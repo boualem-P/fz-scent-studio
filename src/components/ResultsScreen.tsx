@@ -12,7 +12,13 @@ const ResultsScreen = ({ results, onMenu }: ResultsScreenProps) => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center bg-obsidian-gradient overflow-hidden relative px-8">
+    <div className="h-screen w-screen flex flex-col items-center justify-center bg-obsidian-gradient overflow-hidden relative px-8 pattern-fz">
+      {/* Subtle watermark */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-[0.03]">
+        <div className="font-display text-[200px] text-primary tracking-widest whitespace-nowrap select-none rotate-[-15deg]">
+          Fz Parfums
+        </div>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

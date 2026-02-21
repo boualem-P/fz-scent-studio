@@ -72,7 +72,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const hasSelection = selectedTop.length > 0 || selectedHeart.length > 0 || selectedBase.length > 0;
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-obsidian-gradient overflow-hidden relative p-8 lg:p-10">
+    <div className="h-screen w-screen flex flex-col bg-obsidian-gradient overflow-hidden relative p-8 lg:p-10 gold-frame">
       {/* Background pyramid illustration */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
         <div className="w-0 h-0 border-l-[250px] border-r-[250px] border-b-[400px] border-l-transparent border-r-transparent border-b-primary" />

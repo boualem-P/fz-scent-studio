@@ -213,6 +213,42 @@ export const PERFUMES: Perfume[] = [
     heartNotes: ["epices-chaudes"],
     baseNotes: ["gourmandes", "ambrees", "mousses"],
   },
+  {
+    id: "la-vie-est-belle",
+    name: "La Vie Est Belle",
+    brand: "Lancôme",
+    gender: "femme",
+    description:
+      "Un hymne au bonheur. L'iris et le patchouli se fondent dans un tourbillon de praline et de vanille, un sourire olfactif inoubliable.",
+    imageUrl: "https://fimgs.net/mdimg/perfume/375x500.17035.jpg",
+    topNotes: ["fruits-legers", "hesperides"],
+    heartNotes: ["florales"],
+    baseNotes: ["gourmandes", "ambrees"],
+  },
+  {
+    id: "gentleman-givenchy",
+    name: "Gentleman",
+    brand: "Givenchy",
+    gender: "homme",
+    description:
+      "L'élégance masculine dans sa forme la plus pure. La lavande et l'iris dansent sur un accord boisé profond de patchouli crémeux.",
+    imageUrl: "https://fimgs.net/mdimg/perfume/375x500.44239.jpg",
+    topNotes: ["aromatiques", "epices-fraiches"],
+    heartNotes: ["florales", "epices-chaudes"],
+    baseNotes: ["boisees", "gourmandes"],
+  },
+  {
+    id: "coco-mademoiselle",
+    name: "Coco Mademoiselle",
+    brand: "Chanel",
+    gender: "femme",
+    description:
+      "L'esprit libre et audacieux. L'orange fraîche et le jasmin absolu s'entrelacent avec le patchouli et le vétiver pour une féminité moderne.",
+    imageUrl: "https://fimgs.net/mdimg/perfume/375x500.611.jpg",
+    topNotes: ["hesperides", "fruits-legers"],
+    heartNotes: ["florales", "fruitees"],
+    baseNotes: ["boisees", "musquees"],
+  },
 ];
 
 export function matchPerfumes(

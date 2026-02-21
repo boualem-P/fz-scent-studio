@@ -1,41 +1,67 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Flower2, CheckCircle } from "lucide-react";
+import { NoteCategory } from "@/data/perfumes";
 import {
-  NoteCategory,
-  NOTE_LABELS,
-  TOP_NOTES,
-  HEART_NOTES,
-  BASE_NOTES,
-} from "@/data/perfumes";
+  IngredientGroup,
+  TOP_INGREDIENTS,
+  HEART_INGREDIENTS,
+  BASE_INGREDIENTS,
+} from "@/data/ingredients";
+import GoldenRain from "./GoldenRain";
 
 interface PyramidScreenProps {
   onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[]) => void;
   onMenu: () => void;
 }
 
-const NoteTag = ({
-  note,
+const IngredientChip = ({
+  label,
   selected,
   onClick,
 }: {
-  note: NoteCategory;
+  label: string;
   selected: boolean;
   onClick: () => void;
 }) => (
   <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
+    whileTap={{ scale: 0.93 }}
     onClick={onClick}
-    className={`px-4 py-2.5 rounded-sm font-body text-sm tracking-wide transition-all duration-300 border
+    className={`px-2.5 py-1 rounded-sm font-body text-[11px] tracking-wide transition-all duration-300 border leading-tight
       ${
         selected
           ? "bg-primary/15 border-primary/70 text-primary gold-glow-strong"
-          : "bg-secondary/40 border-border/50 text-muted-foreground hover:border-primary/40 hover:text-primary/80"
+          : "bg-secondary/30 border-border/40 text-muted-foreground hover:border-primary/40 hover:text-primary/70"
       }`}
   >
-    {NOTE_LABELS[note]}
+    {label}
   </motion.button>
+);
+
+const GroupSection = ({
+  group,
+  selectedIngredients,
+  onToggle,
+}: {
+  group: IngredientGroup;
+  selectedIngredients: Set<string>;
+  onToggle: (ingredient: string, category: NoteCategory) => void;
+}) => (
+  <div className="mb-2.5">
+    <p className="text-[10px] font-body tracking-[0.15em] uppercase text-primary/60 mb-1.5">
+      {group.label}
+    </p>
+    <div className="flex flex-wrap gap-1.5">
+      {group.ingredients.map((ingredient) => (
+        <IngredientChip
+          key={ingredient}
+          label={ingredient}
+          selected={selectedIngredients.has(ingredient)}
+          onClick={() => onToggle(ingredient, group.category)}
+        />
+      ))}
+    </div>
+  </div>
 );
 
 const SectionTitle = ({
@@ -47,34 +73,73 @@ const SectionTitle = ({
   title: string;
   subtitle: string;
 }) => (
-  <div className="flex items-center gap-3 mb-4">
-    <Icon className="w-5 h-5 text-primary" />
+  <div className="flex items-center gap-2.5 mb-3">
+    <Icon className="w-4 h-4 text-primary flex-shrink-0" />
     <div>
-      <h3 className="font-display text-lg text-primary tracking-wider">{title}</h3>
-      <p className="text-xs text-muted-foreground tracking-widest uppercase">{subtitle}</p>
+      <h3 className="font-display text-base text-primary tracking-wider">{title}</h3>
+      <p className="text-[9px] text-muted-foreground tracking-widest uppercase">{subtitle}</p>
     </div>
   </div>
 );
 
 const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
-  const [selectedTop, setSelectedTop] = useState<NoteCategory[]>([]);
-  const [selectedHeart, setSelectedHeart] = useState<NoteCategory[]>([]);
-  const [selectedBase, setSelectedBase] = useState<NoteCategory[]>([]);
+  // Track selected ingredients and their category mappings
+  const [selectedIngredients, setSelectedIngredients] = useState<Set<string>>(new Set());
+  const [ingredientCategories, setIngredientCategories] = useState<Map<string, NoteCategory>>(new Map());
 
-  const toggle = (
-    note: NoteCategory,
-    list: NoteCategory[],
-    setter: React.Dispatch<React.SetStateAction<NoteCategory[]>>
-  ) => {
-    setter(list.includes(note) ? list.filter((n) => n !== note) : [...list, note]);
+  const toggleIngredient = useCallback((ingredient: string, category: NoteCategory) => {
+    setSelectedIngredients((prev) => {
+      const next = new Set(prev);
+      if (next.has(ingredient)) {
+        next.delete(ingredient);
+      } else {
+        next.add(ingredient);
+      }
+      return next;
+    });
+    setIngredientCategories((prev) => {
+      const next = new Map(prev);
+      if (next.has(ingredient)) {
+        next.delete(ingredient);
+      } else {
+        next.set(ingredient, category);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleValidate = () => {
+    // Map selected ingredients back to unique categories per tier
+    const topCategories = new Set<NoteCategory>();
+    const heartCategories = new Set<NoteCategory>();
+    const baseCategories = new Set<NoteCategory>();
+
+    const topCats = new Set(TOP_INGREDIENTS.map((g) => g.category));
+    const heartCats = new Set(HEART_INGREDIENTS.map((g) => g.category));
+    const baseCats = new Set(BASE_INGREDIENTS.map((g) => g.category));
+
+    ingredientCategories.forEach((cat) => {
+      if (topCats.has(cat)) topCategories.add(cat);
+      else if (heartCats.has(cat)) heartCategories.add(cat);
+      else if (baseCats.has(cat)) baseCategories.add(cat);
+    });
+
+    onValidate(
+      Array.from(topCategories),
+      Array.from(heartCategories),
+      Array.from(baseCategories)
+    );
   };
 
-  const hasSelection = selectedTop.length > 0 || selectedHeart.length > 0 || selectedBase.length > 0;
+  const hasSelection = selectedIngredients.size > 0;
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-obsidian-gradient overflow-hidden relative p-8 lg:p-10 gold-frame">
+    <div className="h-screen w-screen flex flex-col bg-obsidian-gradient overflow-hidden relative p-6 lg:p-8 gold-frame">
+      {/* Golden Rain */}
+      <GoldenRain />
+
       {/* Background pyramid illustration */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0">
         <div className="w-0 h-0 border-l-[250px] border-r-[250px] border-b-[400px] border-l-transparent border-r-transparent border-b-primary" />
       </div>
 
@@ -83,71 +148,68 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-center mb-6"
+        className="text-center mb-4 relative z-20"
       >
-        <h2 className="font-display text-3xl text-gold-gradient tracking-wider">
+        <h2 className="font-display text-2xl lg:text-3xl text-gold-gradient tracking-wider">
           Pyramide Olfactive
         </h2>
-        <div className="gold-divider w-32 mx-auto mt-3" />
+        <div className="gold-divider w-28 mx-auto mt-2" />
       </motion.div>
 
-      {/* Three sections */}
-      <div className="flex-1 grid grid-cols-3 gap-8 max-w-7xl mx-auto w-full">
+      {/* Three columns */}
+      <div className="flex-1 grid grid-cols-3 gap-6 max-w-7xl mx-auto w-full relative z-20 overflow-hidden">
+        {/* Notes de Tête */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-col"
+          className="flex flex-col overflow-y-auto scrollbar-hide"
         >
           <SectionTitle icon={Sparkles} title="Notes de Tête" subtitle="The Spark" />
-          <div className="flex flex-wrap gap-2.5">
-            {TOP_NOTES.map((note) => (
-              <NoteTag
-                key={note}
-                note={note}
-                selected={selectedTop.includes(note)}
-                onClick={() => toggle(note, selectedTop, setSelectedTop)}
-              />
-            ))}
-          </div>
+          {TOP_INGREDIENTS.map((group) => (
+            <GroupSection
+              key={group.category}
+              group={group}
+              selectedIngredients={selectedIngredients}
+              onToggle={toggleIngredient}
+            />
+          ))}
         </motion.div>
 
+        {/* Notes de Cœur */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.35 }}
-          className="flex flex-col"
+          className="flex flex-col overflow-y-auto scrollbar-hide"
         >
           <SectionTitle icon={Flower2} title="Notes de Cœur" subtitle="The Soul" />
-          <div className="flex flex-wrap gap-2.5">
-            {HEART_NOTES.map((note) => (
-              <NoteTag
-                key={note}
-                note={note}
-                selected={selectedHeart.includes(note)}
-                onClick={() => toggle(note, selectedHeart, setSelectedHeart)}
-              />
-            ))}
-          </div>
+          {HEART_INGREDIENTS.map((group) => (
+            <GroupSection
+              key={group.category}
+              group={group}
+              selectedIngredients={selectedIngredients}
+              onToggle={toggleIngredient}
+            />
+          ))}
         </motion.div>
 
+        {/* Notes de Fond */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="flex flex-col"
+          className="flex flex-col overflow-y-auto scrollbar-hide"
         >
           <SectionTitle icon={CheckCircle} title="Notes de Fond" subtitle="The Sillage" />
-          <div className="flex flex-wrap gap-2.5">
-            {BASE_NOTES.map((note) => (
-              <NoteTag
-                key={note}
-                note={note}
-                selected={selectedBase.includes(note)}
-                onClick={() => toggle(note, selectedBase, setSelectedBase)}
-              />
-            ))}
-          </div>
+          {BASE_INGREDIENTS.map((group) => (
+            <GroupSection
+              key={group.category}
+              group={group}
+              selectedIngredients={selectedIngredients}
+              onToggle={toggleIngredient}
+            />
+          ))}
         </motion.div>
       </div>
 
@@ -156,7 +218,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
-        className="flex justify-between items-center mt-6"
+        className="flex justify-between items-center mt-4 relative z-20"
       >
         <motion.button
           whileHover={{ scale: 1.03 }}
@@ -178,7 +240,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               exit={{ opacity: 0, scale: 0.9 }}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => onValidate(selectedTop, selectedHeart, selectedBase)}
+              onClick={handleValidate}
               className="px-12 py-3 font-display text-base tracking-[0.25em] uppercase
                 bg-primary/15 border border-primary/60 text-primary
                 hover:bg-primary/25

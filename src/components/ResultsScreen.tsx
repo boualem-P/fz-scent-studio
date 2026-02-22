@@ -1,66 +1,103 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Perfume } from "@/data/perfumes";
-import PerfumeModal from "./PerfumeModal";
+import CatalogueModal from "./CatalogueModal";
+import GoldenRain from "./GoldenRain";
+import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
   onMenu: () => void;
 }
 
+const PercentCircle = ({ percent }: { percent: number }) => {
+  const radius = 32;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percent / 100) * circumference;
+
+  return (
+    <div className="relative w-20 h-20 flex items-center justify-center">
+      <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+        <circle
+          cx="40" cy="40" r={radius}
+          stroke="hsl(43 72% 52% / 0.15)"
+          strokeWidth="2"
+          fill="none"
+        />
+        <motion.circle
+          cx="40" cy="40" r={radius}
+          stroke="hsl(43, 72%, 52%)"
+          strokeWidth="2.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
+        />
+      </svg>
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+        className="absolute font-display text-lg text-primary"
+      >
+        {percent}%
+      </motion.span>
+    </div>
+  );
+};
+
 const ResultsScreen = ({ results, onMenu }: ResultsScreenProps) => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center bg-obsidian-gradient overflow-hidden relative px-8 pattern-fz">
-      {/* Subtle watermark */}
+      <GoldenRain />
+
+      {/* Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-[0.03]">
         <div className="font-display text-[200px] text-primary tracking-widest whitespace-nowrap select-none rotate-[-15deg]">
           Fz Parfums
         </div>
       </div>
+
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-10"
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="text-center mb-10 relative z-20"
       >
-        <h2 className="font-display text-4xl text-gold-gradient tracking-wider">
+        <motion.h2 variants={staggerItem} className="font-display text-4xl text-gold-gradient tracking-wider">
           Vos Recommandations
-        </h2>
-        <div className="gold-divider w-40 mx-auto mt-4" />
+        </motion.h2>
+        <motion.div variants={staggerItem} className="gold-divider w-40 mx-auto mt-4" />
       </motion.div>
 
-      <div className="flex gap-8 max-w-5xl w-full justify-center">
-        {results.map((result, i) => (
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="flex gap-8 max-w-5xl w-full justify-center relative z-20"
+      >
+        {results.map((result) => (
           <motion.button
             key={result.perfume.id}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 + i * 0.15 }}
-            whileHover={{ scale: 1.03, y: -4 }}
-            whileTap={{ scale: 0.98 }}
+            variants={staggerItem}
+            whileHover={springHover}
+            whileTap={springTap}
             onClick={() => setSelectedPerfume(result.perfume)}
-            className="flex-1 max-w-[280px] bg-card border border-border/50 p-6 flex flex-col items-center
-              hover:border-primary/50 transition-all duration-300 gold-border-glow group cursor-pointer"
+            className="flex-1 max-w-[280px] glass-card card-shimmer-effect p-6 flex flex-col items-center
+              transition-all duration-300 group cursor-pointer"
           >
-            {/* Match percentage */}
-            <div className="mb-4 relative">
-              <div className="w-16 h-16 rounded-full border-2 border-primary/40 flex items-center justify-center
-                group-hover:border-primary/70 transition-colors">
-                <span className="font-display text-lg text-primary">
-                  {result.matchPercent}%
-                </span>
-              </div>
-            </div>
+            <PercentCircle percent={result.matchPercent} />
 
-            {/* Image */}
-            <div className="h-44 flex items-center justify-center mb-4">
+            <div className="h-44 flex items-center justify-center mb-4 mt-2">
               <img
                 src={result.perfume.imageUrl}
                 alt={result.perfume.name}
                 className="max-h-full object-contain drop-shadow-lg
-                  group-hover:drop-shadow-2xl transition-all duration-300"
+                  group-hover:drop-shadow-2xl transition-all duration-500"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "/placeholder.svg";
                 }}
@@ -73,22 +110,22 @@ const ResultsScreen = ({ results, onMenu }: ResultsScreenProps) => {
             <h3 className="font-display text-lg text-primary tracking-wide">
               {result.perfume.name}
             </h3>
-            <p className="text-xs text-muted-foreground mt-2 tracking-wider uppercase">
-              Découvrir →
+            <p className="text-[9px] text-muted-foreground/60 mt-1">
+              {result.perfume.concentration} • {result.perfume.year}
             </p>
           </motion.button>
         ))}
-      </div>
+      </motion.div>
 
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="mt-12"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="mt-12 relative z-20"
       >
         <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
+          whileHover={springHover}
+          whileTap={springTap}
           onClick={onMenu}
           className="px-10 py-3 font-display text-sm tracking-[0.25em] uppercase
             border border-primary/40 text-primary
@@ -101,7 +138,7 @@ const ResultsScreen = ({ results, onMenu }: ResultsScreenProps) => {
 
       <AnimatePresence>
         {selectedPerfume && (
-          <PerfumeModal
+          <CatalogueModal
             perfume={selectedPerfume}
             onClose={() => setSelectedPerfume(null)}
           />

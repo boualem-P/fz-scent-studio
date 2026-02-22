@@ -3,14 +3,14 @@ import { X, Sparkles, Flower2, TreePine } from "lucide-react";
 import { Perfume, NoteDetail } from "@/data/perfumes";
 import { staggerContainer, staggerItem, luxuryEase } from "@/lib/animations";
 
-interface PerfumeModalProps {
+interface CatalogueModalProps {
   perfume: Perfume;
   onClose: () => void;
 }
 
 const NoteBubble = ({ note }: { note: NoteDetail }) => (
-  <motion.div variants={staggerItem} className="flex flex-col items-center gap-1.5 min-w-[55px]">
-    <div className="w-12 h-12 rounded-full overflow-hidden border border-primary/30 shadow-lg shadow-primary/10">
+  <motion.div variants={staggerItem} className="flex flex-col items-center gap-1.5 min-w-[60px]">
+    <div className="w-14 h-14 rounded-full overflow-hidden border border-primary/30 shadow-lg shadow-primary/10">
       <img
         src={note.imageUrl}
         alt={note.name}
@@ -21,7 +21,7 @@ const NoteBubble = ({ note }: { note: NoteDetail }) => (
         }}
       />
     </div>
-    <span className="text-[8px] font-body text-foreground/70 tracking-wider text-center leading-tight max-w-[60px]">
+    <span className="text-[9px] font-body text-foreground/70 tracking-wider text-center leading-tight max-w-[65px]">
       {note.name}
     </span>
   </motion.div>
@@ -36,7 +36,7 @@ const NoteRow = ({
   label: string;
   notes: NoteDetail[];
 }) => (
-  <div className="mb-3">
+  <div className="mb-4">
     <div className="flex items-center gap-2 mb-2">
       <Icon className="w-3.5 h-3.5 text-primary" />
       <span className="text-[10px] font-body tracking-[0.15em] uppercase text-primary/70">{label}</span>
@@ -45,7 +45,7 @@ const NoteRow = ({
       variants={staggerContainer}
       initial="hidden"
       animate="show"
-      className="flex gap-3"
+      className="flex gap-4 overflow-x-auto"
     >
       {notes.map((note) => (
         <NoteBubble key={note.name} note={note} />
@@ -54,7 +54,7 @@ const NoteRow = ({
   </div>
 );
 
-const PerfumeModal = ({ perfume, onClose }: PerfumeModalProps) => {
+const CatalogueModal = ({ perfume, onClose }: CatalogueModalProps) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -69,30 +69,30 @@ const PerfumeModal = ({ perfume, onClose }: PerfumeModalProps) => {
         exit={{ opacity: 0, scale: 0.85 }}
         transition={{ duration: 0.5, ease: luxuryEase }}
         onClick={(e) => e.stopPropagation()}
-        className="relative bg-card/95 border border-primary/30 gold-border-glow max-w-3xl w-full mx-6 flex overflow-hidden backdrop-blur-lg"
+        className="relative bg-card/95 border border-primary/30 gold-border-glow max-w-4xl w-full mx-6 flex overflow-hidden backdrop-blur-lg"
       >
         {/* Gold corner accents */}
-        <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/60" />
-        <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-primary/60" />
-        <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-primary/60" />
-        <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/60" />
+        <div className="absolute top-0 left-0 w-10 h-10 border-t border-l border-primary/60" />
+        <div className="absolute top-0 right-0 w-10 h-10 border-t border-r border-primary/60" />
+        <div className="absolute bottom-0 left-0 w-10 h-10 border-b border-l border-primary/60" />
+        <div className="absolute bottom-0 right-0 w-10 h-10 border-b border-r border-primary/60" />
 
-        {/* Image */}
-        <div className="w-1/3 bg-secondary/30 flex items-center justify-center p-6">
+        {/* Image side */}
+        <div className="w-1/3 bg-secondary/20 flex items-center justify-center p-8">
           <motion.img
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: luxuryEase, delay: 0.2 }}
             src={perfume.imageUrl}
             alt={perfume.name}
-            className="max-h-[350px] object-contain drop-shadow-2xl"
+            className="max-h-[380px] object-contain drop-shadow-2xl"
             onError={(e) => {
               (e.target as HTMLImageElement).src = "/placeholder.svg";
             }}
           />
         </div>
 
-        {/* Content */}
+        {/* Content side */}
         <motion.div
           variants={staggerContainer}
           initial="hidden"
@@ -101,37 +101,56 @@ const PerfumeModal = ({ perfume, onClose }: PerfumeModalProps) => {
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-muted-foreground hover:text-primary transition-colors"
+            className="absolute top-4 right-4 text-muted-foreground hover:text-primary transition-colors z-10"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <motion.p variants={staggerItem} className="text-xs font-body tracking-[0.3em] uppercase text-muted-foreground mb-1">
+          <motion.p variants={staggerItem} className="text-[10px] font-body tracking-[0.3em] uppercase text-muted-foreground mb-1">
             {perfume.brand}
           </motion.p>
           <motion.h2 variants={staggerItem} className="font-display text-3xl text-gold-gradient mb-2">
             {perfume.name}
           </motion.h2>
 
+          {/* Metadata row */}
           <motion.div variants={staggerItem} className="flex items-center gap-3 mb-4">
             <span className="text-[10px] font-body tracking-wider text-muted-foreground uppercase">
               {perfume.gender === "homme" ? "Homme" : perfume.gender === "femme" ? "Femme" : "Mixte"}
             </span>
             <span className="text-primary/30">•</span>
-            <span className="text-[10px] font-body tracking-wider text-muted-foreground">{perfume.concentration}</span>
+            <span className="text-[10px] font-body tracking-wider text-muted-foreground">
+              {perfume.concentration}
+            </span>
             <span className="text-primary/30">•</span>
-            <span className="text-[10px] font-body tracking-wider text-muted-foreground">{perfume.year}</span>
+            <span className="text-[10px] font-body tracking-wider text-muted-foreground">
+              {perfume.year}
+            </span>
           </motion.div>
 
           <motion.div variants={staggerItem} className="gold-divider w-16 mb-4" />
+
           <motion.p variants={staggerItem} className="text-sm text-foreground/80 leading-relaxed font-body mb-6 italic">
             "{perfume.description}"
           </motion.p>
 
+          {/* Visual Pyramid with photorealistic bubbles */}
           <div className="mt-auto">
-            <NoteRow icon={Sparkles} label="Notes de Tête" notes={perfume.topNotesDetailed} />
-            <NoteRow icon={Flower2} label="Notes de Cœur" notes={perfume.heartNotesDetailed} />
-            <NoteRow icon={TreePine} label="Notes de Fond" notes={perfume.baseNotesDetailed} />
+            <NoteRow
+              icon={Sparkles}
+              label="Notes de Tête"
+              notes={perfume.topNotesDetailed}
+            />
+            <NoteRow
+              icon={Flower2}
+              label="Notes de Cœur"
+              notes={perfume.heartNotesDetailed}
+            />
+            <NoteRow
+              icon={TreePine}
+              label="Notes de Fond"
+              notes={perfume.baseNotesDetailed}
+            />
           </div>
         </motion.div>
       </motion.div>
@@ -139,4 +158,4 @@ const PerfumeModal = ({ perfume, onClose }: PerfumeModalProps) => {
   );
 };
 
-export default PerfumeModal;
+export default CatalogueModal;

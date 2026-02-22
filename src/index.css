@@ -168,6 +168,36 @@
     animation: shimmer 3s linear infinite;
   }
 
+  /* Card shimmer beam */
+  @keyframes card-shimmer {
+    0% { transform: translateX(-100%) rotate(25deg); }
+    100% { transform: translateX(200%) rotate(25deg); }
+  }
+
+  .card-shimmer-effect {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-shimmer-effect::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 40%;
+    height: 200%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(43 72% 52% / 0.07) 40%,
+      hsl(43 80% 65% / 0.15) 50%,
+      hsl(43 72% 52% / 0.07) 60%,
+      transparent 100%
+    );
+    animation: card-shimmer 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
   .gold-frame {
     border: 1px solid hsl(43 72% 52% / 0.3);
     box-shadow:
@@ -207,5 +237,18 @@
       hsl(43 72% 52% / 0.02) 100px,
       hsl(43 72% 52% / 0.02) 101px
     );
+  }
+
+  /* Glassmorphism card */
+  .glass-card {
+    background: hsl(0 0% 6% / 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(43 72% 52% / 0.15);
+  }
+
+  .glass-card:hover {
+    background: hsl(0 0% 8% / 0.7);
+    border-color: hsl(43 72% 52% / 0.4);
   }
 }

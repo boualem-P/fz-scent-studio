@@ -2,12 +2,14 @@ import { motion } from "framer-motion";
 import { Gender } from "@/data/perfumes";
 import GoldenRain from "./GoldenRain";
 import luxuryBg from "@/assets/luxury-bottle-bg.jpg";
+import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 
 interface LandingScreenProps {
   onSelectGender: (gender: Gender) => void;
+  onCatalogue: () => void;
 }
 
-const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
+const LandingScreen = ({ onSelectGender, onCatalogue }: LandingScreenProps) => {
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center overflow-hidden relative">
       {/* Background image */}
@@ -17,7 +19,6 @@ const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
       />
       <div className="absolute inset-0 bg-background/70" />
 
-      {/* Golden rain */}
       <GoldenRain />
 
       {/* Decorative lines */}
@@ -27,16 +28,20 @@ const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
         className="text-center mb-16 relative z-20"
       >
-        <h1 className="font-display text-7xl md:text-8xl lg:text-9xl tracking-wider text-gold-shimmer leading-tight">
+        <motion.h1
+          variants={staggerItem}
+          className="font-display text-7xl md:text-8xl lg:text-9xl tracking-wider text-gold-shimmer leading-tight"
+        >
           Fz Parfums
-        </h1>
-        <div className="gold-divider w-48 mx-auto mt-6 mb-6" />
+        </motion.h1>
+        <motion.div variants={staggerItem} className="gold-divider w-48 mx-auto mt-6 mb-6" />
         <motion.p
+          variants={staggerItem}
           className="font-body text-lg tracking-[0.3em] uppercase text-muted-foreground animate-pulse-gold"
         >
           Cliquez pour Commencer
@@ -44,29 +49,42 @@ const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-        className="flex gap-6 md:gap-10 relative z-20"
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="flex flex-wrap gap-6 md:gap-10 relative z-20 justify-center"
       >
-        {(["homme", "femme", "mixte"] as Gender[]).map((gender, i) => (
+        {(["homme", "femme", "mixte"] as Gender[]).map((gender) => (
           <motion.button
             key={gender}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.8 + i * 0.15 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
+            variants={staggerItem}
+            whileHover={springHover}
+            whileTap={springTap}
             onClick={() => onSelectGender(gender)}
             className="px-12 py-5 font-display text-xl tracking-[0.25em] uppercase
               border border-primary/40 bg-secondary/50 text-primary
               hover:bg-primary/10 hover:border-primary/70
               transition-colors duration-300
-              gold-border-glow backdrop-blur-sm"
+              gold-border-glow backdrop-blur-sm card-shimmer-effect"
           >
             {gender.toUpperCase()}
           </motion.button>
         ))}
+
+        {/* Catalogue button */}
+        <motion.button
+          variants={staggerItem}
+          whileHover={springHover}
+          whileTap={springTap}
+          onClick={onCatalogue}
+          className="px-12 py-5 font-display text-xl tracking-[0.25em] uppercase
+            border border-primary/60 bg-primary/10 text-primary
+            hover:bg-primary/20 hover:border-primary/80
+            transition-colors duration-300
+            gold-glow backdrop-blur-sm card-shimmer-effect"
+        >
+          Catalogue
+        </motion.button>
       </motion.div>
     </div>
   );

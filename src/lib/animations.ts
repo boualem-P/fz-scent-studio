@@ -1,4 +1,4 @@
-// Shared Framer Motion animation presets for Awwwards-level experience
+// Shared Framer Motion animation presets
 
 export const luxuryEase = [0.16, 1, 0.3, 1] as const;
 
@@ -18,7 +18,7 @@ export const staggerItem = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, ease: luxuryEase },
+    transition: { duration: 0.5, ease: luxuryEase },
   },
 };
 

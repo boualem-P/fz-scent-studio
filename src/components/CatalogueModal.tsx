@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { X, Sparkles, Flower2, TreePine } from "lucide-react";
+import { X, Sparkles, Flower2, TreePine, Droplets } from "lucide-react";
 import { Perfume, NoteDetail } from "@/data/perfumes";
 import { staggerContainer, staggerItem, luxuryEase } from "@/lib/animations";
 
@@ -10,16 +10,8 @@ interface CatalogueModalProps {
 
 const NoteBubble = ({ note }: { note: NoteDetail }) => (
   <motion.div variants={staggerItem} className="flex flex-col items-center gap-1.5 min-w-[60px]">
-    <div className="w-14 h-14 rounded-full overflow-hidden border border-primary/30 shadow-lg shadow-primary/10">
-      <img
-        src={note.imageUrl}
-        alt={note.name}
-        className="w-full h-full object-cover"
-        onError={(e) => {
-          (e.target as HTMLImageElement).style.background = "hsl(43 72% 52% / 0.2)";
-          (e.target as HTMLImageElement).src = "";
-        }}
-      />
+    <div className="w-14 h-14 rounded-full border border-primary/30 shadow-lg shadow-primary/10 flex items-center justify-center bg-primary/5">
+      <Droplets className="w-5 h-5 text-primary/70" />
     </div>
     <span className="text-[9px] font-body text-foreground/70 tracking-wider text-center leading-tight max-w-[65px]">
       {note.name}
@@ -45,7 +37,7 @@ const NoteRow = ({
       variants={staggerContainer}
       initial="hidden"
       animate="show"
-      className="flex gap-4 overflow-x-auto"
+      className="flex gap-4 flex-wrap"
     >
       {notes.map((note) => (
         <NoteBubble key={note.name} note={note} />
@@ -53,6 +45,21 @@ const NoteRow = ({
     </motion.div>
   </div>
 );
+
+const PerfumeInitialsLarge = ({ name }: { name: string }) => {
+  const initials = name
+    .split(/[\s'-]+/)
+    .filter((w) => w.length > 0 && w[0] === w[0].toUpperCase())
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("");
+
+  return (
+    <div className="w-40 h-56 rounded-sm bg-gradient-to-b from-primary/20 to-transparent border border-primary/30 flex items-center justify-center">
+      <span className="font-display text-5xl text-primary/80 tracking-wider">{initials}</span>
+    </div>
+  );
+};
 
 const CatalogueModal = ({ perfume, onClose }: CatalogueModalProps) => {
   return (
@@ -77,19 +84,15 @@ const CatalogueModal = ({ perfume, onClose }: CatalogueModalProps) => {
         <div className="absolute bottom-0 left-0 w-10 h-10 border-b border-l border-primary/60" />
         <div className="absolute bottom-0 right-0 w-10 h-10 border-b border-r border-primary/60" />
 
-        {/* Image side */}
+        {/* Glassmorphism placeholder side */}
         <div className="w-1/3 bg-secondary/20 flex items-center justify-center p-8">
-          <motion.img
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: luxuryEase, delay: 0.2 }}
-            src={perfume.imageUrl}
-            alt={perfume.name}
-            className="max-h-[380px] object-contain drop-shadow-2xl"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "/placeholder.svg";
-            }}
-          />
+            transition={{ duration: 0.5, ease: luxuryEase, delay: 0.2 }}
+          >
+            <PerfumeInitialsLarge name={perfume.name} />
+          </motion.div>
         </div>
 
         {/* Content side */}
@@ -113,7 +116,6 @@ const CatalogueModal = ({ perfume, onClose }: CatalogueModalProps) => {
             {perfume.name}
           </motion.h2>
 
-          {/* Metadata row */}
           <motion.div variants={staggerItem} className="flex items-center gap-3 mb-4">
             <span className="text-[10px] font-body tracking-wider text-muted-foreground uppercase">
               {perfume.gender === "homme" ? "Homme" : perfume.gender === "femme" ? "Femme" : "Mixte"}
@@ -134,23 +136,10 @@ const CatalogueModal = ({ perfume, onClose }: CatalogueModalProps) => {
             "{perfume.description}"
           </motion.p>
 
-          {/* Visual Pyramid with photorealistic bubbles */}
           <div className="mt-auto">
-            <NoteRow
-              icon={Sparkles}
-              label="Notes de Tête"
-              notes={perfume.topNotesDetailed}
-            />
-            <NoteRow
-              icon={Flower2}
-              label="Notes de Cœur"
-              notes={perfume.heartNotesDetailed}
-            />
-            <NoteRow
-              icon={TreePine}
-              label="Notes de Fond"
-              notes={perfume.baseNotesDetailed}
-            />
+            <NoteRow icon={Sparkles} label="Notes de Tête" notes={perfume.topNotesDetailed} />
+            <NoteRow icon={Flower2} label="Notes de Cœur" notes={perfume.heartNotesDetailed} />
+            <NoteRow icon={TreePine} label="Notes de Fond" notes={perfume.baseNotesDetailed} />
           </div>
         </motion.div>
       </motion.div>

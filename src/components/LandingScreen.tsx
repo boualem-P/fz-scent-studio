@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 import { Gender } from "@/data/perfumes";
-import GoldenRain from "./GoldenRain";
-import luxuryBg from "@/assets/luxury-bottle-bg.jpg";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 
 interface LandingScreenProps {
@@ -11,15 +9,11 @@ interface LandingScreenProps {
 
 const LandingScreen = ({ onSelectGender, onCatalogue }: LandingScreenProps) => {
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center overflow-hidden relative">
-      {/* Background image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${luxuryBg})` }}
-      />
-      <div className="absolute inset-0 bg-background/70" />
-
-      <GoldenRain />
+    <div className="min-h-screen w-screen flex flex-col items-center justify-center overflow-y-auto relative bg-background pb-40">
+      {/* Subtle gold radial gradient */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: "radial-gradient(ellipse at 50% 40%, hsl(43 72% 52% / 0.06) 0%, transparent 60%)"
+      }} />
 
       {/* Decorative lines */}
       <div className="absolute inset-0 pointer-events-none z-20">
@@ -71,7 +65,6 @@ const LandingScreen = ({ onSelectGender, onCatalogue }: LandingScreenProps) => {
           </motion.button>
         ))}
 
-        {/* Catalogue button */}
         <motion.button
           variants={staggerItem}
           whileHover={springHover}

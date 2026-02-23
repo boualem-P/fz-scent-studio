@@ -8,40 +8,29 @@
   :root {
     --background: 0 0% 2%;
     --foreground: 43 54% 80%;
-
     --card: 0 0% 6%;
     --card-foreground: 43 54% 80%;
-
     --popover: 0 0% 4%;
     --popover-foreground: 43 54% 80%;
-
     --primary: 43 72% 52%;
     --primary-foreground: 0 0% 2%;
-
     --secondary: 0 0% 10%;
     --secondary-foreground: 43 54% 80%;
-
     --muted: 0 0% 8%;
     --muted-foreground: 43 20% 50%;
-
     --accent: 43 72% 52%;
     --accent-foreground: 0 0% 2%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 43 30% 18%;
     --input: 43 20% 14%;
     --ring: 43 72% 52%;
-
     --radius: 0.5rem;
-
     --gold: 43 72% 52%;
     --gold-light: 43 80% 65%;
     --gold-dark: 43 60% 38%;
     --obsidian: 0 0% 2%;
     --obsidian-light: 0 0% 6%;
-
     --sidebar-background: 0 0% 4%;
     --sidebar-foreground: 43 54% 80%;
     --sidebar-primary: 43 72% 52%;
@@ -60,21 +49,11 @@
 
   body {
     @apply bg-background text-foreground font-body;
-    overflow: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     user-select: none;
     -webkit-user-select: none;
     cursor: default;
-  }
-
-  ::-webkit-scrollbar {
-    display: none;
-  }
-
-  * {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
   }
 }
 
@@ -88,52 +67,28 @@
   }
 
   .text-gold-gradient {
-    background: linear-gradient(
-      135deg,
-      hsl(43 80% 65%) 0%,
-      hsl(43 72% 52%) 40%,
-      hsl(43 80% 65%) 60%,
-      hsl(43 60% 38%) 100%
-    );
+    background: linear-gradient(135deg, hsl(43 80% 65%) 0%, hsl(43 72% 52%) 40%, hsl(43 80% 65%) 60%, hsl(43 60% 38%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .gold-glow {
-    box-shadow: 0 0 20px hsl(43 72% 52% / 0.3),
-      0 0 40px hsl(43 72% 52% / 0.1),
-      inset 0 1px 0 hsl(43 80% 65% / 0.2);
+    box-shadow: 0 0 20px hsl(43 72% 52% / 0.3), 0 0 40px hsl(43 72% 52% / 0.1), inset 0 1px 0 hsl(43 80% 65% / 0.2);
   }
 
   .gold-glow-strong {
-    box-shadow: 0 0 25px hsl(43 72% 52% / 0.5),
-      0 0 50px hsl(43 72% 52% / 0.2),
-      inset 0 1px 0 hsl(43 80% 65% / 0.3);
+    box-shadow: 0 0 25px hsl(43 72% 52% / 0.5), 0 0 50px hsl(43 72% 52% / 0.2), inset 0 1px 0 hsl(43 80% 65% / 0.3);
   }
 
   .gold-border-glow {
     border: 1px solid hsl(43 72% 52% / 0.4);
-    box-shadow: 0 0 15px hsl(43 72% 52% / 0.15),
-      inset 0 0 15px hsl(43 72% 52% / 0.05);
+    box-shadow: 0 0 15px hsl(43 72% 52% / 0.15), inset 0 0 15px hsl(43 72% 52% / 0.05);
   }
 
   .gold-divider {
     height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      hsl(43 72% 52% / 0.5),
-      transparent
-    );
-  }
-
-  .bg-obsidian-gradient {
-    background: radial-gradient(
-      ellipse at center,
-      hsl(0 0% 6%) 0%,
-      hsl(0 0% 2%) 70%
-    );
+    background: linear-gradient(90deg, transparent, hsl(43 72% 52% / 0.5), transparent);
   }
 
   @keyframes pulse-gold {
@@ -151,16 +106,7 @@
   }
 
   .text-gold-shimmer {
-    background: linear-gradient(
-      90deg,
-      hsl(43 60% 38%) 0%,
-      hsl(43 72% 52%) 20%,
-      hsl(43 90% 75%) 40%,
-      hsl(43 80% 65%) 50%,
-      hsl(43 90% 75%) 60%,
-      hsl(43 72% 52%) 80%,
-      hsl(43 60% 38%) 100%
-    );
+    background: linear-gradient(90deg, hsl(43 60% 38%) 0%, hsl(43 72% 52%) 20%, hsl(43 90% 75%) 40%, hsl(43 80% 65%) 50%, hsl(43 90% 75%) 60%, hsl(43 72% 52%) 80%, hsl(43 60% 38%) 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -168,7 +114,6 @@
     animation: shimmer 3s linear infinite;
   }
 
-  /* Card shimmer beam */
   @keyframes card-shimmer {
     0% { transform: translateX(-100%) rotate(25deg); }
     100% { transform: translateX(200%) rotate(25deg); }
@@ -186,23 +131,14 @@
     left: -50%;
     width: 40%;
     height: 200%;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      hsl(43 72% 52% / 0.07) 40%,
-      hsl(43 80% 65% / 0.15) 50%,
-      hsl(43 72% 52% / 0.07) 60%,
-      transparent 100%
-    );
+    background: linear-gradient(90deg, transparent 0%, hsl(43 72% 52% / 0.07) 40%, hsl(43 80% 65% / 0.15) 50%, hsl(43 72% 52% / 0.07) 60%, transparent 100%);
     animation: card-shimmer 3s ease-in-out infinite;
     pointer-events: none;
   }
 
   .gold-frame {
     border: 1px solid hsl(43 72% 52% / 0.3);
-    box-shadow:
-      inset 0 0 30px hsl(43 72% 52% / 0.05),
-      0 0 20px hsl(43 72% 52% / 0.1);
+    box-shadow: inset 0 0 30px hsl(43 72% 52% / 0.05), 0 0 20px hsl(43 72% 52% / 0.1);
     position: relative;
   }
 
@@ -230,16 +166,9 @@
   }
 
   .pattern-fz {
-    background-image: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 100px,
-      hsl(43 72% 52% / 0.02) 100px,
-      hsl(43 72% 52% / 0.02) 101px
-    );
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 100px, hsl(43 72% 52% / 0.02) 100px, hsl(43 72% 52% / 0.02) 101px);
   }
 
-  /* Glassmorphism card */
   .glass-card {
     background: hsl(0 0% 6% / 0.6);
     backdrop-filter: blur(12px);

@@ -52,8 +52,9 @@ const PerfumeInitials = ({ name }: { name: string }) => {
 
   return (
     <div className="h-44 flex items-center justify-center mb-4 mt-2">
-      <div className="w-24 h-36 rounded-sm bg-gradient-to-b from-primary/20 to-transparent border border-primary/30 flex items-center justify-center">
-        <span className="font-display text-3xl text-primary/80 tracking-wider">{initials}</span>
+      <div className="w-24 h-36 rounded-sm border border-primary/30 flex items-center justify-center transition-shadow duration-300 group-hover:shadow-[0_0_15px_hsl(43_72%_52%_/_0.3)]"
+        style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 80% 65% / 0.2), transparent 70%)" }}>
+        <span className="font-display text-3xl text-primary/80 tracking-widest">{initials}</span>
       </div>
     </div>
   );

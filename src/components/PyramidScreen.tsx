@@ -219,10 +219,10 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               whileHover={springHover}
               whileTap={springTap}
               onClick={handleValidate}
-              className="px-12 py-3 font-display text-base tracking-[0.25em] uppercase
+              className="px-16 py-4 font-display text-lg tracking-[0.3em] uppercase
                 bg-primary/15 border border-primary/60 text-primary
-                hover:bg-primary/25
-                transition-colors duration-300 gold-glow card-shimmer-effect"
+                hover:bg-primary hover:text-primary-foreground
+                transition-all duration-300 gold-glow card-shimmer-effect"
             >
               Valider
             </motion.button>

@@ -8,7 +8,6 @@ import {
   HEART_INGREDIENTS,
   BASE_INGREDIENTS,
 } from "@/data/ingredients";
-import GoldenRain from "./GoldenRain";
 import { staggerContainer, staggerItem, springHover, springTap, luxuryEase } from "@/lib/animations";
 
 interface PyramidScreenProps {
@@ -129,8 +128,11 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const hasSelection = selectedIngredients.size > 0;
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-obsidian-gradient overflow-hidden relative p-6 lg:p-8 gold-frame">
-      <GoldenRain />
+    <div className="min-h-screen w-screen flex flex-col bg-background overflow-y-auto relative p-6 lg:p-8 pb-40 gold-frame">
+      {/* Subtle gold radial gradient */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)"
+      }} />
 
       {/* Background pyramid */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0">
@@ -151,12 +153,12 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
       </motion.div>
 
       {/* Three columns */}
-      <div className="flex-1 grid grid-cols-3 gap-6 max-w-7xl mx-auto w-full relative z-20 overflow-hidden">
+      <div className="flex-1 grid grid-cols-3 gap-6 max-w-7xl mx-auto w-full relative z-20">
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: luxuryEase, delay: 0.2 }}
-          className="flex flex-col overflow-y-auto scrollbar-hide"
+          transition={{ duration: 0.5, ease: luxuryEase, delay: 0.2 }}
+          className="flex flex-col"
         >
           <SectionTitle icon={Sparkles} title="Notes de Tête" subtitle="The Spark" />
           {TOP_INGREDIENTS.map((group) => (
@@ -167,8 +169,8 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: luxuryEase, delay: 0.35 }}
-          className="flex flex-col overflow-y-auto scrollbar-hide"
+          transition={{ duration: 0.5, ease: luxuryEase, delay: 0.35 }}
+          className="flex flex-col"
         >
           <SectionTitle icon={Flower2} title="Notes de Cœur" subtitle="The Soul" />
           {HEART_INGREDIENTS.map((group) => (
@@ -179,8 +181,8 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: luxuryEase, delay: 0.5 }}
-          className="flex flex-col overflow-y-auto scrollbar-hide"
+          transition={{ duration: 0.5, ease: luxuryEase, delay: 0.5 }}
+          className="flex flex-col"
         >
           <SectionTitle icon={CheckCircle} title="Notes de Fond" subtitle="The Sillage" />
           {BASE_INGREDIENTS.map((group) => (
@@ -193,17 +195,17 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
-        className="flex justify-between items-center mt-4 relative z-20"
+        transition={{ delay: 0.5 }}
+        className="flex justify-between items-center mt-8 relative z-20"
       >
         <motion.button
           whileHover={springHover}
           whileTap={springTap}
           onClick={onMenu}
           className="px-8 py-3 font-display text-sm tracking-[0.2em] uppercase
-            border border-border/50 text-muted-foreground
-            hover:border-primary/40 hover:text-primary
-            transition-colors duration-300"
+            border border-primary/40 text-primary
+            hover:border-primary/60 hover:bg-primary/10
+            transition-colors duration-300 gold-border-glow"
         >
           Menu
         </motion.button>

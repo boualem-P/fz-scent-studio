@@ -2,19 +2,38 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PERFUMES, Perfume } from "@/data/perfumes";
 import CatalogueModal from "./CatalogueModal";
-import GoldenRain from "./GoldenRain";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 
 interface CatalogueScreenProps {
   onMenu: () => void;
 }
 
+const PerfumeInitials = ({ name }: { name: string }) => {
+  const initials = name
+    .split(/[\s'-]+/)
+    .filter((w) => w.length > 0 && w[0] === w[0].toUpperCase())
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("");
+
+  return (
+    <div className="h-32 lg:h-36 flex items-center justify-center mb-3">
+      <div className="w-20 h-28 rounded-sm bg-gradient-to-b from-primary/20 to-transparent border border-primary/30 flex items-center justify-center">
+        <span className="font-display text-2xl text-primary/80 tracking-wider">{initials}</span>
+      </div>
+    </div>
+  );
+};
+
 const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-obsidian-gradient overflow-hidden relative p-6 lg:p-8 gold-frame">
-      <GoldenRain />
+    <div className="min-h-screen w-screen flex flex-col bg-background overflow-y-auto relative p-6 lg:p-8 pb-40 gold-frame">
+      {/* Subtle gold radial gradient */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)"
+      }} />
 
       {/* Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-[0.02]">
@@ -41,7 +60,7 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="flex-1 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-w-7xl mx-auto w-full relative z-20 overflow-y-auto"
+        className="flex-1 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-w-7xl mx-auto w-full relative z-20"
       >
         {PERFUMES.map((perfume) => (
           <motion.button
@@ -52,16 +71,7 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
             onClick={() => setSelected(perfume)}
             className="glass-card card-shimmer-effect p-4 flex flex-col items-center cursor-pointer transition-all duration-300 group"
           >
-            <div className="h-32 lg:h-36 flex items-center justify-center mb-3">
-              <img
-                src={perfume.imageUrl}
-                alt={perfume.name}
-                className="max-h-full object-contain drop-shadow-lg group-hover:drop-shadow-2xl transition-all duration-500"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/placeholder.svg";
-                }}
-              />
-            </div>
+            <PerfumeInitials name={perfume.name} />
             <p className="text-[9px] font-body tracking-[0.2em] uppercase text-muted-foreground mb-0.5">
               {perfume.brand}
             </p>
@@ -79,8 +89,8 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="flex justify-center mt-4 relative z-20"
+        transition={{ delay: 0.5 }}
+        className="flex justify-center mt-8 relative z-20"
       >
         <motion.button
           whileHover={springHover}

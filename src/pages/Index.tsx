@@ -14,7 +14,6 @@ const Index = () => {
   const [screen, setScreen] = useState<Screen>("landing");
   const [gender, setGender] = useState<Gender>("homme");
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
-  const [scrolled, setScrolled] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
   /* Apparition après 2 secondes */
@@ -23,12 +22,8 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  /* Effet premium au scroll */
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+
+
 
   const handleGender = (g: Gender) => {
     setGender(g);
@@ -75,45 +70,19 @@ const Index = () => {
         Catalogue
       </button>
 
-      {/* 👤 BOUTON PROFIL ULTRA PREMIUM */}
+      {/* 👤 BOUTON PROFIL */}
       <AnimatePresence>
         {showProfile && (
           <motion.button
-            initial={{ opacity: 0, x: -30 }}
-            animate={{
-              opacity: scrolled ? 0.7 : 1,
-              x: 0,
-              scale: scrolled ? 0.85 : 1,
-              y: [0, -4, 0], // floating premium
-            }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0 }}
-            transition={{
-              opacity: { duration: 0.4 },
-              x: { duration: 0.6 },
-              scale: { duration: 0.3 },
-              y: {
-                repeat: Infinity,
-                duration: 3,
-                ease: "easeInOut",
-              },
-            }}
+            transition={{ duration: 0.5 }}
             onClick={() => console.log("Profil cliqué")}
-            className="
-              fixed top-5 left-4 md:left-6 z-[60]
-              p-2 md:p-2.5
-              rounded-full
-              border border-primary/30
-              bg-background/40
-              text-primary
-              backdrop-blur-lg
-              shadow-lg
-              transition-all duration-300
-              hover:shadow-[0_0_15px_rgba(212,175,55,0.6)]
-              hover:scale-110
-            "
+            className="fixed top-6 left-4 md:left-6 z-[60] p-2.5 rounded-full border border-primary/30 bg-background/60 text-primary backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_15px_hsl(43_72%_52%_/_0.5)] hover:scale-110 hover:border-primary/60"
             title="Mon Profil"
           >
-            <User size={18} className="md:w-5 md:h-5" />
+            <User size={20} />
           </motion.button>
         )}
       </AnimatePresence>

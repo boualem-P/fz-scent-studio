@@ -15,6 +15,10 @@ interface PyramidScreenProps {
   onMenu: () => void;
 }
 
+/* ===================== */
+/*   INGREDIENT CHIP     */
+/* ===================== */
+
 const IngredientChip = ({
   label,
   selected,
@@ -32,13 +36,17 @@ const IngredientChip = ({
     className={`px-2.5 py-1 rounded-sm font-body text-[11px] tracking-wide transition-all duration-300 border leading-tight
       ${
         selected
-          ? "bg-primary/15 border-primary/70 text-primary gold-glow-strong"
-          : "bg-secondary/30 border-border/40 text-muted-foreground hover:border-primary/40 hover:text-primary/70"
+          ? "bg-[#FFFEB0] border-[#F9F3B5] text-black shadow-md"
+          : "bg-[#FFFEB0] border-[#F9F3B5] text-black hover:brightness-95"
       }`}
   >
     {label}
   </motion.button>
 );
+
+/* ===================== */
+/*   CATEGORY ICONS      */
+/* ===================== */
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
   "hesperides": Citrus,
@@ -57,6 +65,10 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
   "mousses": Sprout,
 };
 
+/* ===================== */
+/*   GROUP SECTION       */
+/* ===================== */
+
 const GroupSection = ({
   group,
   selectedIngredients,
@@ -67,15 +79,22 @@ const GroupSection = ({
   onToggle: (ingredient: string, category: NoteCategory) => void;
 }) => {
   const CategoryIcon = CATEGORY_ICONS[group.category] || Sparkles;
+
   return (
-    <div className="mb-2.5">
-      <div className="flex items-center gap-1.5 mb-1.5">
-        <CategoryIcon className="w-3.5 h-3.5 text-primary" />
-        <p className="text-[10px] font-body tracking-[0.15em] uppercase text-primary/60">
+    <div className="mb-3">
+      <div className="flex items-center gap-2 mb-2">
+        <CategoryIcon className="w-4 h-4 text-[#F9F3B5]" />
+        <p className="text-sm font-display tracking-wide underline decoration-[#F9F3B5] text-[#F9F3B5]">
           {group.label}
         </p>
       </div>
-      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="flex flex-wrap gap-1.5">
+
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="flex flex-wrap gap-1.5"
+      >
         {group.ingredients.map((ingredient) => (
           <IngredientChip
             key={ingredient}
@@ -89,6 +108,10 @@ const GroupSection = ({
   );
 };
 
+/* ===================== */
+/*   SECTION TITLE       */
+/* ===================== */
+
 const SectionTitle = ({
   icon: Icon,
   title,
@@ -98,7 +121,7 @@ const SectionTitle = ({
   title: string;
   subtitle: string;
 }) => (
-  <div className="flex items-center gap-2.5 mb-3">
+  <div className="flex items-center gap-2.5 mb-4">
     <Icon className="w-4 h-4 text-primary flex-shrink-0" />
     <div>
       <h3 className="font-display text-base text-primary tracking-wider">{title}</h3>
@@ -106,6 +129,10 @@ const SectionTitle = ({
     </div>
   </div>
 );
+
+/* ===================== */
+/*   MAIN COMPONENT      */
+/* ===================== */
 
 const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const [selectedIngredients, setSelectedIngredients] = useState<Set<string>>(new Set());
@@ -118,6 +145,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
       else next.add(ingredient);
       return next;
     });
+
     setIngredientCategories((prev) => {
       const next = new Map(prev);
       if (next.has(ingredient)) next.delete(ingredient);
@@ -152,22 +180,13 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
 
   return (
     <div className="min-h-screen w-screen flex flex-col bg-background overflow-y-auto relative p-6 lg:p-8 pb-40 gold-frame">
-      {/* Subtle gold radial gradient */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)"
-      }} />
-
-      {/* Background pyramid */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0">
-        <div className="w-0 h-0 border-l-[250px] border-r-[250px] border-b-[400px] border-l-transparent border-r-transparent border-b-primary" />
-      </div>
 
       {/* Header */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="text-center mb-4 relative z-20"
+        className="text-center mb-6 relative z-20"
       >
         <motion.h2 variants={staggerItem} className="font-display text-2xl lg:text-3xl text-gold-gradient tracking-wider">
           Pyramide Olfactive
@@ -175,38 +194,23 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
         <motion.div variants={staggerItem} className="gold-divider w-28 mx-auto mt-2" />
       </motion.div>
 
-      {/* Three columns */}
       <div className="flex-1 grid grid-cols-3 gap-6 max-w-7xl mx-auto w-full relative z-20">
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, ease: luxuryEase, delay: 0.2 }}
-          className="flex flex-col"
-        >
+
+        <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: luxuryEase, delay: 0.2 }}>
           <SectionTitle icon={Sparkles} title="Notes de Tête" subtitle="The Spark" />
           {TOP_INGREDIENTS.map((group) => (
             <GroupSection key={group.category} group={group} selectedIngredients={selectedIngredients} onToggle={toggleIngredient} />
           ))}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: luxuryEase, delay: 0.35 }}
-          className="flex flex-col"
-        >
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: luxuryEase, delay: 0.35 }}>
           <SectionTitle icon={Flower2} title="Notes de Cœur" subtitle="The Soul" />
           {HEART_INGREDIENTS.map((group) => (
             <GroupSection key={group.category} group={group} selectedIngredients={selectedIngredients} onToggle={toggleIngredient} />
           ))}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, ease: luxuryEase, delay: 0.5 }}
-          className="flex flex-col"
-        >
+        <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: luxuryEase, delay: 0.5 }}>
           <SectionTitle icon={CheckCircle} title="Notes de Fond" subtitle="The Sillage" />
           {BASE_INGREDIENTS.map((group) => (
             <GroupSection key={group.category} group={group} selectedIngredients={selectedIngredients} onToggle={toggleIngredient} />
@@ -214,21 +218,12 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
         </motion.div>
       </div>
 
-      {/* Bottom navigation */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="flex justify-between items-center mt-8 relative z-20"
-      >
+      <motion.div className="flex justify-between items-center mt-10 relative z-20">
         <motion.button
           whileHover={springHover}
           whileTap={springTap}
           onClick={onMenu}
-          className="px-8 py-3 font-display text-sm tracking-[0.2em] uppercase
-            border border-primary/40 text-primary
-            hover:border-primary/60 hover:bg-primary/10
-            transition-colors duration-300 gold-border-glow"
+          className="px-8 py-3 font-display text-sm tracking-[0.2em] uppercase border border-primary/40 text-primary hover:border-primary/60 hover:bg-primary/10 transition-colors duration-300 gold-border-glow"
         >
           Menu
         </motion.button>
@@ -242,10 +237,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               whileHover={springHover}
               whileTap={springTap}
               onClick={handleValidate}
-              className="px-16 py-4 font-display text-lg tracking-[0.3em] uppercase
-                bg-primary/15 border border-primary/60 text-primary
-                hover:bg-primary hover:text-primary-foreground
-                transition-all duration-300 gold-glow card-shimmer-effect"
+              className="px-16 py-4 font-display text-lg tracking-[0.3em] uppercase bg-primary/15 border border-primary/60 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 gold-glow card-shimmer-effect"
             >
               Valider
             </motion.button>

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Flower2, CheckCircle } from "lucide-react";
+import { Sparkles, Flower2, CheckCircle, Citrus, Wind, Waves, Flame, Apple, Cherry, Leaf, TreePine, Gem, Cookie, Heart, Sprout, type LucideIcon } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
 import {
   IngredientGroup,
@@ -40,6 +40,23 @@ const IngredientChip = ({
   </motion.button>
 );
 
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  "hesperides": Citrus,
+  "aromatiques": Wind,
+  "marines": Waves,
+  "epices-fraiches": Flame,
+  "fruits-legers": Apple,
+  "florales": Flower2,
+  "fruitees": Cherry,
+  "epices-chaudes": Flame,
+  "notes-vertes": Leaf,
+  "boisees": TreePine,
+  "ambrees": Gem,
+  "gourmandes": Cookie,
+  "musquees": Heart,
+  "mousses": Sprout,
+};
+
 const GroupSection = ({
   group,
   selectedIngredients,
@@ -48,23 +65,29 @@ const GroupSection = ({
   group: IngredientGroup;
   selectedIngredients: Set<string>;
   onToggle: (ingredient: string, category: NoteCategory) => void;
-}) => (
-  <div className="mb-2.5">
-    <p className="text-[10px] font-body tracking-[0.15em] uppercase text-primary/60 mb-1.5">
-      {group.label}
-    </p>
-    <motion.div variants={staggerContainer} initial="hidden" animate="show" className="flex flex-wrap gap-1.5">
-      {group.ingredients.map((ingredient) => (
-        <IngredientChip
-          key={ingredient}
-          label={ingredient}
-          selected={selectedIngredients.has(ingredient)}
-          onClick={() => onToggle(ingredient, group.category)}
-        />
-      ))}
-    </motion.div>
-  </div>
-);
+}) => {
+  const CategoryIcon = CATEGORY_ICONS[group.category] || Sparkles;
+  return (
+    <div className="mb-2.5">
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <CategoryIcon className="w-3.5 h-3.5 text-primary" />
+        <p className="text-[10px] font-body tracking-[0.15em] uppercase text-primary/60">
+          {group.label}
+        </p>
+      </div>
+      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="flex flex-wrap gap-1.5">
+        {group.ingredients.map((ingredient) => (
+          <IngredientChip
+            key={ingredient}
+            label={ingredient}
+            selected={selectedIngredients.has(ingredient)}
+            onClick={() => onToggle(ingredient, group.category)}
+          />
+        ))}
+      </motion.div>
+    </div>
+  );
+};
 
 const SectionTitle = ({
   icon: Icon,

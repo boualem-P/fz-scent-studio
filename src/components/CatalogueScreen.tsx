@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PERFUMES, Perfume } from "@/data/perfumes";
-import { X } from "lucide-react"; // Ajout de l'icône X
+import { X } from "lucide-react";
 import CatalogueModal from "./CatalogueModal";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 
@@ -20,7 +20,9 @@ const PerfumeInitials = ({ name }: { name: string }) => {
   return (
     <div className="h-32 lg:h-36 flex items-center justify-center mb-3">
       <div className="w-20 h-28 rounded-sm bg-gradient-to-b from-primary/20 to-transparent border border-primary/30 flex items-center justify-center">
-        <span className="font-display text-2xl text-primary/80 tracking-wider">{initials}</span>
+        <span className="font-display text-2xl text-primary/80 tracking-wider">
+          {initials}
+        </span>
       </div>
     </div>
   );
@@ -29,12 +31,30 @@ const PerfumeInitials = ({ name }: { name: string }) => {
 const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
 
+  // 🔒 Bloque le scroll du background quand la modal est ouverte
+  useEffect(() => {
+    if (selected) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [selected]);
+
   return (
     <div className="min-h-screen w-screen flex flex-col bg-background overflow-y-auto relative p-6 lg:p-8 pb-40 gold-frame">
-      {/* Subtle gold radial gradient */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)"
-      }} />
+
+      {/* Gradient subtil */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)",
+        }}
+      />
 
       {/* Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-[0.02]">
@@ -50,10 +70,16 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
         animate="show"
         className="text-center mb-6 relative z-20"
       >
-        <motion.h2 variants={staggerItem} className="font-display text-3xl lg:text-4xl text-gold-gradient tracking-wider">
+        <motion.h2
+          variants={staggerItem}
+          className="font-display text-3xl lg:text-4xl text-gold-gradient tracking-wider"
+        >
           Catalogue
         </motion.h2>
-        <motion.div variants={staggerItem} className="gold-divider w-32 mx-auto mt-3" />
+        <motion.div
+          variants={staggerItem}
+          className="gold-divider w-32 mx-auto mt-3"
+        />
       </motion.div>
 
       {/* Grid */}
@@ -86,7 +112,7 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
         ))}
       </motion.div>
 
-      {/* Menu button (Visible quand aucun parfum n'est sélectionné) */}
+      {/* Bouton retour menu (visible seulement si pas de modal ouverte) */}
       {!selected && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -108,25 +134,38 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
         </motion.div>
       )}
 
-      {/* BOUTON DE FERMETURE GLOBAL (Affiche le "X" par-dessus la modal) */}
+      {/* MODAL PROPRE ET RESPONSIVE */}
       <AnimatePresence>
         {selected && (
           <>
-            <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              onClick={() => setSelected(null)}
-              className="fixed top-6 right-6 z-[200] p-3 rounded-full bg-black/50 border border-primary/40 text-primary backdrop-blur-xl hover:bg-primary hover:text-black transition-all duration-300 shadow-2xl"
-              title="Fermer la fiche"
+            {/* Overlay + centrage */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[250] bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
             >
-              <X size={24} />
-            </motion.button>
-            
-            <CatalogueModal perfume={selected} onClose={() => setSelected(null)} />
+              <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                
+                {/* Bouton fermeture */}
+                <button
+                  onClick={() => setSelected(null)}
+                  className="absolute top-4 right-4 z-[300] p-2 rounded-full bg-black/70 border border-primary/40 text-primary hover:bg-primary hover:text-black transition-all duration-300 shadow-lg"
+                  title="Fermer la fiche"
+                >
+                  <X size={20} />
+                </button>
+
+                <CatalogueModal
+                  perfume={selected}
+                  onClose={() => setSelected(null)}
+                />
+              </div>
+            </motion.div>
           </>
         )}
       </AnimatePresence>
+
     </div>
   );
 };

@@ -31,17 +31,13 @@ const PerfumeInitials = ({ name }: { name: string }) => {
 const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
 
-  // 🔒 Bloque le scroll du background quand la modal est ouverte
   useEffect(() => {
     if (selected) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
     }
-
-    return () => {
-      document.body.style.overflow = "auto";
-    };
+    return () => { document.body.style.overflow = "auto"; };
   }, [selected]);
 
   return (
@@ -112,7 +108,7 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
         ))}
       </motion.div>
 
-      {/* Bouton retour menu (visible seulement si pas de modal ouverte) */}
+      {/* Bouton retour menu */}
       {!selected && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -134,38 +130,36 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
         </motion.div>
       )}
 
-      {/* MODAL PROPRE ET RESPONSIVE */}
+      {/* MODAL — full screen with fixed X */}
       <AnimatePresence>
         {selected && (
-          <>
-            {/* Overlay + centrage */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[250] bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center"
+            onClick={() => setSelected(null)}
+          >
+            {/* Fixed close button */}
+            <button
+              onClick={(e) => { e.stopPropagation(); setSelected(null); }}
+              className="fixed top-5 right-5 z-[9999] p-2.5 rounded-full bg-black/80 border border-primary/40 text-primary hover:bg-primary hover:text-black transition-all duration-300 shadow-lg"
             >
-              <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                
-                {/* Bouton fermeture */}
-                <button
-                  onClick={() => setSelected(null)}
-                  className="absolute top-4 right-4 z-[300] p-2 rounded-full bg-black/70 border border-primary/40 text-primary hover:bg-primary hover:text-black transition-all duration-300 shadow-lg"
-                  title="Fermer la fiche"
-                >
-                  <X size={20} />
-                </button>
+              <X size={22} />
+            </button>
 
-                <CatalogueModal
-                  perfume={selected}
-                  onClose={() => setSelected(null)}
-                />
-              </div>
-            </motion.div>
-          </>
+            <div
+              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <CatalogueModal
+                perfume={selected}
+                onClose={() => setSelected(null)}
+              />
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 };

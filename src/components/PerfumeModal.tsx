@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { X, Sparkles, Flower2, TreePine, Droplets } from "lucide-react";
+import { X, Sparkles, Flower2, TreePine } from "lucide-react";
 import { Perfume, NoteDetail } from "@/data/perfumes";
+import { getIngredientImage } from "@/data/olfactory-visuals";
 import { staggerContainer, staggerItem, luxuryEase } from "@/lib/animations";
 
 interface PerfumeModalProps {
@@ -8,16 +9,26 @@ interface PerfumeModalProps {
   onClose: () => void;
 }
 
-const NoteBubble = ({ note }: { note: NoteDetail }) => (
-  <motion.div variants={staggerItem} className="flex flex-col items-center gap-1.5 min-w-[55px]">
-    <div className="w-12 h-12 rounded-full border border-primary/30 shadow-lg shadow-primary/10 flex items-center justify-center bg-primary/5">
-      <Droplets className="w-4 h-4 text-primary/70" />
-    </div>
-    <span className="text-[8px] font-body text-foreground/70 tracking-wider text-center leading-tight max-w-[60px]">
-      {note.name}
-    </span>
-  </motion.div>
-);
+const NoteBubble = ({ note }: { note: NoteDetail }) => {
+  const imgUrl = getIngredientImage(note.name);
+
+  return (
+    <motion.div variants={staggerItem} className="flex flex-col items-center gap-1.5 min-w-[55px]">
+      <div className="w-12 h-12 rounded-full border border-primary/20 shadow-lg shadow-primary/10 overflow-hidden relative group">
+        <img
+          src={imgUrl}
+          alt={note.name}
+          loading="lazy"
+          className="w-full h-full object-cover ingredient-img ingredient-img-idle"
+        />
+        <div className="absolute inset-0 ingredient-overlay" />
+      </div>
+      <span className="text-[8px] font-body text-foreground/70 tracking-wider text-center leading-tight max-w-[60px]">
+        {note.name}
+      </span>
+    </motion.div>
+  );
+};
 
 const NoteRow = ({
   icon: Icon,

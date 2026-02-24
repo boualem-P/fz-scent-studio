@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react"; // Ajout de useMemo
 import { AnimatePresence, motion } from "framer-motion";
 import { User } from "lucide-react";
 import LandingScreen from "@/components/LandingScreen";
@@ -16,14 +16,22 @@ const Index = () => {
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [showProfile, setShowProfile] = useState(false);
 
-  /* Apparition après 2 secondes */
   useEffect(() => {
     const timer = setTimeout(() => setShowProfile(true), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-
-
+  // 🌧️ MÉMORISATION DE LA PLUIE (Empêche le reset à chaque changement de page)
+  const rainParticles = useMemo(() => {
+    return Array.from({ length: 60 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      height: `${40 + Math.random() * 120}px`,
+      duration: `${3 + Math.random() * 3}s`,
+      delay: `${Math.random() * 5}s`,
+      opacity: 0.15 + Math.random() * 0.3,
+    }));
+  }, []); // [] signifie : calculé une seule fois au chargement du site
 
   const handleGender = (g: Gender) => {
     setGender(g);
@@ -44,19 +52,19 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
-
-      {/* 🌧️ PLUIE DORÉE PREMIUM */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        {Array.from({ length: 60 }).map((_, i) => (
+      
+      {/* 🌧️ CONTENEUR PLUIE PERSISTANT */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {rainParticles.map((p) => (
           <div
-            key={i}
+            key={p.id}
             className="absolute top-0 w-[1px] bg-gradient-to-b from-primary/80 to-transparent animate-rain"
             style={{
-              left: `${Math.random() * 100}%`,
-              height: `${40 + Math.random() * 120}px`,
-              animationDuration: `${3 + Math.random() * 3}s`,
-              animationDelay: `${Math.random() * 5}s`,
-              opacity: 0.15 + Math.random() * 0.3,
+              left: p.left,
+              height: p.height,
+              animationDuration: p.duration,
+              animationDelay: p.delay,
+              opacity: p.opacity,
             }}
           />
         ))}
@@ -87,44 +95,47 @@ const Index = () => {
         )}
       </AnimatePresence>
 
-      <AnimatePresence mode="wait">
-        {screen === "landing" && (
-          <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-            <LandingScreen onSelectGender={handleGender} onCatalogue={() => setScreen("catalogue")} />
-          </motion.div>
-        )}
+      {/* CONTENU DES PAGES (Z-10 pour être devant la pluie) */}
+      <div className="relative z-10">
+        <AnimatePresence mode="wait">
+          {screen === "landing" && (
+            <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+              <LandingScreen onSelectGender={handleGender} onCatalogue={() => setScreen("catalogue")} />
+            </motion.div>
+          )}
 
-        {screen === "pyramid" && (
-          <motion.div key="pyramid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-            <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />
-          </motion.div>
-        )}
+          {screen === "pyramid" && (
+            <motion.div key="pyramid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+              <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />
+            </motion.div>
+          )}
 
-        {screen === "analyzing" && (
-          <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-            <AnalyzingLoader />
-          </motion.div>
-        )}
+          {screen === "analyzing" && (
+            <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+              <AnalyzingLoader />
+            </motion.div>
+          )}
 
-        {screen === "results" && (
-          <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-            <ResultsScreen results={results} onMenu={handleMenu} />
-          </motion.div>
-        )}
+          {screen === "results" && (
+            <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+              <ResultsScreen results={results} onMenu={handleMenu} />
+            </motion.div>
+          )}
 
-        {screen === "catalogue" && (
-          <motion.div key="catalogue" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-            <CatalogueScreen onMenu={handleMenu} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+          {screen === "catalogue" && (
+            <motion.div key="catalogue" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+              <CatalogueScreen onMenu={handleMenu} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
-      {/* Animation pluie */}
       <style>
         {`
           @keyframes rain {
-            0% { transform: translateY(-100px); opacity: 0; }
+            0% { transform: translateY(-120px); opacity: 0; }
             10% { opacity: 1; }
+            90% { opacity: 1; }
             100% { transform: translateY(110vh); opacity: 0; }
           }
           .animate-rain {
@@ -134,7 +145,6 @@ const Index = () => {
           }
         `}
       </style>
-
     </div>
   );
 };

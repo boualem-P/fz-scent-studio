@@ -33,7 +33,7 @@ const IngredientChip = ({
   whileHover={springHover}
   whileTap={springTap}
   onClick={onClick}
-  className={`px-2.5 py-1 rounded-sm font-body text-[11px] tracking-wide transition-all duration-300 border leading-tight
+  className={`px-2.5 py-1 rounded-sm font-body font-bold text-[13px] tracking-wide transition-all duration-300 border leading-tight
     ${
       selected
         ? "bg-primary/15 border-primary/70 text-primary gold-glow-strong"

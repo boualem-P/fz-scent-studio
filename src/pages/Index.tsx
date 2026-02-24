@@ -31,10 +31,31 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-black">
-      {/* BOUTON PROFIL FIXE (Apparaît sur toutes les pages) */}
+      {/* CSS Golden Rain */}
+      <div className="golden-rain" aria-hidden="true">
+        {Array.from({ length: 40 }).map((_, i) => (
+          <div key={i} className="rain-drop" style={{
+            left: `${(i * 2.5) % 100}%`,
+            animationDelay: `${(i * 0.37) % 5}s`,
+            animationDuration: `${3 + (i % 4) * 1.2}s`,
+            opacity: 0.15 + (i % 5) * 0.08,
+            width: `${1 + (i % 3) * 0.5}px`,
+          }} />
+        ))}
+      </div>
+
+      {/* BOUTON CATALOGUE FIXE */}
+      <button 
+        onClick={() => setScreen("catalogue")}
+        className="fixed top-6 right-6 z-[60] px-6 py-2.5 font-display text-sm tracking-[0.2em] uppercase border border-primary/40 bg-background/60 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 backdrop-blur-md gold-border-glow"
+      >
+        Catalogue
+      </button>
+
+      {/* BOUTON PROFIL FIXE */}
       <button 
         onClick={() => console.log("Profil cliqué")}
-        className="fixed top-6 right-24 z-[60] p-2.5 rounded-full border border-[#D4AF37]/30 bg-black/40 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-all duration-300 backdrop-blur-md shadow-lg"
+        className="fixed top-6 right-44 z-[60] p-2.5 rounded-full border border-primary/30 bg-background/40 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 backdrop-blur-md"
         title="Mon Profil"
       >
         <User size={20} />

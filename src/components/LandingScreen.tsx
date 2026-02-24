@@ -64,20 +64,6 @@ const LandingScreen = ({ onSelectGender, onCatalogue }: LandingScreenProps) => {
             {gender.toUpperCase()}
           </motion.button>
         ))}
-
-        <motion.button
-          variants={staggerItem}
-          whileHover={springHover}
-          whileTap={springTap}
-          onClick={onCatalogue}
-          className="px-12 py-5 font-display text-xl tracking-[0.25em] uppercase
-            border border-primary/60 bg-primary/10 text-primary
-            hover:bg-primary/20 hover:border-primary/80
-            transition-colors duration-300
-            gold-glow backdrop-blur-sm card-shimmer-effect"
-        >
-          Catalogue
-        </motion.button>
       </motion.div>
     </div>
   );

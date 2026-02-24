@@ -37,7 +37,7 @@ const AnalyzingLoader = () => {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="font-display text-xl tracking-[0.2em] uppercase text-primary"
           >
-            Analyse en cours
+            Analyse de vos préférences...
           </motion.p>
           <motion.p
             initial={{ opacity: 0 }}
@@ -45,7 +45,7 @@ const AnalyzingLoader = () => {
             transition={{ delay: 0.5, duration: 2, repeat: Infinity }}
             className="font-body text-sm tracking-widest text-muted-foreground mt-3"
           >
-            Profilage olfactif...
+            Création de votre signature olfactive unique.
           </motion.p>
         </div>
       </motion.div>

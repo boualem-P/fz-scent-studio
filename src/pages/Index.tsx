@@ -1,12 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { User } from "lucide-react";
+import { User, BookOpen } from "lucide-react";
 import LandingScreen from "@/components/LandingScreen";
 import PyramidScreen from "@/components/PyramidScreen";
 import ResultsScreen from "@/components/ResultsScreen";
 import CatalogueScreen from "@/components/CatalogueScreen";
 import AnalyzingLoader from "@/components/AnalyzingLoader";
-import GoldenRain from "@/components/GoldenRain"; // Nouveau composant
+import GoldenRain from "@/components/GoldenRain";
 import { Gender, NoteCategory, matchPerfumes, Perfume } from "@/data/perfumes";
 
 type Screen = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
@@ -38,27 +38,32 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
-      
-      {/* 🌧️ EFFET GLOBAL PERSISTANT AU-DESSUS DE TOUT */}
+
       <GoldenRain />
 
-      {/* BOUTONS FIXES D'INTERFACE */}
+      {/* BOUTONS FIXES */}
       <div className="relative z-[100]">
-        <button 
-          onClick={() => setScreen("catalogue")}
-          className="fixed top-6 right-6 px-6 py-2.5 font-display text-sm tracking-[0.2em] uppercase border border-[#D4AF37]/40 bg-black/60 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-all duration-300 backdrop-blur-md"
-        >
-          Catalogue
-        </button>
 
+        {/* Bouton Catalogue = icône seulement */}
+        {screen !== "results" && (
+          <button
+            onClick={() => setScreen("catalogue")}
+            className="fixed top-6 right-6 p-2.5 rounded-full border border-[#D4AF37]/30 bg-black/60 text-[#D4AF37] backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.6)]"
+            title="Catalogue"
+          >
+            <BookOpen size={20} />
+          </button>
+        )}
+
+        {/* Bouton Profil */}
         <AnimatePresence>
           {showProfile && (
             <motion.button
-              initial={{ opacity: 0, x: -20 }} 
-              animate={{ opacity: 1, x: 0 }} 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0 }}
               onClick={() => console.log("Profil cliqué")}
-              className="fixed top-6 left-6 p-2.5 rounded-full border border-[#D4AF37]/30 bg-black/60 text-[#D4AF37] backdrop-blur-md transition-all duration-300 hover:scale-110"
+              className="fixed top-6 left-6 p-2.5 rounded-full border border-[#D4AF37]/30 bg-black/60 text-[#D4AF37] backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.6)]"
               title="Mon Profil"
             >
               <User size={20} />
@@ -67,41 +72,41 @@ const Index = () => {
         </AnimatePresence>
       </div>
 
-      {/* SYSTÈME DE NAVIGATION ENTRE ÉCRANS */}
       <main className="relative z-10">
         <AnimatePresence mode="wait">
+
           {screen === "landing" && (
-            <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+            <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <LandingScreen onSelectGender={handleGender} onCatalogue={() => setScreen("catalogue")} />
             </motion.div>
           )}
 
           {screen === "pyramid" && (
-            <motion.div key="pyramid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+            <motion.div key="pyramid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />
             </motion.div>
           )}
 
           {screen === "analyzing" && (
-            <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+            <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <AnalyzingLoader />
             </motion.div>
           )}
 
           {screen === "results" && (
-            <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+            <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <ResultsScreen results={results} onMenu={handleMenu} />
             </motion.div>
           )}
 
           {screen === "catalogue" && (
-            <motion.div key="catalogue" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+            <motion.div key="catalogue" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <CatalogueScreen onMenu={handleMenu} />
             </motion.div>
           )}
+
         </AnimatePresence>
       </main>
-
     </div>
   );
 };

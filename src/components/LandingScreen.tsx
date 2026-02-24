@@ -7,73 +7,69 @@ interface LandingScreenProps {
   onCatalogue: () => void;
 }
 
-const LandingScreen = ({ onSelectGender, onCatalogue }: LandingScreenProps) => {
+const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
   return (
-    <div className="min-h-screen w-screen flex flex-col items-center justify-center overflow-y-auto relative bg-background pb-40">
-      {/* Subtle gold radial gradient */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: "radial-gradient(ellipse at 50% 40%, hsl(43 72% 52% / 0.06) 0%, transparent 60%)"
-      }} />
-
-      {/* Decorative lines */}
-      <div className="absolute inset-0 pointer-events-none z-20">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] gold-divider" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] gold-divider" />
-      </div>
-
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-6 text-center">
+      
+      {/* SECTION TITRE & SLOGAN */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="text-center mb-16 relative z-20"
+        className="mb-16 relative z-10"
       >
-        <motion.h1
+        <motion.h1 
           variants={staggerItem}
-          className="font-display text-7xl md:text-8xl lg:text-9xl tracking-widest uppercase text-gold-shimmer leading-tight"
+          className="font-display text-6xl md:text-8xl lg:text-9xl text-gold-gradient tracking-tighter mb-2"
         >
           Fz Parfums
         </motion.h1>
-        <motion.div variants={staggerItem} className="gold-divider w-48 mx-auto mt-6 mb-3" />
+
+        {/* ÉTAPE 5 : LE SLOGAN DORÉ */}
         <motion.p
           variants={staggerItem}
-          className="font-display text-lg md:text-xl italic tracking-wide text-primary/80 gold-glow-text"
+          className="font-serif italic text-lg md:text-2xl tracking-[0.1em] text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F7EF8A] to-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]"
         >
           L'art de flaconner l'inoubliable.
         </motion.p>
+
+        <motion.div 
+          variants={staggerItem}
+          className="gold-divider w-24 mx-auto mt-6"
+        />
       </motion.div>
 
+      {/* SECTION BOUTONS */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="flex flex-wrap gap-6 md:gap-10 relative z-20 justify-center"
+        className="flex flex-col items-center gap-8 relative z-10"
       >
-        {(["homme", "femme", "mixte"] as Gender[]).map((gender) => (
-          <motion.button
-            key={gender}
-            variants={staggerItem}
-            whileHover={springHover}
-            whileTap={springTap}
-            onClick={() => onSelectGender(gender)}
-            className="px-12 py-5 font-display text-xl tracking-[0.25em] uppercase
-              border border-primary/40 bg-secondary/50 text-primary
-              hover:bg-primary/10 hover:border-primary/70
-              transition-colors duration-300
-              gold-border-glow backdrop-blur-sm card-shimmer-effect"
-          >
-            {gender.toUpperCase()}
-          </motion.button>
-        ))}
+        <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+          {(["homme", "femme", "mixte"] as Gender[]).map((gender) => (
+            <motion.button
+              key={gender}
+              variants={staggerItem}
+              whileHover={springHover}
+              whileTap={springTap}
+              onClick={() => onSelectGender(gender)}
+              className="px-8 py-4 min-w-[140px] font-display text-sm tracking-[0.2em] uppercase border border-primary/30 bg-black/40 text-primary hover:bg-primary hover:text-black transition-all duration-500 backdrop-blur-sm gold-border-glow"
+            >
+              {gender}
+            </motion.button>
+          ))}
+        </div>
+
+        {/* ÉTAPE 4 : INSTRUCTION DÉPLACÉE ICI (SOUS LES BOUTONS) */}
+        <motion.p
+          variants={staggerItem}
+          className="font-body text-[10px] md:text-xs uppercase tracking-[0.5em] text-primary/60 animate-pulse mt-4"
+        >
+          Cliquez pour commencer l'aventure
+        </motion.p>
       </motion.div>
 
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
-        className="font-body text-sm tracking-[0.3em] uppercase text-muted-foreground animate-pulse-gold mt-12 relative z-20"
-      >
-        Cliquez pour Commencer
-      </motion.p>
     </div>
   );
 };

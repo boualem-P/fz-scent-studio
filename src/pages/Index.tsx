@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { User, BookOpen } from "lucide-react";
+import { User, Library } from "lucide-react";
 import LandingScreen from "@/components/LandingScreen";
 import PyramidScreen from "@/components/PyramidScreen";
 import ResultsScreen from "@/components/ResultsScreen";
@@ -44,14 +44,14 @@ const Index = () => {
       {/* BOUTONS FIXES */}
       <div className="relative z-[100]">
 
-        {/* Bouton Catalogue = icône seulement */}
+        {/* Bouton Catalogue = icône ronde, caché sur Results */}
         {screen !== "results" && (
           <button
             onClick={() => setScreen("catalogue")}
-            className="fixed top-6 right-6 p-2.5 rounded-full border border-[#D4AF37]/30 bg-black/60 text-[#D4AF37] backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.6)]"
+            className="fixed top-6 right-6 w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.6)] flex items-center justify-center"
             title="Catalogue"
           >
-            <BookOpen size={20} />
+            <Library size={18} />
           </button>
         )}
 
@@ -63,7 +63,7 @@ const Index = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0 }}
               onClick={() => console.log("Profil cliqué")}
-              className="fixed top-6 left-6 p-2.5 rounded-full border border-[#D4AF37]/30 bg-black/60 text-[#D4AF37] backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.6)]"
+              className="fixed top-6 left-6 p-2.5 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.6)]"
               title="Mon Profil"
             >
               <User size={20} />
@@ -95,7 +95,7 @@ const Index = () => {
 
           {screen === "results" && (
             <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <ResultsScreen results={results} onMenu={handleMenu} />
+              <ResultsScreen results={results} onMenu={handleMenu} onCatalogue={() => setScreen("catalogue")} />
             </motion.div>
           )}
 

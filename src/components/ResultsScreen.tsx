@@ -8,6 +8,7 @@ import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/ani
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
   onMenu: () => void;
+  onCatalogue: () => void;
 }
 
 const PercentCircle = ({ percent }: { percent: number }) => {
@@ -77,7 +78,7 @@ const PerfumeInitials = ({ name }: { name: string }) => {
   );
 };
 
-const ResultsScreen = ({ results, onMenu }: ResultsScreenProps) => {
+const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
   // 🔒 Bloque le scroll du background quand la modal est ouverte
@@ -162,13 +163,13 @@ const ResultsScreen = ({ results, onMenu }: ResultsScreenProps) => {
         ))}
       </motion.div>
 
-      {/* Bouton retour menu */}
+      {/* Buttons at the bottom */}
       {!selectedPerfume && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2 }}
-          className="mt-12 relative z-20"
+          className="mt-12 relative z-20 flex flex-col items-center gap-4"
         >
           <motion.button
             whileHover={springHover}
@@ -181,28 +182,38 @@ const ResultsScreen = ({ results, onMenu }: ResultsScreenProps) => {
           >
             Retour au Menu
           </motion.button>
+
+          <motion.button
+            whileHover={springHover}
+            whileTap={springTap}
+            onClick={onCatalogue}
+            className="px-8 py-2.5 font-body text-[10px] tracking-[0.3em] uppercase
+              text-muted-foreground hover:text-primary
+              transition-colors duration-300"
+          >
+            Voir le catalogue complet →
+          </motion.button>
         </motion.div>
       )}
 
-      {/* MODAL FIX */}
+      {/* MODAL FIX — full screen with fixed X */}
       <AnimatePresence>
         {selectedPerfume && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[250] bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center"
           >
-            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            {/* Fixed close button */}
+            <button
+              onClick={() => setSelectedPerfume(null)}
+              className="fixed top-5 right-5 z-[9999] p-2.5 rounded-full bg-black/80 border border-primary/40 text-primary hover:bg-primary hover:text-black transition-all duration-300 shadow-lg"
+            >
+              <X size={22} />
+            </button>
 
-              {/* Croix toujours visible */}
-              <button
-                onClick={() => setSelectedPerfume(null)}
-                className="absolute top-4 right-4 z-[300] p-2 rounded-full bg-black/70 border border-primary/40 text-primary hover:bg-primary hover:text-black transition-all duration-300 shadow-lg"
-              >
-                <X size={20} />
-              </button>
-
+            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
               <CatalogueModal
                 perfume={selectedPerfume}
                 onClose={() => setSelectedPerfume(null)}

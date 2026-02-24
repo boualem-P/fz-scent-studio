@@ -8,6 +8,7 @@ import {
   HEART_INGREDIENTS,
   BASE_INGREDIENTS,
 } from "@/data/ingredients";
+import { getIngredientImage } from "@/data/olfactory-visuals";
 import { staggerContainer, staggerItem, springHover, springTap, luxuryEase } from "@/lib/animations";
 
 interface PyramidScreenProps {
@@ -27,23 +28,38 @@ const IngredientChip = ({
   label: string;
   selected: boolean;
   onClick: () => void;
-}) => (
-  <motion.button
-  variants={staggerItem}
-  whileHover={springHover}
-  whileTap={springTap}
-  onClick={onClick}
-  className={`px-2.5 py-1 rounded-sm font-body font-bold text-[13px] tracking-wide transition-all duration-300 border leading-tight
-    ${
-      selected
-        ? "bg-primary/15 border-primary/70 text-primary gold-glow-strong"
-        : "bg-gradient-to-r from-[#D3B874] via-[#F0E8AA] to-[#AF8336] border-transparent text-black hover:border-primary/40 hover:text-primary/70"
-    }`}
->
-  {label}
-</motion.button>
+}) => {
+  const imgUrl = getIngredientImage(label);
 
-);
+  return (
+    <motion.button
+      variants={staggerItem}
+      whileHover={springHover}
+      whileTap={springTap}
+      onClick={onClick}
+      className={`relative overflow-hidden rounded-sm border transition-all duration-300 w-[72px] h-[72px] flex flex-col items-center justify-end p-1 group
+        ${
+          selected
+            ? "border-primary/70 gold-glow-strong"
+            : "border-primary/20 hover:border-primary/40"
+        }`}
+    >
+      {/* Background image */}
+      <img
+        src={imgUrl}
+        alt={label}
+        loading="lazy"
+        className={`absolute inset-0 w-full h-full object-cover ingredient-img ${!selected ? "ingredient-img-idle" : ""}`}
+      />
+      {/* Overlay */}
+      <div className="absolute inset-0 ingredient-overlay" />
+      {/* Label */}
+      <span className="relative z-10 text-[8px] font-body font-semibold tracking-wide text-white text-center leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+        {label}
+      </span>
+    </motion.button>
+  );
+};
 
 /* ===================== */
 /*   CATEGORY ICONS      */
@@ -94,7 +110,7 @@ const GroupSection = ({
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="flex flex-wrap gap-1.5"
+        className="flex flex-wrap gap-2"
       >
         {group.ingredients.map((ingredient) => (
           <IngredientChip

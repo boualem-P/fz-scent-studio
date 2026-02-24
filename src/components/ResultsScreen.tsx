@@ -70,6 +70,22 @@ const ResultsScreen = ({ results, onMenu }: ResultsScreenProps) => {
         background: "radial-gradient(ellipse at 50% 40%, hsl(43 72% 52% / 0.05) 0%, transparent 60%)"
       }} />
 
+      {/* Fireworks celebration */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            className="firework-burst"
+            style={{
+              left: `${10 + Math.random() * 80}%`,
+              top: `${10 + Math.random() * 60}%`,
+              animationDelay: `${Math.random() * 4}s`,
+              animationDuration: `${2 + Math.random() * 2}s`,
+            }}
+          />
+        ))}
+      </div>
+
       {/* Watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-[0.03]">
         <div className="font-display text-[200px] text-primary tracking-widest whitespace-nowrap select-none rotate-[-15deg]">

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PERFUMES, Perfume } from "@/data/perfumes";
+import { X } from "lucide-react"; // Ajout de l'icône X
 import CatalogueModal from "./CatalogueModal";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 
@@ -85,29 +86,45 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
         ))}
       </motion.div>
 
-      {/* Menu button */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="flex justify-center mt-8 relative z-20"
-      >
-        <motion.button
-          whileHover={springHover}
-          whileTap={springTap}
-          onClick={onMenu}
-          className="px-10 py-3 font-display text-sm tracking-[0.25em] uppercase
-            border border-primary/40 text-primary
-            hover:bg-primary/10 hover:border-primary/60
-            transition-colors duration-300 gold-border-glow"
+      {/* Menu button (Visible quand aucun parfum n'est sélectionné) */}
+      {!selected && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="flex justify-center mt-8 relative z-20"
         >
-          Retour au Menu
-        </motion.button>
-      </motion.div>
+          <motion.button
+            whileHover={springHover}
+            whileTap={springTap}
+            onClick={onMenu}
+            className="px-10 py-3 font-display text-sm tracking-[0.25em] uppercase
+              border border-primary/40 text-primary
+              hover:bg-primary/10 hover:border-primary/60
+              transition-colors duration-300 gold-border-glow"
+          >
+            Retour au Menu
+          </motion.button>
+        </motion.div>
+      )}
 
+      {/* BOUTON DE FERMETURE GLOBAL (Affiche le "X" par-dessus la modal) */}
       <AnimatePresence>
         {selected && (
-          <CatalogueModal perfume={selected} onClose={() => setSelected(null)} />
+          <>
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              onClick={() => setSelected(null)}
+              className="fixed top-6 right-6 z-[200] p-3 rounded-full bg-black/50 border border-primary/40 text-primary backdrop-blur-xl hover:bg-primary hover:text-black transition-all duration-300 shadow-2xl"
+              title="Fermer la fiche"
+            >
+              <X size={24} />
+            </motion.button>
+            
+            <CatalogueModal perfume={selected} onClose={() => setSelected(null)} />
+          </>
         )}
       </AnimatePresence>
     </div>

@@ -100,7 +100,6 @@ const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => 
             ))}
           </motion.div>
 
-          {/* BOUTONS BAS DE PAGE */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -129,12 +128,27 @@ const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => 
       {/* Modal */}
       <AnimatePresence>
         {selectedPerfume && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center">
-            <button onClick={() => setSelectedPerfume(null)} className="fixed top-6 right-6 z-[10000] p-3 rounded-full bg-black/80 border border-primary/40 text-primary hover:scale-110 transition-all shadow-2xl">
-              <X size={24} />
-            </button>
-            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto px-4">
-              <CatalogueModal perfume={selectedPerfume} onClose={() => setSelectedPerfume(null)} />
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            {/* Conteneur de la fiche avec la croix à l'intérieur */}
+            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-lg shadow-2xl border border-primary/20 bg-[#050505]">
+              
+              {/* Bouton X déplacé à l'intérieur */}
+              <button 
+                onClick={() => setSelectedPerfume(null)} 
+                className="absolute top-4 right-4 z-[10001] p-2 rounded-full bg-black/40 text-primary/80 hover:text-primary hover:bg-black/60 transition-all backdrop-blur-sm border border-primary/10"
+              >
+                <X size={20} />
+              </button>
+
+              {/* Contenu Scrollable de la fiche */}
+              <div className="overflow-y-auto max-h-[90vh]">
+                <CatalogueModal perfume={selectedPerfume} onClose={() => setSelectedPerfume(null)} />
+              </div>
             </div>
           </motion.div>
         )}

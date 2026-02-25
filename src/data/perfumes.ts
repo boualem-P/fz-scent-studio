@@ -1,4 +1,5 @@
 import { PERFUMES } from "./database";
+export { PERFUMES };
 
 export type NoteCategory =
   | "hesperides"

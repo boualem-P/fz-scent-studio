@@ -53,14 +53,16 @@ const Index = () => {
           </button>
         )}
 
-        {/* Bouton Catalogue - Toujours visible */}
-        <button
-          onClick={() => setScreen("catalogue")}
-          className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] flex items-center justify-center"
-          title="Catalogue"
-        >
-          <Library size={18} />
-        </button>
+        {/* Bouton Catalogue - Masqué sur l'écran Results */}
+        {screen !== "results" && (
+          <button
+            onClick={() => setScreen("catalogue")}
+            className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] flex items-center justify-center"
+            title="Catalogue"
+          >
+            <Library size={18} />
+          </button>
+        )}
       </div>
 
       {/* Bouton Profil (Gauche) */}

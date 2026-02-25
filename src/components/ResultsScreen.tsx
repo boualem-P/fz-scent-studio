@@ -226,4 +226,15 @@ const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => 
   );
 };
 
+if (results.length === 0) {
+  return (
+    <div className="text-center mt-20">
+      <p className="text-muted-foreground text-lg">
+        Aucun parfum ne correspond exactement à votre sélection.
+      </p>
+    </div>
+  );
+}
+
+
 export default ResultsScreen;

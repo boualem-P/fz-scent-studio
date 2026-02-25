@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { User, Library } from "lucide-react";
+import { User, Library, Home } from "lucide-react";
 import LandingScreen from "@/components/LandingScreen";
 import PyramidScreen from "@/components/PyramidScreen";
 import ResultsScreen from "@/components/ResultsScreen";
@@ -18,7 +18,7 @@ const Index = () => {
   const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowProfile(true), 2000);
+    const timer = setTimeout(() => setShowProfile(true), 1000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -38,43 +38,47 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
-
       <GoldenRain />
 
-      {/* BOUTONS FIXES */}
-      <div className="relative z-[100]">
-
-        {/* Bouton Catalogue = icône ronde, caché sur Results */}
-        {screen !== "results" && (
+      {/* BOUTONS DE NAVIGATION FIXES */}
+      <div className="fixed top-6 right-6 z-[100] flex items-center gap-3">
+        {/* Bouton Home - Visible si on n'est pas sur Landing */}
+        {screen !== "landing" && (
           <button
-            onClick={() => setScreen("catalogue")}
-            className="fixed top-6 right-6 w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.6)] flex items-center justify-center"
-            title="Catalogue"
+            onClick={handleMenu}
+            className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] flex items-center justify-center"
+            title="Accueil"
           >
-            <Library size={18} />
+            <Home size={18} />
           </button>
         )}
 
-        {/* Bouton Profil */}
-        <AnimatePresence>
-          {showProfile && (
-            <motion.button
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0 }}
-              onClick={() => console.log("Profil cliqué")}
-              className="fixed top-6 left-6 p-2.5 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.6)]"
-              title="Mon Profil"
-            >
-              <User size={20} />
-            </motion.button>
-          )}
-        </AnimatePresence>
+        {/* Bouton Catalogue - Toujours visible */}
+        <button
+          onClick={() => setScreen("catalogue")}
+          className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] flex items-center justify-center"
+          title="Catalogue"
+        >
+          <Library size={18} />
+        </button>
       </div>
+
+      {/* Bouton Profil (Gauche) */}
+      <AnimatePresence>
+        {showProfile && (
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="fixed top-6 left-6 w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
+            title="Mon Profil"
+          >
+            <User size={18} />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       <main className="relative z-10">
         <AnimatePresence mode="wait">
-
           {screen === "landing" && (
             <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <LandingScreen onSelectGender={handleGender} onCatalogue={() => setScreen("catalogue")} />
@@ -104,7 +108,6 @@ const Index = () => {
               <CatalogueScreen onMenu={handleMenu} />
             </motion.div>
           )}
-
         </AnimatePresence>
       </main>
     </div>

@@ -83,7 +83,7 @@ const Index = () => {
         <AnimatePresence mode="wait">
           {screen === "landing" && (
             <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <LandingScreen onSelectGender={handleGender} onCatalogue={() => setScreen("catalogue")} />
+              <LandingScreen onSelectGender={handleGender} />
             </motion.div>
           )}
 

@@ -38,7 +38,7 @@ const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#d4af3722] blur-[100px] rounded-full" />
           
           <img 
-            src="https://i.ibb.co/whZ94tqz/hero-perfume.jpg" 
+            src="https://i.ibb.co/HDSMf6VY/hero-perfume.png" 
             alt="Fz Parfums Luxury" 
             className="h-72 md:h-96 w-auto drop-shadow-[0_50px_50px_rgba(0,0,0,0.9)] rounded-2xl border border-[#d4af3722]"
           />

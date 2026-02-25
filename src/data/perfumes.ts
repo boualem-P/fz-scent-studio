@@ -74,38 +74,38 @@ export function matchPerfumes(
   selectedBase: NoteCategory[]
 ): { perfume: Perfume; matchPercent: number }[] {
 
-  const candidates = gender
-    ? PERFUMES.filter((p) => p.gender === gender || p.gender === "mixte")
-    : PERFUMES;
+  // LOGIQUE DE FILTRE STRICT : 
+  // Si un genre est sélectionné, on ne garde QUE ce genre + le mixte.
+  // On exclut totalement l'autre genre.
+  const candidates = PERFUMES.filter((p) => {
+    if (!gender) return true; // Si pas de choix, on montre tout
+    if (gender === "homme") return p.gender === "homme" || p.gender === "mixte";
+    if (gender === "femme") return p.gender === "femme" || p.gender === "mixte";
+    return p.gender === "mixte";
+  });
 
   const userSelection = [...selectedTop, ...selectedHeart, ...selectedBase];
 
   const scored = candidates
     .map((perfume) => {
-      // On récupère toutes les catégories de notes uniques qui COMPOSENT le parfum
       const perfumeCategories = Array.from(new Set([
         ...perfume.topNotes,
         ...perfume.heartNotes,
         ...perfume.baseNotes
       ]));
 
-      // On compte combien de ces catégories l'utilisateur a sélectionnées
       const matches = perfumeCategories.filter((cat) => userSelection.includes(cat));
       
       if (matches.length === 0) return null;
 
-      // Logique : (Catégories trouvées / Total catégories du parfum) * 100
+      // Ton calcul de probabilité basé sur les sous-notes réunies
       const matchPercent = Math.round((matches.length / perfumeCategories.length) * 100);
 
       return { perfume, matchPercent };
     })
     .filter((item): item is { perfume: Perfume; matchPercent: number } => item !== null);
 
-  // Tri par pourcentage et on retourne le top 3
   return scored
     .sort((a, b) => b.matchPercent - a.matchPercent)
     .slice(0, 3);
 }
-
-// On exporte aussi la liste brute pour les autres composants (comme le catalogue)
-export { PERFUMES };

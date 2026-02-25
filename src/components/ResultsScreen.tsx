@@ -147,10 +147,10 @@ const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => 
                 <span>Retour</span>
               </button>
 
-              {/* Bouton X (Droite) - Légèrement décalé vers la gauche et le bas */}
+              {/* Bouton X (Droite) - Positionné vers la gauche et vers le bas par rapport au coin */}
               <button 
                 onClick={() => setSelectedPerfume(null)} 
-                className="absolute top-6 right-8 z-[10001] p-1.5 rounded-full bg-white/5 text-primary/60 hover:text-primary hover:bg-white/10 transition-all border border-primary/10"
+                className="absolute top-8 right-10 z-[10001] p-1.5 rounded-full bg-white/5 text-primary/60 hover:text-primary hover:bg-white/10 transition-all border border-primary/10"
               >
                 <X size={20} />
               </button>

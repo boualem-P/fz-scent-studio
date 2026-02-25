@@ -345,9 +345,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Feuille de Figuier" }, { name: "Figue" }],
     heartNotesDetailed: [{ name: "Noix de Coco" }, { name: "Notes Vertes" }],
     baseNotesDetailed: [{ name: "Cèdre" }, { name: "Figuier" }]
-  }
-];
-{
+  },
+  {
     id: "layton",
     name: "Layton",
     brand: "Parfums de Marly",
@@ -504,7 +503,7 @@ export const PERFUMES: Perfume[] = [
     gender: "homme",
     year: 2012,
     concentration: "Eau de Parfum",
-    description: "Une vanille fumée et majestueuse, exaltée par un tabac précieux.",
+    description: "Une vanille fumée et majesticueuse, exaltée par un tabac précieux.",
     topNotes: ["epices-chaudes"],
     heartNotes: ["florales", "boisees"],
     baseNotes: ["gourmandes", "boisees", "musquees"],
@@ -767,3 +766,4 @@ export const PERFUMES: Perfume[] = [
     heartNotesDetailed: [{ name: "Benjoin" }],
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Miel" }, { name: "Tabac" }]
   }
+];

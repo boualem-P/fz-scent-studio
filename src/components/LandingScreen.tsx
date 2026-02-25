@@ -1,18 +1,63 @@
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 import { motion } from "framer-motion";
-import { Canvas } from "@react-three/fiber";
-import { Environment, Float, OrbitControls, useGLTF } from "@react-three/drei";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Environment, Float, OrbitControls, MeshTransmissionMaterial } from "@react-three/drei";
+import * as THREE from "three";
 import { Gender } from "@/data/perfumes";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 
-const MODEL_URL = "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/glass-bottle/model.gltf";
+function GlassBottle() {
+  const groupRef = useRef<THREE.Group>(null);
 
-function BottleModel() {
-  const { scene } = useGLTF(MODEL_URL);
-  return <primitive object={scene} scale={2.5} position={[0, -1, 0]} />;
+  // Bottle body - lathe geometry for elegant shape
+  const bodyPoints = [
+    new THREE.Vector2(0, 0),
+    new THREE.Vector2(0.6, 0),
+    new THREE.Vector2(0.7, 0.1),
+    new THREE.Vector2(0.75, 0.5),
+    new THREE.Vector2(0.75, 2.0),
+    new THREE.Vector2(0.7, 2.2),
+    new THREE.Vector2(0.5, 2.4),
+    new THREE.Vector2(0.25, 2.5),
+    new THREE.Vector2(0.2, 2.6),
+    new THREE.Vector2(0.2, 3.2),
+    new THREE.Vector2(0.15, 3.3),
+    new THREE.Vector2(0, 3.3),
+  ];
+
+  return (
+    <group ref={groupRef} position={[0, -1.5, 0]} scale={0.8}>
+      {/* Glass body */}
+      <mesh>
+        <latheGeometry args={[bodyPoints, 64]} />
+        <MeshTransmissionMaterial
+          backside
+          samples={6}
+          thickness={0.5}
+          chromaticAberration={0.2}
+          anisotropy={0.3}
+          distortion={0.1}
+          distortionScale={0.2}
+          temporalDistortion={0.1}
+          ior={1.5}
+          color="#d4af37"
+          roughness={0.05}
+          transmission={0.95}
+        />
+      </mesh>
+      {/* Gold liquid inside */}
+      <mesh position={[0, 0.6, 0]}>
+        <cylinderGeometry args={[0.65, 0.65, 1.2, 32]} />
+        <meshStandardMaterial color="#b8860b" transparent opacity={0.6} roughness={0.2} metalness={0.8} />
+      </mesh>
+      {/* Gold cap */}
+      <mesh position={[0, 3.4, 0]}>
+        <cylinderGeometry args={[0.22, 0.18, 0.3, 32]} />
+        <meshStandardMaterial color="#d4af37" metalness={0.9} roughness={0.1} />
+      </mesh>
+    </group>
+  );
 }
-
-useGLTF.preload(MODEL_URL);
 
 const LandingScreen = ({ onSelectGender }: { onSelectGender: (g: Gender) => void }) => {
   return (
@@ -38,7 +83,7 @@ const LandingScreen = ({ onSelectGender }: { onSelectGender: (g: Gender) => void
               floatIntensity={0.6}
               floatingRange={[-0.1, 0.1]}
             >
-              <BottleModel />
+              <GlassBottle />
             </Float>
 
             <OrbitControls

@@ -229,39 +229,42 @@ export function matchPerfumes(
     ? PERFUMES.filter((p) => p.gender === gender || p.gender === "mixte")
     : PERFUMES;
 
-  const scored = candidates.map((perfume) => {
-    let score = 0;
-    let total = 0;
+  const scored = candidates
+    .map((perfume) => {
+      let score = 0;
+      let totalSelected = 0;
 
-    if (selectedTop.length > 0) {
-      const topHits = selectedTop.filter((n) =>
-        perfume.topNotes.includes(n)
-      ).length;
-      score += topHits;
-      total += selectedTop.length;
-    }
+      const allSelected = [
+        ...selectedTop,
+        ...selectedHeart,
+        ...selectedBase,
+      ];
 
-    if (selectedHeart.length > 0) {
-      const heartHits = selectedHeart.filter((n) =>
-        perfume.heartNotes.includes(n)
-      ).length;
-      score += heartHits * 1.2;
-      total += selectedHeart.length * 1.2;
-    }
+      totalSelected = allSelected.length;
 
-    if (selectedBase.length > 0) {
-      const baseHits = selectedBase.filter((n) =>
-        perfume.baseNotes.includes(n)
-      ).length;
-      score += baseHits * 1.5;
-      total += selectedBase.length * 1.5;
-    }
+      const perfumeNotes = [
+        ...perfume.topNotes,
+        ...perfume.heartNotes,
+        ...perfume.baseNotes,
+      ];
 
-    const matchPercent =
-      total > 0 ? Math.round((score / total) * 100) : 50;
+      const matches = allSelected.filter((note) =>
+        perfumeNotes.includes(note)
+      );
 
-    return { perfume, matchPercent };
-  });
+      score = matches.length;
+
+      if (score === 0) return null;
+
+      const matchPercent = Math.round((score / totalSelected) * 100);
+
+      return { perfume, matchPercent };
+    })
+    .filter(Boolean) as { perfume: Perfume; matchPercent: number }[];
+
+  return scored
+    .sort((a, b) => b.matchPercent - a.matchPercent);
+}
 
   return scored
     .sort((a, b) => b.matchPercent - a.matchPercent)

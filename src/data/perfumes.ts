@@ -231,40 +231,21 @@ export function matchPerfumes(
 
   const scored = candidates
     .map((perfume) => {
-      let score = 0;
-      let totalSelected = 0;
+      const allSelected = [...selectedTop, ...selectedHeart, ...selectedBase];
+      const totalSelected = allSelected.length;
 
-      const allSelected = [
-        ...selectedTop,
-        ...selectedHeart,
-        ...selectedBase,
-      ];
+      if (totalSelected === 0) return null;
 
-      totalSelected = allSelected.length;
+      const perfumeNotes = [...perfume.topNotes, ...perfume.heartNotes, ...perfume.baseNotes];
+      const matches = allSelected.filter((note) => perfumeNotes.includes(note));
 
-      const perfumeNotes = [
-        ...perfume.topNotes,
-        ...perfume.heartNotes,
-        ...perfume.baseNotes,
-      ];
-
-      const matches = allSelected.filter((note) =>
-        perfumeNotes.includes(note)
-      );
-
-      score = matches.length;
-
+      const score = matches.length;
       if (score === 0) return null;
 
       const matchPercent = Math.round((score / totalSelected) * 100);
-
       return { perfume, matchPercent };
     })
-    .filter(Boolean) as { perfume: Perfume; matchPercent: number }[];
-
-  return scored
-    .sort((a, b) => b.matchPercent - a.matchPercent);
-}
+    .filter((item): item is { perfume: Perfume; matchPercent: number } => item !== null);
 
   return scored
     .sort((a, b) => b.matchPercent - a.matchPercent)

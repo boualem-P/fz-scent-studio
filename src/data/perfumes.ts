@@ -229,20 +229,26 @@ export function matchPerfumes(
     ? PERFUMES.filter((p) => p.gender === gender || p.gender === "mixte")
     : PERFUMES;
 
+  const userSelection = [...selectedTop, ...selectedHeart, ...selectedBase];
+
   const scored = candidates
     .map((perfume) => {
-      const allSelected = [...selectedTop, ...selectedHeart, ...selectedBase];
-      const totalSelected = allSelected.length;
+      // On récupère toutes les catégories de notes uniques qui COMPOSENT le parfum
+      const perfumeCategories = Array.from(new Set([
+        ...perfume.topNotes,
+        ...perfume.heartNotes,
+        ...perfume.baseNotes
+      ]));
 
-      if (totalSelected === 0) return null;
+      // On compte combien de ces catégories l'utilisateur a sélectionnées
+      const matches = perfumeCategories.filter((cat) => userSelection.includes(cat));
+      
+      if (matches.length === 0) return null;
 
-      const perfumeNotes = [...perfume.topNotes, ...perfume.heartNotes, ...perfume.baseNotes];
-      const matches = allSelected.filter((note) => perfumeNotes.includes(note));
+      // Logique : (Nombre de catégories trouvées / Nombre de catégories total du parfum) * 100
+      // Ainsi, 100% n'arrive que si TOUTES les catégories du parfum sont dans la sélection utilisateur.
+      const matchPercent = Math.round((matches.length / perfumeCategories.length) * 100);
 
-      const score = matches.length;
-      if (score === 0) return null;
-
-      const matchPercent = Math.round((score / totalSelected) * 100);
       return { perfume, matchPercent };
     })
     .filter((item): item is { perfume: Perfume; matchPercent: number } => item !== null);

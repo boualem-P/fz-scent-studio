@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Perfume } from "@/data/perfumes";
 import CatalogueModal from "./CatalogueModal";
-import { X, ArrowRight, RotateCcw } from "lucide-react";
+import { X, ArrowRight, RotateCcw, ArrowLeft } from "lucide-react";
 import {
   staggerContainer,
   staggerItem,
@@ -125,7 +125,7 @@ const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => 
         </>
       )}
 
-      {/* Modal */}
+      {/* Modal / Fiche Parfum */}
       <AnimatePresence>
         {selectedPerfume && (
           <motion.div 
@@ -134,19 +134,29 @@ const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => 
             exit={{ opacity: 0 }} 
             className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
           >
-            {/* Conteneur de la fiche avec la croix à l'intérieur */}
             <div className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-lg shadow-2xl border border-primary/20 bg-[#050505]">
               
-              {/* Bouton X déplacé à l'intérieur */}
+              {/* NAVIGATION INTERNE DE LA FICHE */}
+              
+              {/* Bouton Retour (Gauche) */}
               <button 
                 onClick={() => setSelectedPerfume(null)} 
-                className="absolute top-4 right-4 z-[10001] p-2 rounded-full bg-black/40 text-primary/80 hover:text-primary hover:bg-black/60 transition-all backdrop-blur-sm border border-primary/10"
+                className="absolute top-5 left-6 z-[10001] flex items-center gap-2 text-primary/70 hover:text-primary transition-colors font-display text-[10px] uppercase tracking-[0.2em]"
+              >
+                <ArrowLeft size={18} />
+                <span>Retour</span>
+              </button>
+
+              {/* Bouton X (Droite) - Légèrement décalé vers la gauche et le bas */}
+              <button 
+                onClick={() => setSelectedPerfume(null)} 
+                className="absolute top-6 right-8 z-[10001] p-1.5 rounded-full bg-white/5 text-primary/60 hover:text-primary hover:bg-white/10 transition-all border border-primary/10"
               >
                 <X size={20} />
               </button>
 
-              {/* Contenu Scrollable de la fiche */}
-              <div className="overflow-y-auto max-h-[90vh]">
+              {/* Contenu Scrollable */}
+              <div className="overflow-y-auto max-h-[90vh] pt-12">
                 <CatalogueModal perfume={selectedPerfume} onClose={() => setSelectedPerfume(null)} />
               </div>
             </div>

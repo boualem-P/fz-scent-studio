@@ -12,13 +12,13 @@ const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  // Lissage du mouvement (pour que ce soit fluide et non saccadé)
-  const mouseX = useSpring(x, { stiffness: 150, damping: 20 });
-  const mouseY = useSpring(y, { stiffness: 150, damping: 20 });
+  // Lissage du mouvement pour un effet "soyeux"
+  const mouseX = useSpring(x, { stiffness: 120, damping: 25 });
+  const mouseY = useSpring(y, { stiffness: 120, damping: 25 });
 
-  // Transformation en rotation (max 15 degrés)
-  const rotateX = useTransform(mouseY, [-300, 300], [15, -15]);
-  const rotateY = useTransform(mouseX, [-300, 300], [-15, 15]);
+  // Transformation en rotation (max 12 degrés pour rester élégant)
+  const rotateX = useTransform(mouseY, [-500, 500], [12, -12]);
+  const rotateY = useTransform(mouseX, [-500, 500], [-12, 12]);
 
   const handleMouseMove = (event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -30,82 +30,70 @@ const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
 
   return (
     <div 
-      className="relative min-h-screen w-screen flex flex-col items-center justify-center p-6 text-center bg-[#050505] overflow-hidden"
+      className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-center bg-black overflow-hidden"
       onMouseMove={handleMouseMove}
     >
       
-      {/* 1. ARRIÈRE-PLAN LUXE (Gradient & Particules) */}
+      {/* 1. ARRIÈRE-PLAN LUXE */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-60" />
-        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]" />
+        {/* Halo doré central pour donner de la profondeur */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#d4af3715_0%,_transparent_70%)] opacity-80" />
       </div>
 
-      {/* 2. SECTION FLACON 3D */}
+      {/* 2. SECTION FLACON 3D (Ton image ImgBB) */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.5, ease: "easeOut" }}
-        style={{ perspective: 1000 }}
-        className="relative z-10 mb-8"
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 1.8, ease: "easeOut" }}
+        style={{ perspective: 1200 }}
+        className="relative z-10 mb-6"
       >
         <motion.div
           style={{ rotateX, rotateY }}
           className="relative group cursor-pointer"
         >
-          {/* Halo lumineux derrière le flacon */}
-          <div className="absolute -inset-12 bg-primary/20 blur-[100px] rounded-full opacity-40 group-hover:opacity-70 transition-opacity duration-1000" />
+          {/* Halo brillant derrière le flacon qui réagit au survol */}
+          <div className="absolute -inset-20 bg-[#d4af3722] blur-[120px] rounded-full opacity-50 group-hover:opacity-90 transition-opacity duration-1000" />
           
           <img 
-            src="/hero-perfume.png" 
+            src="https://i.ibb.co/whZ94tqz/hero-perfume.jpg" 
             alt="Fz Parfums Luxury" 
-            className="h-64 md:h-80 lg:h-[400px] w-auto drop-shadow-[0_35px_35px_rgba(0,0,0,0.7)] select-none pointer-events-none"
+            className="h-64 md:h-80 lg:h-[450px] w-auto drop-shadow-[0_45px_45px_rgba(0,0,0,0.8)] select-none pointer-events-none rounded-xl"
           />
         </motion.div>
       </motion.div>
 
-      {/* 3. SECTION TITRE & SLOGAN */}
+      {/* 3. TEXTES ET BOUTONS */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="mb-12 relative z-20"
+        className="z-20 flex flex-col items-center"
       >
         <motion.h1 
           variants={staggerItem}
-          className="font-display text-5xl md:text-7xl lg:text-8xl text-gold-gradient tracking-tighter mb-2"
+          className="font-display text-5xl md:text-7xl lg:text-8xl bg-gradient-to-b from-[#f7ef8a] to-[#d4af37] bg-clip-text text-transparent tracking-tighter mb-2"
         >
           Fz Parfums
         </motion.h1>
 
         <motion.p
           variants={staggerItem}
-          className="font-serif italic text-lg md:text-xl tracking-[0.1em] text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F7EF8A] to-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]"
+          className="font-serif italic text-lg md:text-xl tracking-[0.15em] text-[#d4af37] opacity-90 mb-10"
         >
           L'art de flaconner l'inoubliable.
         </motion.p>
 
-        <motion.div 
-          variants={staggerItem}
-          className="gold-divider w-24 mx-auto mt-6"
-        />
-      </motion.div>
-
-      {/* 4. SECTION BOUTONS */}
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        animate="show"
-        className="flex flex-col items-center gap-6 relative z-20"
-      >
+        {/* SECTION BOUTONS */}
         <div className="flex flex-wrap justify-center gap-4 md:gap-6">
           {(["homme", "femme", "mixte"] as Gender[]).map((gender) => (
             <motion.button
               key={gender}
               variants={staggerItem}
-              whileHover={{ ...springHover, scale: 1.05 }}
-              whileTap={springTap}
+              whileHover={{ scale: 1.05, borderColor: "#d4af37", backgroundColor: "rgba(212, 175, 55, 0.1)" }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => onSelectGender(gender)}
-              className="px-8 py-3 min-w-[130px] font-display text-[10px] tracking-[0.25em] uppercase border border-primary/30 bg-black/60 text-primary hover:bg-primary hover:text-black transition-all duration-500 backdrop-blur-md gold-border-glow shadow-xl"
+              className="px-8 py-3 min-w-[140px] font-display text-[10px] tracking-[0.3em] uppercase border border-[#d4af3744] bg-black/60 text-[#d4af37] hover:text-white transition-all duration-500 backdrop-blur-md"
             >
               {gender}
             </motion.button>
@@ -114,9 +102,9 @@ const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
 
         <motion.p
           variants={staggerItem}
-          className="font-body text-[9px] uppercase tracking-[0.4em] text-primary/40 animate-pulse mt-4"
+          className="font-body text-[9px] uppercase tracking-[0.4em] text-[#d4af37] opacity-40 animate-pulse mt-8"
         >
-          Choisissez votre univers
+          Sélectionnez votre univers
         </motion.p>
       </motion.div>
 

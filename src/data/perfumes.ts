@@ -110,4 +110,39 @@ export const PERFUMES: Perfume[] = [
   // Applique le même modèle { name: "...", image: getNoteImage("...") } pour les autres parfums...
 ];
 
-// ... reste de la fonction matchPerfumes (inchangée) ...
+export function matchPerfumes(
+  gender: Gender,
+  topNotes: NoteCategory[],
+  heartNotes: NoteCategory[],
+  baseNotes: NoteCategory[]
+): { perfume: Perfume; matchPercent: number }[] {
+  return PERFUMES
+    .filter((p) => p.gender === gender || p.gender === "mixte")
+    .map((perfume) => {
+      let score = 0;
+      let total = 0;
+
+      // Top notes (weight 1.0)
+      topNotes.forEach((note) => {
+        total += 1;
+        if (perfume.topNotes.includes(note)) score += 1;
+      });
+
+      // Heart notes (weight 1.2)
+      heartNotes.forEach((note) => {
+        total += 1.2;
+        if (perfume.heartNotes.includes(note)) score += 1.2;
+      });
+
+      // Base notes (weight 1.5)
+      baseNotes.forEach((note) => {
+        total += 1.5;
+        if (perfume.baseNotes.includes(note)) score += 1.5;
+      });
+
+      const matchPercent = total > 0 ? Math.round((score / total) * 100) : 0;
+      return { perfume, matchPercent };
+    })
+    .filter((r) => r.matchPercent > 0)
+    .sort((a, b) => b.matchPercent - a.matchPercent);
+}

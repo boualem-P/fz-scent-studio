@@ -25,19 +25,20 @@ const IngredientChip = ({
   onClick: () => void;
 }) => (
   <motion.button
-    variants={staggerItem}
-    whileHover={springHover}
-    whileTap={springTap}
-    onClick={onClick}
-    className={`px-2.5 py-1 rounded-sm font-body text-[11px] tracking-wide transition-all duration-300 border leading-tight
-      ${
-        selected
-          ? "bg-primary/15 border-primary/70 text-primary gold-glow-strong"
-          : "bg-secondary/30 border-border/40 text-muted-foreground hover:border-primary/40 hover:text-primary/70"
-      }`}
-  >
-    {label}
-  </motion.button>
+  variants={staggerItem}
+  whileHover={springHover}
+  whileTap={springTap}
+  onClick={onClick}
+  className={`px-2.5 py-1 rounded-sm font-body font-bold text-[11px] tracking-wide transition-all duration-300 border leading-tight
+    ${
+      selected
+        ? "bg-primary/15 border-primary/70 text-primary gold-glow-strong"
+        : "bg-gradient-to-r from-[#D3B874] via-[#F0E8AA] to-[#AF8336] border-transparent text-black hover:border-primary/40 hover:text-primary/70"
+    }`}
+>
+  {label}
+</motion.button>
+
 );
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {

@@ -3,7 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Perfume } from "@/data/perfumes";
 import CatalogueModal from "./CatalogueModal";
 import { X } from "lucide-react";
-import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
+import {
+  staggerContainer,
+  staggerItem,
+  springHover,
+  springTap,
+} from "@/lib/animations";
 
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
@@ -78,17 +83,15 @@ const PerfumeInitials = ({ name }: { name: string }) => {
   );
 };
 
-const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => {
+const ResultsScreen = ({
+  results,
+  onMenu,
+  onCatalogue,
+}: ResultsScreenProps) => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
-  // 🔒 Bloque le scroll du background quand la modal est ouverte
   useEffect(() => {
-    if (selectedPerfume) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-
+    document.body.style.overflow = selectedPerfume ? "hidden" : "auto";
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -97,106 +100,82 @@ const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => 
   return (
     <div className="min-h-screen w-screen flex flex-col items-center bg-background overflow-y-auto relative px-6 pb-40 pattern-fz">
 
-      {/* Gradient */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 40%, hsl(43 72% 52% / 0.05) 0%, transparent 60%)",
-        }}
-      />
+      {/* Aucun résultat */}
+      {results.length === 0 && (
+        <div className="flex flex-col items-center justify-center mt-32 text-center relative z-20">
+          <p className="text-muted-foreground text-lg">
+            Aucun parfum ne correspond exactement à votre sélection.
+          </p>
 
-      {/* Watermark */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-[0.03]">
-        <div className="font-display text-[200px] text-primary tracking-widest whitespace-nowrap select-none rotate-[-15deg]">
-          Fz Parfums
-        </div>
-      </div>
-
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        animate="show"
-        className="text-center mb-10 relative z-20 pt-12"
-      >
-        <motion.h2
-          variants={staggerItem}
-          className="font-display text-4xl text-gold-gradient tracking-wider"
-        >
-          Vos Recommandations
-        </motion.h2>
-        <motion.div
-          variants={staggerItem}
-          className="gold-divider w-40 mx-auto mt-4"
-        />
-      </motion.div>
-
-      {/* Cards */}
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        animate="show"
-        className="flex flex-wrap gap-8 max-w-5xl w-full justify-center relative z-20"
-      >
-        {results.map((result) => (
-          <motion.button
-            key={result.perfume.id}
-            variants={staggerItem}
-            whileHover={springHover}
-            whileTap={springTap}
-            onClick={() => setSelectedPerfume(result.perfume)}
-            className="w-full sm:w-[280px] glass-card card-shimmer-effect p-6 flex flex-col items-center transition-all duration-300 group cursor-pointer"
-          >
-            <PercentCircle percent={result.matchPercent} />
-            <PerfumeInitials name={result.perfume.name} />
-
-            <p className="text-[10px] font-body tracking-[0.3em] uppercase text-muted-foreground mb-1">
-              {result.perfume.brand}
-            </p>
-            <h3 className="font-display text-lg text-primary tracking-wide text-center">
-              {result.perfume.name}
-            </h3>
-            <p className="text-[9px] text-muted-foreground/60 mt-1">
-              {result.perfume.concentration} • {result.perfume.year}
-            </p>
-          </motion.button>
-        ))}
-      </motion.div>
-
-      {/* Buttons at the bottom */}
-      {!selectedPerfume && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2 }}
-          className="mt-12 relative z-20 flex flex-col items-center gap-4"
-        >
           <motion.button
             whileHover={springHover}
             whileTap={springTap}
             onClick={onMenu}
-            className="px-10 py-3 font-display text-sm tracking-[0.25em] uppercase
+            className="mt-6 px-8 py-3 font-display text-sm tracking-[0.25em] uppercase
               border border-primary/40 text-primary
               hover:bg-primary/10 hover:border-primary/60
               transition-colors duration-300 gold-border-glow"
           >
             Retour au Menu
           </motion.button>
-
-          <motion.button
-            whileHover={springHover}
-            whileTap={springTap}
-            onClick={onCatalogue}
-            className="px-8 py-2.5 font-body text-[10px] tracking-[0.3em] uppercase
-              text-muted-foreground hover:text-primary
-              transition-colors duration-300"
-          >
-            Voir le catalogue complet →
-          </motion.button>
-        </motion.div>
+        </div>
       )}
 
-      {/* MODAL FIX — full screen with fixed X */}
+      {/* Si résultats présents */}
+      {results.length > 0 && (
+        <>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+            className="text-center mb-10 relative z-20 pt-12"
+          >
+            <motion.h2
+              variants={staggerItem}
+              className="font-display text-4xl text-gold-gradient tracking-wider"
+            >
+              Vos Recommandations
+            </motion.h2>
+            <motion.div
+              variants={staggerItem}
+              className="gold-divider w-40 mx-auto mt-4"
+            />
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+            className="flex flex-wrap gap-8 max-w-5xl w-full justify-center relative z-20"
+          >
+            {results.map((result) => (
+              <motion.button
+                key={result.perfume.id}
+                variants={staggerItem}
+                whileHover={springHover}
+                whileTap={springTap}
+                onClick={() => setSelectedPerfume(result.perfume)}
+                className="w-full sm:w-[280px] glass-card card-shimmer-effect p-6 flex flex-col items-center transition-all duration-300 group cursor-pointer"
+              >
+                <PercentCircle percent={result.matchPercent} />
+                <PerfumeInitials name={result.perfume.name} />
+
+                <p className="text-[10px] font-body tracking-[0.3em] uppercase text-muted-foreground mb-1">
+                  {result.perfume.brand}
+                </p>
+                <h3 className="font-display text-lg text-primary tracking-wide text-center">
+                  {result.perfume.name}
+                </h3>
+                <p className="text-[9px] text-muted-foreground/60 mt-1">
+                  {result.perfume.concentration} • {result.perfume.year}
+                </p>
+              </motion.button>
+            ))}
+          </motion.div>
+        </>
+      )}
+
+      {/* Modal */}
       <AnimatePresence>
         {selectedPerfume && (
           <motion.div
@@ -205,7 +184,6 @@ const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => 
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md flex items-center justify-center"
           >
-            {/* Fixed close button */}
             <button
               onClick={() => setSelectedPerfume(null)}
               className="fixed top-5 right-5 z-[9999] p-2.5 rounded-full bg-black/80 border border-primary/40 text-primary hover:bg-primary hover:text-black transition-all duration-300 shadow-lg"
@@ -225,16 +203,5 @@ const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => 
     </div>
   );
 };
-
-if (results.length === 0) {
-  return (
-    <div className="text-center mt-20">
-      <p className="text-muted-foreground text-lg">
-        Aucun parfum ne correspond exactement à votre sélection.
-      </p>
-    </div>
-  );
-}
-
 
 export default ResultsScreen;

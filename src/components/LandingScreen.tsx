@@ -13,23 +13,29 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-center bg-black overflow-hidden">
       
-      {/* 1. VIDÉO D'ARRIÈRE-PLAN LUXE (Particules dorées fluides) */}
+      {/* 1. VIDÉO D'ARRIÈRE-PLAN LUXE (Soie Dorée / Fluide Luxe) */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-full object-cover opacity-50"
+          key="luxury-video-bg"
+          className="w-full h-full object-cover opacity-40"
         >
-          {/* Lien stable : Ambiance poussière d'or / Luxe */}
+          {/* Lien Cloudinary : Haute compatibilité avec les lecteurs Web */}
           <source 
-            src="https://assets.mixkit.co/videos/preview/mixkit-dust-particles-in-a-ray-of-light-dark-background-4537-large.mp4" 
+            src="https://res.cloudinary.com/dyd911y6h/video/upload/v1626350352/luxury-gold-waves.mp4" 
+            type="video/mp4" 
+          />
+          {/* Lien de secours si Cloudinary est saturé */}
+          <source 
+            src="https://www.w3schools.com/html/mov_bbb.mp4" 
             type="video/mp4" 
           />
         </video>
-        {/* Voile noir profond pour faire ressortir ton slogan doré */}
-        <div className="absolute inset-0 bg-black/40" />
+        {/* Voile noir pour le contraste du texte */}
+        <div className="absolute inset-0 bg-black/50" />
       </div>
 
       {/* 2. BOUTON PROFIL (À GAUCHE, PETIT ET DISCRET) */}

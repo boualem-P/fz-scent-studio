@@ -1,50 +1,48 @@
 import { motion } from "framer-motion";
 import { Gender } from "@/data/perfumes";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
-import { User } from "lucide-react"; // Importation pour le bouton profil
+import { User } from "lucide-react";
 
 interface LandingScreenProps {
   onSelectGender: (gender: Gender) => void;
   onCatalogue: () => void;
-  onProfile: () => void; // Ajouté obligatoirement ici
+  onProfile: () => void;
 }
 
-const LandingScreen = ({ onSelectGender, onProfile }: LandingScreenProps) => {
+const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-center bg-black overflow-hidden">
       
-      {/* 1. FIX DU BOUTON PROFIL (Placé en haut à droite en priorité maximale) */}
-      <div className="fixed top-8 right-8 z-[100]">
-        <motion.button
-          whileHover={springHover}
-          whileTap={springTap}
-          onClick={onProfile}
-          className="p-3 rounded-full border border-[#D4AF37]/30 bg-black/60 text-[#D4AF37] backdrop-blur-md shadow-[0_0_15px_rgba(212,175,55,0.2)]"
-        >
-          <User size={24} />
-        </motion.button>
-      </div>
-
-      {/* 2. FIX DE LA VIDÉO (Arrière-plan forcé) */}
+      {/* 1. VIDÉO D'ARRIÈRE-PLAN (Lien direct MP4 stable) */}
       <div className="absolute inset-0 z-0">
         <video
           autoPlay
           loop
           muted
           playsInline
-          key="hero-video" // Force le rafraîchissement
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover opacity-50"
         >
           <source 
-            src="https://assets.mixkit.co/videos/preview/mixkit-golden-particles-in-slow-motion-24334-large.mp4" 
+            src="https://static.videezy.com/system/resources/previews/000/012/370/original/Golden_Dust_4K_Motion_Background.mp4" 
             type="video/mp4" 
           />
         </video>
-        {/* Filtre pour que le texte doré reste lisible */}
         <div className="absolute inset-0 bg-black/40 pointer-events-none" />
       </div>
 
-      {/* SECTION TITRE & SLOGAN (z-10 pour être devant) */}
+      {/* 2. BOUTON PROFIL (À GAUCHE ET PETIT) */}
+      <div className="absolute top-8 left-8 z-50">
+        <motion.button
+          whileHover={springHover}
+          whileTap={springTap}
+          onClick={onProfile}
+          className="flex items-center justify-center w-10 h-10 rounded-full border border-primary/30 bg-black/40 text-primary backdrop-blur-sm hover:bg-primary hover:text-black transition-all duration-500"
+        >
+          <User size={18} /> {/* Taille réduite pour l'élégance */}
+        </motion.button>
+      </div>
+
+      {/* SECTION TITRE & SLOGAN */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
@@ -93,14 +91,22 @@ const LandingScreen = ({ onSelectGender, onProfile }: LandingScreenProps) => {
           ))}
         </div>
 
+        {/* BOUTON CATALOGUE (Petit, assorti au profil) */}
+        <motion.button
+          variants={staggerItem}
+          onClick={onCatalogue}
+          className="font-body text-[10px] uppercase tracking-[0.5em] text-primary/60 hover:text-primary transition-colors mt-2"
+        >
+          Découvrir la collection
+        </motion.button>
+
         <motion.p
           variants={staggerItem}
-          className="font-body text-[10px] md:text-xs uppercase tracking-[0.5em] text-primary/60 animate-pulse mt-4"
+          className="font-body text-[10px] md:text-xs uppercase tracking-[0.5em] text-primary/40 animate-pulse mt-4"
         >
           Cliquez pour commencer l'aventure
         </motion.p>
       </motion.div>
-
     </div>
   );
 };

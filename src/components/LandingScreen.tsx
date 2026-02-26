@@ -1,70 +1,74 @@
 import { motion } from "framer-motion";
 import { Gender } from "@/data/perfumes";
-import { staggerContainer, staggerItem } from "@/lib/animations";
-import { User } from "lucide-react"; // Assure-toi que lucide-react est bien dans ton package.json
+import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 
 interface LandingScreenProps {
   onSelectGender: (gender: Gender) => void;
-  onProfile: () => void; // Obligatoire pour le clic
+  onCatalogue: () => void;
 }
 
-const LandingScreen = ({ onSelectGender, onProfile }: LandingScreenProps) => {
+const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
   return (
-    // On ajoute h-screen et w-full pour verrouiller le cadre
-    <div className="relative h-screen w-full bg-[#050505] overflow-hidden">
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-6 text-center">
       
-      {/* --- LE BOUTON PROFIL (FORCE FIXE) --- */}
-      <div className="fixed top-6 right-6 z-[9999] pointer-events-auto"> 
-        <button
-          onClick={(e) => {
-            e.stopPropagation(); // Empêche le clic de se propager au fond
-            onProfile();
-          }}
-          className="flex items-center justify-center w-12 h-12 rounded-full border border-[#d4af3766] bg-black/80 text-[#d4af37] shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:bg-[#d4af37] hover:text-black transition-all duration-300"
+      {/* SECTION TITRE & SLOGAN */}
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="mb-16 relative z-10"
+      >
+        <motion.h1 
+          variants={staggerItem}
+          className="font-display text-6xl md:text-8xl lg:text-9xl text-gold-gradient tracking-tighter mb-2"
         >
-          <User size={24} />
-        </button>
-      </div>
+          Fz Parfums
+        </motion.h1>
 
-      {/* --- LE CONTENU CENTRAL --- */}
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#d4af3708_0%,_transparent_60%)] pointer-events-none" />
-
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="show"
-          className="z-10 text-center flex flex-col items-center px-4"
+        {/* ÉTAPE 5 : LE SLOGAN DORÉ */}
+        <motion.p
+          variants={staggerItem}
+          className="font-serif italic text-lg md:text-2xl tracking-[0.1em] text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F7EF8A] to-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]"
         >
-          <motion.h1 
-            variants={staggerItem}
-            className="font-display text-7xl md:text-9xl bg-gradient-to-b from-[#f7ef8a] to-[#d4af37] bg-clip-text text-transparent tracking-tighter"
-          >
-            Fz Parfums
-          </motion.h1>
+          L'art de flaconner l'inoubliable.
+        </motion.p>
 
-          <motion.p 
-            variants={staggerItem}
-            className="text-[#d4af37] font-serif italic text-xl tracking-[0.4em] mt-6 mb-16 opacity-80"
-          >
-            L'Essence de l'Inoubliable
-          </motion.p>
+        <motion.div 
+          variants={staggerItem}
+          className="gold-divider w-24 mx-auto mt-6"
+        />
+      </motion.div>
 
-          <div className="flex flex-col md:flex-row gap-8">
-            {(["homme", "femme", "mixte"] as Gender[]).map((gender) => (
-              <motion.button
-                key={gender}
-                variants={staggerItem}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => onSelectGender(gender)}
-                className="px-12 py-4 border border-[#d4af3722] bg-transparent text-[#d4af37] font-display text-sm tracking-[0.5em] uppercase transition-all duration-700 hover:border-[#d4af37]"
-              >
-                {gender}
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
-      </div>
+      {/* SECTION BOUTONS */}
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="flex flex-col items-center gap-8 relative z-10"
+      >
+        <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+          {(["homme", "femme", "mixte"] as Gender[]).map((gender) => (
+            <motion.button
+              key={gender}
+              variants={staggerItem}
+              whileHover={springHover}
+              whileTap={springTap}
+              onClick={() => onSelectGender(gender)}
+              className="px-8 py-4 min-w-[140px] font-display text-sm tracking-[0.2em] uppercase border border-primary/30 bg-black/40 text-primary hover:bg-primary hover:text-black transition-all duration-500 backdrop-blur-sm gold-border-glow"
+            >
+              {gender}
+            </motion.button>
+          ))}
+        </div>
+
+        {/* ÉTAPE 4 : INSTRUCTION DÉPLACÉE ICI (SOUS LES BOUTONS) */}
+        <motion.p
+          variants={staggerItem}
+          className="font-body text-[10px] md:text-xs uppercase tracking-[0.5em] text-primary/60 animate-pulse mt-4"
+        >
+          Cliquez pour commencer l'aventure
+        </motion.p>
+      </motion.div>
 
     </div>
   );

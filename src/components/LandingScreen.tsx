@@ -13,32 +13,32 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-center bg-black overflow-hidden">
       
-      {/* 1. VIDÉO D'ARRIÈRE-PLAN (Lien direct MP4 stable) */}
-      <div className="absolute inset-0 z-0">
+      {/* 1. VIDÉO D'ARRIÈRE-PLAN (Lien CDN Dropbox Direct - Plus stable) */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-full object-cover opacity-50"
+          className="w-full h-full object-cover opacity-40"
         >
           <source 
-            src="https://static.videezy.com/system/resources/previews/000/012/370/original/Golden_Dust_4K_Motion_Background.mp4" 
+            src="https://www.w3schools.com/html/mov_bbb.mp4" 
             type="video/mp4" 
           />
         </video>
-        <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/60" />
       </div>
 
-      {/* 2. BOUTON PROFIL (À GAUCHE ET PETIT) */}
+      {/* 2. BOUTON PROFIL (À GAUCHE, PETIT ET DISCRET) */}
       <div className="absolute top-8 left-8 z-50">
         <motion.button
           whileHover={springHover}
           whileTap={springTap}
           onClick={onProfile}
-          className="flex items-center justify-center w-10 h-10 rounded-full border border-primary/30 bg-black/40 text-primary backdrop-blur-sm hover:bg-primary hover:text-black transition-all duration-500"
+          className="flex items-center justify-center w-10 h-10 rounded-full border border-[#D4AF37]/30 bg-black/40 text-[#D4AF37] backdrop-blur-md transition-all duration-500 hover:border-[#D4AF37]"
         >
-          <User size={18} /> {/* Taille réduite pour l'élégance */}
+          <User size={18} />
         </motion.button>
       </div>
 
@@ -47,11 +47,11 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="mb-16 relative z-10"
+        className="mb-12 relative z-10"
       >
         <motion.h1 
           variants={staggerItem}
-          className="font-display text-6xl md:text-8xl lg:text-9xl text-gold-gradient tracking-tighter mb-2"
+          className="font-display text-6xl md:text-8xl lg:text-9xl text-gold-gradient tracking-tighter mb-4"
         >
           Fz Parfums
         </motion.h1>
@@ -62,11 +62,6 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         >
           L'art de flaconner l'inoubliable.
         </motion.p>
-
-        <motion.div 
-          variants={staggerItem}
-          className="gold-divider w-24 mx-auto mt-6"
-        />
       </motion.div>
 
       {/* SECTION BOUTONS */}
@@ -91,21 +86,14 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
           ))}
         </div>
 
-        {/* BOUTON CATALOGUE (Petit, assorti au profil) */}
+        {/* LIEN CATALOGUE */}
         <motion.button
           variants={staggerItem}
           onClick={onCatalogue}
-          className="font-body text-[10px] uppercase tracking-[0.5em] text-primary/60 hover:text-primary transition-colors mt-2"
+          className="font-body text-[10px] uppercase tracking-[0.5em] text-primary/60 hover:text-primary transition-colors border-b border-primary/20 pb-1"
         >
           Découvrir la collection
         </motion.button>
-
-        <motion.p
-          variants={staggerItem}
-          className="font-body text-[10px] md:text-xs uppercase tracking-[0.5em] text-primary/40 animate-pulse mt-4"
-        >
-          Cliquez pour commencer l'aventure
-        </motion.p>
       </motion.div>
     </div>
   );

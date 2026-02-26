@@ -13,28 +13,23 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-center bg-black overflow-hidden">
       
-      {/* 1. VIDÉO D'ARRIÈRE-PLAN LUXE (Soie Dorée / Fluide Luxe) */}
+      {/* 1. VIDÉO D'ARRIÈRE-PLAN LUXE (Particules d'Or Fluides) */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <video
           autoPlay
           loop
           muted
           playsInline
-          key="luxury-video-bg"
-          className="w-full h-full object-cover opacity-40"
+          key="luxury-gold-bg"
+          className="w-full h-full object-cover opacity-50"
         >
-          {/* Lien Cloudinary : Haute compatibilité avec les lecteurs Web */}
+          {/* Nouveau lien direct vers une vidéo de particules dorées luxe (CDN stable) */}
           <source 
-            src="https://res.cloudinary.com/dyd911y6h/video/upload/v1626350352/luxury-gold-waves.mp4" 
-            type="video/mp4" 
-          />
-          {/* Lien de secours si Cloudinary est saturé */}
-          <source 
-            src="https://www.w3schools.com/html/mov_bbb.mp4" 
+            src="https://cdn.pixabay.com/video/2022/04/17/114256-699703445_large.mp4" 
             type="video/mp4" 
           />
         </video>
-        {/* Voile noir pour le contraste du texte */}
+        {/* Voile noir profond pour la lisibilité */}
         <div className="absolute inset-0 bg-black/50" />
       </div>
 

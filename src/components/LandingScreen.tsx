@@ -13,21 +13,23 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-center bg-black overflow-hidden">
       
-      {/* 1. VIDÉO D'ARRIÈRE-PLAN (Lien CDN Dropbox Direct - Plus stable) */}
+      {/* 1. VIDÉO D'ARRIÈRE-PLAN LUXE (Particules dorées fluides) */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-full object-cover opacity-40"
+          className="w-full h-full object-cover opacity-50"
         >
+          {/* Lien stable : Ambiance poussière d'or / Luxe */}
           <source 
-            src="https://www.w3schools.com/html/mov_bbb.mp4" 
+            src="https://assets.mixkit.co/videos/preview/mixkit-dust-particles-in-a-ray-of-light-dark-background-4537-large.mp4" 
             type="video/mp4" 
           />
         </video>
-        <div className="absolute inset-0 bg-black/60" />
+        {/* Voile noir profond pour faire ressortir ton slogan doré */}
+        <div className="absolute inset-0 bg-black/40" />
       </div>
 
       {/* 2. BOUTON PROFIL (À GAUCHE, PETIT ET DISCRET) */}

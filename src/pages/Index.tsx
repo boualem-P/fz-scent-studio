@@ -7,6 +7,7 @@ import ResultsScreen from "@/components/ResultsScreen";
 import CatalogueScreen from "@/components/CatalogueScreen";
 import AnalyzingLoader from "@/components/AnalyzingLoader";
 import GoldenRain from "@/components/GoldenRain";
+import PerfumePage from "@/components/PerfumePage"; // Import de ta nouvelle fiche 40/60
 import { Gender, NoteCategory, matchPerfumes, Perfume } from "@/data/perfumes";
 
 type Screen = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
@@ -16,6 +17,9 @@ const Index = () => {
   const [gender, setGender] = useState<Gender>("homme");
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [showProfile, setShowProfile] = useState(false);
+  
+  // État pour la fiche produit détaillée (Rectangle 40/60)
+  const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowProfile(true), 1000);
@@ -34,7 +38,10 @@ const Index = () => {
     setTimeout(() => setScreen("results"), 4000);
   }, [gender]);
 
-  const handleMenu = () => setScreen("landing");
+  const handleMenu = () => {
+    setScreen("landing");
+    setSelectedPerfume(null); // Ferme la fiche si on revient au menu
+  };
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
@@ -42,7 +49,6 @@ const Index = () => {
 
       {/* BOUTONS DE NAVIGATION FIXES */}
       <div className="fixed top-6 right-6 z-[100] flex items-center gap-3">
-        {/* Bouton Home - Visible si on n'est pas sur Landing */}
         {screen !== "landing" && (
           <button
             onClick={handleMenu}
@@ -53,7 +59,6 @@ const Index = () => {
           </button>
         )}
 
-        {/* Bouton Catalogue - Masqué sur l'écran Results */}
         {screen !== "results" && (
           <button
             onClick={() => setScreen("catalogue")}
@@ -81,34 +86,58 @@ const Index = () => {
 
       <main className="relative z-10">
         <AnimatePresence mode="wait">
-          {screen === "landing" && (
-            <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <LandingScreen onSelectGender={handleGender} />
+          {/* AFFICHAGE DE LA FICHE PRODUIT (Rectangle 40/60) */}
+          {selectedPerfume ? (
+            <motion.div 
+              key="details"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="z-[200] relative"
+            >
+              <PerfumePage 
+                onClose={() => setSelectedPerfume(null)} 
+                // Ici on pourrait passer selectedPerfume en prop si tu modifies PerfumePage 
+                // pour accepter des données dynamiques
+              />
             </motion.div>
-          )}
+          ) : (
+            <>
+              {screen === "landing" && (
+                <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <LandingScreen onSelectGender={handleGender} />
+                </motion.div>
+              )}
 
-          {screen === "pyramid" && (
-            <motion.div key="pyramid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />
-            </motion.div>
-          )}
+              {screen === "pyramid" && (
+                <motion.div key="pyramid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />
+                </motion.div>
+              )}
 
-          {screen === "analyzing" && (
-            <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <AnalyzingLoader />
-            </motion.div>
-          )}
+              {screen === "analyzing" && (
+                <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <AnalyzingLoader />
+                </motion.div>
+              )}
 
-          {screen === "results" && (
-            <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <ResultsScreen results={results} onMenu={handleMenu} onCatalogue={() => setScreen("catalogue")} />
-            </motion.div>
-          )}
+              {screen === "results" && (
+                <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <ResultsScreen 
+                    results={results} 
+                    onMenu={handleMenu} 
+                    onCatalogue={() => setScreen("catalogue")}
+                    // On pourrait ajouter ici : onSelect={(p) => setSelectedPerfume(p)}
+                  />
+                </motion.div>
+              )}
 
-          {screen === "catalogue" && (
-            <motion.div key="catalogue" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <CatalogueScreen onMenu={handleMenu} />
-            </motion.div>
+              {screen === "catalogue" && (
+                <motion.div key="catalogue" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <CatalogueScreen onMenu={handleMenu} />
+                </motion.div>
+              )}
+            </>
           )}
         </AnimatePresence>
       </main>

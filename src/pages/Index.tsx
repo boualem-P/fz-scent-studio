@@ -7,7 +7,7 @@ import ResultsScreen from "@/components/ResultsScreen";
 import CatalogueScreen from "@/components/CatalogueScreen";
 import AnalyzingLoader from "@/components/AnalyzingLoader";
 import GoldenRain from "@/components/GoldenRain";
-import PerfumePage from "@/components/PerfumePage"; // Import de ta nouvelle fiche 40/60
+import PerfumePage from "@/components/PerfumePage"; 
 import { Gender, NoteCategory, matchPerfumes, Perfume } from "@/data/perfumes";
 
 type Screen = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
@@ -17,8 +17,6 @@ const Index = () => {
   const [gender, setGender] = useState<Gender>("homme");
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [showProfile, setShowProfile] = useState(false);
-  
-  // État pour la fiche produit détaillée (Rectangle 40/60)
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
   useEffect(() => {
@@ -40,44 +38,39 @@ const Index = () => {
 
   const handleMenu = () => {
     setScreen("landing");
-    setSelectedPerfume(null); // Ferme la fiche si on revient au menu
+    setSelectedPerfume(null);
   };
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
       <GoldenRain />
 
-      {/* BOUTONS DE NAVIGATION FIXES */}
+      {/* NAVIGATION */}
       <div className="fixed top-6 right-6 z-[100] flex items-center gap-3">
         {screen !== "landing" && (
           <button
             onClick={handleMenu}
-            className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] flex items-center justify-center"
-            title="Accueil"
+            className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
           >
             <Home size={18} />
           </button>
         )}
-
         {screen !== "results" && (
           <button
             onClick={() => setScreen("catalogue")}
-            className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] flex items-center justify-center"
-            title="Catalogue"
+            className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
           >
             <Library size={18} />
           </button>
         )}
       </div>
 
-      {/* Bouton Profil (Gauche) */}
       <AnimatePresence>
         {showProfile && (
           <motion.button
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="fixed top-6 left-6 w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
-            title="Mon Profil"
           >
             <User size={18} />
           </motion.button>
@@ -85,23 +78,23 @@ const Index = () => {
       </AnimatePresence>
 
       <main className="relative z-10">
-        <AnimatePresence mode="wait">
-          {/* AFFICHAGE DE LA FICHE PRODUIT (Rectangle 40/60) */}
-          {selectedPerfume ? (
+        {/* AFFICHAGE DE LA FICHE PRODUIT EN OVERLAY */}
+        <AnimatePresence>
+          {selectedPerfume && (
             <motion.div 
-              key="details"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="z-[200] relative"
+              key="details-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[150] bg-black"
             >
-              <PerfumePage 
-                onClose={() => setSelectedPerfume(null)} 
-                // Ici on pourrait passer selectedPerfume en prop si tu modifies PerfumePage 
-                // pour accepter des données dynamiques
-              />
+              <PerfumePage onClose={() => setSelectedPerfume(null)} />
             </motion.div>
-          ) : (
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence mode="wait">
+          {!selectedPerfume && (
             <>
               {screen === "landing" && (
                 <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -126,8 +119,7 @@ const Index = () => {
                   <ResultsScreen 
                     results={results} 
                     onMenu={handleMenu} 
-                    onCatalogue={() => setScreen("catalogue")}
-                    // On pourrait ajouter ici : onSelect={(p) => setSelectedPerfume(p)}
+                    onCatalogue={() => setScreen("catalogue")} 
                   />
                 </motion.div>
               )}

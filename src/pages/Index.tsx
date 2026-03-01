@@ -57,12 +57,10 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black overflow-hidden text-white">
       
-      {/* BACKGROUND (Pointer events none pour ne pas bloquer les clics) */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      {/* NAVIGATION (Z-1001 pour être au-dessus de tout) */}
       <nav className="fixed inset-0 pointer-events-none z-[1001]">
         <div className="absolute top-6 left-6 flex flex-col gap-4 pointer-events-auto">
           <AnimatePresence>
@@ -103,12 +101,11 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* MAIN CONTENT */}
       <main className="relative z-10 w-full h-full">
         <AnimatePresence mode="wait">
           {selectedPerfume && (
             <motion.div 
-              key={selectedPerfume.id} // Indispensable pour rafraîchir le composant
+              key={selectedPerfume.id} 
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
@@ -138,7 +135,7 @@ const Index = () => {
               {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />}
               {screen === "analyzing" && <AnalyzingLoader />}
               {screen === "results" && <ResultsScreen results={results} onMenu={handleMenu} onCatalogue={() => setScreen("catalogue")} onSelectPerfume={setSelectedPerfume} />}
-              {screen === "catalogue" && <CatalogueScreen onMenu={handleMenu} />}
+              {screen === "catalogue" && <CatalogueScreen onMenu={handleMenu} onSelectPerfume={setSelectedPerfume} />}
             </motion.div>
           )}
         </AnimatePresence>

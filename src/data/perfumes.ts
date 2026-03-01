@@ -37,6 +37,7 @@ export interface Perfume {
   topNotesDetailed: NoteDetail[];
   heartNotesDetailed: NoteDetail[];
   baseNotesDetailed: NoteDetail[];
+  image?: string; // Ajouté pour la sécurité
 }
 
 export const NOTE_LABELS: Record<NoteCategory, string> = {
@@ -56,18 +57,6 @@ export const NOTE_LABELS: Record<NoteCategory, string> = {
   mousses: "Mousses",
 };
 
-export const TOP_NOTES: NoteCategory[] = [
-  "hesperides", "aromatiques", "marines", "epices-fraiches", "fruits-legers",
-];
-
-export const HEART_NOTES: NoteCategory[] = [
-  "florales", "fruitees", "epices-chaudes", "notes-vertes",
-];
-
-export const BASE_NOTES: NoteCategory[] = [
-  "boisees", "ambrees", "gourmandes", "musquees", "mousses",
-];
-
 export function matchPerfumes(
   gender: Gender | null,
   selectedTop: NoteCategory[],
@@ -75,11 +64,8 @@ export function matchPerfumes(
   selectedBase: NoteCategory[]
 ): { perfume: Perfume; matchPercent: number }[] {
 
-  // LOGIQUE DE FILTRE STRICT : 
-  // Si un genre est sélectionné, on ne garde QUE ce genre + le mixte.
-  // On exclut totalement l'autre genre.
   const candidates = PERFUMES.filter((p) => {
-    if (!gender) return true; // Si pas de choix, on montre tout
+    if (!gender) return true;
     if (gender === "homme") return p.gender === "homme" || p.gender === "mixte";
     if (gender === "femme") return p.gender === "femme" || p.gender === "mixte";
     return p.gender === "mixte";
@@ -99,14 +85,13 @@ export function matchPerfumes(
       
       if (matches.length === 0) return null;
 
-      // Ton calcul de probabilité basé sur les sous-notes réunies
       const matchPercent = Math.round((matches.length / perfumeCategories.length) * 100);
-
       return { perfume, matchPercent };
     })
     .filter((item): item is { perfume: Perfume; matchPercent: number } => item !== null);
 
-  return scored
+  // CORRECTION : Utilisation de sort() classique sur une copie du tableau
+  return [...scored]
     .sort((a, b) => b.matchPercent - a.matchPercent)
     .slice(0, 3);
 }

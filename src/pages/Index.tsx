@@ -41,7 +41,7 @@ const Index = () => {
     setSelectedPerfume(null);
   };
 
-  // NOUVELLE LOGIQUE DE RETOUR
+  // LOGIQUE DE NAVIGATION ARRIÈRE (Back Button)
   const handleBack = () => {
     if (selectedPerfume) {
       setSelectedPerfume(null);
@@ -59,14 +59,16 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black overflow-hidden text-white">
       
-      {/* BACKGROUND LAYER */}
+      {/* 1. COUCHE ARRIÈRE-PLAN (PLUIE DORÉE) */}
       <div className="fixed inset-0 z-0">
+        {/* On masque la pluie si on est sur l'accueil ou si on regarde un parfum précis */}
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      {/* NAVIGATION UI */}
+      {/* 2. INTERFACE DE NAVIGATION (NAVBAR) */}
       <nav className="fixed inset-0 pointer-events-none z-[999]">
-        {/* GROUPE GAUCHE : PROFIL & RETOUR */}
+        
+        {/* GROUPE GAUCHE : PROFIL & RETOUR (Vertical) */}
         <div className="absolute top-6 left-6 flex flex-col gap-4 pointer-events-auto">
           {/* Bouton Profil */}
           <AnimatePresence>
@@ -81,10 +83,11 @@ const Index = () => {
             )}
           </AnimatePresence>
 
-          {/* BOUTON RETOUR (Visible uniquement si pas sur Landing) */}
+          {/* Bouton Retour (Visible sauf sur l'écran d'accueil) */}
           <AnimatePresence>
             {(screen !== "landing" || selectedPerfume) && (
               <motion.button
+                key="back-button"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -114,15 +117,17 @@ const Index = () => {
         </div>
       </nav>
 
+      {/* 3. CONTENU PRINCIPAL */}
       <main className="relative z-10 w-full h-full">
-        {/* PAGE PRODUIT */}
+        
+        {/* NOUVELLE PAGE PRODUIT (DARK MODE #1D1E1F) */}
         <AnimatePresence>
           {selectedPerfume && (
             <motion.div 
-              key="details-page"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              key="details-overlay"
+              initial={{ x: "100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "100%", opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed inset-0 z-[1000] bg-[#1D1E1F] overflow-y-auto"
             >
@@ -134,7 +139,7 @@ const Index = () => {
           )}
         </AnimatePresence>
 
-        {/* ÉCRANS PRINCIPAUX */}
+        {/* AFFICHAGE DES ÉCRANS DU QUIZ / CATALOGUE */}
         <AnimatePresence mode="wait">
           {!selectedPerfume && (
             <motion.div

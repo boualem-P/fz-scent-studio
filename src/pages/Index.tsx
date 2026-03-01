@@ -46,8 +46,8 @@ const Index = () => {
       
       {/* BACKGROUND LAYER */}
       <div className="fixed inset-0 z-0">
-        {/* GoldenRain s'affiche PARTOUT sauf sur l'écran landing */}
-        {screen !== "landing" && <GoldenRain />}
+        {/* GoldenRain s'affiche PARTOUT sauf sur l'écran landing et quand un parfum est sélectionné */}
+        {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
       {/* NAVIGATION UI (Z-999 pour être toujours cliquable) */}
@@ -85,17 +85,21 @@ const Index = () => {
       </nav>
 
       <main className="relative z-10 w-full h-full">
-        {/* OVERLAY FICHE PRODUIT */}
+        {/* OVERLAY FICHE PRODUIT (Nouvelle Page) */}
         <AnimatePresence>
           {selectedPerfume && (
             <motion.div 
               key="details-overlay"
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 100 }}
-              className="fixed inset-0 z-[500] bg-black overflow-y-auto"
+              initial={{ opacity: 0, x: 50 }} // Animation de glissement latéral pour le côté "nouvelle page"
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 50 }}
+              className="fixed inset-0 z-[500] bg-[#fafafa] overflow-y-auto"
             >
-              <PerfumePage onClose={() => setSelectedPerfume(null)} />
+              {/* On passe l'objet selectedPerfume complet au composant */}
+              <PerfumePage 
+                perfume={selectedPerfume} 
+                onClose={() => setSelectedPerfume(null)} 
+              />
             </motion.div>
           )}
         </AnimatePresence>

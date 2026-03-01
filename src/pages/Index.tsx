@@ -124,7 +124,7 @@ const Index = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-0 z-[1000] bg-[#fafafa] overflow-y-auto"
+              className="fixed inset-0 z-[1000] bg-[#1D1E1F] overflow-y-auto"
             >
               <PerfumePage 
                 perfume={selectedPerfume} 

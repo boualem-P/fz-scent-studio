@@ -1,4 +1,17 @@
-// ... (garder les types NoteCategory, Gender, NoteDetail inchangés)
+import { PERFUMES } from "./database";
+export { PERFUMES };
+
+export type NoteCategory =
+  | "hesperides" | "aromatiques" | "marines" | "epices-fraiches"
+  | "fruits-legers" | "florales" | "fruitees" | "epices-chaudes"
+  | "notes-vertes" | "boisees" | "ambrees" | "gourmandes"
+  | "musquees" | "mousses";
+
+export type Gender = "homme" | "femme" | "mixte";
+
+export interface NoteDetail {
+  name: string;
+}
 
 export interface Perfume {
   id: string;
@@ -14,10 +27,25 @@ export interface Perfume {
   topNotesDetailed: NoteDetail[];
   heartNotesDetailed: NoteDetail[];
   baseNotesDetailed: NoteDetail[];
-  image?: string; // Le "?" rend le champ optionnel
+  image?: string; 
 }
 
-// ... (garder les constantes NOTE_LABELS, TOP_NOTES, etc. inchangées)
+export const NOTE_LABELS: Record<NoteCategory, string> = {
+  hesperides: "Hespéridés (Agrumes)",
+  aromatiques: "Aromatiques (Herbes)",
+  marines: "Marines / Aquatiques",
+  "epices-fraiches": "Épices Fraîches",
+  "fruits-legers": "Fruits Légers",
+  florales: "Florales (Jasmin, Rose, Iris)",
+  fruitees: "Fruités (Rouges, Jaunes)",
+  "epices-chaudes": "Épices Chaudes",
+  "notes-vertes": "Notes Vertes",
+  boisees: "Boisées (Santal, Oud, Cèdre)",
+  ambrees: "Ambrées & Résines",
+  gourmandes: "Gourmandes (Vanille, Caramel)",
+  musquees: "Musquées & Animales",
+  mousses: "Mousses",
+};
 
 export function matchPerfumes(
   gender: Gender | null,
@@ -51,7 +79,6 @@ export function matchPerfumes(
     })
     .filter((item): item is { perfume: Perfume; matchPercent: number } => item !== null);
 
-  // Utilisation de .sort() sur une copie pour éviter le bug toSorted
   return [...scored]
     .sort((a, b) => b.matchPercent - a.matchPercent)
     .slice(0, 3);

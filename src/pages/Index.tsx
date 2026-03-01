@@ -138,7 +138,7 @@ const Index = () => {
               {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />}
               {screen === "analyzing" && <AnalyzingLoader />}
               {screen === "results" && <ResultsScreen results={results} onMenu={handleMenu} onCatalogue={() => setScreen("catalogue")} onSelectPerfume={setSelectedPerfume} />}
-              {screen === "catalogue" && <CatalogueScreen onMenu={handleMenu} onSelectPerfume={setSelectedPerfume} />}
+              {screen === "catalogue" && <CatalogueScreen onMenu={handleMenu} />}
             </motion.div>
           )}
         </AnimatePresence>

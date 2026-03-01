@@ -30,7 +30,7 @@ const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: Result
             >
               <div className="aspect-square mb-6 overflow-hidden rounded-xl bg-white/5 flex items-center justify-center">
                 <img 
-                  src={result.perfume.image || "/placeholder.svg"} 
+                  src="/placeholder.svg" 
                   className="w-3/4 h-3/4 object-contain group-hover:scale-110 transition-transform duration-700" 
                 />
               </div>

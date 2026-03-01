@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { X, Heart, Calendar } from 'lucide-react';
-import { Perfume, perfumes } from "@/data/perfumes";
+import { Perfume, PERFUMES } from "@/data/perfumes";
 
 interface PerfumePageProps {
   perfume: Perfume | null;
@@ -22,7 +22,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   if (!perfume) return null;
 
   // Filtrage des suggestions (même marque ou même genre)
-  const suggestions = perfumes
+  const suggestions = PERFUMES
     .filter(p => p.id !== perfume.id)
     .filter(p => p.brand === perfume.brand || p.gender === perfume.gender)
     .slice(0, 6);
@@ -48,7 +48,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
         {/* VISUEL PRINCIPAL */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           <div className="aspect-square bg-white/5 rounded-3xl border border-white/10 flex items-center justify-center p-12">
-             <img src={perfume.image} alt={perfume.name} className="max-h-full w-auto object-contain drop-shadow-2xl" />
+             <span className="text-4xl font-display text-primary/40">{perfume.name.charAt(0)}</span>
           </div>
           <div className="space-y-6">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-white/40">Accords Olfactifs</h3>
@@ -74,7 +74,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                 className="min-w-[160px] bg-white/5 rounded-2xl border border-white/5 p-4 flex flex-col items-center gap-4 hover:bg-white/10 hover:border-primary/50 transition-all snap-start focus:outline-none focus:ring-2 focus:ring-primary/50"
               >
                  <div className="h-24 w-full flex items-center justify-center">
-                    <img src={suggested.image} alt={suggested.name} className="max-h-full object-contain pointer-events-none" />
+                    <span className="text-2xl font-display text-primary/40">{suggested.name.charAt(0)}</span>
                  </div>
                  <div className="text-center">
                     <p className="text-[8px] font-bold text-primary/60 uppercase">{suggested.brand}</p>

@@ -1,168 +1,57 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Perfume } from "@/data/perfumes";
-import CatalogueModal from "./CatalogueModal";
-import { X, ArrowRight, RotateCcw, ArrowLeft } from "lucide-react";
-import {
-  staggerContainer,
-  staggerItem,
-  springHover,
-  springTap,
-} from "@/lib/animations";
+import { RefreshCw, Library } from "lucide-react";
 
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
   onMenu: () => void;
   onCatalogue: () => void;
+  onSelectPerfume: (perfume: Perfume) => void; // Cette fonction est la clé
 }
 
-const PercentCircle = ({ percent }: { percent: number }) => {
-  const radius = 32;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (percent / 100) * circumference;
-
+const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
   return (
-    <div className="relative w-20 h-20 flex items-center justify-center">
-      <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
-        <circle cx="40" cy="40" r={radius} stroke="hsl(43 72% 52% / 0.15)" strokeWidth="2" fill="none" />
-        <motion.circle
-          cx="40" cy="40" r={radius}
-          stroke="hsl(43, 72%, 52%)"
-          strokeWidth="2.5"
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset: offset }}
-          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
-        />
-      </svg>
-      <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="absolute font-display text-lg text-primary">
-        {percent}%
-      </motion.span>
-    </div>
-  );
-};
+    <div className="min-h-screen pt-24 pb-12 px-6">
+      <div className="max-w-6xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-display text-gold-gradient mb-4">Vos Correspondances</h2>
+          <p className="text-primary/60 font-serif italic">Les essences qui résonnent avec votre pyramide.</p>
+        </motion.div>
 
-const PerfumeInitials = ({ name }: { name: string }) => {
-  const initials = name.split(/[\s'-]+/).filter(w => w.length > 0 && w[0] === w[0].toUpperCase()).map(w => w[0]).slice(0, 2).join("");
-  return (
-    <div className="h-44 flex items-center justify-center mb-4 mt-2">
-      <div className="w-24 h-36 rounded-sm border border-primary/30 flex items-center justify-center transition-shadow duration-300 group-hover:shadow-[0_0_15px_hsl(43_72%_52%_/_0.3)]"
-           style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 80% 65% / 0.2), transparent 70%)" }}>
-        <span className="font-display text-3xl text-primary/80 tracking-widest">{initials}</span>
-      </div>
-    </div>
-  );
-};
-
-const ResultsScreen = ({ results, onMenu, onCatalogue }: ResultsScreenProps) => {
-  const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
-
-  useEffect(() => {
-    document.body.style.overflow = selectedPerfume ? "hidden" : "auto";
-    return () => { document.body.style.overflow = "auto"; };
-  }, [selectedPerfume]);
-
-  return (
-    <div className="min-h-screen w-screen flex flex-col items-center bg-background overflow-y-auto relative px-6 pb-32 pattern-fz">
-      
-      {results.length === 0 ? (
-        <div className="flex flex-col items-center justify-center mt-32 text-center relative z-20">
-          <p className="text-muted-foreground text-lg mb-8">Aucun parfum ne correspond exactement à votre sélection.</p>
-          <motion.button onClick={onMenu} whileHover={springHover} whileTap={springTap} className="px-8 py-3 font-display text-sm tracking-[0.25em] uppercase border border-primary/40 text-primary transition-all gold-border-glow">
-            Recommencer l'expérience
-          </motion.button>
-        </div>
-      ) : (
-        <>
-          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-10 relative z-20 pt-16">
-            <motion.h2 variants={staggerItem} className="font-display text-4xl text-gold-gradient tracking-wider">Vos Recommandations</motion.h2>
-            <motion.div variants={staggerItem} className="gold-divider w-40 mx-auto mt-4" />
-          </motion.div>
-
-          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="flex flex-wrap gap-8 max-w-5xl w-full justify-center relative z-20">
-            {results.map((result) => (
-              <motion.button
-                key={result.perfume.id}
-                variants={staggerItem}
-                whileHover={springHover}
-                whileTap={springTap}
-                onClick={() => setSelectedPerfume(result.perfume)}
-                className="w-full sm:w-[280px] glass-card card-shimmer-effect p-6 flex flex-col items-center group cursor-pointer"
-              >
-                <PercentCircle percent={result.matchPercent} />
-                <PerfumeInitials name={result.perfume.name} />
-                <p className="text-[10px] font-body tracking-[0.3em] uppercase text-muted-foreground mb-1">{result.perfume.brand}</p>
-                <h3 className="font-display text-lg text-primary tracking-wide text-center">{result.perfume.name}</h3>
-                <p className="text-[9px] text-muted-foreground/60 mt-1">{result.perfume.concentration} • {result.perfume.year}</p>
-              </motion.button>
-            ))}
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5 }}
-            className="flex flex-col items-center gap-6 mt-20 relative z-20"
-          >
-            <button
-              onClick={onCatalogue}
-              className="group flex items-center gap-3 px-10 py-4 bg-primary text-black font-display text-[11px] uppercase tracking-[0.2em] transition-all hover:bg-[#F2D06B] hover:shadow-[0_0_30px_rgba(212,175,55,0.4)]"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {results.map((result, index) => (
+            <motion.div
+              key={result.perfume.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.1 }}
+              onClick={() => onSelectPerfume(result.perfume)} // ICI : On envoie l'info à l'Index
+              className="group cursor-pointer relative bg-black/40 border border-primary/20 p-6 rounded-2xl hover:border-primary/50 transition-all duration-500 overflow-hidden"
             >
-              Explorer le Catalogue Complet
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-            
-            <button
-              onClick={onMenu}
-              className="flex items-center gap-2 text-primary/60 hover:text-primary transition-colors text-[10px] uppercase tracking-[0.3em]"
-            >
-              <RotateCcw size={12} />
-              Recommencer l'analyse
-            </button>
-          </motion.div>
-        </>
-      )}
-
-      {/* Modal / Fiche Parfum */}
-      <AnimatePresence>
-        {selectedPerfume && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }} 
-            className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
-          >
-            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-lg shadow-2xl border border-primary/20 bg-[#050505]">
-              
-              {/* NAVIGATION INTERNE DE LA FICHE */}
-              
-              {/* Bouton Retour (Gauche) */}
-              <button 
-                onClick={() => setSelectedPerfume(null)} 
-                className="absolute top-5 left-6 z-[10001] flex items-center gap-2 text-primary/70 hover:text-primary transition-colors font-display text-[10px] uppercase tracking-[0.2em]"
-              >
-                <ArrowLeft size={18} />
-                <span>Retour</span>
-              </button>
-
-              {/* Bouton X (Droite) - Positionné vers la gauche et vers le bas par rapport au coin */}
-              <button 
-                onClick={() => setSelectedPerfume(null)} 
-                className="absolute top-8 right-10 z-[10001] p-1.5 rounded-full bg-white/5 text-primary/60 hover:text-primary hover:bg-white/10 transition-all border border-primary/10"
-              >
-                <X size={20} />
-              </button>
-
-              {/* Contenu Scrollable */}
-              <div className="overflow-y-auto max-h-[90vh] pt-12">
-                <CatalogueModal perfume={selectedPerfume} onClose={() => setSelectedPerfume(null)} />
+              <div className="aspect-square mb-6 overflow-hidden rounded-xl bg-white/5 flex items-center justify-center">
+                <img 
+                  src={result.perfume.image || "/placeholder.svg"} 
+                  className="w-3/4 h-3/4 object-contain group-hover:scale-110 transition-transform duration-700" 
+                />
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div className="absolute top-4 right-4 bg-primary/20 backdrop-blur-md px-3 py-1 rounded-full border border-primary/30">
+                <span className="text-primary text-xs font-bold">{result.matchPercent}% Match</span>
+              </div>
+              <h3 className="text-xl font-display text-primary mb-1">{result.perfume.name}</h3>
+              <p className="text-white/40 text-sm uppercase tracking-widest">{result.perfume.brand}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-16 flex flex-wrap justify-center gap-6">
+          <button onClick={onMenu} className="flex items-center gap-2 px-8 py-4 border border-primary/30 text-primary hover:bg-primary hover:text-black transition-all">
+            <RefreshCw size={18} /> Recommencer
+          </button>
+          <button onClick={onCatalogue} className="flex items-center gap-2 px-8 py-4 bg-primary text-black hover:bg-primary/80 transition-all">
+            <Library size={18} /> Voir le Catalogue
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

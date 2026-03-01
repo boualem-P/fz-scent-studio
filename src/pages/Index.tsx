@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { User, Library, Home } from "lucide-react";
+import { User, Library, Home, ArrowLeft } from "lucide-react";
 import LandingScreen from "@/components/LandingScreen";
 import PyramidScreen from "@/components/PyramidScreen";
 import ResultsScreen from "@/components/ResultsScreen";
@@ -41,18 +41,34 @@ const Index = () => {
     setSelectedPerfume(null);
   };
 
+  // NOUVELLE LOGIQUE DE RETOUR
+  const handleBack = () => {
+    if (selectedPerfume) {
+      setSelectedPerfume(null);
+      return;
+    }
+    
+    switch (screen) {
+      case "pyramid": setScreen("landing"); break;
+      case "results": setScreen("pyramid"); break;
+      case "catalogue": setScreen("landing"); break;
+      default: break;
+    }
+  };
+
   return (
     <div className="relative min-h-screen bg-black overflow-hidden text-white">
       
       {/* BACKGROUND LAYER */}
       <div className="fixed inset-0 z-0">
-        {/* On masque la pluie dorée quand la fiche produit est ouverte pour gagner en performance */}
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      {/* NAVIGATION UI (Z-999) */}
+      {/* NAVIGATION UI */}
       <nav className="fixed inset-0 pointer-events-none z-[999]">
-        <div className="absolute top-6 left-6 pointer-events-auto">
+        {/* GROUPE GAUCHE : PROFIL & RETOUR */}
+        <div className="absolute top-6 left-6 flex flex-col gap-4 pointer-events-auto">
+          {/* Bouton Profil */}
           <AnimatePresence>
             {showProfile && (
               <motion.button
@@ -64,8 +80,24 @@ const Index = () => {
               </motion.button>
             )}
           </AnimatePresence>
+
+          {/* BOUTON RETOUR (Visible uniquement si pas sur Landing) */}
+          <AnimatePresence>
+            {(screen !== "landing" || selectedPerfume) && (
+              <motion.button
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                onClick={handleBack}
+                className="w-12 h-12 rounded-full border border-white/10 bg-white/5 text-white backdrop-blur-md flex items-center justify-center hover:bg-white/20 transition-all shadow-lg"
+              >
+                <ArrowLeft size={20} />
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
 
+        {/* GROUPE DROITE : HOME & CATALOGUE */}
         <div className="absolute top-6 right-6 pointer-events-auto flex gap-3">
           <button
             onClick={handleMenu}
@@ -83,12 +115,12 @@ const Index = () => {
       </nav>
 
       <main className="relative z-10 w-full h-full">
-        {/* LA NOUVELLE PAGE PRODUIT (Remplace le rectangle/modal) */}
+        {/* PAGE PRODUIT */}
         <AnimatePresence>
           {selectedPerfume && (
             <motion.div 
               key="details-page"
-              initial={{ x: "100%" }} // Arrive de la droite
+              initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
@@ -102,7 +134,7 @@ const Index = () => {
           )}
         </AnimatePresence>
 
-        {/* ÉCRANS PRINCIPAUX - On les garde montés mais AnimatePresence gère le switch */}
+        {/* ÉCRANS PRINCIPAUX */}
         <AnimatePresence mode="wait">
           {!selectedPerfume && (
             <motion.div

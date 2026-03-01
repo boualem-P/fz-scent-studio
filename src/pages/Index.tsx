@@ -61,7 +61,7 @@ const Index = () => {
       
       {/* 1. COUCHE ARRIÈRE-PLAN (PLUIE DORÉE) */}
       <div className="fixed inset-0 z-0">
-        {/* On masque la pluie si on est sur l'accueil ou si on regarde un parfum précis */}
+        {/* On masque la pluie si on est sur l'accueil ou si une fiche produit est ouverte */}
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
@@ -134,6 +134,7 @@ const Index = () => {
               <PerfumePage 
                 perfume={selectedPerfume} 
                 onClose={() => setSelectedPerfume(null)} 
+                onSelectPerfume={(p) => setSelectedPerfume(p)} // Logique de suggestion cliquable ajoutée
               />
             </motion.div>
           )}

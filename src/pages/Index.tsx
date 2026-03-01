@@ -46,13 +46,12 @@ const Index = () => {
       
       {/* BACKGROUND LAYER */}
       <div className="fixed inset-0 z-0">
-        {/* GoldenRain s'affiche PARTOUT sauf sur l'écran landing et quand un parfum est sélectionné */}
+        {/* On masque la pluie dorée quand la fiche produit est ouverte pour gagner en performance */}
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      {/* NAVIGATION UI (Z-999 pour être toujours cliquable) */}
+      {/* NAVIGATION UI (Z-999) */}
       <nav className="fixed inset-0 pointer-events-none z-[999]">
-        {/* Bouton Profil à gauche */}
         <div className="absolute top-6 left-6 pointer-events-auto">
           <AnimatePresence>
             {showProfile && (
@@ -67,7 +66,6 @@ const Index = () => {
           </AnimatePresence>
         </div>
 
-        {/* Boutons Home/Catalogue à droite */}
         <div className="absolute top-6 right-6 pointer-events-auto flex gap-3">
           <button
             onClick={handleMenu}
@@ -85,17 +83,17 @@ const Index = () => {
       </nav>
 
       <main className="relative z-10 w-full h-full">
-        {/* OVERLAY FICHE PRODUIT (Nouvelle Page) */}
+        {/* LA NOUVELLE PAGE PRODUIT (Remplace le rectangle/modal) */}
         <AnimatePresence>
           {selectedPerfume && (
             <motion.div 
-              key="details-overlay"
-              initial={{ opacity: 0, x: 50 }} // Animation de glissement latéral pour le côté "nouvelle page"
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
-              className="fixed inset-0 z-[500] bg-[#fafafa] overflow-y-auto"
+              key="details-page"
+              initial={{ x: "100%" }} // Arrive de la droite
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed inset-0 z-[1000] bg-[#fafafa] overflow-y-auto"
             >
-              {/* On passe l'objet selectedPerfume complet au composant */}
               <PerfumePage 
                 perfume={selectedPerfume} 
                 onClose={() => setSelectedPerfume(null)} 
@@ -104,7 +102,7 @@ const Index = () => {
           )}
         </AnimatePresence>
 
-        {/* ÉCRANS PRINCIPAUX */}
+        {/* ÉCRANS PRINCIPAUX - On les garde montés mais AnimatePresence gère le switch */}
         <AnimatePresence mode="wait">
           {!selectedPerfume && (
             <motion.div

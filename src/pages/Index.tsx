@@ -57,17 +57,18 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black overflow-hidden text-white">
       
+      {/* BACKGROUND LAYER */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
+      {/* NAVIGATION LAYER (Z-1001) */}
       <nav className="fixed inset-0 pointer-events-none z-[1001]">
         <div className="absolute top-6 left-6 flex flex-col gap-4 pointer-events-auto">
           <AnimatePresence>
             {showProfile && (
               <motion.button
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
                 className="w-12 h-12 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md flex items-center justify-center hover:scale-110 transition-all shadow-lg"
               >
                 <User size={20} />
@@ -79,9 +80,7 @@ const Index = () => {
             {(screen !== "landing" || selectedPerfume) && (
               <motion.button
                 key="back-button"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                 onClick={handleBack}
                 className="w-12 h-12 rounded-full border border-white/10 bg-white/5 text-white backdrop-blur-md flex items-center justify-center hover:bg-white/20 transition-all shadow-lg"
               >
@@ -101,15 +100,14 @@ const Index = () => {
         </div>
       </nav>
 
+      {/* PAGE CONTENT */}
       <main className="relative z-10 w-full h-full">
         <AnimatePresence mode="wait">
           {selectedPerfume && (
             <motion.div 
               key={selectedPerfume.id} 
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              initial={{ x: "100%", opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: "100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed inset-0 z-[1000] bg-[#1D1E1F]"
             >
               <PerfumePage 
@@ -123,13 +121,7 @@ const Index = () => {
 
         <AnimatePresence mode="wait">
           {!selectedPerfume && (
-            <motion.div
-              key={screen}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full h-full"
+            <motion.div key={screen} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} className="w-full h-full"
             >
               {screen === "landing" && <LandingScreen onSelectGender={handleGender} />}
               {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />}

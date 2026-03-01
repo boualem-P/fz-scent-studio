@@ -43,35 +43,36 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
-      <GoldenRain />
-
-      {/* NAVIGATION */}
-      <div className="fixed top-6 right-6 z-[100] flex items-center gap-3">
-        {screen !== "landing" && (
-          <button
-            onClick={handleMenu}
-            className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
-          >
-            <Home size={18} />
-          </button>
-        )}
-        {screen !== "results" && (
-          <button
-            onClick={() => setScreen("catalogue")}
-            className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
-          >
-            <Library size={18} />
-          </button>
-        )}
+      {/* 1. FOND (Z-0) */}
+      <div className="fixed inset-0 z-0">
+        <GoldenRain />
       </div>
 
-      {/* PROFIL */}
+      {/* 2. NAVIGATION (Z-210 pour être TOUJOURS au dessus) */}
+      <div className="fixed top-6 right-6 z-[210] flex items-center gap-3">
+        <button
+          onClick={handleMenu}
+          className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
+          title="Accueil"
+        >
+          <Home size={18} />
+        </button>
+        <button
+          onClick={() => { setScreen("catalogue"); setSelectedPerfume(null); }}
+          className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
+          title="Catalogue"
+        >
+          <Library size={18} />
+        </button>
+      </div>
+
+      {/* PROFIL (Z-210) */}
       <AnimatePresence>
         {showProfile && (
           <motion.button
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="fixed top-6 left-6 w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
+            className="fixed top-6 left-6 z-[210] w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
           >
             <User size={18} />
           </motion.button>
@@ -79,14 +80,14 @@ const Index = () => {
       </AnimatePresence>
 
       <main className="relative z-10">
-        {/* FICHE PRODUIT EN OVERLAY */}
+        {/* 3. FICHE PRODUIT (Z-200) */}
         <AnimatePresence>
           {selectedPerfume && (
             <motion.div 
               key="details-overlay"
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 50 }}
+              exit={{ opacity: 0, y: 100 }}
               className="fixed inset-0 z-[200] bg-black overflow-y-auto"
             >
               <PerfumePage onClose={() => setSelectedPerfume(null)} />
@@ -94,7 +95,7 @@ const Index = () => {
           )}
         </AnimatePresence>
 
-        {/* ÉCRANS PRINCIPAUX */}
+        {/* 4. CONTENU PRINCIPAL (Z-10) */}
         <AnimatePresence mode="wait">
           {!selectedPerfume && (
             <motion.div
@@ -111,21 +112,27 @@ const Index = () => {
                 <ResultsScreen 
                   results={results} 
                   onMenu={handleMenu} 
-                  onCatalogue={() => setScreen("catalogue")} 
+                  onCatalogue={() => setScreen("catalogue")}
+                  onSelectPerfume={(p) => setSelectedPerfume(p)} 
                 />
               )}
-              {screen === "catalogue" && <CatalogueScreen onMenu={handleMenu} />}
+              {screen === "catalogue" && (
+                <CatalogueScreen 
+                  onMenu={handleMenu} 
+                  onSelectPerfume={(p) => setSelectedPerfume(p)}
+                />
+              )}
             </motion.div>
           )}
         </AnimatePresence>
       </main>
       
-      {/* BOUTON TEST TEMPORAIRE (À supprimer après validation) */}
+      {/* Bouton de test discret en bas à gauche */}
       <button 
-        onClick={() => setSelectedPerfume({ id: 1 } as any)}
-        className="fixed bottom-4 left-4 z-[200] text-[8px] text-primary/20 opacity-20 hover:opacity-100"
+        onClick={() => setSelectedPerfume({ id: 1, name: "Test", brand: "Test" } as any)}
+        className="fixed bottom-4 left-4 z-[210] text-[8px] text-primary/10 hover:text-primary transition-opacity"
       >
-        Debug: Open Detail
+        DEBUG: OPEN DETAIL
       </button>
     </div>
   );

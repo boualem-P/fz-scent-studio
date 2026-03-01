@@ -65,6 +65,7 @@ const Index = () => {
         )}
       </div>
 
+      {/* PROFIL */}
       <AnimatePresence>
         {showProfile && (
           <motion.button
@@ -78,61 +79,54 @@ const Index = () => {
       </AnimatePresence>
 
       <main className="relative z-10">
-        {/* AFFICHAGE DE LA FICHE PRODUIT EN OVERLAY */}
+        {/* FICHE PRODUIT EN OVERLAY */}
         <AnimatePresence>
           {selectedPerfume && (
             <motion.div 
               key="details-overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[150] bg-black"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              className="fixed inset-0 z-[200] bg-black overflow-y-auto"
             >
               <PerfumePage onClose={() => setSelectedPerfume(null)} />
             </motion.div>
           )}
         </AnimatePresence>
 
+        {/* ÉCRANS PRINCIPAUX */}
         <AnimatePresence mode="wait">
           {!selectedPerfume && (
-            <>
-              {screen === "landing" && (
-                <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <LandingScreen onSelectGender={handleGender} />
-                </motion.div>
-              )}
-
-              {screen === "pyramid" && (
-                <motion.div key="pyramid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />
-                </motion.div>
-              )}
-
-              {screen === "analyzing" && (
-                <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <AnalyzingLoader />
-                </motion.div>
-              )}
-
+            <motion.div
+              key={screen}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {screen === "landing" && <LandingScreen onSelectGender={handleGender} />}
+              {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />}
+              {screen === "analyzing" && <AnalyzingLoader />}
               {screen === "results" && (
-                <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <ResultsScreen 
-                    results={results} 
-                    onMenu={handleMenu} 
-                    onCatalogue={() => setScreen("catalogue")} 
-                  />
-                </motion.div>
+                <ResultsScreen 
+                  results={results} 
+                  onMenu={handleMenu} 
+                  onCatalogue={() => setScreen("catalogue")} 
+                />
               )}
-
-              {screen === "catalogue" && (
-                <motion.div key="catalogue" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <CatalogueScreen onMenu={handleMenu} />
-                </motion.div>
-              )}
-            </>
+              {screen === "catalogue" && <CatalogueScreen onMenu={handleMenu} />}
+            </motion.div>
           )}
         </AnimatePresence>
       </main>
+      
+      {/* BOUTON TEST TEMPORAIRE (À supprimer après validation) */}
+      <button 
+        onClick={() => setSelectedPerfume({ id: 1 } as any)}
+        className="fixed bottom-4 left-4 z-[200] text-[8px] text-primary/20 opacity-20 hover:opacity-100"
+      >
+        Debug: Open Detail
+      </button>
     </div>
   );
 };

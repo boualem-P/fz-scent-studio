@@ -16,13 +16,7 @@ const Index = () => {
   const [screen, setScreen] = useState<Screen>("landing");
   const [gender, setGender] = useState<Gender>("homme");
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
-  const [showProfile, setShowProfile] = useState(false);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowProfile(true), 1000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleGender = (g: Gender) => {
     setGender(g);
@@ -42,68 +36,68 @@ const Index = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-black overflow-hidden">
-      {/* 1. FOND (Z-0) */}
+    <div className="relative min-h-screen bg-black overflow-hidden text-white font-sans">
+      {/* 1. BACKGROUND (Toujours en fond) */}
       <div className="fixed inset-0 z-0">
         <GoldenRain />
       </div>
 
-      {/* 2. NAVIGATION (Z-210 pour être TOUJOURS au dessus) */}
-      <div className="fixed top-6 right-6 z-[210] flex items-center gap-3">
-        <button
-          onClick={handleMenu}
-          className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
-          title="Accueil"
-        >
-          <Home size={18} />
-        </button>
-        <button
-          onClick={() => { setScreen("catalogue"); setSelectedPerfume(null); }}
-          className="w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
-          title="Catalogue"
-        >
-          <Library size={18} />
-        </button>
-      </div>
-
-      {/* PROFIL (Z-210) */}
-      <AnimatePresence>
-        {showProfile && (
+      {/* 2. UI LAYER : BOUTONS FIXES (C'est ici qu'on règle ton problème de visibilité) */}
+      <nav className="fixed inset-0 pointer-events-none z-[999]">
+        {/* Bouton Profil (Gauche) */}
+        <div className="absolute top-6 left-6 pointer-events-auto">
           <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="fixed top-6 left-6 z-[210] w-10 h-10 rounded-full border border-primary/30 bg-black/60 text-primary backdrop-blur-md transition-all duration-300 hover:scale-110 flex items-center justify-center"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-12 h-12 rounded-full border border-primary/40 bg-black/80 text-primary backdrop-blur-xl shadow-[0_0_20px_rgba(212,175,55,0.2)] flex items-center justify-center hover:scale-110 transition-transform duration-300"
+            onClick={() => console.log("Profil cliqué")}
           >
-            <User size={18} />
+            <User size={22} />
           </motion.button>
-        )}
-      </AnimatePresence>
+        </div>
 
-      <main className="relative z-10">
-        {/* 3. FICHE PRODUIT (Z-200) */}
-        <AnimatePresence>
+        {/* Boutons Navigation (Droite) */}
+        <div className="absolute top-6 right-6 pointer-events-auto flex gap-4">
+          <button
+            onClick={handleMenu}
+            className="w-12 h-12 rounded-full border border-primary/40 bg-black/80 text-primary backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-[0_0_20px_rgba(212,175,55,0.1)]"
+          >
+            <Home size={20} />
+          </button>
+          <button
+            onClick={() => { setScreen("catalogue"); setSelectedPerfume(null); }}
+            className="w-12 h-12 rounded-full border border-primary/40 bg-black/80 text-primary backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-[0_0_20px_rgba(212,175,55,0.1)]"
+          >
+            <Library size={20} />
+          </button>
+        </div>
+      </nav>
+
+      {/* 3. MAIN CONTENT LAYER (Z-10) */}
+      <main className="relative z-10 w-full h-full">
+        <AnimatePresence mode="wait">
+          {/* OVERLAY FICHE PRODUIT */}
           {selectedPerfume && (
             <motion.div 
               key="details-overlay"
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 100 }}
-              className="fixed inset-0 z-[200] bg-black overflow-y-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[500] bg-black overflow-y-auto"
             >
               <PerfumePage onClose={() => setSelectedPerfume(null)} />
             </motion.div>
           )}
-        </AnimatePresence>
 
-        {/* 4. CONTENU PRINCIPAL (Z-10) */}
-        <AnimatePresence mode="wait">
+          {/* ÉCRANS PRINCIPAUX */}
           {!selectedPerfume && (
             <motion.div
               key={screen}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4 }}
+              className="w-full h-full"
             >
               {screen === "landing" && <LandingScreen onSelectGender={handleGender} />}
               {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={handleMenu} />}
@@ -126,14 +120,6 @@ const Index = () => {
           )}
         </AnimatePresence>
       </main>
-      
-      {/* Bouton de test discret en bas à gauche */}
-      <button 
-        onClick={() => setSelectedPerfume({ id: 1, name: "Test", brand: "Test" } as any)}
-        className="fixed bottom-4 left-4 z-[210] text-[8px] text-primary/10 hover:text-primary transition-opacity"
-      >
-        DEBUG: OPEN DETAIL
-      </button>
     </div>
   );
 };

@@ -57,11 +57,13 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black overflow-hidden text-white">
       
-      <div className="fixed inset-0 z-0">
+      {/* 1. FOND (PLUIE DORÉE) */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      <nav className="fixed inset-0 pointer-events-none z-[999]">
+      {/* 2. INTERFACE DE NAVIGATION (Z-1001 pour être au dessus de la page produit) */}
+      <nav className="fixed inset-0 pointer-events-none z-[1001]">
         <div className="absolute top-6 left-6 flex flex-col gap-4 pointer-events-auto">
           <AnimatePresence>
             {showProfile && (
@@ -101,29 +103,29 @@ const Index = () => {
         </div>
       </nav>
 
+      {/* 3. PAGES ET OVERLAYS */}
       <main className="relative z-10 w-full h-full">
-        <AnimatePresence mode="wait">
+        {/* PAGE PRODUIT (Z-1000) */}
+        <AnimatePresence>
           {selectedPerfume && (
             <motion.div 
-              key={selectedPerfume.id} // CRUCIAL : Force React à recréer la page au changement de parfum
+              key={selectedPerfume.id} 
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed inset-0 z-[1000] bg-[#1D1E1F] overflow-y-auto"
+              className="fixed inset-0 z-[1000] bg-[#1D1E1F]"
             >
               <PerfumePage 
                 perfume={selectedPerfume} 
                 onClose={() => setSelectedPerfume(null)} 
-                onSelectPerfume={(p) => {
-                    setSelectedPerfume(p);
-                    window.scrollTo(0,0); // Remonte en haut
-                }}
+                onSelectPerfume={(p) => setSelectedPerfume(p)}
               />
             </motion.div>
           )}
         </AnimatePresence>
 
+        {/* ÉCRANS PRINCIPAUX */}
         <AnimatePresence mode="wait">
           {!selectedPerfume && (
             <motion.div

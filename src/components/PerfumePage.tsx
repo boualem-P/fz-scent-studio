@@ -1,15 +1,24 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { X, Calendar, Heart, Droplets } from 'lucide-react';
-import { Perfume } from "@/data/perfumes";
+import { Perfume, perfumes } from "@/data/perfumes"; // On importe la liste globale
 
 interface PerfumePageProps {
   perfume: Perfume | null;
   onClose: () => void;
+  onSelectPerfume: (perfume: Perfume) => void; // Nouvelle prop pour la navigation
 }
 
-const PerfumePage = ({ perfume, onClose }: PerfumePageProps) => {
+const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   if (!perfume) return null;
+
+  // LOGIQUE DE SUGGESTION : 
+  // On filtre le catalogue pour trouver des parfums de la même marque 
+  // ou on prend les 4 premiers qui ne sont pas le parfum actuel.
+  const suggestions = perfumes
+    .filter(p => p.id !== perfume.id)
+    .filter(p => p.brand === perfume.brand || p.gender === perfume.gender)
+    .slice(0, 5);
 
   const accords = [
     { label: "Boisé", value: 90, color: "#451A03" },
@@ -20,10 +29,8 @@ const PerfumePage = ({ perfume, onClose }: PerfumePageProps) => {
   ];
 
   return (
-    <motion.div 
-      className="min-h-screen w-full bg-[#1D1E1F] text-white pb-20 font-sans"
-    >
-      {/* HEADER BAR DARK */}
+    <motion.div className="min-h-screen w-full bg-[#1D1E1F] text-white pb-20 font-sans">
+      {/* NAVIGATION BAR */}
       <nav className="sticky top-0 z-50 bg-[#1D1E1F]/80 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex justify-between items-center shadow-2xl">
         <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-all">
           <X size={24} className="text-white/70" />
@@ -38,10 +45,8 @@ const PerfumePage = ({ perfume, onClose }: PerfumePageProps) => {
       </nav>
 
       <div className="max-w-4xl mx-auto p-6 space-y-12">
-        
         {/* SECTION 1: PHOTO & ACCORDS */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mt-4">
-          {/* Gauche: Photo (Fond légèrement plus clair pour détacher le flacon) */}
           <div className="aspect-square bg-gradient-to-b from-white/5 to-transparent rounded-3xl border border-white/10 shadow-2xl flex items-center justify-center p-12 group">
              <img 
                 src={perfume.image || "/placeholder.svg"} 
@@ -50,7 +55,6 @@ const PerfumePage = ({ perfume, onClose }: PerfumePageProps) => {
              />
           </div>
 
-          {/* Droite: Batonnets */}
           <div className="space-y-6">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">Accords Principaux</h3>
             {accords.map((accord, i) => (
@@ -79,43 +83,52 @@ const PerfumePage = ({ perfume, onClose }: PerfumePageProps) => {
               Édition 2021
            </div>
            <p className="text-white/60 font-serif leading-relaxed italic text-xl max-w-xl mx-auto">
-             "Une signature olfactive audacieuse, conçue pour marquer l'esprit par sa profondeur et son mystère."
+             "{perfume.name} par {perfume.brand} est une création exceptionnelle qui capture l'essence de la sophistication."
            </p>
         </section>
 
-        {/* SECTION 3: NOTES (IMAGES) */}
+        {/* SECTION 3: NOTES OLFACTIVES */}
         <section className="space-y-10">
            <h3 className="text-center text-[10px] font-bold uppercase tracking-[0.5em] text-white/30">Notes Olfactives</h3>
            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {[
-                { n: "Bergamote", img: "https://images.unsplash.com/photo-1596722265008-8e8952329759?w=100" },
-                { n: "Patchouli", img: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=100" },
-                { n: "Cuir", img: "https://images.unsplash.com/photo-1524383525204-629433e5623e?w=100" },
-                { n: "Vanille", img: "https://images.unsplash.com/photo-1539735354046-5174207a5f19?w=100" }
-              ].map((note, i) => (
+              {/* On peut boucler sur les notes réelles du parfum si elles existent dans ton data */}
+              {["Bergamote", "Patchouli", "Cuir", "Vanille"].map((note, i) => (
                 <div key={i} className="flex flex-col items-center gap-4 group">
                   <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl border border-white/10 transition-all duration-500 group-hover:border-primary/50 group-hover:-translate-y-2">
-                    <img src={note.img} alt={note.n} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                    <img src={`https://source.unsplash.com/200x200/?${note}`} alt={note} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-primary transition-colors">{note.n}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-primary transition-colors">{note}</span>
                 </div>
               ))}
            </div>
         </section>
 
-        {/* SECTION CAROUSSEL */}
+        {/* SECTION 4: CAROUSSEL DYNAMIQUE & CLIQUABLE */}
         <section className="space-y-6 pt-10">
           <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/20">Suggestions similaires</h3>
-          <div className="flex gap-4 overflow-x-auto pb-6 no-scrollbar">
-            {[1, 2, 3, 4].map((id) => (
-              <div key={id} className="min-w-[160px] aspect-[4/5] bg-white/5 rounded-2xl border border-white/5 p-6 flex flex-col items-center justify-center hover:bg-white/10 transition-all cursor-pointer group">
-                 <Droplets className="text-white/10 mb-4 group-hover:text-primary transition-colors" size={32} />
-                 <span className="text-[10px] font-bold text-center uppercase tracking-tighter text-white/40 group-hover:text-white">Fragrance {id}</span>
-              </div>
+          <div className="flex gap-4 overflow-x-auto pb-6 no-scrollbar snap-x">
+            {suggestions.map((suggestedPerfume) => (
+              <motion.div 
+                key={suggestedPerfume.id} 
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  onSelectPerfume(suggestedPerfume);
+                  // On remonte en haut de page pour la nouvelle fiche
+                  document.querySelector('main')?.parentElement?.scrollTo(0,0);
+                }}
+                className="min-w-[160px] bg-white/5 rounded-2xl border border-white/5 p-4 flex flex-col items-center justify-between hover:bg-white/10 transition-all cursor-pointer group snap-start"
+              >
+                 <div className="h-24 w-full flex items-center justify-center mb-4">
+                    <img src={suggestedPerfume.image} alt={suggestedPerfume.name} className="max-h-full object-contain group-hover:scale-110 transition-transform" />
+                 </div>
+                 <div className="text-center">
+                    <p className="text-[8px] font-bold text-primary/60 uppercase">{suggestedPerfume.brand}</p>
+                    <p className="text-[10px] font-bold text-white uppercase truncate w-32">{suggestedPerfume.name}</p>
+                 </div>
+              </motion.div>
             ))}
           </div>
         </section>
-
       </div>
     </motion.div>
   );

@@ -6,11 +6,9 @@ import { User, Maximize, Minimize } from "lucide-react"; // Import des icônes d
 
 interface LandingScreenProps {
   onSelectGender: (gender: Gender) => void;
-  onCatalogue: () => void;
-  onProfile: () => void;
 }
 
-const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
+const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const videoSrc = "/bg-parfum.mp4";
 
@@ -47,19 +45,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
 
-      {/* BOUTON PROFIL (HAUT GAUCHE) */}
-      <div className="absolute top-8 left-8 z-50">
-        <motion.button
-          whileHover={springHover}
-          whileTap={springTap}
-          onClick={onProfile}
-          className="flex items-center justify-center w-10 h-10 rounded-full border border-[#D4AF37]/30 bg-black/40 text-[#D4AF37] backdrop-blur-md"
-        >
-          <User size={18} />
-        </motion.button>
-      </div>
-
-      {/* NOUVEAU : BOUTON PLEIN ÉCRAN (BAS GAUCHE) */}
+      {/* BOUTON PLEIN ÉCRAN (BAS GAUCHE) */}
       <div className="absolute bottom-8 left-8 z-50">
         <motion.button
           whileHover={springHover}
@@ -98,13 +84,6 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
             </motion.button>
           ))}
         </div>
-        <motion.button
-          variants={staggerItem}
-          onClick={onCatalogue}
-          className="font-body text-[10px] uppercase tracking-[0.5em] text-primary/60 hover:text-primary transition-colors border-b border-primary/20 pb-1"
-        >
-          Découvrir la collection
-        </motion.button>
       </motion.div>
     </div>
   );

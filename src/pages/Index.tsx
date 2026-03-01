@@ -57,12 +57,12 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black overflow-hidden text-white">
       
-      {/* 1. FOND (PLUIE DORÉE) */}
+      {/* BACKGROUND (Pointer events none pour ne pas bloquer les clics) */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      {/* 2. INTERFACE DE NAVIGATION (Z-1001 pour être au dessus de la page produit) */}
+      {/* NAVIGATION (Z-1001 pour être au-dessus de tout) */}
       <nav className="fixed inset-0 pointer-events-none z-[1001]">
         <div className="absolute top-6 left-6 flex flex-col gap-4 pointer-events-auto">
           <AnimatePresence>
@@ -103,13 +103,12 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* 3. PAGES ET OVERLAYS */}
+      {/* MAIN CONTENT */}
       <main className="relative z-10 w-full h-full">
-        {/* PAGE PRODUIT (Z-1000) */}
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {selectedPerfume && (
             <motion.div 
-              key={selectedPerfume.id} 
+              key={selectedPerfume.id} // Indispensable pour rafraîchir le composant
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
@@ -125,7 +124,6 @@ const Index = () => {
           )}
         </AnimatePresence>
 
-        {/* ÉCRANS PRINCIPAUX */}
         <AnimatePresence mode="wait">
           {!selectedPerfume && (
             <motion.div

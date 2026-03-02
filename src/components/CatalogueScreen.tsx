@@ -30,7 +30,12 @@ const PerfumeInitials = ({ name }: { name: string }) => {
 
 const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
-  const [searchQuery, setSearchQuery] = useState(""); // État pour la recherche
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const MAX_SEARCH_LENGTH = 100;
+  const sanitizeSearchInput = (input: string): string => {
+    return input.slice(0, MAX_SEARCH_LENGTH).trim();
+  };
 
   // Logique de filtrage
   const filteredPerfumes = PERFUMES.filter((perfume) =>
@@ -75,7 +80,8 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
             type="text"
             placeholder="Rechercher..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(sanitizeSearchInput(e.target.value))}
+            maxLength={100}
             className="w-full bg-black/40 border border-primary/20 rounded-full py-2 pl-10 pr-10 text-xs font-body tracking-wider text-primary outline-none focus:border-primary/60 transition-all placeholder:text-primary/30"
           />
           {searchQuery && (

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Library, Home, ArrowLeft, User } from "lucide-react"; // Ajout de l'icône User
+import { Library, Home, ArrowLeft, User } from "lucide-react";
 import LandingScreen from "@/components/LandingScreen";
 import PyramidScreen from "@/components/PyramidScreen";
 import ResultsScreen from "@/components/ResultsScreen";
@@ -48,8 +48,9 @@ const Index = () => {
       </div>
 
       {/* 2. NAVIGATION FIXE */}
-      <nav className="fixed top-6 left-6 right-6 flex justify-between items-center z-[200] pointer-events-none">
-        <div className="flex gap-4 pointer-events-auto">
+      <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
+        {/* COLONNE GAUCHE : RETOUR + PROFIL */}
+        <div className="flex flex-col gap-3 pointer-events-auto">
           {(screen !== "landing" || selectedPerfume) && (
             <button 
               onClick={() => selectedPerfume ? handleSelectPerfume(null) : setScreen("landing")}
@@ -58,20 +59,19 @@ const Index = () => {
               <ArrowLeft size={20} />
             </button>
           )}
-        </div>
-
-        <div className="flex gap-3 pointer-events-auto">
-          {/* LE BOUTON PROFIL (GENRE) RÉAPPARAÎT ICI */}
+          
+          {/* NOUVEL EMPLACEMENT DU BOUTON PROFIL (SANS TEXTE) */}
           <button 
             onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
-            className="px-4 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center gap-2 hover:scale-105 transition-all shadow-2xl group"
+            className="w-12 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
+            title={`Profil actuel : ${gender}`}
           >
-            <User size={18} />
-            <span className="text-[10px] font-bold uppercase tracking-widest border-l border-amber-500/20 pl-2">
-              Profil: {gender}
-            </span>
+            <User size={20} />
           </button>
+        </div>
 
+        {/* COLONNE DROITE : ACCUEIL + CATALOGUE */}
+        <div className="flex gap-3 pointer-events-auto">
           <button 
             onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
             className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"

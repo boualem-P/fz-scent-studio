@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Wind, Droplets, Sparkles, Check, ArrowRight, ArrowLeft, Triangle } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { Wind, Droplets, Sparkles, Smile, Frown, ArrowLeft } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
 
 interface PyramidScreenProps {
@@ -9,199 +9,121 @@ interface PyramidScreenProps {
 }
 
 const STEPS = [
-  { id: "top", label: "Tête", icon: <Wind size={14}/>, desc: "L'ouverture" },
-  { id: "heart", label: "Cœur", icon: <Droplets size={14}/>, desc: "L'identité" },
-  { id: "base", label: "Fond", icon: <Sparkles size={14}/>, desc: "Le sillage" }
+  { id: "top", label: "Notes de Tête", icon: <Wind size={16}/> },
+  { id: "heart", label: "Notes de Cœur", icon: <Droplets size={16}/> },
+  { id: "base", label: "Notes de Fond", icon: <Sparkles size={16}/> }
 ];
 
-const NOTES_DATA: Record<string, { id: NoteCategory, label: string, color: string }[]> = {
+const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string }[]> = {
   top: [
-    { id: "hesperides", label: "Agrumes", color: "from-yellow-200 to-amber-400" },
-    { id: "aromatiques", label: "Aromates", color: "from-emerald-200 to-teal-500" },
-    { id: "marines", label: "Marines", color: "from-blue-200 to-cyan-500" },
-    { id: "epices-fraiches", label: "Épices F.", color: "from-zinc-200 to-slate-500" }
+    { id: "hesperides", label: "Agrumes", img: "https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=400" },
+    { id: "aromatiques", label: "Aromates", img: "https://images.unsplash.com/photo-1595908129746-57ca1a63dd4d?q=80&w=400" },
+    { id: "marines", label: "Marines", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400" }
   ],
   heart: [
-    { id: "florales", label: "Fleurs", color: "from-pink-200 to-rose-500" },
-    { id: "fruitees", label: "Fruits", color: "from-orange-200 to-red-500" },
-    { id: "notes-vertes", label: "Vertes", color: "from-green-200 to-emerald-600" },
-    { id: "epices-chaudes", label: "Épices C.", color: "from-orange-300 to-amber-700" }
+    { id: "florales", label: "Fleurs", img: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?q=80&w=400" },
+    { id: "fruitees", label: "Fruits", img: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=400" }
   ],
   base: [
-    { id: "boisees", label: "Bois", color: "from-stone-300 to-orange-900" },
-    { id: "ambrees", label: "Ambre", color: "from-amber-400 to-orange-800" },
-    { id: "musquees", color: "from-slate-100 to-zinc-400", label: "Muscs" },
-    { id: "gourmandes", label: "Vanille", color: "from-yellow-600 to-amber-900" },
-    { id: "mousses", label: "Mousses", color: "from-green-800 to-stone-900" }
+    { id: "boisees", label: "Bois", img: "https://images.unsplash.com/photo-1585675100414-add2e465a136?q=80&w=400" },
+    { id: "ambrees", label: "Ambre", img: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=400" }
   ]
 };
 
 const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [noteIndex, setNoteIndex] = useState(0);
   const [selections, setSelections] = useState<{ top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[] }>({
     top: [], heart: [], base: []
   });
 
   const stepInfo = STEPS[currentStep];
-  const stepNotes = NOTES_DATA[stepInfo.id];
+  const notesAvailable = NOTES_DATA[stepInfo.id];
+  const currentNote = notesAvailable[noteIndex];
 
-  const toggleNote = (noteId: NoteCategory) => {
+  // Motion values pour le swipe
+  const x = useMotionValue(0);
+  const rotate = useTransform(x, [-200, 200], [-25, 25]);
+  const opacityIconLeft = useTransform(x, [-150, -50], [1, 0]);
+  const opacityIconRight = useTransform(x, [50, 150], [0, 1]);
+
+  const handleNext = (liked: boolean) => {
     const key = stepInfo.id as keyof typeof selections;
-    setSelections(prev => ({
-      ...prev,
-      [key]: prev[key].includes(noteId) 
-        ? prev[key].filter(id => id !== noteId) 
-        : [...prev[key], noteId]
-    }));
-  };
+    
+    // Si aimé, on ajoute à la sélection
+    const newSelections = { ...selections };
+    if (liked) {
+      newSelections[key] = [...newSelections[key], currentNote.id];
+      setSelections(newSelections);
+    }
 
-  const next = () => {
-    if (currentStep < 2) setCurrentStep(prev => prev + 1);
-    else onValidate(selections.top, selections.heart, selections.base);
+    // Navigation
+    if (noteIndex < notesAvailable.length - 1) {
+      setNoteIndex(prev => prev + 1);
+    } else if (currentStep < 2) {
+      setCurrentStep(prev => prev + 1);
+      setNoteIndex(0);
+    } else {
+      onValidate(newSelections.top, newSelections.heart, newSelections.base);
+    }
   };
-
-  // Calcul du résumé des sélections pour l'affichage permanent
-  const totalSelected = selections.top.length + selections.heart.length + selections.base.length;
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center overflow-hidden">
+    <div className="min-h-screen bg-black flex flex-col items-center pt-24 px-6 overflow-hidden">
       
-      {/* HEADER LUXE */}
-      <header className="fixed top-0 w-full z-50 p-8 flex justify-between items-start">
-        <button onClick={onMenu} className="text-zinc-500 hover:text-white transition-colors uppercase text-[10px] tracking-[0.3em]">Quitter</button>
-        <div className="text-center">
-          <p className="text-amber-500 text-[9px] font-black uppercase tracking-[0.5em] mb-2">Architecte Olfactif</p>
-          <div className="flex gap-2 justify-center">
-            {STEPS.map((_, i) => (
-              <div key={i} className={`h-1 w-8 rounded-full transition-all duration-700 ${i <= currentStep ? "bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" : "bg-white/10"}`} />
-            ))}
-          </div>
+      {/* Header Interne */}
+      <div className="text-center mb-12 z-10">
+        <div className="flex items-center justify-center gap-2 text-amber-500 mb-2">
+          {stepInfo.icon}
+          <span className="text-[10px] font-black uppercase tracking-[0.4em]">{stepInfo.label}</span>
         </div>
-        <div className="text-right">
-          <span className="text-amber-500 font-serif italic text-xl">{totalSelected}</span>
-          <p className="text-zinc-600 text-[8px] uppercase tracking-widest">Essences</p>
-        </div>
-      </header>
+        <h2 className="text-3xl font-light text-white uppercase tracking-tighter">Votre Ressenti</h2>
+      </div>
 
-      {/* ZONE DE FLOTTAISON DES BULLES */}
-      <main className="flex-1 w-full max-w-4xl relative flex items-center justify-center">
-        <AnimatePresence mode="wait">
+      {/* Zone de Swipe */}
+      <div className="relative w-full max-w-[320px] aspect-[3/4] mb-20">
+        <AnimatePresence mode="popLayout">
           <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.1 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full h-[500px] flex items-center justify-center"
+            key={currentNote.id}
+            style={{ x, rotate }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.x > 100) handleNext(true);
+              else if (info.offset.x < -100) handleNext(false);
+            }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ x: x.get() > 0 ? 400 : -400, opacity: 0, transition: { duration: 0.3 } }}
+            className="absolute inset-0 bg-zinc-900 rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing"
           >
-            {/* TITRE CENTRAL DISCRET */}
-            <div className="absolute z-0 text-center pointer-events-none">
-              <h2 className="text-8xl font-black text-white/[0.03] uppercase tracking-tighter leading-none select-none">
-                {stepInfo.label}
-              </h2>
-            </div>
+            <img src={currentNote.img} alt="" className="w-full h-full object-cover opacity-50 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none" />
+            
+            {/* Indicateurs de swipe */}
+            <motion.div style={{ opacity: opacityIconRight }} className="absolute top-10 right-10 text-amber-500 bg-black/50 p-4 rounded-full backdrop-blur-md border border-amber-500/50">
+              <Smile size={40} />
+            </motion.div>
+            <motion.div style={{ opacity: opacityIconLeft }} className="absolute top-10 left-10 text-zinc-500 bg-black/50 p-4 rounded-full backdrop-blur-md border border-white/20">
+              <Frown size={40} />
+            </motion.div>
 
-            {/* LES BULLES */}
-            <div className="relative w-full h-full flex items-center justify-center">
-              {stepNotes.map((note, index) => {
-                const isSelected = (selections[stepInfo.id as keyof typeof selections] as NoteCategory[]).includes(note.id);
-                
-                // Positionnement "organique" circulaire
-                const angle = (index / stepNotes.length) * Math.PI * 2;
-                const radius = 160;
-                const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius;
-
-                return (
-                  <motion.button
-                    key={note.id}
-                    onClick={() => toggleNote(note.id)}
-                    initial={{ x: 0, y: 0, opacity: 0 }}
-                    animate={{ 
-                      x, 
-                      y, 
-                      opacity: 1,
-                      transition: { delay: index * 0.1, duration: 1 }
-                    }}
-                    whileHover={{ scale: 1.1 }}
-                    className="absolute group"
-                  >
-                    {/* LA BULLE (Sphère) */}
-                    <div className={`relative w-28 h-28 rounded-full flex flex-col items-center justify-center transition-all duration-700 border shadow-2xl ${
-                      isSelected 
-                      ? "border-amber-500 shadow-[0_0_40px_rgba(245,158,11,0.2)] bg-black" 
-                      : "border-white/10 bg-zinc-900/40 backdrop-blur-md"
-                    }`}>
-                      {/* Reflet de lumière sur la bulle */}
-                      <div className="absolute top-4 left-4 w-6 h-6 bg-white/10 rounded-full blur-md" />
-                      
-                      <div className={`text-[9px] uppercase tracking-widest font-bold mb-1 transition-colors ${isSelected ? "text-amber-500" : "text-zinc-400"}`}>
-                        {note.label}
-                      </div>
-
-                      {isSelected && (
-                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-amber-500 mt-1">
-                          <Check size={16} strokeWidth={3} />
-                        </motion.div>
-                      )}
-
-                      {/* Dégradé de couleur discret au fond de la bulle */}
-                      <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${note.color} opacity-[0.03] group-hover:opacity-10 transition-opacity`} />
-                    </div>
-
-                    {/* Effet d'orbite autour de la bulle sélectionnée */}
-                    {isSelected && (
-                      <motion.div 
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-[-10px] border border-amber-500/20 rounded-full border-dashed"
-                      />
-                    )}
-                  </motion.button>
-                );
-              })}
+            <div className="absolute bottom-12 left-0 right-0 text-center px-6">
+              <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.5em] mb-2">Note Olfactive</p>
+              <h3 className="text-4xl font-extralight text-white tracking-tight">{currentNote.label}</h3>
             </div>
           </motion.div>
         </AnimatePresence>
-      </main>
+      </div>
 
-      {/* FOOTER NAVIGATION */}
-      <footer className="w-full p-12 flex flex-col items-center gap-8 bg-gradient-to-t from-black via-black to-transparent">
-        <div className="flex flex-col items-center max-w-xs text-center">
-          <p className="text-zinc-500 text-xs font-light italic leading-relaxed mb-6 opacity-60">
-            "{stepInfo.desc} : Sélectionnez les essences qui résonnent avec votre âme."
-          </p>
+      {/* Footer Navigation */}
+      <div className="mt-auto pb-12 w-full max-w-xs flex justify-between items-center opacity-40">
+        <button onClick={onMenu} className="flex items-center gap-2 text-[10px] uppercase tracking-widest hover:text-white transition-colors">
+          <ArrowLeft size={14}/> Retour
+        </button>
+        <div className="text-[10px] font-bold tracking-[0.2em] text-amber-500">
+          {noteIndex + 1} / {notesAvailable.length}
         </div>
-
-        <div className="flex items-center gap-12">
-          <button 
-            onClick={() => currentStep > 0 && setCurrentStep(c => c - 1)}
-            className={`text-[10px] uppercase tracking-[0.3em] transition-all ${currentStep === 0 ? "opacity-0 pointer-events-none" : "text-zinc-500 hover:text-white"}`}
-          >
-            Précédent
-          </button>
-
-          <button 
-            onClick={next}
-            disabled={selections[stepInfo.id as keyof typeof selections].length === 0}
-            className={`relative group px-12 py-5 rounded-full overflow-hidden transition-all duration-500 ${
-              selections[stepInfo.id as keyof typeof selections].length > 0
-              ? "bg-white text-black scale-105"
-              : "bg-zinc-900 text-zinc-700 opacity-50"
-            }`}
-          >
-            <div className="relative z-10 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em]">
-              {currentStep === 2 ? "Finaliser" : "Suivant"} <ArrowRight size={14} />
-            </div>
-            {/* Effet brillant au survol */}
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-200 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500" />
-          </button>
-        </div>
-      </footer>
-
-      {/* DÉCORATION D'ARRIÈRE-PLAN */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber-500/5 rounded-full blur-[120px]" />
       </div>
     </div>
   );

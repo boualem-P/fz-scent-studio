@@ -79,7 +79,7 @@ export function matchPerfumes(
     })
     .filter((item): item is { perfume: Perfume; matchPercent: number } => item !== null);
 
-  // Utilisation de .sort() sur une copie pour compatibilité maximale
+  // Correction ici : [...scored].sort() remplace toSorted() pour la compatibilité
   return [...scored]
     .sort((a, b) => b.matchPercent - a.matchPercent)
     .slice(0, 3);

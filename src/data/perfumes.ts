@@ -79,8 +79,8 @@ export function matchPerfumes(
     })
     .filter((item): item is { perfume: Perfume; matchPercent: number } => item !== null);
 
-  // RÉPARATION ICI : Utilisation de [...].sort() au lieu de toSorted() 
-  // pour assurer la compatibilité avec tous les environnements.
+  // SOLUTION : On utilise [...scored].sort() au lieu de toSorted()
+  // pour garantir que Lovable puisse construire l'aperçu sans erreur.
   return [...scored]
     .sort((a, b) => b.matchPercent - a.matchPercent)
     .slice(0, 3);

@@ -1,7 +1,6 @@
-import { useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { Wind, Droplets, Sparkles, Smile, Frown, ArrowLeft, ArrowRight } from "lucide-react";
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 import { NoteCategory } from "@/data/perfumes";
 
 interface PyramidScreenProps {
@@ -24,20 +23,15 @@ const NOTES_DATA = {
   ]
 };
 
+const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'VERT'];
+
 const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const [screen, setScreen] = useState<'swipe' | 'map'>('swipe');
   const [currentStep, setCurrentStep] = useState(0);
   const [noteIndex, setNoteIndex] = useState(0);
-  const [radarData, setRadarData] = useState([
-    { subject: 'AGRUMES', A: 50, full: 100 },
-    { subject: 'ANIMAL', A: 50, full: 100 },
-    { subject: 'BOISÉ', A: 50, full: 100 },
-    { subject: 'ÉPICÉ', A: 50, full: 100 },
-    { subject: 'FLORAL', A: 50, full: 100 },
-    { subject: 'FRUITÉ', A: 50, full: 100 },
-    { subject: 'SUCRÉ', A: 50, full: 100 },
-    { subject: 'VERT', A: 50, full: 100 },
-  ]);
+  
+  // Intensités de 0.2 à 1 (pour ne pas être à 0 au centre)
+  const [intensities, setIntensities] = useState<number[]>(FAMILIES.map(() => 0.5));
 
   const steps = ["top", "heart", "base"];
   const notesAvailable = NOTES_DATA[steps[currentStep] as keyof typeof NOTES_DATA];
@@ -48,10 +42,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const opRight = useTransform(x, [50, 150], [0, 1]);
   const opLeft = useTransform(x, [-150, -50], [1, 0]);
 
-  // FIX DU CENTRAGE : Réinitialise X dès que la note change
-  useLayoutEffect(() => {
-    x.set(0);
-  }, [noteIndex, currentStep, x]);
+  useLayoutEffect(() => { x.set(0); }, [noteIndex, currentStep, x]);
 
   const handleSwipe = (liked: boolean) => {
     if (noteIndex < notesAvailable.length - 1) {
@@ -64,20 +55,34 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     }
   };
 
-  const handleRadarClick = (data: any) => {
-    if (!data) return;
-    const index = data.activeTooltipIndex;
-    const newData = [...radarData];
-    newData[index].A = newData[index].A >= 100 ? 20 : newData[index].A + 20;
-    setRadarData(newData);
+  // Logique du Radar Manuel
+  const size = 300;
+  const center = size / 2;
+  const radius = size * 0.4;
+
+  const getPointPos = (index: number, intensity: number) => {
+    const angle = (Math.PI * 2 * index) / FAMILIES.length - Math.PI / 2;
+    return {
+      x: center + radius * intensity * Math.cos(angle),
+      y: center + radius * intensity * Math.sin(angle)
+    };
+  };
+
+  const points = intensities.map((inst, i) => getPointPos(i, inst));
+  const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
+
+  const handleNodeClick = (index: number) => {
+    const newInts = [...intensities];
+    newInts[index] = newInts[index] >= 1 ? 0.2 : newInts[index] + 0.2;
+    setIntensities(newInts);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6">
+    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 select-none">
       <AnimatePresence mode="wait">
         {screen === 'swipe' ? (
           <motion.div key="sw" className="w-full max-w-sm flex flex-col items-center">
-            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Quelles odeurs vous transportent ?</h2>
+            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-500">Affinez vos désirs</h2>
             
             <div className="relative w-full aspect-[3/4] mb-12">
               <AnimatePresence mode="popLayout">
@@ -92,39 +97,65 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                   initial={{ opacity: 0, scale: 0.9, x: 0 }}
                   animate={{ opacity: 1, scale: 1, x: 0 }}
                   exit={{ x: x.get() > 0 ? 500 : -500, opacity: 0 }}
-                  className="absolute inset-0 bg-white rounded-xl overflow-hidden shadow-2xl"
+                  className="absolute inset-0 bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/10"
                 >
-                  <img src={currentNote.img} className="w-full h-2/3 object-cover" />
-                  <motion.div style={{ opacity: opRight }} className="absolute top-1/2 right-4 bg-emerald-400 p-3 rounded-full text-white z-20"><Smile size={32}/></motion.div>
-                  <motion.div style={{ opacity: opLeft }} className="absolute top-1/2 left-4 bg-rose-400 p-3 rounded-full text-white z-20"><Frown size={32}/></motion.div>
+                  <img src={currentNote.img} className="w-full h-2/3 object-cover grayscale-[20%]" />
+                  <motion.div style={{ opacity: opRight }} className="absolute top-1/2 right-6 bg-amber-500 p-4 rounded-full text-black z-20 shadow-xl"><Smile size={32}/></motion.div>
+                  <motion.div style={{ opacity: opLeft }} className="absolute top-1/2 left-6 bg-zinc-800 p-4 rounded-full text-white z-20 shadow-xl"><Frown size={32}/></motion.div>
                   
-                  <div className="p-6 text-center">
-                    <h3 className="text-2xl font-medium text-black mb-2">{currentNote.label}</h3>
-                    <p className="text-[10px] text-zinc-400 uppercase tracking-widest mb-1">Équivalent en parfumerie</p>
-                    <p className="text-amber-600 text-sm font-light italic">{currentNote.sub}</p>
+                  <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center">
+                    <h3 className="text-3xl font-light text-black mb-1 tracking-tighter">{currentNote.label}</h3>
+                    <p className="text-amber-600 text-xs font-bold uppercase tracking-widest">{currentNote.sub}</p>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
           </motion.div>
         ) : (
-          <motion.div key="map" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-md flex flex-col items-center">
-            <h2 className="text-2xl font-light mb-4 uppercase tracking-tighter">Votre profil olfactif</h2>
+          <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md flex flex-col items-center">
+            <h2 className="text-2xl font-light mb-2 uppercase tracking-[0.2em] text-amber-500">Signature</h2>
+            <p className="text-zinc-500 text-[10px] uppercase tracking-widest mb-8">Sculptez votre sillage</p>
             
-            <div className="w-full h-80 my-8">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData} onClick={handleRadarClick}>
-                  <PolarGrid stroke="#333" />
-                  <PolarAngleAxis dataKey="subject" tick={{ fill: '#999', fontSize: 10 }} />
-                  <Radar name="Profil" dataKey="A" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.5} />
-                </RadarChart>
-              </ResponsiveContainer>
+            {/* RADAR SVG PERSONNALISÉ */}
+            <div className="relative">
+              <svg width={size} height={size} className="drop-shadow-2xl">
+                {/* Grilles de fond */}
+                {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => (
+                  <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" strokeWidth="1" />
+                ))}
+                {FAMILIES.map((_, i) => {
+                  const p = getPointPos(i, 1);
+                  return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#222" strokeWidth="1" />;
+                })}
+
+                {/* Forme du Radar */}
+                <polygon points={polygonPath} fill="rgba(245, 158, 11, 0.3)" stroke="#f59e0b" strokeWidth="2" className="transition-all duration-300" />
+
+                {/* Points Interactifs (Les Nœuds) */}
+                {points.map((p, i) => (
+                  <g key={i} onClick={() => handleNodeClick(i)} className="cursor-pointer group">
+                    <circle cx={p.x} cy={p.y} r="8" fill="#f59e0b" className="transition-all duration-300 group-hover:r-12" />
+                    <circle cx={p.x} cy={p.y} r="15" fill="transparent" />
+                  </g>
+                ))}
+              </svg>
+
+              {/* Libellés autour du radar */}
+              {FAMILIES.map((f, i) => {
+                const p = getPointPos(i, 1.25);
+                return (
+                  <div key={i} className="absolute text-[9px] font-bold tracking-tighter text-zinc-400" 
+                       style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}>
+                    {f}
+                  </div>
+                );
+              })}
             </div>
 
-            <p className="text-[10px] text-zinc-500 uppercase mb-10 tracking-widest text-center">Appuyez sur les axes pour ajuster</p>
+            <p className="mt-12 text-[9px] text-zinc-600 uppercase tracking-[0.3em] text-center">Appuyez sur les points dorés pour intensifier</p>
 
-            <button onClick={() => onValidate([],[],[])} className="w-full bg-white text-black py-4 rounded-none font-bold uppercase tracking-[0.3em] hover:bg-amber-500 transition-colors">
-              Valider
+            <button onClick={() => onValidate([],[],[])} className="mt-10 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px] hover:bg-amber-500 transition-all shadow-xl active:scale-95">
+              Révéler l'élixir
             </button>
           </motion.div>
         )}

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Library, Home, ArrowLeft } from "lucide-react";
+import { Library, Home, ArrowLeft, User } from "lucide-react"; // Ajout de l'icône User
 import LandingScreen from "@/components/LandingScreen";
 import PyramidScreen from "@/components/PyramidScreen";
 import ResultsScreen from "@/components/ResultsScreen";
@@ -28,10 +28,8 @@ const Index = () => {
     setTimeout(() => setScreen("results"), 4000);
   }, [gender]);
 
-  // FONCTION DE SÉCURITÉ POUR LOVABLE : Force le rafraîchissement
   const handleSelectPerfume = (perfume: Perfume | null) => {
     if (perfume) {
-      // On met d'abord à null pour forcer un "unmount" si un parfum était déjà ouvert
       setSelectedPerfume(null);
       setTimeout(() => {
         setSelectedPerfume(perfume);
@@ -49,7 +47,7 @@ const Index = () => {
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      {/* 2. NAVIGATION FIXE (Z-200 pour être au-dessus de la fiche) */}
+      {/* 2. NAVIGATION FIXE */}
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-center z-[200] pointer-events-none">
         <div className="flex gap-4 pointer-events-auto">
           {(screen !== "landing" || selectedPerfume) && (
@@ -61,11 +59,30 @@ const Index = () => {
             </button>
           )}
         </div>
+
         <div className="flex gap-3 pointer-events-auto">
-          <button onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} className="w-12 h-12 rounded-full border border-primary/30 bg-black/80 text-primary backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl">
+          {/* LE BOUTON PROFIL (GENRE) RÉAPPARAÎT ICI */}
+          <button 
+            onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
+            className="px-4 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center gap-2 hover:scale-105 transition-all shadow-2xl group"
+          >
+            <User size={18} />
+            <span className="text-[10px] font-bold uppercase tracking-widest border-l border-amber-500/20 pl-2">
+              Profil: {gender}
+            </span>
+          </button>
+
+          <button 
+            onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
+            className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
+          >
             <Home size={20} />
           </button>
-          <button onClick={() => {setScreen("catalogue"); handleSelectPerfume(null);}} className="w-12 h-12 rounded-full border border-primary/30 bg-black/80 text-primary backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl">
+          
+          <button 
+            onClick={() => {setScreen("catalogue"); handleSelectPerfume(null);}} 
+            className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
+          >
             <Library size={20} />
           </button>
         </div>
@@ -86,13 +103,13 @@ const Index = () => {
               {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={() => setScreen("landing")} />}
               {screen === "analyzing" && <AnalyzingLoader />}
               {screen === "results" && <ResultsScreen results={results} onMenu={() => setScreen("landing")} onCatalogue={() => setScreen("catalogue")} onSelectPerfume={handleSelectPerfume} />}
-              {screen === "catalogue" && <CatalogueScreen onMenu={() => setScreen("landing")} />}
+              {screen === "catalogue" && <CatalogueScreen onMenu={() => setScreen("landing")} onSelectPerfume={handleSelectPerfume} />}
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      {/* 4. OVERLAY FICHE PARFUM (Z-150) */}
+      {/* 4. OVERLAY FICHE PARFUM */}
       <AnimatePresence>
         {selectedPerfume && (
           <motion.div 

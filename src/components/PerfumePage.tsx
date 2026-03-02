@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { X, Calendar, Droplets } from 'lucide-react';
-import { Perfume, perfumes } from "@/data/perfumes";
+import { Perfume, PERFUMES } from "@/data/perfumes";
 
 interface PerfumePageProps {
   perfume: Perfume;
@@ -26,7 +26,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     { n: "Aromatique", v: 60, c: "#0d9488" }
   ];
 
-  const similars = perfumes.filter(p => p.id !== perfume.id).slice(0, 6);
+  const similars = PERFUMES.filter(p => p.id !== perfume.id).slice(0, 6);
 
   return (
     <div 

@@ -47,9 +47,6 @@ export const NOTE_LABELS: Record<NoteCategory, string> = {
   mousses: "Mousses",
 };
 
-/**
- * Calcule les meilleures correspondances selon les choix de l'utilisateur
- */
 export function matchPerfumes(
   gender: Gender | null,
   selectedTop: NoteCategory[],
@@ -57,7 +54,6 @@ export function matchPerfumes(
   selectedBase: NoteCategory[]
 ): { perfume: Perfume; matchPercent: number }[] {
 
-  // 1. Filtrage par genre
   const candidates = PERFUMES.filter((p) => {
     if (!gender) return true;
     if (gender === "homme") return p.gender === "homme" || p.gender === "mixte";
@@ -67,31 +63,24 @@ export function matchPerfumes(
 
   const userSelection = [...selectedTop, ...selectedHeart, ...selectedBase];
 
-  // 2. Calcul du score de matching
   const scored = candidates
     .map((perfume) => {
-      // On crée un set des catégories présentes dans le parfum pour éviter les doublons
       const perfumeCategories = Array.from(new Set([
         ...perfume.topNotes,
         ...perfume.heartNotes,
         ...perfume.baseNotes
       ]));
 
-      // On compte combien de catégories choisies par l'utilisateur sont dans ce parfum
       const matches = perfumeCategories.filter((cat) => userSelection.includes(cat));
-      
       if (matches.length === 0) return null;
 
-      // Calcul du pourcentage (règle de trois simple)
       const matchPercent = Math.round((matches.length / perfumeCategories.length) * 100);
-      
       return { perfume, matchPercent };
     })
     .filter((item): item is { perfume: Perfume; matchPercent: number } => item !== null);
 
-  // 3. Tri et retour des 3 meilleurs
-  // IMPORTANT : On utilise [...scored].sort() car .sort() modifie le tableau original. 
-  // Cela remplace e.toSorted() pour une compatibilité totale.
+  // RÉPARATION ICI : Utilisation de [...].sort() au lieu de toSorted() 
+  // pour assurer la compatibilité avec tous les environnements.
   return [...scored]
     .sort((a, b) => b.matchPercent - a.matchPercent)
     .slice(0, 3);

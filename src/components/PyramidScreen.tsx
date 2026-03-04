@@ -48,9 +48,9 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
 
   const x = useMotionValue(0);
   
-  // Transformation de l'opacité (doré discret au repos, éclatant au mouvement)
-  const frownOpacity = useTransform(x, [-150, 0], [1, 0.3]);
-  const smileOpacity = useTransform(x, [0, 150], [0.3, 1]);
+  // Transformation de l'opacité : 15% au repos (aspect sombre/grisé), 100% au mouvement
+  const frownOpacity = useTransform(x, [-150, 0], [1, 0.15]);
+  const smileOpacity = useTransform(x, [0, 150], [0.15, 1]);
 
   const handleSwipe = (liked: boolean) => {
     const key = steps[currentStep] as keyof typeof selections;
@@ -98,12 +98,12 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             
             <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
               
-              {/* ICONES DORÉES FIXES */}
+              {/* ICONES BLANCHES ESTOMPÉES (ASPECT FONCÉ) FIXES */}
               <div className="absolute inset-x-[-65px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2">
-                <motion.div style={{ opacity: frownOpacity }} className="text-[#D4AF37]">
+                <motion.div style={{ opacity: frownOpacity }} className="text-white">
                   <Frown size={42} strokeWidth={1} />
                 </motion.div>
-                <motion.div style={{ opacity: smileOpacity }} className="text-[#D4AF37]">
+                <motion.div style={{ opacity: smileOpacity }} className="text-white">
                   <Smile size={42} strokeWidth={1} />
                 </motion.div>
               </div>
@@ -142,7 +142,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               </AnimatePresence>
             </div>
             
-            <p className="text-[#D4AF37] text-[9px] font-bold uppercase tracking-[0.3em] opacity-40">Explorer votre sillage</p>
+            <p className="text-white text-[9px] font-bold uppercase tracking-[0.3em] opacity-30">Explorer votre sillage</p>
           </motion.div>
         ) : screen === 'map' ? (
           // PAGE B (INCHANGÉE)

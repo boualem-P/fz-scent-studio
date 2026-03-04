@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
+import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2, Award } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
 
+// --- TYPES & DATA (Inchangés pour la cohérence) ---
 interface PyramidScreenProps {
   onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string) => void;
   onMenu: () => void;
@@ -11,18 +12,9 @@ interface PyramidScreenProps {
 const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'VERT'];
 
 const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string }[]> = {
-  top: [
-    { id: "hesperides", label: "Citron & Bergamote", img: "https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=400", sub: "Fraîcheur vive" },
-    { id: "marines", label: "Brise Marine", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400", sub: "Notes aquatiques" }
-  ],
-  heart: [
-    { id: "florales", label: "Rose & Jasmin", img: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?q=80&w=400", sub: "Cœur romantique" },
-    { id: "epicees", label: "Poivre & Gingembre", img: "https://images.unsplash.com/photo-1599940824399-b87987cb94e5?q=80&w=400", sub: "Épices froides" }
-  ],
-  base: [
-    { id: "boisees", label: "Santal & Cèdre", img: "https://images.unsplash.com/photo-1585675100414-add2e465a136?q=80&w=400", sub: "Structure boisée" },
-    { id: "gourmandes", label: "Vanille & Caramel", img: "https://images.unsplash.com/photo-1595589949475-394e277c082b?q=80&w=400", sub: "Notes sucrées" }
-  ]
+  top: [{ id: "hesperides", label: "Citron & Bergamote", img: "https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=400", sub: "Fraîcheur vive" }, { id: "marines", label: "Brise Marine", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400", sub: "Notes aquatiques" }],
+  heart: [{ id: "florales", label: "Rose & Jasmin", img: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?q=80&w=400", sub: "Cœur romantique" }, { id: "epicees", label: "Poivre & Gingembre", img: "https://images.unsplash.com/photo-1599940824399-b87987cb94e5?q=80&w=400", sub: "Épices froides" }],
+  base: [{ id: "boisees", label: "Santal & Cèdre", img: "https://images.unsplash.com/photo-1585675100414-add2e465a136?q=80&w=400", sub: "Structure boisée" }, { id: "gourmandes", label: "Vanille & Caramel", img: "https://images.unsplash.com/photo-1595589949475-394e277c082b?q=80&w=400", sub: "Notes sucrées" }]
 };
 
 const ATMOSPHERES = [
@@ -32,8 +24,33 @@ const ATMOSPHERES = [
   { id: 'rendezvous', label: 'Rendez-vous', icon: <Heart size={24}/>, desc: "Sensuel & Captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400" },
 ];
 
+// --- NOUVEAU COMPOSANT : ACCORDS MAJEURS (STYLÉ SELON L'IMAGE) ---
+const MainAccords = ({ accords }: { accords: { label: string, value: number, color: string }[] }) => {
+  return (
+    <div className="w-full space-y-3 px-2 mt-8">
+      <h3 className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Accords Majeurs</h3>
+      {accords.map((accord, i) => (
+        <div key={accord.label} className="w-full h-8 bg-zinc-900/50 rounded-r-full overflow-hidden flex items-center relative border border-white/5">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${accord.value}%` }}
+            transition={{ duration: 1.5, delay: i * 0.1, ease: "circOut" }}
+            style={{ backgroundColor: accord.color }}
+            className="h-full rounded-r-full flex items-center px-4"
+          >
+            <span className={`text-[11px] font-bold uppercase tracking-wider whitespace-nowrap ${accord.label === 'Citrus' ? 'text-black' : 'text-white'}`}>
+              {accord.label}
+            </span>
+          </motion.div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// --- COMPOSANT PRINCIPAL ---
 const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
-  const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere'>('swipe');
+  const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere' | 'result'>('swipe');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisText, setAnalysisText] = useState("");
   
@@ -44,16 +61,24 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     top: [], heart: [], base: []
   });
 
+  // Mock des accords pour l'exemple final
+  const mockAccords = [
+    { label: "Citrus", value: 90, color: "#f4f933" },
+    { label: "Amber", value: 75, color: "#b35a2d" },
+    { label: "Woody", value: 65, color: "#8a6240" },
+    { label: "Fresh Spicy", value: 55, color: "#9cd66a" },
+    { label: "Smoky", value: 40, color: "#b2abbd" }
+  ];
+
   const steps = ["top", "heart", "base"];
   const notesAvailable = NOTES_DATA[steps[currentStep]];
   const currentNote = notesAvailable[noteIndex];
-  const nextNote = notesAvailable[noteIndex + 1] || (currentStep < 2 ? NOTES_DATA[steps[currentStep + 1]][0] : null);
 
   const x = useMotionValue(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
-  const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
+  const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere' | 'result', text: string) => {
     setAnalysisText(text);
     setIsAnalyzing(true);
     setTimeout(() => {
@@ -98,65 +123,28 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
+    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden font-sans">
       <AnimatePresence mode="wait">
         {isAnalyzing ? (
-          <motion.div
-            key="loader"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-10 text-center"
-          >
+          <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-10 text-center">
             <div className="relative mb-8">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="w-20 h-20 border-t-2 border-b-2 border-amber-500 rounded-full"
-                />
-                <div className="absolute inset-0 flex items-center justify-center text-amber-500 opacity-50">
-                    <Loader2 size={24} className="animate-spin" />
-                </div>
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="w-20 h-20 border-t-2 border-b-2 border-amber-500 rounded-full" />
+                <div className="absolute inset-0 flex items-center justify-center text-amber-500 opacity-50"><Loader2 size={24} className="animate-spin" /></div>
             </div>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-amber-500 font-light italic tracking-[0.2em] text-sm uppercase"
-            >
-              {analysisText}
-            </motion.p>
+            <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-amber-500 font-light italic tracking-[0.2em] text-sm uppercase">{analysisText}</motion.p>
           </motion.div>
         ) : screen === 'swipe' ? (
           <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center relative">
             <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Affinez vos désirs</h2>
             <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
               <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
-                <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg">
-                  <Frown size={48} strokeWidth={1.5} />
-                </motion.div>
-                <motion.div style={{ opacity: smileOpacity }} className="text-white drop-shadow-lg">
-                  <Smile size={48} strokeWidth={1.5} />
-                </motion.div>
+                <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg"><Frown size={48} strokeWidth={1.5} /></motion.div>
+                <motion.div style={{ opacity: smileOpacity }} className="text-white drop-shadow-lg"><Smile size={48} strokeWidth={1.5} /></motion.div>
               </div>
               <AnimatePresence mode="popLayout">
-                <motion.div 
-                  key={`${steps[currentStep]}-${noteIndex}`} 
-                  style={{ x }}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.9}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 100) handleSwipe(true);
-                    else if (info.offset.x < -100) handleSwipe(false);
-                  }}
-                  initial={{ x: 0, scale: 0.9, opacity: 0 }}
-                  animate={{ x: 0, scale: 1, opacity: 1 }}
-                  exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10"
-                >
+                <motion.div key={`${steps[currentStep]}-${noteIndex}`} style={{ x }} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.9} onDragEnd={(_, info) => { if (info.offset.x > 100) handleSwipe(true); else if (info.offset.x < -100) handleSwipe(false); }} initial={{ x: 0, scale: 0.9, opacity: 0 }} animate={{ x: 0, scale: 1, opacity: 1 }} exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0 }} transition={{ type: "spring", stiffness: 400, damping: 30 }} className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10" >
                   <div className="w-full h-full flex flex-col pointer-events-none">
-                    <img src={currentNote.img} className="w-full h-2/3 object-cover" />
+                    <img src={currentNote.img} className="w-full h-2/3 object-cover" alt="" />
                     <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center">
                       <h3 className="text-2xl font-light text-black mb-1 uppercase tracking-tighter">{currentNote.label}</h3>
                       <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">{currentNote.sub}</p>
@@ -190,21 +178,19 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             </div>
             <button onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")} className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]">Finaliser le profil</button>
           </motion.div>
-        ) : (
+        ) : screen === 'atmosphere' ? (
           <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center justify-center">
-            {/* TITRE PRESTIGIEUX PAGE C */}
             <div className="flex flex-col items-center mb-10 text-center">
               <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Univers Olfactif</h2>
               <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
               <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">Définissez le sillage de votre destinée</p>
             </div>
-
             <div className="grid grid-cols-1 gap-4 w-full px-4">
               {ATMOSPHERES.map((atm) => (
-                <button key={atm.id} onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id)}
+                <button key={atm.id} onClick={() => triggerTransition('result', "Création de votre élixir personnel...")}
                   className="group relative h-28 rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center p-6 hover:border-amber-500/50 transition-all text-left"
                 >
-                  <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" />
+                  <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" alt="" />
                   <div className="relative z-10 flex items-center gap-6 w-full">
                     <div className="p-4 bg-black/60 rounded-xl text-amber-500">{atm.icon}</div>
                     <div>
@@ -216,6 +202,31 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                 </button>
               ))}
             </div>
+          </motion.div>
+        ) : (
+          /* --- PAGE RÉSULTAT FINAL --- */
+          <motion.div key="result" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-md flex flex-col items-center pb-20">
+             <div className="flex flex-col items-center mb-8 text-center">
+              <h2 className="text-2xl font-bold uppercase tracking-[0.4em] text-white">Votre Élixir</h2>
+              <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
+              <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.2em]">Révélation de votre signature</p>
+            </div>
+
+            <div className="w-full relative rounded-3xl overflow-hidden border border-white/10 bg-zinc-900/20 mb-8 p-1">
+               <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=800" className="w-full aspect-square object-cover rounded-2xl opacity-80" alt="Parfum" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+               <div className="absolute bottom-6 left-6 right-6">
+                  <span className="bg-amber-500 text-black text-[9px] font-black px-3 py-1 rounded-full uppercase mb-2 inline-block">Suggestion Premium</span>
+                  <h3 className="text-3xl font-light uppercase tracking-tighter">Nuit de l'Ambre</h3>
+               </div>
+            </div>
+
+            {/* INTEGRATION DES ACCORDS MAJEURS STYLE IMAGE */}
+            <MainAccords accords={mockAccords} />
+
+            <button onClick={() => setScreen('swipe')} className="mt-12 text-zinc-500 text-[10px] font-bold uppercase tracking-[0.3em] hover:text-white transition-colors">
+              Recommencer l'expérience
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

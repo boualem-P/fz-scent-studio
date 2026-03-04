@@ -4,7 +4,7 @@ import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2 } from "
 import { NoteCategory } from "@/data/perfumes";
 
 interface PyramidScreenProps {
-  // AJOUT : La fonction accepte maintenant les accords calculés
+  // Ajout du paramètre opionnel accords pour la transmission
   onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string, accords?: any[]) => void;
   onMenu: () => void;
 }
@@ -37,6 +37,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere'>('swipe');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisText, setAnalysisText] = useState("");
+  
   const [currentStep, setCurrentStep] = useState(0);
   const [noteIndex, setNoteIndex] = useState(0);
   const [intensities, setIntensities] = useState<number[]>(FAMILIES.map(() => 0.5));
@@ -52,14 +53,16 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
-  // --- GÉNÉRATEUR DYNAMIQUE D'ACCORDS ---
-  const getDynamicAccords = () => {
+  // CALCULE LES ACCORDS DYNAMIQUEMENT SELON LE RADAR
+  const calculateAccords = () => {
     const colors = ["#F4F933", "#E11D48", "#8A6240", "#9CD66A", "#B35A2D", "#60A5FA", "#F59E0B", "#10B981"];
     return FAMILIES.map((label, i) => ({
       label: label.charAt(0) + label.slice(1).toLowerCase(),
       value: Math.round(intensities[i] * 100),
       color: colors[i]
-    })).sort((a, b) => b.value - a.value).slice(0, 5); // Garde les 5 plus forts
+    }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 4); // On prend les 4 accords majeurs
   };
 
   const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
@@ -68,7 +71,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     setTimeout(() => {
       setIsAnalyzing(false);
       setScreen(nextScreen);
-    }, 4000);
+    }, 3000);
   };
 
   const handleSwipe = (liked: boolean) => {
@@ -81,7 +84,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
       setCurrentStep(prev => prev + 1);
       setNoteIndex(0);
     } else {
-      triggerTransition('map', "Harmonisation des essences sélectionnées...");
+      triggerTransition('map', "Harmonisation des essences...");
     }
     x.set(0); 
   };
@@ -93,6 +96,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     const angle = (Math.PI * 2 * index) / FAMILIES.length - Math.PI / 2;
     return { x: center + radius * intensity * Math.cos(angle), y: center + radius * intensity * Math.sin(angle) };
   };
+
   const updateIntensity = (index: number, info: any) => {
     const rect = document.getElementById('radar-svg')?.getBoundingClientRect();
     if (!rect) return;
@@ -112,69 +116,68 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
       <AnimatePresence mode="wait">
         {isAnalyzing ? (
           <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-10 text-center">
-             <div className="relative mb-8">
-                <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="w-20 h-20 border-t-2 border-b-2 border-amber-500 rounded-full" />
-                <div className="absolute inset-0 flex items-center justify-center text-amber-500 opacity-50"><Loader2 size={24} className="animate-spin" /></div>
-            </div>
-            <motion.p className="text-amber-500 font-light italic tracking-[0.2em] text-sm uppercase">{analysisText}</motion.p>
+             <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="w-16 h-16 border-t-2 border-amber-500 rounded-full mb-8" />
+             <p className="text-amber-500 font-light italic tracking-[0.2em] text-sm uppercase">{analysisText}</p>
           </motion.div>
         ) : screen === 'swipe' ? (
-          <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center relative">
+          <motion.div key="swipe" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center">
             <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Affinez vos désirs</h2>
-            <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
-              <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
-                <motion.div style={{ opacity: frownOpacity }} className="text-white"><Frown size={48} strokeWidth={1.5} /></motion.div>
-                <motion.div style={{ opacity: smileOpacity }} className="text-white"><Smile size={48} strokeWidth={1.5} /></motion.div>
+            <div className="relative w-full aspect-[3/4.2] mb-12">
+              <div className="absolute inset-x-[-60px] top-1/2 -translate-y-1/2 flex justify-between pointer-events-none z-0">
+                <motion.div style={{ opacity: frownOpacity }}><Frown size={40} /></motion.div>
+                <motion.div style={{ opacity: smileOpacity }}><Smile size={40} /></motion.div>
               </div>
               <AnimatePresence mode="popLayout">
-                <motion.div key={`${steps[currentStep]}-${noteIndex}`} style={{ x }} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.9} onDragEnd={(_, info) => { if (info.offset.x > 100) handleSwipe(true); else if (info.offset.x < -100) handleSwipe(false); }} initial={{ x: 0, scale: 0.9, opacity: 0 }} animate={{ x: 0, scale: 1, opacity: 1 }} exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0 }} transition={{ type: "spring", stiffness: 400, damping: 30 }} className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10">
-                  <div className="w-full h-full flex flex-col pointer-events-none">
-                    <img src={currentNote.img} className="w-full h-2/3 object-cover" />
-                    <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center">
-                      <h3 className="text-2xl font-light text-black mb-1 uppercase tracking-tighter">{currentNote.label}</h3>
-                      <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">{currentNote.sub}</p>
-                    </div>
+                <motion.div
+                  key={`${currentStep}-${noteIndex}`}
+                  style={{ x }} drag="x" dragConstraints={{ left: 0, right: 0 }}
+                  onDragEnd={(_, info) => { if (info.offset.x > 100) handleSwipe(true); else if (info.offset.x < -100) handleSwipe(false); }}
+                  initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ x: x.get() > 0 ? 500 : -500, opacity: 0 }}
+                  className="absolute inset-0 bg-white rounded-[2rem] overflow-hidden"
+                >
+                  <img src={currentNote.img} className="w-full h-2/3 object-cover" />
+                  <div className="p-6 text-center h-1/3 flex flex-col justify-center bg-white">
+                    <h3 className="text-xl font-light text-black uppercase tracking-tighter">{currentNote.label}</h3>
+                    <p className="text-amber-600 text-[10px] font-bold uppercase">{currentNote.sub}</p>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
           </motion.div>
         ) : screen === 'map' ? (
-          <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-md flex flex-col items-center justify-center">
-            <h2 className="text-2xl font-bold uppercase tracking-[0.3em] text-white">Architecture Olfactive</h2>
-            <div className="relative mt-10">
+          <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md flex flex-col items-center">
+            <h2 className="text-2xl font-bold uppercase tracking-widest text-white mb-10">Architecture</h2>
+            <div className="relative">
               <svg id="radar-svg" width={size} height={size}>
                 {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => ( <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" /> ))}
-                {FAMILIES.map((_, i) => { const p = getPointPos(i, 1); return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#222" />; })}
                 <polygon points={polygonPath} fill="rgba(245, 158, 11, 0.2)" stroke="#f59e0b" strokeWidth="2" />
                 {points.map((p, i) => (
                   <motion.g key={i}>
-                    <motion.circle cx={p.x} cy={p.y} r="25" fill="transparent" drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} onDrag={(_, info) => updateIntensity(i, info)} />
-                    <circle cx={p.x} cy={p.y} r="6" fill="#f59e0b" />
+                    <motion.circle cx={p.x} cy={p.y} r="20" fill="transparent" drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} onDrag={(_, info) => updateIntensity(i, info)} />
+                    <circle cx={p.x} cy={p.y} r="5" fill="#f59e0b" />
                   </motion.g>
                 ))}
               </svg>
-              {FAMILIES.map((f, i) => { const p = getPointPos(i, 1.28); return <div key={i} className="absolute text-[9px] font-black text-zinc-500 uppercase tracking-tighter" style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}>{f}</div>; })}
+              {FAMILIES.map((f, i) => { const p = getPointPos(i, 1.25); return <div key={i} className="absolute text-[8px] font-bold text-zinc-500 uppercase" style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}>{f}</div>; })}
             </div>
-            <button onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")} className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]">Finaliser le profil</button>
+            <button onClick={() => triggerTransition('atmosphere', "Définition de l'univers...")} className="mt-16 w-full bg-white text-black py-4 rounded-full font-bold uppercase text-[10px] tracking-widest">Suivant</button>
           </motion.div>
         ) : (
-          <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center">
-             <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white mb-10">Univers Olfactif</h2>
-             <div className="grid grid-cols-1 gap-4 w-full px-4">
+          <motion.div key="atm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-lg">
+            <h2 className="text-2xl font-bold uppercase tracking-widest text-center mb-10">Univers</h2>
+            <div className="grid grid-cols-1 gap-4 px-4">
               {ATMOSPHERES.map((atm) => (
                 <button 
                   key={atm.id} 
-                  // ENVOI DES ACCORDS ICI VERS LE COMPOSANT PARENT
-                  onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id, getDynamicAccords())}
+                  onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id, calculateAccords())}
                   className="group relative h-24 rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center p-6"
                 >
                   <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20" />
                   <div className="relative z-10 flex items-center gap-6 w-full">
                     <div className="text-amber-500">{atm.icon}</div>
-                    <div>
-                      <h4 className="text-xl font-light">{atm.label}</h4>
-                      <p className="text-[9px] uppercase tracking-widest text-zinc-500">{atm.desc}</p>
+                    <div className="text-left">
+                      <h4 className="text-lg font-light">{atm.label}</h4>
+                      <p className="text-[8px] uppercase tracking-widest text-zinc-500">{atm.desc}</p>
                     </div>
                     <ArrowRight className="ml-auto text-zinc-700 group-hover:text-amber-500" />
                   </div>

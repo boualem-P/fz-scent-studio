@@ -125,14 +125,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             >
               {analysisText}
             </motion.p>
-            <div className="mt-4 w-32 h-[1px] bg-zinc-800 relative overflow-hidden">
-                <motion.div 
-                    initial={{ x: "-100%" }}
-                    animate={{ x: "100%" }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute inset-0 bg-amber-500"
-                />
-            </div>
           </motion.div>
         ) : screen === 'swipe' ? (
           <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center relative">
@@ -146,9 +138,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                   <Smile size={48} strokeWidth={1.5} />
                 </motion.div>
               </div>
-              {nextNote && (
-                <div className="absolute inset-0 bg-white rounded-[2.5rem] scale-95 translate-y-4 opacity-10 border border-zinc-200 z-0" />
-              )}
               <AnimatePresence mode="popLayout">
                 <motion.div 
                   key={`${steps[currentStep]}-${noteIndex}`} 
@@ -169,7 +158,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                   <div className="w-full h-full flex flex-col pointer-events-none">
                     <img src={currentNote.img} className="w-full h-2/3 object-cover" />
                     <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center">
-                      <h3 className="text-2xl font-light text-black mb-1 leading-tight uppercase tracking-tighter">{currentNote.label}</h3>
+                      <h3 className="text-2xl font-light text-black mb-1 uppercase tracking-tighter">{currentNote.label}</h3>
                       <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">{currentNote.sub}</p>
                     </div>
                   </div>
@@ -179,9 +168,12 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             <p className="text-white text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">Balayez pour choisir</p>
           </motion.div>
         ) : screen === 'map' ? (
-          <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-md flex flex-col items-center">
-            <h2 className="text-2xl font-light mb-2 uppercase tracking-[0.25em] text-white">Architecture Olfactive</h2>
-            <p className="text-amber-500/80 text-[10px] font-bold uppercase tracking-[0.15em] mb-12 text-center">Modelez l'intensité de vos accords</p>
+          <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-md flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center mb-10 text-center">
+              <h2 className="text-2xl font-bold uppercase tracking-[0.3em] text-white">Architecture Olfactive</h2>
+              <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
+              <p className="text-amber-500/80 text-[10px] font-bold uppercase tracking-[0.15em]">Modelez l'intensité de vos accords</p>
+            </div>
             <div className="relative">
               <svg id="radar-svg" width={size} height={size}>
                 {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => ( <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" /> ))}
@@ -200,8 +192,8 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
           </motion.div>
         ) : (
           <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center">
-            <h2 className="text-3xl font-light mb-2 uppercase tracking-tighter text-white">L'Atmosphère</h2>
-            <div className="grid grid-cols-1 gap-4 w-full px-4 mt-4">
+            <h2 className="text-3xl font-light mb-8 uppercase tracking-tighter text-white">L'Atmosphère</h2>
+            <div className="grid grid-cols-1 gap-4 w-full px-4">
               {ATMOSPHERES.map((atm) => (
                 <button key={atm.id} onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id)}
                   className="group relative h-28 rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center p-6 hover:border-amber-500/50 transition-all text-left"

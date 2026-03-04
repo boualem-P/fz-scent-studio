@@ -1,143 +1,130 @@
-import { useState, useCallback } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Library, Home, ArrowLeft, User } from "lucide-react";
-import LandingScreen from "@/components/LandingScreen";
-import PyramidScreen from "@/components/PyramidScreen";
-import ResultsScreen from "@/components/ResultsScreen";
-import CatalogueScreen from "@/components/CatalogueScreen";
-import AnalyzingLoader from "@/components/AnalyzingLoader";
-import GoldenRain from "@/components/GoldenRain";
-import PerfumePage from "@/components/PerfumePage"; 
-import { Gender, NoteCategory, matchPerfumes, Perfume } from "@/data/perfumes";
+import { motion } from "framer-motion";
+import { X, ShoppingBag, Wind, Droplets, Zap } from "lucide-react";
+import { Perfume } from "@/data/perfumes";
 
-const Index = () => {
-  const [screen, setScreen] = useState<"landing" | "pyramid" | "analyzing" | "results" | "catalogue">("landing");
-  const [gender, setGender] = useState<Gender>("homme");
-  const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
-  const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
-  
-  // NOUVEAU : État pour stocker les accords calculés par le radar
-  const [currentAccords, setCurrentAccords] = useState<any[]>([]);
+interface PerfumePageProps {
+  perfume: Perfume;
+  onClose: () => void;
+  onSelectPerfume: (perfume: Perfume) => void;
+}
 
-  const handleGender = (g: Gender) => { 
-    setGender(g); 
-    setScreen("pyramid"); 
-  };
-
-  // MISE À JOUR : On accepte maintenant l'argument 'accords'
-  const handleValidate = useCallback((top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string, accords?: any[]) => {
-    const matches = matchPerfumes(gender, top, heart, base);
-    setResults(matches);
-    
-    // On sauvegarde les accords s'ils existent, sinon on met un défaut
-    if (accords) {
-      setCurrentAccords(accords);
-    }
-    
-    setScreen("analyzing");
-    setTimeout(() => setScreen("results"), 4000);
-  }, [gender]);
-
-  const handleSelectPerfume = (perfume: Perfume | null) => {
-    if (perfume) {
-      setSelectedPerfume(null);
-      setTimeout(() => {
-        setSelectedPerfume(perfume);
-      }, 10);
-    } else {
-      setSelectedPerfume(null);
-    }
-  };
+const PerfumePage = ({ perfume, onClose }: PerfumePageProps) => {
+  // Accords visuels calculés pour le rendu esthétique
+  const visualAccords = [
+    { label: "Boisé", value: 85, color: "#8A6240" },
+    { label: "Épicé", value: 65, color: "#B35A2D" },
+    { label: "Floral", value: 45, color: "#E11D48" },
+    { label: "Minéral", value: 30, color: "#60A5FA" },
+  ];
 
   return (
-    <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
-      
-      {/* 1. FOND VISUEL */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        {screen !== "landing" && !selectedPerfume && <GoldenRain />}
+    <div className="relative min-h-screen bg-[#0A0A0A] text-white pb-20">
+      {/* Bouton de fermeture discret */}
+      <div className="absolute top-8 right-8 z-50">
+        <button 
+          onClick={onClose}
+          className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all"
+        >
+          <X size={20} />
+        </button>
       </div>
 
-      {/* 2. NAVIGATION FIXE */}
-      <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
-        <div className="flex flex-col gap-3 pointer-events-auto">
-          {(screen !== "landing" || selectedPerfume) && (
-            <button 
-              onClick={() => selectedPerfume ? handleSelectPerfume(null) : setScreen("landing")}
-              className="w-12 h-12 rounded-full border border-white/10 bg-black/80 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-2xl"
-            >
-              <ArrowLeft size={20} />
-            </button>
-          )}
-          
-          <button 
-            onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
-            className="w-12 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-            title={`Profil actuel : ${gender}`}
-          >
-            <User size={20} />
-          </button>
+      <div className="max-w-screen-xl mx-auto">
+        {/* SECTION PHOTO PRINCIPALE */}
+        <div className="relative w-full aspect-[4/5] md:aspect-video overflow-hidden">
+          <motion.img 
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.5 }}
+            src={perfume.image} 
+            className="w-full h-full object-cover"
+            alt={perfume.name}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
         </div>
 
-        <div className="flex gap-3 pointer-events-auto">
-          <button 
-            onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
-            className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-          >
-            <Home size={20} />
-          </button>
+        {/* LAYOUT : ACCORDS À GAUCHE / INFOS À DROITE */}
+        <div className="px-6 -mt-16 relative z-10 flex flex-col md:flex-row gap-16">
           
-          <button 
-            onClick={() => {setScreen("catalogue"); handleSelectPerfume(null);}} 
-            className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-          >
-            <Library size={20} />
-          </button>
-        </div>
-      </nav>
+          {/* CÔTÉ GAUCHE : JAUGES MINIMALISTES */}
+          <div className="w-full md:w-64 shrink-0">
+            <div className="flex flex-col gap-6">
+              <h3 className="text-zinc-500 text-[9px] font-bold uppercase tracking-[0.4em] mb-2">
+                Accords Majeurs
+              </h3>
+              
+              <div className="space-y-6">
+                {visualAccords.map((acc, i) => (
+                  <div key={i} className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] uppercase tracking-[0.1em] text-zinc-400 font-light">
+                        {acc.label}
+                      </span>
+                      <span className="text-[9px] text-zinc-600 italic">{acc.value}%</span>
+                    </div>
+                    <div className="h-[1px] w-full bg-zinc-900 overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${acc.value}%` }}
+                        transition={{ duration: 1.5, delay: 0.5 + (i * 0.1) }}
+                        style={{ backgroundColor: acc.color }}
+                        className="h-full"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
 
-      {/* 3. ÉCRANS PRINCIPAUX */}
-      <main className="relative z-10 h-full w-full">
-        <AnimatePresence mode="wait">
-          {!selectedPerfume && (
-            <motion.div 
-              key={screen} 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }} 
-              className="h-full w-full"
+          {/* CÔTÉ DROIT : CONTENU TEXTUEL */}
+          <div className="flex-1">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
             >
-              {screen === "landing" && <LandingScreen onSelectGender={handleGender} />}
-              {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={() => setScreen("landing")} />}
-              {screen === "analyzing" && <AnalyzingLoader />}
-              {screen === "results" && <ResultsScreen results={results} onMenu={() => setScreen("landing")} onCatalogue={() => setScreen("catalogue")} onSelectPerfume={handleSelectPerfume} />}
-              {screen === "catalogue" && <CatalogueScreen onMenu={() => setScreen("landing")} />}
+              <h1 className="text-6xl md:text-8xl font-light uppercase tracking-tighter mb-2 italic">
+                {perfume.name}
+              </h1>
+              <p className="text-amber-500 text-[10px] font-black uppercase tracking-[0.5em] mb-10">
+                {perfume.brand}
+              </p>
+
+              <p className="text-zinc-400 text-xl leading-relaxed font-light italic max-w-2xl mb-12">
+                "{perfume.description}"
+              </p>
+
+              {/* PYRAMIDE OLFACTIVE TECHNIQUE */}
+              <div className="grid grid-cols-3 gap-8 py-10 border-y border-white/5 max-w-2xl">
+                <div className="text-center">
+                  <Wind size={18} className="mx-auto mb-4 text-zinc-600" />
+                  <p className="text-[8px] uppercase text-zinc-500 tracking-widest mb-2 font-bold">Tête</p>
+                  <p className="text-[10px] text-white uppercase leading-tight">{perfume.topNotes.join(", ")}</p>
+                </div>
+                <div className="text-center border-x border-white/5 px-4">
+                  <Droplets size={18} className="mx-auto mb-4 text-zinc-600" />
+                  <p className="text-[8px] uppercase text-zinc-500 tracking-widest mb-2 font-bold">Cœur</p>
+                  <p className="text-[10px] text-white uppercase leading-tight">{perfume.heartNotes.join(", ")}</p>
+                </div>
+                <div className="text-center">
+                  <Zap size={18} className="mx-auto mb-4 text-zinc-600" />
+                  <p className="text-[8px] uppercase text-zinc-500 tracking-widest mb-2 font-bold">Fond</p>
+                  <p className="text-[10px] text-white uppercase leading-tight">{perfume.baseNotes.join(", ")}</p>
+                </div>
+              </div>
+
+              <div className="mt-12">
+                <button className="px-14 py-5 border border-white/10 rounded-full text-[10px] uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all">
+                  Découvrir le sillage
+                </button>
+              </div>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-
-      {/* 4. OVERLAY FICHE PARFUM */}
-      <AnimatePresence>
-        {selectedPerfume && (
-          <motion.div 
-            key={`perfume-${selectedPerfume.id}`} 
-            initial={{ y: "100%", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[150] bg-[#1D1E1F] overflow-y-auto"
-          >
-            <PerfumePage 
-              perfume={selectedPerfume} 
-              accords={currentAccords} // PASSAGE DES ACCORDS ICI
-              onClose={() => handleSelectPerfume(null)} 
-              onSelectPerfume={handleSelectPerfume} 
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Index;
+export default PerfumePage;

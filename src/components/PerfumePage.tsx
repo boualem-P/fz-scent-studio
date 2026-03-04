@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { X, ShoppingBag, Wind, Droplets, Zap } from "lucide-react";
-import { Perfume } from "@/data/perfumes";
+import { X, Calendar, Wind, Droplets, Zap } from "lucide-react";
+import { Perfume, perfumes } from "@/data/perfumes";
+import { useMemo } from "react";
 
 interface PerfumePageProps {
   perfume: Perfume;
@@ -8,118 +9,135 @@ interface PerfumePageProps {
   onSelectPerfume: (perfume: Perfume) => void;
 }
 
-const PerfumePage = ({ perfume, onClose }: PerfumePageProps) => {
-  // Accords visuels calculés pour le rendu esthétique
-  const visualAccords = [
-    { label: "Boisé", value: 85, color: "#8A6240" },
-    { label: "Épicé", value: 65, color: "#B35A2D" },
-    { label: "Floral", value: 45, color: "#E11D48" },
-    { label: "Minéral", value: 30, color: "#60A5FA" },
+const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
+  // 6. Recommandations : Parfums de la même marque ou même catégorie
+  const recommendations = useMemo(() => {
+    return perfumes
+      .filter(p => p.id !== perfume.id && (p.brand === perfume.brand || p.gender === perfume.gender))
+      .slice(0, 3);
+  }, [perfume]);
+
+  // Simulation des pourcentages pour les jauges interactives (Point 3)
+  const pyramidData = [
+    { label: "Tête", value: 25, icon: <Wind size={14} />, color: "#fbbf24" },
+    { label: "Cœur", value: 45, icon: <Droplets size={14} />, color: "#f59e0b" },
+    { label: "Fond", value: 30, icon: <Zap size={14} />, color: "#b45309" },
   ];
 
   return (
     <div className="relative min-h-screen bg-[#0A0A0A] text-white pb-20">
-      {/* Bouton de fermeture discret */}
-      <div className="absolute top-8 right-8 z-50">
-        <button 
-          onClick={onClose}
-          className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all"
-        >
-          <X size={20} />
+      
+      {/* 7. Interface avec léger BLUR en haut */}
+      <div className="sticky top-0 z-[100] w-full h-20 bg-black/20 backdrop-blur-lg flex items-center justify-between px-8 border-b border-white/5">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+          <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-400">Analyse Détaillée</span>
+        </div>
+        <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+          <X size={24} />
         </button>
       </div>
 
-      <div className="max-w-screen-xl mx-auto">
-        {/* SECTION PHOTO PRINCIPALE */}
-        <div className="relative w-full aspect-[4/5] md:aspect-video overflow-hidden">
-          <motion.img 
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.5 }}
-            src={perfume.image} 
-            className="w-full h-full object-cover"
-            alt={perfume.name}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+      <div className="max-w-7xl mx-auto px-6 pt-8">
+        
+        {/* 1. TITRE */}
+        <div className="mb-10">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            className="text-6xl md:text-8xl font-light italic tracking-tighter uppercase"
+          >
+            {perfume.name}
+          </motion.h1>
+          <p className="text-amber-500 tracking-[0.5em] uppercase text-xs mt-2 font-bold">{perfume.brand}</p>
         </div>
 
-        {/* LAYOUT : ACCORDS À GAUCHE / INFOS À DROITE */}
-        <div className="px-6 -mt-16 relative z-10 flex flex-col md:flex-row gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
-          {/* CÔTÉ GAUCHE : JAUGES MINIMALISTES */}
-          <div className="w-full md:w-64 shrink-0">
-            <div className="flex flex-col gap-6">
-              <h3 className="text-zinc-500 text-[9px] font-bold uppercase tracking-[0.4em] mb-2">
-                Accords Majeurs
-              </h3>
-              
-              <div className="space-y-6">
-                {visualAccords.map((acc, i) => (
-                  <div key={i} className="flex flex-col gap-2">
+          {/* 2. IMAGE PARFUM (Gauche) */}
+          <div className="lg:col-span-4">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+              className="rounded-[2.5rem] overflow-hidden aspect-[3/4] border border-white/10 shadow-2xl"
+            >
+              <img src={perfume.image} className="w-full h-full object-cover" alt={perfume.name} />
+            </motion.div>
+
+            {/* 5. DESCRIPTION + ANNÉE (Sous l'image) */}
+            <div className="mt-8 space-y-4">
+              <div className="flex items-center gap-3 text-zinc-500 text-sm">
+                <Calendar size={16} />
+                <span>Édition de Collection — 2024</span>
+              </div>
+              <p className="text-zinc-400 leading-relaxed italic font-light">
+                "{perfume.description}"
+              </p>
+            </div>
+          </div>
+
+          {/* COLONNE DROITE (Points 3 et 4) */}
+          <div className="lg:col-span-8 space-y-12">
+            
+            {/* 3. JAUGES INTERACTIVES DES NOTES */}
+            <div className="bg-white/5 rounded-3xl p-8 border border-white/10">
+              <h3 className="text-xs uppercase tracking-widest text-zinc-500 mb-8">Équilibre de la Pyramide</h3>
+              <div className="space-y-8">
+                {pyramidData.map((note) => (
+                  <div key={note.label} className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] uppercase tracking-[0.1em] text-zinc-400 font-light">
-                        {acc.label}
-                      </span>
-                      <span className="text-[9px] text-zinc-600 italic">{acc.value}%</span>
+                      <div className="flex items-center gap-3 text-zinc-200 uppercase text-[10px] tracking-widest">
+                        {note.icon} {note.label}
+                      </div>
+                      <span className="text-amber-500 font-mono text-xs">{note.value}%</span>
                     </div>
-                    <div className="h-[1px] w-full bg-zinc-900 overflow-hidden">
+                    <div className="h-[2px] w-full bg-zinc-800 rounded-full">
                       <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${acc.value}%` }}
-                        transition={{ duration: 1.5, delay: 0.5 + (i * 0.1) }}
-                        style={{ backgroundColor: acc.color }}
-                        className="h-full"
+                        initial={{ width: 0 }} animate={{ width: `${note.value}%` }}
+                        className="h-full rounded-full" style={{ backgroundColor: note.color }}
                       />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* CÔTÉ DROIT : CONTENU TEXTUEL */}
-          <div className="flex-1">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <h1 className="text-6xl md:text-8xl font-light uppercase tracking-tighter mb-2 italic">
-                {perfume.name}
-              </h1>
-              <p className="text-amber-500 text-[10px] font-black uppercase tracking-[0.5em] mb-10">
-                {perfume.brand}
-              </p>
-
-              <p className="text-zinc-400 text-xl leading-relaxed font-light italic max-w-2xl mb-12">
-                "{perfume.description}"
-              </p>
-
-              {/* PYRAMIDE OLFACTIVE TECHNIQUE */}
-              <div className="grid grid-cols-3 gap-8 py-10 border-y border-white/5 max-w-2xl">
-                <div className="text-center">
-                  <Wind size={18} className="mx-auto mb-4 text-zinc-600" />
-                  <p className="text-[8px] uppercase text-zinc-500 tracking-widest mb-2 font-bold">Tête</p>
-                  <p className="text-[10px] text-white uppercase leading-tight">{perfume.topNotes.join(", ")}</p>
-                </div>
-                <div className="text-center border-x border-white/5 px-4">
-                  <Droplets size={18} className="mx-auto mb-4 text-zinc-600" />
-                  <p className="text-[8px] uppercase text-zinc-500 tracking-widest mb-2 font-bold">Cœur</p>
-                  <p className="text-[10px] text-white uppercase leading-tight">{perfume.heartNotes.join(", ")}</p>
-                </div>
-                <div className="text-center">
-                  <Zap size={18} className="mx-auto mb-4 text-zinc-600" />
-                  <p className="text-[8px] uppercase text-zinc-500 tracking-widest mb-2 font-bold">Fond</p>
-                  <p className="text-[10px] text-white uppercase leading-tight">{perfume.baseNotes.join(", ")}</p>
-                </div>
+            {/* 4. PETITES IMAGES DES SOUS-NOTES */}
+            <div className="space-y-6">
+              <h3 className="text-xs uppercase tracking-widest text-zinc-500">Composants Olfactifs</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[...perfume.topNotes, ...perfume.heartNotes].slice(0, 4).map((note, i) => (
+                  <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-white/5 bg-zinc-900">
+                    <img 
+                      src={`https://source.unsplash.com/featured/?${note},fragrance`} 
+                      className="w-full h-full object-cover opacity-50 group-hover:scale-110 transition-transform duration-500" 
+                      alt={note}
+                    />
+                    <div className="absolute inset-0 flex items-end p-4 bg-gradient-to-t from-black via-transparent to-transparent">
+                      <span className="text-[10px] uppercase tracking-tighter font-medium">{note}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              <div className="mt-12">
-                <button className="px-14 py-5 border border-white/10 rounded-full text-[10px] uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all">
-                  Découvrir le sillage
-                </button>
+            {/* 6. RECOMMANDATIONS (Cliquable) */}
+            <div className="pt-8 border-t border-white/5">
+              <h3 className="text-xs uppercase tracking-widest text-zinc-500 mb-6">Sillages Similaires</h3>
+              <div className="grid grid-cols-3 gap-4">
+                {recommendations.map((rec) => (
+                  <button 
+                    key={rec.id}
+                    onClick={() => onSelectPerfume(rec)}
+                    className="flex flex-col gap-3 group text-left"
+                  >
+                    <div className="aspect-square rounded-xl overflow-hidden border border-white/10 group-hover:border-amber-500 transition-colors">
+                      <img src={rec.image} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <span className="text-[9px] uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors truncate">{rec.name}</span>
+                  </button>
+                ))}
               </div>
-            </motion.div>
+            </div>
+
           </div>
         </div>
       </div>

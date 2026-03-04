@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown } from "lucide-react";
+import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
 
 interface PyramidScreenProps {
@@ -34,6 +34,9 @@ const ATMOSPHERES = [
 
 const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere'>('swipe');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisText, setAnalysisText] = useState("");
+  
   const [currentStep, setCurrentStep] = useState(0);
   const [noteIndex, setNoteIndex] = useState(0);
   const [intensities, setIntensities] = useState<number[]>(FAMILIES.map(() => 0.5));
@@ -47,10 +50,18 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const nextNote = notesAvailable[noteIndex + 1] || (currentStep < 2 ? NOTES_DATA[steps[currentStep + 1]][0] : null);
 
   const x = useMotionValue(0);
-  
-  // OPACITÉ ÉLEVÉE : 60% au repos pour être bien "tapant" et visible.
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
+
+  // Fonction de transition avec délai "Analyse"
+  const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
+    setAnalysisText(text);
+    setIsAnalyzing(true);
+    setTimeout(() => {
+      setIsAnalyzing(false);
+      setScreen(nextScreen);
+    }, 4000); // 4 secondes de délai
+  };
 
   const handleSwipe = (liked: boolean) => {
     const key = steps[currentStep] as keyof typeof selections;
@@ -62,12 +73,12 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
       setCurrentStep(prev => prev + 1);
       setNoteIndex(0);
     } else {
-      setScreen('map');
+      triggerTransition('map', "Harmonisation des essences sélectionnées...");
     }
     x.set(0); 
   };
 
-  // LOGIQUE RADAR (INCHANGÉE)
+  // LOGIQUE RADAR
   const size = 300;
   const center = size / 2;
   const radius = size * 0.38;
@@ -91,13 +102,47 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
       <AnimatePresence mode="wait">
-        {screen === 'swipe' ? (
-          <motion.div key="swipe-container" className="w-full max-w-sm flex flex-col items-center relative">
+        {/* ÉCRAN D'ANALYSE (TRANSITION LUXE) */}
+        {isAnalyzing ? (
+          <motion.div
+            key="loader"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-10 text-center"
+          >
+            <div className="relative mb-8">
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    className="w-20 h-20 border-t-2 border-b-2 border-amber-500 rounded-full"
+                />
+                <div className="absolute inset-0 flex items-center justify-center text-amber-500 opacity-50">
+                    <Loader2 size={24} className="animate-spin" />
+                </div>
+            </div>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="text-amber-500 font-light italic tracking-[0.2em] text-sm uppercase"
+            >
+              {analysisText}
+            </motion.p>
+            <div className="mt-4 w-32 h-[1px] bg-zinc-800 relative overflow-hidden">
+                <motion.div 
+                    initial={{ x: "-100%" }}
+                    animate={{ x: "100%" }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute inset-0 bg-amber-500"
+                />
+            </div>
+          </motion.div>
+        ) : screen === 'swipe' ? (
+          <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center relative">
             <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Affinez vos désirs</h2>
             
             <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
-              
-              {/* ICONES BLANCHES - VISIBILITÉ MAXIMALE (60% à 100%) */}
               <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
                 <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg">
                   <Frown size={48} strokeWidth={1.5} />
@@ -107,12 +152,10 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                 </motion.div>
               </div>
 
-              {/* CARTE DESSOUS */}
               {nextNote && (
                 <div className="absolute inset-0 bg-white rounded-[2.5rem] scale-95 translate-y-4 opacity-10 border border-zinc-200 z-0" />
               )}
 
-              {/* CARTE ACTIVE */}
               <AnimatePresence mode="popLayout">
                 <motion.div 
                   key={`${steps[currentStep]}-${noteIndex}`} 
@@ -160,12 +203,17 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               </svg>
               {FAMILIES.map((f, i) => { const p = getPointPos(i, 1.25); return <div key={i} className="absolute text-[8px] font-bold text-zinc-500" style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}>{f}</div>; })}
             </div>
-            <button onClick={() => setScreen('atmosphere')} className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]">Continuer</button>
+            <button 
+                onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")} 
+                className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]"
+            >
+                Continuer
+            </button>
           </motion.div>
         ) : (
           <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center">
             <h2 className="text-3xl font-light mb-2 uppercase tracking-tighter text-white">L'Atmosphère</h2>
-            <div className="grid grid-cols-1 gap-4 w-full px-4">
+            <div className="grid grid-cols-1 gap-4 w-full px-4 mt-4">
               {ATMOSPHERES.map((atm) => (
                 <button key={atm.id} onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id)}
                   className="group relative h-28 rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center p-6 hover:border-amber-500/50 transition-all text-left"

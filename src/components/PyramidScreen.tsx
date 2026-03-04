@@ -32,8 +32,16 @@ const ATMOSPHERES = [
   { id: 'rendezvous', label: 'Rendez-vous', icon: <Heart size={24}/>, desc: "Sensuel & Captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400" },
 ];
 
+// --- Données des Accords pour l'affichage ---
+const ACCORDS_DATA = [
+  { label: "Agrumes", value: 85, color: "#F4F933" },
+  { label: "Ambré", value: 70, color: "#B35A2D" },
+  { label: "Boisé", value: 60, color: "#8A6240" },
+  { label: "Épicé", value: 45, color: "#9CD66A" },
+];
+
 const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
-  const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere' | 'result'>('swipe');
+  const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere'>('swipe');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisText, setAnalysisText] = useState("");
   
@@ -47,13 +55,12 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const steps = ["top", "heart", "base"];
   const notesAvailable = NOTES_DATA[steps[currentStep]];
   const currentNote = notesAvailable[noteIndex];
-  const nextNote = notesAvailable[noteIndex + 1] || (currentStep < 2 ? NOTES_DATA[steps[currentStep + 1]][0] : null);
 
   const x = useMotionValue(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
-  const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere' | 'result', text: string) => {
+  const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
     setAnalysisText(text);
     setIsAnalyzing(true);
     setTimeout(() => {
@@ -97,41 +104,18 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const points = intensities.map((inst, i) => getPointPos(i, inst));
   const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
 
-  // Simulation des accords pour la page finale
-  const ACCORDS_MOCK = [
-    { label: "Agrumes", value: 90, color: "#f4f933" },
-    { label: "Ambré", value: 75, color: "#b35a2d" },
-    { label: "Boisé", value: 65, color: "#8a6240" },
-    { label: "Épicé Frais", value: 55, color: "#9cd66a" },
-    { label: "Fumé", value: 40, color: "#b2abbd" }
-  ];
-
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
+    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-x-hidden pb-10">
       <AnimatePresence mode="wait">
         {isAnalyzing ? (
-          <motion.div
-            key="loader"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-10 text-center"
-          >
+          <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-10 text-center">
             <div className="relative mb-8">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="w-20 h-20 border-t-2 border-b-2 border-amber-500 rounded-full"
-                />
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="w-20 h-20 border-t-2 border-b-2 border-amber-500 rounded-full" />
                 <div className="absolute inset-0 flex items-center justify-center text-amber-500 opacity-50">
                     <Loader2 size={24} className="animate-spin" />
                 </div>
             </div>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-amber-500 font-light italic tracking-[0.2em] text-sm uppercase"
-            >
+            <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-amber-500 font-light italic tracking-[0.2em] text-sm uppercase">
               {analysisText}
             </motion.p>
           </motion.div>
@@ -140,30 +124,11 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Affinez vos désirs</h2>
             <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
               <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
-                <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg">
-                  <Frown size={48} strokeWidth={1.5} />
-                </motion.div>
-                <motion.div style={{ opacity: smileOpacity }} className="text-white drop-shadow-lg">
-                  <Smile size={48} strokeWidth={1.5} />
-                </motion.div>
+                <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg"><Frown size={48} strokeWidth={1.5} /></motion.div>
+                <motion.div style={{ opacity: smileOpacity }} className="text-white drop-shadow-lg"><Smile size={48} strokeWidth={1.5} /></motion.div>
               </div>
               <AnimatePresence mode="popLayout">
-                <motion.div 
-                  key={`${steps[currentStep]}-${noteIndex}`} 
-                  style={{ x }}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.9}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 100) handleSwipe(true);
-                    else if (info.offset.x < -100) handleSwipe(false);
-                  }}
-                  initial={{ x: 0, scale: 0.9, opacity: 0 }}
-                  animate={{ x: 0, scale: 1, opacity: 1 }}
-                  exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10"
-                >
+                <motion.div key={`${steps[currentStep]}-${noteIndex}`} style={{ x }} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.9} onDragEnd={(_, info) => { if (info.offset.x > 100) handleSwipe(true); else if (info.offset.x < -100) handleSwipe(false); }} initial={{ x: 0, scale: 0.9, opacity: 0 }} animate={{ x: 0, scale: 1, opacity: 1 }} exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0 }} transition={{ type: "spring", stiffness: 400, damping: 30 }} className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10">
                   <div className="w-full h-full flex flex-col pointer-events-none">
                     <img src={currentNote.img} className="w-full h-2/3 object-cover" />
                     <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center">
@@ -199,17 +164,41 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             </div>
             <button onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")} className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]">Finaliser le profil</button>
           </motion.div>
-        ) : screen === 'atmosphere' ? (
-          <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center justify-center">
+        ) : (
+          <motion.div key="atm" initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center">
+            
+            {/* NOUVELLE SECTION : ARCHITECTURE DES ACCORDS (FRANÇAIS) */}
+            <div className="w-full max-w-sm mb-12 px-4">
+              <h3 className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.3em] mb-6 text-center">Accords Principaux</h3>
+              <div className="space-y-3">
+                {ACCORDS_DATA.map((accord, i) => (
+                  <div key={accord.label} className="w-full h-8 bg-zinc-900/40 rounded-r-full overflow-hidden flex items-center relative border border-white/5">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${accord.value}%` }}
+                      transition={{ duration: 1.5, delay: i * 0.2, ease: "circOut" }}
+                      style={{ backgroundColor: accord.color }}
+                      className="h-full rounded-r-full flex items-center px-4"
+                    >
+                      <span className={`text-[10px] font-bold uppercase tracking-widest whitespace-nowrap ${accord.label === 'Agrumes' ? 'text-black' : 'text-white'}`}>
+                        {accord.label}
+                      </span>
+                    </motion.div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* TITRE PRESTIGIEUX EXISTANT */}
             <div className="flex flex-col items-center mb-10 text-center">
               <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Univers Olfactif</h2>
               <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
               <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">Définissez le sillage de votre destinée</p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 w-full px-4">
+            <div className="grid grid-cols-1 gap-4 w-full px-4 mb-10">
               {ATMOSPHERES.map((atm) => (
-                <button key={atm.id} onClick={() => triggerTransition('result', "Création de votre élixir personnel...")}
+                <button key={atm.id} onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id)}
                   className="group relative h-28 rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center p-6 hover:border-amber-500/50 transition-all text-left"
                 >
                   <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" />
@@ -224,41 +213,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                 </button>
               ))}
             </div>
-          </motion.div>
-        ) : (
-          /* --- ÉCRAN FINAL AVEC ARCHITECTURE DES ACCORDS --- */
-          <motion.div key="result" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-md flex flex-col items-center pb-20">
-            <div className="flex flex-col items-center mb-8 text-center">
-              <h2 className="text-2xl font-bold uppercase tracking-[0.4em] text-white">Votre Signature</h2>
-              <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
-              <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.2em]">Analyse de la composition</p>
-            </div>
-
-            <div className="w-full space-y-4 px-2">
-              <h3 className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.3em] mb-6">Accords Majeurs</h3>
-              {ACCORDS_MOCK.map((accord, i) => (
-                <div key={accord.label} className="w-full h-9 bg-zinc-900/50 rounded-r-full overflow-hidden flex items-center relative border border-white/5">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${accord.value}%` }}
-                    transition={{ duration: 1.5, delay: i * 0.15, ease: "circOut" }}
-                    style={{ backgroundColor: accord.color }}
-                    className="h-full rounded-r-full flex items-center px-4"
-                  >
-                    <span className={`text-[11px] font-bold uppercase tracking-wider whitespace-nowrap ${accord.label === 'Agrumes' ? 'text-black' : 'text-white'}`}>
-                      {accord.label}
-                    </span>
-                  </motion.div>
-                </div>
-              ))}
-            </div>
-
-            <button 
-              onClick={() => setScreen('swipe')}
-              className="mt-16 text-zinc-600 text-[10px] font-bold uppercase tracking-[0.4em] hover:text-amber-500 transition-colors"
-            >
-              Créer un nouveau profil
-            </button>
           </motion.div>
         )}
       </AnimatePresence>

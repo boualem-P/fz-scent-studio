@@ -44,11 +44,19 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const steps = ["top", "heart", "base"];
   const notesAvailable = NOTES_DATA[steps[currentStep]];
   const currentNote = notesAvailable[noteIndex];
+  
+  // Préparation de la carte suivante pour l'effet de pile
+  const nextNote = notesAvailable[noteIndex + 1] || (currentStep < 2 ? NOTES_DATA[steps[currentStep + 1]][0] : null);
 
   const x = useMotionValue(0);
+  const y = useMotionValue(0); // Ajout du mouvement vertical
   const rotate = useTransform(x, [-200, 200], [-25, 25]);
+  const opacityIcons = useTransform(x, [-100, 0, 100], [1, 0, 1]);
 
-  useLayoutEffect(() => { x.set(0); }, [noteIndex, currentStep, x, screen]);
+  useLayoutEffect(() => { 
+    x.set(0); 
+    y.set(0); // Reset vertical
+  }, [noteIndex, currentStep, screen]);
 
   const handleSwipe = (liked: boolean) => {
     const key = steps[currentStep] as keyof typeof selections;
@@ -87,27 +95,63 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none">
+    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
       <AnimatePresence mode="wait">
         {screen === 'swipe' ? (
           <motion.div key="sw" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-sm flex flex-col items-center">
             <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-500">Affinez vos désirs</h2>
+            
             <div className="relative w-full aspect-[3/4] mb-12">
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.div key={currentNote.id} style={{ x, rotate }} drag="x" dragConstraints={{ left: 0, right: 0 }}
-                  onDragEnd={(_, i) => { if (i.offset.x > 100) handleSwipe(true); else if (i.offset.x < -100) handleSwipe(false); }}
-                  initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-                  exit={{ x: x.get() > 0 ? 500 : -500, opacity: 0 }}
-                  className="absolute inset-0 bg-white rounded-[2.5rem] overflow-hidden shadow-2xl"
+              {/* CARTE EN DESSOUS (STACK EFFECT) */}
+              {nextNote && (
+                <div 
+                  className="absolute inset-0 bg-white rounded-[2.5rem] overflow-hidden shadow-sm scale-95 translate-y-4 rotate-2 opacity-40 border border-zinc-200 pointer-events-none"
                 >
-                  <img src={currentNote.img} className="w-full h-2/3 object-cover" />
+                  <img src={nextNote.img} className="w-full h-2/3 object-cover grayscale-[50%]" />
                   <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center">
+                    <h3 className="text-2xl font-light text-black/20 mb-1">{nextNote.label}</h3>
+                  </div>
+                </div>
+              )}
+
+              {/* CARTE ACTIVE */}
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.div 
+                  key={currentNote.id} 
+                  style={{ x, y, rotate }} 
+                  drag 
+                  dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                  dragElastic={0.8}
+                  onDragEnd={(_, i) => { 
+                    if (i.offset.x > 120) handleSwipe(true); 
+                    else if (i.offset.x < -120) handleSwipe(false); 
+                  }}
+                  initial={{ opacity: 0, scale: 0.9, y: 0 }} 
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ x: x.get() > 0 ? 500 : -500, opacity: 0, rotate: x.get() > 0 ? 45 : -45 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="absolute inset-0 bg-white rounded-[2.5rem] overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing border border-zinc-100"
+                >
+                  {/* Image sans événements pour laisser passer le drag */}
+                  <div className="w-full h-2/3 relative pointer-events-none">
+                    <img src={currentNote.img} className="w-full h-full object-cover" />
+                    
+                    {/* Overlay d'état au drag */}
+                    <motion.div style={{ opacity: opacityIcons }} className="absolute inset-0 flex items-center justify-between px-10">
+                       <Frown size={80} className="text-black/10" />
+                       <Smile size={80} className="text-amber-500/20" />
+                    </motion.div>
+                  </div>
+
+                  <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center pointer-events-none">
                     <h3 className="text-2xl font-light text-black mb-1">{currentNote.label}</h3>
                     <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">{currentNote.sub}</p>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
+            
+            <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.2em]">Balayez pour choisir</p>
           </motion.div>
         ) : screen === 'map' ? (
           <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-md flex flex-col items-center">

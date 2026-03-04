@@ -1,158 +1,138 @@
-import { useState, useLayoutEffect } from "react";
-import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { Wind, Droplets, Sparkles, Smile, Frown, ArrowLeft, Moon, Sun, Briefcase, Heart, ArrowRight } from "lucide-react";
-import { NoteCategory } from "@/data/perfumes";
+import { motion } from "framer-motion";
+import { Perfume, NOTE_LABELS } from "@/data/perfumes";
+import { RefreshCw, Library, ChevronRight, Sparkles, ShoppingBag } from "lucide-react";
 
-interface PyramidScreenProps {
-  onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string) => void;
+interface ResultsScreenProps {
+  results: { perfume: Perfume; matchPercent: number }[];
   onMenu: () => void;
+  onCatalogue: () => void;
+  onSelectPerfume: (perfume: Perfume) => void;
 }
 
-const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'VERT'];
-
-const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string }[]> = {
-  top: [
-    { id: "hesperides", label: "Citron & Bergamote", img: "https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=400", sub: "Fraîcheur vive" },
-    { id: "marines", label: "Brise Marine", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400", sub: "Notes aquatiques" },
-    { id: "aromatiques", label: "Lavande Sauvage", img: "https://images.unsplash.com/photo-1595908129746-57ca1a63dd4d?q=80&w=400", sub: "Herbes fraîches" }
-  ],
-  heart: [
-    { id: "florales", label: "Rose & Jasmin", img: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?q=80&w=400", sub: "Cœur romantique" },
-    { id: "fruitees", label: "Fruits Rouges", img: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=400", sub: "Douceur fruitée" }
-  ],
-  base: [
-    { id: "boisees", label: "Santal & Cèdre", img: "https://images.unsplash.com/photo-1585675100414-add2e465a136?q=80&w=400", sub: "Structure boisée" },
-    { id: "ambrees", label: "Ambre Gris", img: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=400", sub: "Sillage profond" }
-  ]
-};
-
-const ATMOSPHERES = [
-  { id: 'soir', label: 'Soirée de Gala', icon: <Moon size={24}/>, desc: "Intense & Magnétique", img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=400" },
-  { id: 'quotidien', label: 'Signature Quotidienne', icon: <Sun size={24}/>, desc: "Léger & Lumineux", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400" },
-  { id: 'business', label: 'Business & Influence', icon: <Briefcase size={24}/>, desc: "Assuré & Subtil", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400" },
-  { id: 'rendezvous', label: 'Rendez-vous', icon: <Heart size={24}/>, desc: "Sensuel & Captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400" },
-];
-
-const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
-  const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere'>('swipe');
-  const [currentStep, setCurrentStep] = useState(0);
-  const [noteIndex, setNoteIndex] = useState(0);
-  const [intensities, setIntensities] = useState<number[]>(FAMILIES.map(() => 0.5));
-  const [selections, setSelections] = useState<{ top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[] }>({
-    top: [], heart: [], base: []
-  });
-
-  const steps = ["top", "heart", "base"];
-  const notesAvailable = NOTES_DATA[steps[currentStep]];
-  const currentNote = notesAvailable[noteIndex];
-  const hasNextCard = noteIndex < notesAvailable.length - 1 || currentStep < 2;
-
-  const x = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 200], [-15, 15]);
-  const opacityIcons = useTransform(x, [-100, 0, 100], [1, 0, 1]);
-
-  // Réinitialisation forcée au milieu
-  useLayoutEffect(() => {
-    x.set(0);
-  }, [noteIndex, currentStep, screen]);
-
-  const handleSwipe = (liked: boolean) => {
-    const key = steps[currentStep] as keyof typeof selections;
-    if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
-
-    if (noteIndex < notesAvailable.length - 1) {
-      setNoteIndex(prev => prev + 1);
-    } else if (currentStep < 2) {
-      setCurrentStep(prev => prev + 1);
-      setNoteIndex(0);
-    } else {
-      setScreen('map');
-    }
-  };
-
-  // Logique Radar (Simplifiée pour la clarté)
-  const size = 300;
-  const center = size / 2;
-  const radius = size * 0.38;
-  const getPointPos = (index: number, intensity: number) => {
-    const angle = (Math.PI * 2 * index) / FAMILIES.length - Math.PI / 2;
-    return { x: center + radius * intensity * Math.cos(angle), y: center + radius * intensity * Math.sin(angle) };
-  };
-
+const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
-      <AnimatePresence mode="wait">
-        {screen === 'swipe' ? (
-          <motion.div key="sw" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center">
-            
-            <header className="text-center mb-12">
-               <p className="text-amber-500 text-[10px] font-black uppercase tracking-[0.4em] mb-2">Étape {currentStep + 1}/3</p>
-               <h2 className="text-3xl font-light italic tracking-tight uppercase">Vos Affinités</h2>
-            </header>
+    <div className="min-h-screen pt-24 pb-20 px-6 bg-black text-white selection:bg-amber-500/30 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Header Style Luxe */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="text-center mb-20"
+        >
+          <span className="text-amber-500 text-[10px] font-black uppercase tracking-[0.5em] mb-4 block">Votre Signature</span>
+          <h2 className="text-5xl md:text-7xl font-light tracking-tighter uppercase italic mb-6">
+            L'Éveil des Sens
+          </h2>
+          <div className="h-[1px] w-24 bg-amber-500/50 mx-auto mb-6" />
+          <p className="text-zinc-500 font-light text-lg max-w-xl mx-auto">
+            Voici les essences qui ont capturé l'âme de votre profil olfactif.
+          </p>
+        </motion.div>
 
-            <div className="relative w-full aspect-[3/4.5] mb-12">
-              {/* CARTE DE FOND (STACK EFFECT) */}
-              {hasNextCard && (
-                <div className="absolute inset-0 bg-zinc-800 rounded-[2.5rem] scale-[0.94] translate-y-4 rotate-2 opacity-40 border border-white/10" />
-              )}
+        {/* Grille de Résultats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          {results.map((result, index) => (
+            <motion.div
+              key={result.perfume.id}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.2, duration: 0.8 }}
+              className="group relative"
+            >
+              {/* Carte de Parfum */}
+              <div 
+                onClick={() => onSelectPerfume(result.perfume)}
+                className="relative bg-zinc-900/20 border border-white/5 rounded-[2.5rem] p-8 transition-all duration-700 hover:border-amber-500/30 hover:bg-zinc-900/40 cursor-pointer overflow-hidden backdrop-blur-xl"
+              >
+                {/* Aura de fond au hover */}
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-amber-500/5 blur-[80px] rounded-full group-hover:bg-amber-500/10 transition-all duration-700" />
 
-              {/* CARTE ACTIVE */}
-              <AnimatePresence mode="popLayout">
-                <motion.div
-                  key={`${currentStep}-${currentNote.id}`} // Key unique pour recentrer
-                  style={{ x, rotate }}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  onDragEnd={(_, i) => {
-                    if (i.offset.x > 100) handleSwipe(true);
-                    else if (i.offset.x < -100) handleSwipe(false);
-                  }}
-                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, transition: { duration: 0.3 } }}
-                  whileTap={{ cursor: "grabbing" }}
-                  className="absolute inset-0 bg-white rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.6)] border border-white/20 cursor-grab"
-                >
-                  {/* Toute cette zone est maintenant Swipable */}
-                  <div className="relative h-full w-full flex flex-col">
-                    <img src={currentNote.img} className="w-full h-3/5 object-cover pointer-events-none" alt="" />
-                    
-                    {/* Indicateurs de swipe */}
-                    <motion.div style={{ opacity: opacityIcons }} className="absolute inset-0 pointer-events-none flex items-center justify-between px-10">
-                       <Frown size={60} className="text-black/20" />
-                       <Smile size={60} className="text-amber-500/40" />
-                    </motion.div>
+                {/* Badge Affinité */}
+                <div className="flex items-center gap-2 mb-8">
+                  <Sparkles size={12} className="text-amber-500" />
+                  <span className="text-[10px] font-black tracking-[0.2em] text-amber-500 uppercase">
+                    {result.matchPercent}% d'affinité
+                  </span>
+                </div>
 
-                    <div className="flex-1 p-8 text-center bg-white flex flex-col justify-center pointer-events-none">
-                      <span className="text-amber-600 text-[9px] font-black uppercase tracking-[0.3em] mb-2">{currentNote.sub}</span>
-                      <h3 className="text-4xl font-light text-black tracking-tighter leading-none mb-4 uppercase italic">
-                        {currentNote.label}
-                      </h3>
-                    </div>
+                {/* Image du flacon */}
+                <div className="aspect-square mb-10 relative z-10 flex items-center justify-center">
+                  <motion.div 
+                    whileHover={{ scale: 1.05, y: -10 }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                    className="w-full h-full"
+                  >
+                    {result.perfume.image ? (
+                      <img 
+                        src={result.perfume.image} 
+                        alt={result.perfume.name}
+                        className="w-full h-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.5)]" 
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-zinc-800/50 rounded-2xl flex items-center justify-center text-6xl font-serif text-zinc-700">
+                        {result.perfume.brand.charAt(0)}
+                      </div>
+                    )}
+                  </motion.div>
+                </div>
+
+                {/* Infos */}
+                <div className="text-center space-y-4">
+                  <div>
+                    <p className="text-amber-500 text-[9px] font-bold uppercase tracking-[0.4em] mb-1">
+                      {result.perfume.brand}
+                    </p>
+                    <h3 className="text-3xl font-light tracking-tight text-white group-hover:text-amber-100 transition-colors uppercase italic">
+                      {result.perfume.name}
+                    </h3>
                   </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-            
-            <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.2em]">Balayez pour choisir</p>
 
-          </motion.div>
-        ) : screen === 'map' ? (
-           <motion.div key="map">
-              {/* Garder le code du radar précédent ici */}
-              <h2 className="text-center text-amber-500 uppercase tracking-widest">Étape B : Le Radar</h2>
-              <button onClick={() => setScreen('atmosphere')} className="mt-20 bg-white text-black px-10 py-4 rounded-full uppercase text-[10px] font-bold tracking-widest">Continuer</button>
-           </motion.div>
-        ) : (
-          <motion.div key="atm">
-             {/* Garder le code de l'atmosphère précédent ici */}
-             <h2 className="text-center text-amber-500 uppercase tracking-widest">Étape C : Atmosphère</h2>
-             <button onClick={() => onValidate(selections.top, selections.heart, selections.base)} className="mt-20 bg-white text-black px-10 py-4 rounded-full uppercase text-[10px] font-bold tracking-widest">Valider</button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  {/* Tags Olfactifs */}
+                  <div className="flex justify-center gap-2">
+                    {Array.from(new Set([...result.perfume.topNotes])).slice(0, 2).map((cat) => (
+                      <span key={cat} className="text-[8px] px-3 py-1 bg-white/5 border border-white/10 rounded-full text-zinc-400 uppercase tracking-widest">
+                        {NOTE_LABELS[cat] || cat}
+                      </span>
+                    ))}
+                  </div>
+
+                  <p className="text-zinc-500 text-xs italic font-light leading-relaxed line-clamp-2 px-4">
+                    "{result.perfume.description}"
+                  </p>
+                </div>
+
+                {/* Bouton Voir Détails Intégré */}
+                <div className="mt-8 pt-6 border-t border-white/5 flex justify-center">
+                   <div className="flex items-center gap-2 text-amber-500 text-[9px] font-black uppercase tracking-[0.2em] group-hover:gap-4 transition-all">
+                      Découvrir l'élixir <ChevronRight size={14} />
+                   </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Actions de Fin de Parcours */}
+        <div className="mt-24 flex flex-col md:flex-row items-center justify-center gap-10">
+          <button 
+            onClick={onMenu} 
+            className="flex items-center gap-3 text-zinc-500 hover:text-amber-500 transition-colors uppercase text-[10px] font-bold tracking-[0.3em]"
+          >
+            <RefreshCw size={14} /> Réinitialiser mon profil
+          </button>
+          
+          <button 
+            onClick={onCatalogue} 
+            className="group flex items-center gap-4 px-12 py-6 bg-white text-black hover:bg-amber-500 hover:text-white transition-all rounded-full font-black uppercase text-[10px] tracking-[0.3em] shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+          >
+            <Library size={18} /> Explorer le catalogue
+          </button>
+        </div>
+
+      </div>
     </div>
   );
 };
 
-export default PyramidScreen;
+export default ResultsScreen;

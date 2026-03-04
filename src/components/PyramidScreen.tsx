@@ -47,9 +47,10 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const nextNote = notesAvailable[noteIndex + 1] || (currentStep < 2 ? NOTES_DATA[steps[currentStep + 1]][0] : null);
 
   const x = useMotionValue(0);
-  // Réaction subtile de l'opacité lors du swipe, mais reste visible à 20% au repos
-  const frownOpacity = useTransform(x, [-150, 0], [1, 0.2]);
-  const smileOpacity = useTransform(x, [0, 150], [0.2, 1]);
+  
+  // Transformation de l'opacité (doré discret au repos, éclatant au mouvement)
+  const frownOpacity = useTransform(x, [-150, 0], [1, 0.3]);
+  const smileOpacity = useTransform(x, [0, 150], [0.3, 1]);
 
   const handleSwipe = (liked: boolean) => {
     const key = steps[currentStep] as keyof typeof selections;
@@ -97,17 +98,17 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             
             <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
               
-              {/* ICONES VISIBLES EN CONTINU */}
-              <div className="absolute inset-x-[-60px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2">
-                <motion.div style={{ opacity: frownOpacity }} className="text-zinc-700">
-                  <Frown size={40} strokeWidth={1.5} />
+              {/* ICONES DORÉES FIXES */}
+              <div className="absolute inset-x-[-65px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2">
+                <motion.div style={{ opacity: frownOpacity }} className="text-[#D4AF37]">
+                  <Frown size={42} strokeWidth={1} />
                 </motion.div>
-                <motion.div style={{ opacity: smileOpacity }} className="text-amber-600">
-                  <Smile size={40} strokeWidth={1.5} />
+                <motion.div style={{ opacity: smileOpacity }} className="text-[#D4AF37]">
+                  <Smile size={42} strokeWidth={1} />
                 </motion.div>
               </div>
 
-              {/* CARTE DESSOUS */}
+              {/* CARTE DESSOUS (STACK EFFECT) */}
               {nextNote && (
                 <div className="absolute inset-0 bg-white rounded-[2.5rem] scale-95 translate-y-4 opacity-20 border border-zinc-200 z-0" />
               )}
@@ -141,9 +142,10 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               </AnimatePresence>
             </div>
             
-            <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-[0.3em] opacity-40">Balayez pour choisir votre essence</p>
+            <p className="text-[#D4AF37] text-[9px] font-bold uppercase tracking-[0.3em] opacity-40">Explorer votre sillage</p>
           </motion.div>
         ) : screen === 'map' ? (
+          // PAGE B (INCHANGÉE)
           <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-md flex flex-col items-center">
             <h2 className="text-2xl font-light mb-2 uppercase tracking-[0.2em] text-amber-500">Signature</h2>
             <p className="text-zinc-500 text-[10px] uppercase tracking-widest mb-10 text-center">Sculptez votre intensité</p>
@@ -164,6 +166,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             <button onClick={() => setScreen('atmosphere')} className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]">Continuer</button>
           </motion.div>
         ) : (
+          // PAGE C (INCHANGÉE)
           <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center">
             <h2 className="text-3xl font-light mb-2 uppercase tracking-tighter text-white">L'Atmosphère</h2>
             <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-10">Où vous mènera ce sillage ?</p>

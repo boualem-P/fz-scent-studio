@@ -15,15 +15,25 @@ const Index = () => {
   const [gender, setGender] = useState<Gender>("homme");
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
+  
+  // NOUVEAU : État pour stocker les accords calculés par le radar
+  const [currentAccords, setCurrentAccords] = useState<any[]>([]);
 
   const handleGender = (g: Gender) => { 
     setGender(g); 
     setScreen("pyramid"); 
   };
 
-  const handleValidate = useCallback((top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[]) => {
+  // MISE À JOUR : On accepte maintenant l'argument 'accords'
+  const handleValidate = useCallback((top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string, accords?: any[]) => {
     const matches = matchPerfumes(gender, top, heart, base);
     setResults(matches);
+    
+    // On sauvegarde les accords s'ils existent, sinon on met un défaut
+    if (accords) {
+      setCurrentAccords(accords);
+    }
+    
     setScreen("analyzing");
     setTimeout(() => setScreen("results"), 4000);
   }, [gender]);
@@ -49,7 +59,6 @@ const Index = () => {
 
       {/* 2. NAVIGATION FIXE */}
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
-        {/* COLONNE GAUCHE : RETOUR + PROFIL */}
         <div className="flex flex-col gap-3 pointer-events-auto">
           {(screen !== "landing" || selectedPerfume) && (
             <button 
@@ -60,7 +69,6 @@ const Index = () => {
             </button>
           )}
           
-          {/* NOUVEL EMPLACEMENT DU BOUTON PROFIL (SANS TEXTE) */}
           <button 
             onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
             className="w-12 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
@@ -70,7 +78,6 @@ const Index = () => {
           </button>
         </div>
 
-        {/* COLONNE DROITE : ACCUEIL + CATALOGUE */}
         <div className="flex gap-3 pointer-events-auto">
           <button 
             onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
@@ -122,6 +129,7 @@ const Index = () => {
           >
             <PerfumePage 
               perfume={selectedPerfume} 
+              accords={currentAccords} // PASSAGE DES ACCORDS ICI
               onClose={() => handleSelectPerfume(null)} 
               onSelectPerfume={handleSelectPerfume} 
             />

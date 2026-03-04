@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
@@ -53,14 +53,13 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
-  // Fonction de transition avec délai "Analyse"
   const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
     setAnalysisText(text);
     setIsAnalyzing(true);
     setTimeout(() => {
       setIsAnalyzing(false);
       setScreen(nextScreen);
-    }, 4000); // 4 secondes de délai
+    }, 4000);
   };
 
   const handleSwipe = (liked: boolean) => {
@@ -78,7 +77,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     x.set(0); 
   };
 
-  // LOGIQUE RADAR
   const size = 300;
   const center = size / 2;
   const radius = size * 0.38;
@@ -102,7 +100,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
       <AnimatePresence mode="wait">
-        {/* ÉCRAN D'ANALYSE (TRANSITION LUXE) */}
         {isAnalyzing ? (
           <motion.div
             key="loader"
@@ -124,7 +121,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
               className="text-amber-500 font-light italic tracking-[0.2em] text-sm uppercase"
             >
               {analysisText}
@@ -141,7 +137,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
         ) : screen === 'swipe' ? (
           <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center relative">
             <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Affinez vos désirs</h2>
-            
             <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
               <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
                 <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg">
@@ -151,11 +146,9 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                   <Smile size={48} strokeWidth={1.5} />
                 </motion.div>
               </div>
-
               {nextNote && (
                 <div className="absolute inset-0 bg-white rounded-[2.5rem] scale-95 translate-y-4 opacity-10 border border-zinc-200 z-0" />
               )}
-
               <AnimatePresence mode="popLayout">
                 <motion.div 
                   key={`${steps[currentStep]}-${noteIndex}`} 
@@ -183,32 +176,27 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                 </motion.div>
               </AnimatePresence>
             </div>
-            
             <p className="text-white text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">Balayez pour choisir</p>
           </motion.div>
         ) : screen === 'map' ? (
           <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-md flex flex-col items-center">
-            <h2 className="text-2xl font-light mb-2 uppercase tracking-[0.2em] text-amber-500">Signature</h2>
+            <h2 className="text-2xl font-light mb-2 uppercase tracking-[0.25em] text-white">Architecture Olfactive</h2>
+            <p className="text-amber-500/80 text-[10px] font-bold uppercase tracking-[0.15em] mb-12 text-center">Modelez l'intensité de vos accords</p>
             <div className="relative">
               <svg id="radar-svg" width={size} height={size}>
-                {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => ( <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#1a1a1a" /> ))}
-                {FAMILIES.map((_, i) => { const p = getPointPos(i, 1); return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#1a1a1a" />; })}
-                <polygon points={polygonPath} fill="rgba(245, 158, 11, 0.15)" stroke="#f59e0b" strokeWidth="2" />
+                {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => ( <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" /> ))}
+                {FAMILIES.map((_, i) => { const p = getPointPos(i, 1); return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#222" />; })}
+                <polygon points={polygonPath} fill="rgba(245, 158, 11, 0.2)" stroke="#f59e0b" strokeWidth="2" />
                 {points.map((p, i) => (
                   <motion.g key={i}>
                     <motion.circle cx={p.x} cy={p.y} r="25" fill="transparent" drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} onDrag={(_, info) => updateIntensity(i, info)} />
-                    <circle cx={p.x} cy={p.y} r="6" fill="#f59e0b" className="pointer-events-none" />
+                    <circle cx={p.x} cy={p.y} r="6" fill="#f59e0b" className="pointer-events-none shadow-xl" />
                   </motion.g>
                 ))}
               </svg>
-              {FAMILIES.map((f, i) => { const p = getPointPos(i, 1.25); return <div key={i} className="absolute text-[8px] font-bold text-zinc-500" style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}>{f}</div>; })}
+              {FAMILIES.map((f, i) => { const p = getPointPos(i, 1.28); return <div key={i} className="absolute text-[9px] font-black text-zinc-500 uppercase tracking-tighter" style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}>{f}</div>; })}
             </div>
-            <button 
-                onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")} 
-                className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]"
-            >
-                Continuer
-            </button>
+            <button onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")} className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]">Finaliser le profil</button>
           </motion.div>
         ) : (
           <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center">

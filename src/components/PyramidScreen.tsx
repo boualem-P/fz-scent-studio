@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
@@ -48,9 +48,9 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
 
   const x = useMotionValue(0);
   
-  // Opacité ultra-basse (0.05) pour un rendu "foncé" et discret au repos
-  const frownOpacity = useTransform(x, [-150, -20], [1, 0.05]);
-  const smileOpacity = useTransform(x, [20, 150], [0.05, 1]);
+  // OPACITÉ ÉLEVÉE : 60% au repos pour être bien "tapant" et visible.
+  const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
+  const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
   const handleSwipe = (liked: boolean) => {
     const key = steps[currentStep] as keyof typeof selections;
@@ -64,10 +64,10 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     } else {
       setScreen('map');
     }
-    x.set(0); // Reset forcé de la position
+    x.set(0); 
   };
 
-  // LOGIQUE RADAR (PAGE B)
+  // LOGIQUE RADAR (INCHANGÉE)
   const size = 300;
   const center = size / 2;
   const radius = size * 0.38;
@@ -92,28 +92,27 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
       <AnimatePresence mode="wait">
         {screen === 'swipe' ? (
-          <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center relative">
-            
-            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-600">Affinez vos désirs</h2>
+          <motion.div key="swipe-container" className="w-full max-w-sm flex flex-col items-center relative">
+            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Affinez vos désirs</h2>
             
             <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
               
-              {/* FEEDBACK ICONES FONCÉES (OPACITÉ 5%) */}
-              <div className="absolute inset-x-[-70px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
-                <motion.div style={{ opacity: frownOpacity }} className="text-white">
-                  <Frown size={40} strokeWidth={0.8} />
+              {/* ICONES BLANCHES - VISIBILITÉ MAXIMALE (60% à 100%) */}
+              <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
+                <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg">
+                  <Frown size={48} strokeWidth={1.5} />
                 </motion.div>
-                <motion.div style={{ opacity: smileOpacity }} className="text-white">
-                  <Smile size={40} strokeWidth={0.8} />
+                <motion.div style={{ opacity: smileOpacity }} className="text-white drop-shadow-lg">
+                  <Smile size={48} strokeWidth={1.5} />
                 </motion.div>
               </div>
 
-              {/* STACK CARTE SUIVANTE */}
+              {/* CARTE DESSOUS */}
               {nextNote && (
-                <div className="absolute inset-0 bg-white rounded-[2.5rem] scale-95 translate-y-4 opacity-10 border border-zinc-800 z-0" />
+                <div className="absolute inset-0 bg-white rounded-[2.5rem] scale-95 translate-y-4 opacity-10 border border-zinc-200 z-0" />
               )}
 
-              {/* CARTE ACTIVE - RECENTREMENT GARANTI PAR KEY UNIQUE */}
+              {/* CARTE ACTIVE */}
               <AnimatePresence mode="popLayout">
                 <motion.div 
                   key={`${steps[currentStep]}-${noteIndex}`} 
@@ -122,8 +121,8 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                   dragConstraints={{ left: 0, right: 0 }}
                   dragElastic={0.9}
                   onDragEnd={(_, info) => {
-                    if (info.offset.x > 120) handleSwipe(true);
-                    else if (info.offset.x < -120) handleSwipe(false);
+                    if (info.offset.x > 100) handleSwipe(true);
+                    else if (info.offset.x < -100) handleSwipe(false);
                   }}
                   initial={{ x: 0, scale: 0.9, opacity: 0 }}
                   animate={{ x: 0, scale: 1, opacity: 1 }}
@@ -142,12 +141,11 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               </AnimatePresence>
             </div>
             
-            <p className="text-white text-[9px] font-bold uppercase tracking-[0.3em] opacity-10">Explorer votre sillage</p>
+            <p className="text-white text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">Balayez pour choisir</p>
           </motion.div>
         ) : screen === 'map' ? (
           <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-md flex flex-col items-center">
             <h2 className="text-2xl font-light mb-2 uppercase tracking-[0.2em] text-amber-500">Signature</h2>
-            <p className="text-zinc-500 text-[10px] uppercase tracking-widest mb-10 text-center">Sculptez votre intensité</p>
             <div className="relative">
               <svg id="radar-svg" width={size} height={size}>
                 {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => ( <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#1a1a1a" /> ))}
@@ -167,7 +165,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
         ) : (
           <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center">
             <h2 className="text-3xl font-light mb-2 uppercase tracking-tighter text-white">L'Atmosphère</h2>
-            <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-10">Où vous mènera ce sillage ?</p>
             <div className="grid grid-cols-1 gap-4 w-full px-4">
               {ATMOSPHERES.map((atm) => (
                 <button key={atm.id} onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id)}
@@ -178,9 +175,9 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                     <div className="p-4 bg-black/60 rounded-xl text-amber-500">{atm.icon}</div>
                     <div>
                       <h4 className="text-xl font-light">{atm.label}</h4>
-                      <p className="text-[9px] uppercase tracking-widest text-zinc-500 group-hover:text-amber-200 transition-colors">{atm.desc}</p>
+                      <p className="text-[9px] uppercase tracking-widest text-zinc-500">{atm.desc}</p>
                     </div>
-                    <ArrowRight className="ml-auto text-zinc-700 group-hover:text-amber-500 transition-colors" />
+                    <ArrowRight className="ml-auto text-zinc-700" />
                   </div>
                 </button>
               ))}

@@ -44,8 +44,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const steps = ["top", "heart", "base"];
   const notesAvailable = NOTES_DATA[steps[currentStep]];
   const currentNote = notesAvailable[noteIndex];
-  
-  // Carte suivante pour l'effet visuel de pile
   const nextNote = notesAvailable[noteIndex + 1] || (currentStep < 2 ? NOTES_DATA[steps[currentStep + 1]][0] : null);
 
   const x = useMotionValue(0);
@@ -53,10 +51,10 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const rotate = useTransform(x, [-200, 200], [-25, 25]);
   const opacityIcons = useTransform(x, [-100, 0, 100], [1, 0, 1]);
 
-  useLayoutEffect(() => { 
-    x.set(0); 
-    y.set(0); 
-  }, [noteIndex, currentStep, screen]);
+  useLayoutEffect(() => {
+    x.set(0);
+    y.set(0);
+  }, [noteIndex, currentStep]);
 
   const handleSwipe = (liked: boolean) => {
     const key = steps[currentStep] as keyof typeof selections;
@@ -72,7 +70,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     }
   };
 
-  // Logique Radar (CONSERVÉE EXACTEMENT)
+  // Logique Radar (CONSERVÉE STRICTEMENT)
   const size = 300;
   const center = size / 2;
   const radius = size * 0.38;
@@ -99,53 +97,48 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
       <AnimatePresence mode="wait">
         {screen === 'swipe' ? (
           <motion.div key="sw" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center">
-            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-500">Affinez vos désirs</h2>
+            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-500 text-center">Affinez vos désirs</h2>
             
             <div className="relative w-full aspect-[3/4] mb-12">
-              {/* 1. CARTE EN DESSOUS (STACK) - Statique mais visible */}
+              {/* CARTE EN DESSOUS (STACK) */}
               {nextNote && (
                 <div 
-                  className="absolute inset-0 bg-white rounded-[2.5rem] overflow-hidden shadow-sm scale-[0.94] translate-y-6 rotate-2 opacity-40 border border-zinc-200 pointer-events-none"
+                  className="absolute inset-0 bg-white rounded-[2.5rem] overflow-hidden shadow-sm scale-[0.93] translate-y-6 rotate-2 opacity-30 border border-zinc-200"
                   style={{ zIndex: 0 }}
                 >
-                  <img src={nextNote.img} className="w-full h-2/3 object-cover grayscale-[50%]" />
+                  <img src={nextNote.img} className="w-full h-2/3 object-cover grayscale-[60%]" />
                   <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center">
-                    <h3 className="text-2xl font-light text-black/20 mb-1">{nextNote.label}</h3>
+                    <h3 className="text-2xl font-light text-black/20">{nextNote.label}</h3>
                   </div>
                 </div>
               )}
 
-              {/* 2. CARTE ACTIVE - Avec key={currentNote.id} pour recentrer automatiquement */}
+              {/* CARTE ACTIVE */}
               <AnimatePresence mode="popLayout">
                 <motion.div 
-                  key={currentNote.id} 
+                  key={currentNote.id} // FORCE LE RECENTREMENT À CHAQUE CARTE
                   style={{ x, y, rotate, zIndex: 10 }} 
                   drag 
                   dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                  dragElastic={1} // Mouvement libre total
+                  dragElastic={0.7}
                   onDragEnd={(_, info) => { 
-                    // Validation sur l'axe X uniquement
-                    if (info.offset.x > 130) handleSwipe(true); 
-                    else if (info.offset.x < -130) handleSwipe(false); 
+                    if (info.offset.x > 120) handleSwipe(true); 
+                    else if (info.offset.x < -120) handleSwipe(false); 
                   }}
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }} // Apparition depuis l'arrière
+                  initial={{ opacity: 0, scale: 0.92, y: 15 }} 
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ x: x.get() > 0 ? 500 : -500, opacity: 0, rotate: x.get() > 0 ? 45 : -45 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, rotate: x.get() > 0 ? 35 : -35 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   className="absolute inset-0 bg-white rounded-[2.5rem] overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing border border-zinc-100"
                 >
-                  {/* Toute cette zone est Swipable (Image + Texte) */}
                   <div className="w-full h-full flex flex-col pointer-events-none">
                     <div className="w-full h-2/3 relative">
                       <img src={currentNote.img} className="w-full h-full object-cover" />
-                      
-                      {/* Overlay d'état (Frown/Smile) */}
-                      <motion.div style={{ opacity: opacityIcons }} className="absolute inset-0 flex items-center justify-between px-10 pointer-events-none">
+                      <motion.div style={{ opacity: opacityIcons }} className="absolute inset-0 flex items-center justify-between px-10">
                         <Frown size={80} className="text-black/10" />
                         <Smile size={80} className="text-amber-500/20" />
                       </motion.div>
                     </div>
-
                     <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center">
                       <h3 className="text-2xl font-light text-black mb-1">{currentNote.label}</h3>
                       <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">{currentNote.sub}</p>
@@ -155,10 +148,9 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               </AnimatePresence>
             </div>
             
-            <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.2em]">Libre mouvement • Balayez pour choisir</p>
+            <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.2em]">Balayez librement pour choisir</p>
           </motion.div>
         ) : screen === 'map' ? (
-          // PAGE B : RADAR (CONSERVÉE STRICTEMENT)
           <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-md flex flex-col items-center">
             <h2 className="text-2xl font-light mb-2 uppercase tracking-[0.2em] text-amber-500">Signature</h2>
             <p className="text-zinc-500 text-[10px] uppercase tracking-widest mb-10 text-center">Sculptez votre intensité</p>
@@ -179,7 +171,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             <button onClick={() => setScreen('atmosphere')} className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]">Continuer</button>
           </motion.div>
         ) : (
-          // PAGE C : ATMOSPHÈRE (CONSERVÉE STRICTEMENT)
           <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center">
             <h2 className="text-3xl font-light mb-2 uppercase tracking-tighter text-white">L'Atmosphère</h2>
             <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-10">Où vous mènera ce sillage ?</p>

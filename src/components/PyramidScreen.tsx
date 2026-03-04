@@ -191,8 +191,14 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             <button onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")} className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]">Finaliser le profil</button>
           </motion.div>
         ) : (
-          <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center">
-            <h2 className="text-3xl font-light mb-8 uppercase tracking-tighter text-white">L'Atmosphère</h2>
+          <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center justify-center">
+            {/* TITRE PRESTIGIEUX PAGE C */}
+            <div className="flex flex-col items-center mb-10 text-center">
+              <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Univers Olfactif</h2>
+              <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
+              <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">Définissez le sillage de votre destinée</p>
+            </div>
+
             <div className="grid grid-cols-1 gap-4 w-full px-4">
               {ATMOSPHERES.map((atm) => (
                 <button key={atm.id} onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id)}
@@ -205,7 +211,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                       <h4 className="text-xl font-light">{atm.label}</h4>
                       <p className="text-[9px] uppercase tracking-widest text-zinc-500">{atm.desc}</p>
                     </div>
-                    <ArrowRight className="ml-auto text-zinc-700" />
+                    <ArrowRight className="ml-auto text-zinc-700 group-hover:text-amber-500 transition-colors" />
                   </div>
                 </button>
               ))}

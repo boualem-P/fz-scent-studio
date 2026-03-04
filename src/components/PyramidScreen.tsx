@@ -48,9 +48,9 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
 
   const x = useMotionValue(0);
   
-  // Transformation de l'opacité : 15% au repos (aspect sombre/grisé), 100% au mouvement
-  const frownOpacity = useTransform(x, [-150, 0], [1, 0.15]);
-  const smileOpacity = useTransform(x, [0, 150], [0.15, 1]);
+  // Opacité ultra-basse (0.05) pour un rendu "foncé" et discret au repos
+  const frownOpacity = useTransform(x, [-150, -20], [1, 0.05]);
+  const smileOpacity = useTransform(x, [20, 150], [0.05, 1]);
 
   const handleSwipe = (liked: boolean) => {
     const key = steps[currentStep] as keyof typeof selections;
@@ -64,10 +64,10 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     } else {
       setScreen('map');
     }
-    x.set(0);
+    x.set(0); // Reset forcé de la position
   };
 
-  // LOGIQUE RADAR (INCHANGÉE)
+  // LOGIQUE RADAR (PAGE B)
   const size = 300;
   const center = size / 2;
   const radius = size * 0.38;
@@ -94,26 +94,26 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
         {screen === 'swipe' ? (
           <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center relative">
             
-            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-500">Affinez vos désirs</h2>
+            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-600">Affinez vos désirs</h2>
             
             <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
               
-              {/* ICONES BLANCHES ESTOMPÉES (ASPECT FONCÉ) FIXES */}
-              <div className="absolute inset-x-[-65px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2">
+              {/* FEEDBACK ICONES FONCÉES (OPACITÉ 5%) */}
+              <div className="absolute inset-x-[-70px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
                 <motion.div style={{ opacity: frownOpacity }} className="text-white">
-                  <Frown size={42} strokeWidth={1} />
+                  <Frown size={40} strokeWidth={0.8} />
                 </motion.div>
                 <motion.div style={{ opacity: smileOpacity }} className="text-white">
-                  <Smile size={42} strokeWidth={1} />
+                  <Smile size={40} strokeWidth={0.8} />
                 </motion.div>
               </div>
 
-              {/* CARTE DESSOUS (STACK EFFECT) */}
+              {/* STACK CARTE SUIVANTE */}
               {nextNote && (
-                <div className="absolute inset-0 bg-white rounded-[2.5rem] scale-95 translate-y-4 opacity-20 border border-zinc-200 z-0" />
+                <div className="absolute inset-0 bg-white rounded-[2.5rem] scale-95 translate-y-4 opacity-10 border border-zinc-800 z-0" />
               )}
 
-              {/* CARTE ACTIVE */}
+              {/* CARTE ACTIVE - RECENTREMENT GARANTI PAR KEY UNIQUE */}
               <AnimatePresence mode="popLayout">
                 <motion.div 
                   key={`${steps[currentStep]}-${noteIndex}`} 
@@ -142,10 +142,9 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               </AnimatePresence>
             </div>
             
-            <p className="text-white text-[9px] font-bold uppercase tracking-[0.3em] opacity-30">Explorer votre sillage</p>
+            <p className="text-white text-[9px] font-bold uppercase tracking-[0.3em] opacity-10">Explorer votre sillage</p>
           </motion.div>
         ) : screen === 'map' ? (
-          // PAGE B (INCHANGÉE)
           <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-md flex flex-col items-center">
             <h2 className="text-2xl font-light mb-2 uppercase tracking-[0.2em] text-amber-500">Signature</h2>
             <p className="text-zinc-500 text-[10px] uppercase tracking-widest mb-10 text-center">Sculptez votre intensité</p>
@@ -166,7 +165,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             <button onClick={() => setScreen('atmosphere')} className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]">Continuer</button>
           </motion.div>
         ) : (
-          // PAGE C (INCHANGÉE)
           <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center">
             <h2 className="text-3xl font-light mb-2 uppercase tracking-tighter text-white">L'Atmosphère</h2>
             <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-10">Où vous mènera ce sillage ?</p>

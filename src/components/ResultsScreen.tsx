@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 import { Perfume } from "@/data/perfumes";
-import { Trophy, RotateCcw, Library } from "lucide-react";
+import { Trophy, RotateCcw, Library, Sparkles, Crown } from "lucide-react";
 
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
@@ -9,6 +9,12 @@ interface ResultsScreenProps {
   onCatalogue: () => void;
   onSelectPerfume: (perfume: Perfume) => void;
 }
+
+const PerfumeInitial = ({ name }: { name: string }) => (
+  <div className="w-full h-full flex items-center justify-center font-display text-5xl md:text-6xl text-gold-gradient select-none">
+    {name.charAt(0)}
+  </div>
+);
 
 const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
   if (results.length === 0) {
@@ -21,7 +27,7 @@ const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: Result
           </p>
           <button
             onClick={onMenu}
-            className="px-8 py-3 border border-primary/30 text-primary hover:bg-primary hover:text-black transition-all"
+            className="px-8 py-3 border border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground transition-all"
           >
             Recommencer
           </button>
@@ -30,90 +36,193 @@ const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: Result
     );
   }
 
+  const topResult = results[0];
+  const otherResults = results.slice(1);
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 pt-24">
+    <div className="min-h-screen flex flex-col items-center justify-start p-6 pt-20 pb-40">
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="w-full max-w-4xl space-y-8"
+        className="w-full max-w-5xl space-y-10"
       >
-        <motion.div variants={staggerItem} className="text-center space-y-3">
-          <Trophy className="w-10 h-10 text-primary mx-auto" />
-          <h2 className="font-display text-4xl md:text-5xl text-primary tracking-tight">
-            Vos Accords
+        {/* Header */}
+        <motion.div variants={staggerItem} className="text-center space-y-4">
+          <motion.div
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+          >
+            <Crown className="w-12 h-12 text-primary mx-auto drop-shadow-[0_0_12px_hsl(43_72%_52%/0.5)]" />
+          </motion.div>
+          <h2 className="font-display text-4xl md:text-5xl text-gold-shimmer tracking-tight">
+            Vos Accords Parfaits
           </h2>
-          <p className="text-muted-foreground text-sm tracking-widest uppercase">
+          <div className="gold-divider w-32 mx-auto" />
+          <p className="text-muted-foreground text-sm tracking-[0.3em] uppercase font-body">
             {results.length} parfum{results.length > 1 ? "s" : ""} sélectionné{results.length > 1 ? "s" : ""}
           </p>
         </motion.div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {results.map(({ perfume, matchPercent }, index) => (
-            <motion.button
-              key={perfume.id}
-              variants={staggerItem}
-              whileHover={springHover}
-              whileTap={springTap}
-              onClick={() => onSelectPerfume(perfume)}
-              className="group relative p-6 border border-primary/20 bg-black/40 backdrop-blur-sm text-left hover:border-primary/60 transition-all duration-500 rounded-sm"
-            >
-              {index === 0 && (
-                <span className="absolute -top-3 left-4 px-3 py-0.5 bg-primary text-black text-[10px] font-display tracking-widest uppercase">
-                  Meilleur accord
-                </span>
+        {/* Top Result - Hero Card */}
+        <motion.button
+          variants={staggerItem}
+          whileHover={springHover}
+          whileTap={springTap}
+          onClick={() => onSelectPerfume(topResult.perfume)}
+          className="group relative w-full glass-card card-shimmer-effect gold-frame p-0 overflow-hidden text-left transition-all duration-700 rounded-sm"
+        >
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
+          <div className="flex flex-col md:flex-row">
+            {/* Image / Initial */}
+            <div className="relative w-full md:w-72 h-64 md:h-auto bg-background/40 flex-shrink-0 overflow-hidden">
+              {topResult.perfume.image ? (
+                <img
+                  src={topResult.perfume.image}
+                  alt={topResult.perfume.name}
+                  className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                />
+              ) : (
+                <PerfumeInitial name={topResult.perfume.name} />
               )}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/60 pointer-events-none" />
+              <span className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1 bg-primary text-primary-foreground text-[10px] font-display tracking-[0.25em] uppercase rounded-sm gold-glow">
+                <Sparkles size={12} />
+                Meilleur accord
+              </span>
+            </div>
 
-              <div className="space-y-4">
-                <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-display text-2xl">
-                  {perfume.name.charAt(0)}
-                </div>
-
-                <div>
-                  <h3 className="font-display text-lg text-primary group-hover:text-primary/90 transition-colors">
-                    {perfume.name}
-                  </h3>
-                  <p className="text-muted-foreground text-xs tracking-wider uppercase mt-1">
-                    {perfume.brand}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Compatibilité</span>
-                    <span className="text-primary font-display">{matchPercent}%</span>
-                  </div>
-                  <div className="h-1 bg-primary/10 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${matchPercent}%` }}
-                      transition={{ delay: 0.5 + index * 0.2, duration: 1 }}
-                      className="h-full bg-gradient-to-r from-primary/60 to-primary rounded-full"
-                    />
-                  </div>
-                </div>
-
-                <p className="text-muted-foreground/60 text-xs line-clamp-2">
-                  {perfume.concentration} · {perfume.gender}
+            {/* Details */}
+            <div className="flex-1 p-8 md:p-10 flex flex-col justify-center space-y-6">
+              <div>
+                <h3 className="font-display text-3xl md:text-4xl text-primary group-hover:text-gold-light transition-colors duration-500">
+                  {topResult.perfume.name}
+                </h3>
+                <p className="text-muted-foreground text-xs tracking-[0.3em] uppercase mt-2 font-body">
+                  {topResult.perfume.brand}
                 </p>
               </div>
-            </motion.button>
-          ))}
-        </div>
 
-        <motion.div variants={staggerItem} className="flex justify-center gap-4 pt-4">
+              <p className="text-muted-foreground/70 text-sm leading-relaxed line-clamp-2 max-w-lg">
+                {topResult.perfume.description}
+              </p>
+
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground tracking-widest uppercase">Compatibilité</span>
+                  <span className="text-primary font-display text-lg">{topResult.matchPercent}%</span>
+                </div>
+                <div className="h-1.5 bg-primary/10 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${topResult.matchPercent}%` }}
+                    transition={{ delay: 0.8, duration: 1.2, ease: "easeOut" }}
+                    className="h-full rounded-full"
+                    style={{
+                      background: "linear-gradient(90deg, hsl(43 60% 38%), hsl(43 72% 52%), hsl(43 80% 65%))",
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 text-muted-foreground/50 text-xs tracking-wider">
+                <span>{topResult.perfume.concentration}</span>
+                <span className="w-1 h-1 rounded-full bg-primary/30" />
+                <span>{topResult.perfume.gender}</span>
+                <span className="w-1 h-1 rounded-full bg-primary/30" />
+                <span>{topResult.perfume.year}</span>
+              </div>
+            </div>
+          </div>
+        </motion.button>
+
+        {/* Other Results */}
+        {otherResults.length > 0 && (
+          <div className="grid gap-6 md:grid-cols-2">
+            {otherResults.map(({ perfume, matchPercent }, index) => (
+              <motion.button
+                key={perfume.id}
+                variants={staggerItem}
+                whileHover={springHover}
+                whileTap={springTap}
+                onClick={() => onSelectPerfume(perfume)}
+                className="group relative glass-card card-shimmer-effect p-0 overflow-hidden text-left transition-all duration-500 rounded-sm gold-border-glow"
+              >
+                <div className="flex">
+                  {/* Image / Initial */}
+                  <div className="relative w-28 md:w-36 flex-shrink-0 bg-background/40 overflow-hidden">
+                    {perfume.image ? (
+                      <img
+                        src={perfume.image}
+                        alt={perfume.name}
+                        className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                      />
+                    ) : (
+                      <div className="w-full h-full min-h-[160px] flex items-center justify-center">
+                        <span className="font-display text-4xl text-gold-gradient">{perfume.name.charAt(0)}</span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/50 pointer-events-none" />
+                  </div>
+
+                  {/* Details */}
+                  <div className="flex-1 p-6 space-y-4">
+                    <div>
+                      <h3 className="font-display text-xl text-primary group-hover:text-gold-light transition-colors duration-500">
+                        {perfume.name}
+                      </h3>
+                      <p className="text-muted-foreground text-[10px] tracking-[0.25em] uppercase mt-1">
+                        {perfume.brand}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted-foreground tracking-wider">Compatibilité</span>
+                        <span className="text-primary font-display text-base">{matchPercent}%</span>
+                      </div>
+                      <div className="h-1 bg-primary/10 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${matchPercent}%` }}
+                          transition={{ delay: 1 + index * 0.3, duration: 1, ease: "easeOut" }}
+                          className="h-full rounded-full"
+                          style={{
+                            background: "linear-gradient(90deg, hsl(43 60% 38%), hsl(43 72% 52%))",
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-muted-foreground/40 text-[10px] tracking-wider">
+                      <span>{perfume.concentration}</span>
+                      <span className="w-0.5 h-0.5 rounded-full bg-primary/20" />
+                      <span>{perfume.gender}</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        )}
+
+        {/* Actions */}
+        <motion.div variants={staggerItem} className="flex justify-center gap-5 pt-6">
           <button
             onClick={onMenu}
-            className="flex items-center gap-2 px-6 py-3 border border-primary/20 text-primary/70 hover:text-primary hover:border-primary/40 transition-all text-xs tracking-widest uppercase"
+            className="group flex items-center gap-2.5 px-8 py-3.5 glass-card gold-border-glow hover:gold-glow transition-all duration-500 text-xs tracking-[0.25em] uppercase text-primary/70 hover:text-primary"
           >
-            <RotateCcw size={14} />
+            <RotateCcw size={14} className="group-hover:rotate-[-360deg] transition-transform duration-700" />
             Recommencer
           </button>
           <button
             onClick={onCatalogue}
-            className="flex items-center gap-2 px-6 py-3 border border-primary/20 text-primary/70 hover:text-primary hover:border-primary/40 transition-all text-xs tracking-widest uppercase"
+            className="group flex items-center gap-2.5 px-8 py-3.5 glass-card gold-border-glow hover:gold-glow transition-all duration-500 text-xs tracking-[0.25em] uppercase text-primary/70 hover:text-primary"
           >
-            <Library size={14} />
+            <Library size={14} className="group-hover:scale-110 transition-transform duration-500" />
             Catalogue
           </button>
         </motion.div>

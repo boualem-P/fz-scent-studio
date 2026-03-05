@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Perfume, NOTE_LABELS } from "@/data/perfumes";
-import { RefreshCw, Library, ChevronRight, Sparkles, ShoppingBag } from "lucide-react";
+import { RefreshCw, Library, ChevronRight, Sparkles } from "lucide-react";
 
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
@@ -10,6 +10,18 @@ interface ResultsScreenProps {
 }
 
 const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
+  // Sécurité : Si aucun résultat, on redirige ou on affiche un message
+  if (!results || results.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white p-6">
+        <p className="text-zinc-500 uppercase tracking-widest mb-8">Aucune essence ne correspond à cette sélection.</p>
+        <button onClick={onMenu} className="px-8 py-4 border border-white/20 hover:bg-white hover:text-black transition-all uppercase text-[10px] tracking-widest">
+          Réessayer
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pt-24 pb-20 px-6 bg-black text-white selection:bg-amber-500/30 overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
@@ -34,7 +46,7 @@ const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: Result
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {results.map((result, index) => (
             <motion.div
-              key={result.perfume.id}
+              key={`${result.perfume.id}-${index}`}
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2, duration: 0.8 }}
@@ -90,7 +102,8 @@ const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: Result
 
                   {/* Tags Olfactifs */}
                   <div className="flex justify-center gap-2">
-                    {Array.from(new Set([...result.perfume.topNotes])).slice(0, 2).map((cat) => (
+                    {/* Utilisation de sort() compatible au lieu de toSorted() si besoin de trier ici */}
+                    {[...result.perfume.topNotes].slice(0, 2).map((cat) => (
                       <span key={cat} className="text-[8px] px-3 py-1 bg-white/5 border border-white/10 rounded-full text-zinc-400 uppercase tracking-widest">
                         {NOTE_LABELS[cat] || cat}
                       </span>
@@ -105,7 +118,7 @@ const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: Result
                 {/* Bouton Voir Détails Intégré */}
                 <div className="mt-8 pt-6 border-t border-white/5 flex justify-center">
                    <div className="flex items-center gap-2 text-amber-500 text-[9px] font-black uppercase tracking-[0.2em] group-hover:gap-4 transition-all">
-                      Découvrir l'élixir <ChevronRight size={14} />
+                     Découvrir l'élixir <ChevronRight size={14} />
                    </div>
                 </div>
               </div>

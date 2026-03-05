@@ -10,13 +10,16 @@ interface LandingScreenProps {
 }
 
 const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
-  const videoSrc = "/videos/videofz.mp4";
+  // CORRECTION DU CHEMIN : On retire "/videos" car ton fichier est directement dans public
+  const videoSrc = "/videofz.mp4";
 
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-center bg-black overflow-hidden">
       
+      {/* VIDÉO D'ARRIÈRE-PLAN */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <video
+          key={videoSrc} // Force React à rafraîchir le composant vidéo
           autoPlay
           loop
           muted
@@ -24,10 +27,13 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
           className="w-full h-full object-cover opacity-60"
         >
           <source src={videoSrc} type="video/mp4" />
+          Votre navigateur ne supporte pas la vidéo.
         </video>
+        {/* Overlay pour la lisibilité */}
         <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
 
+      {/* BOUTON PROFIL */}
       <div className="absolute top-8 left-8 z-50">
         <motion.button
           whileHover={springHover}
@@ -39,6 +45,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         </motion.button>
       </div>
 
+      {/* TITRE ET SLOGAN */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
@@ -60,6 +67,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         </motion.p>
       </motion.div>
 
+      {/* BOUTONS DE SÉLECTION */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"

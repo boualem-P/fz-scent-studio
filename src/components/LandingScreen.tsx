@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Gender } from "@/data/perfumes";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 import { Maximize, Minimize } from "lucide-react";
@@ -10,7 +10,9 @@ interface LandingScreenProps {
 
 const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const videoSrc = "/bg-parfum.mp4";
+  
+  // MISE À JOUR DU CHEMIN DE LA VIDÉO ICI
+  const videoSrc = "/videos/Fz perfums video.mp4";
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -33,9 +35,10 @@ const LandingScreen = ({ onSelectGender }: LandingScreenProps) => {
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-center bg-black overflow-hidden">
       
-      {/* VIDÉO D'ARRIÈRE-PLAN AVEC ACCÉLÉRATION MATÉRIELLE */}
+      {/* VIDÉO D'ARRIÈRE-PLAN - VERSION CORRIGÉE */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <video 
+          key={videoSrc} // Force le rechargement si le chemin change
           autoPlay 
           loop 
           muted 

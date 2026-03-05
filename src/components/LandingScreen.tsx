@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Gender } from "@/data/perfumes";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
-import { User } from "lucide-react";
+import { User, Maximize } from "lucide-react";
 
 interface LandingScreenProps {
   onSelectGender: (gender: Gender) => void;
@@ -10,8 +10,16 @@ interface LandingScreenProps {
 }
 
 const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
-  // SOURCE VIDÉO STABLE
   const videoSrc = "/videofz.mp4";
+
+  // Fonction pour basculer en plein écran
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  };
 
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center p-6 text-center bg-black overflow-hidden">
@@ -27,12 +35,11 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
           className="w-full h-full object-cover opacity-60"
         >
           <source src={videoSrc} type="video/mp4" />
-          Votre navigateur ne supporte pas la vidéo.
         </video>
         <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
 
-      {/* BOUTON PROFIL (Maintenu à sa position stable) */}
+      {/* BOUTON PROFIL (TOP LEFT) */}
       <div className="absolute top-8 left-8 z-50">
         <motion.button
           whileHover={springHover}
@@ -44,29 +51,43 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         </motion.button>
       </div>
 
-      {/* TITRE ET SLOGAN - DÉPLACÉS EN HAUT ET RÉDUITS */}
+      {/* BOUTON FULLSCREEN (BOTTOM LEFT) */}
+      <div className="absolute bottom-8 left-8 z-50">
+        <motion.button
+          whileHover={springHover}
+          whileTap={springTap}
+          onClick={toggleFullScreen}
+          className="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-black/20 text-white/50 backdrop-blur-sm transition-all duration-500 hover:text-white hover:border-white/40"
+          title="Plein écran"
+        >
+          <Maximize size={16} />
+        </motion.button>
+      </div>
+
+      {/* TITRE ET SLOGAN - HAUT & CHIC */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="relative z-20 mt-12 mb-auto" // mb-auto pousse les boutons vers le bas
+        className="relative z-20 mt-12 mb-auto"
       >
         <motion.h1 
           variants={staggerItem}
-          className="font-display text-4xl md:text-5xl lg:text-6xl text-gold-gradient tracking-tighter mb-2"
+          className="font-display text-4xl md:text-5xl lg:text-6xl text-gold-gradient tracking-tighter mb-4"
         >
           Fz Parfums
         </motion.h1>
 
         <motion.p
           variants={staggerItem}
-          className="font-serif italic text-sm md:text-base tracking-[0.1em] text-primary/80 uppercase"
+          className="font-serif text-[11px] md:text-sm tracking-[0.6em] text-primary/90 uppercase leading-relaxed italic"
+          style={{ fontStyle: 'italic', fontWeight: 300 }}
         >
-          L'art de flaconner l'inoubliable.
+          L'art de flaconner l'inoubliable
         </motion.p>
       </motion.div>
 
-      {/* BOUTONS DE SÉLECTION (Maintenus en bas pour dégager le centre) */}
+      {/* BOUTONS DE SÉLECTION (BOTTOM) */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
@@ -99,9 +120,9 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
 
           <motion.p
             variants={staggerItem}
-            className="font-body text-[10px] md:text-xs uppercase tracking-[0.5em] text-primary/40 animate-pulse"
+            className="font-body text-[9px] uppercase tracking-[0.6em] text-primary/30 animate-pulse mt-2"
           >
-            Cliquez pour commencer l'aventure
+            Commencer l'expérience
           </motion.p>
         </div>
       </motion.div>

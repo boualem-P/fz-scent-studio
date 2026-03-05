@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Library, ArrowLeft, User } from "lucide-react";
 import LandingScreen from "@/components/LandingScreen";
@@ -19,41 +19,46 @@ const Index = () => {
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
-  // FONCTION DE NAVIGATION ROBUSTE
+  // FONCTION DE NAVIGATION AVEC MÉMOIRE RÉELLE
   const navigateTo = (nextScreen: ScreenType) => {
     if (nextScreen === screen) return;
     
-    // On ajoute l'écran actuel à l'historique AVANT de changer
-    setHistory((prev) => [...prev, screen]);
+    // On capture l'écran actuel juste avant de changer
+    setHistory((prevHistory) => {
+      const updatedHistory = [...prevHistory, screen];
+      console.log("Navigation vers:", nextScreen, "Historique:", updatedHistory);
+      return updatedHistory;
+    });
+    
     setScreen(nextScreen);
   };
 
-  // RETOUR PRÉCIS
+  // RETOUR ÉTAPE PAR ÉTAPE
   const handleBack = () => {
-    // Si une fiche parfum est ouverte, on la ferme simplement
+    // 1. Si une fiche parfum est ouverte, on la ferme (priorité absolue)
     if (selectedPerfume) {
       setSelectedPerfume(null);
       return;
     }
 
-    // Si on a un historique, on prend le dernier élément
+    // 2. Si on a un historique, on remonte d'un cran
     if (history.length > 0) {
       const newHistory = [...history];
-      const previousScreen = newHistory.pop(); // Récupère et enlève le dernier écran
+      const lastVisitedScreen = newHistory.pop(); // On retire le dernier écran
       
-      if (previousScreen) {
-        // Sécurité : si le précédent était l'analyse, on remonte encore d'un cran
-        if (previousScreen === "analyzing") {
-          const skipAnalysis = newHistory.pop();
-          setScreen(skipAnalysis || "landing");
+      if (lastVisitedScreen) {
+        // Sécurité pour ne pas boucler sur l'animation de chargement
+        if (lastVisitedScreen === "analyzing") {
+          const skipLoader = newHistory.pop();
+          setScreen(skipLoader || "landing");
           setHistory(newHistory);
         } else {
-          setScreen(previousScreen);
+          setScreen(lastVisitedScreen);
           setHistory(newHistory);
         }
       }
     } else {
-      // Si l'historique est vide, retour forcé à l'accueil
+      // 3. Cas de secours : retour au menu
       setScreen("landing");
     }
   };
@@ -67,19 +72,14 @@ const Index = () => {
     const matches = matchPerfumes(gender, top, heart, base);
     setResults(matches);
     
-    // On navigue vers l'analyse
+    // On enregistre l'étape de la pyramide dans l'historique
     navigateTo("analyzing");
     
-    // Après 4s, on remplace l'écran par les résultats
-    // Note: On ne veut pas que "analyzing" pollue l'historique lors du retour
     setTimeout(() => {
+      // On passe aux résultats sans polluer l'historique avec le loader
       setScreen("results");
     }, 4000);
   }, [gender, screen]);
-
-  const handleSelectPerfume = (perfume: Perfume) => {
-    setSelectedPerfume(perfume);
-  };
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
@@ -90,11 +90,11 @@ const Index = () => {
 
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
         <div className="flex flex-col gap-3 pointer-events-auto">
-          {/* BOUTON RETOUR : Affiché si historique présent ou fiche ouverte */}
-          {(history.length > 0 || selectedPerfume) && (
+          {/* BOUTON RETOUR : Visible si historique ou si on n'est pas sur le landing */}
+          {(history.length > 0 || screen !== "landing" || selectedPerfume) && (
             <button 
               onClick={handleBack}
-              className="w-12 h-12 rounded-full border border-white/10 bg-black/80 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-2xl"
+              className="w-12 h-12 rounded-full border border-white/10 bg-black/80 backdrop-blur-xl flex items-center justify-center text-white hover:bg-amber-500/20 hover:border-amber-500/50 transition-all shadow-2xl"
             >
               <ArrowLeft size={20} />
             </button>
@@ -123,9 +123,9 @@ const Index = () => {
           {!selectedPerfume && (
             <motion.div 
               key={screen} 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }} 
+              initial={{ opacity: 0, x: 10 }} 
+              animate={{ opacity: 1, x: 0 }} 
+              exit={{ opacity: 0, x: -10 }} 
               className="h-full w-full"
             >
               {screen === "landing" && (
@@ -137,7 +137,14 @@ const Index = () => {
               )}
               {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={() => setScreen("landing")} />}
               {screen === "analyzing" && <AnalyzingLoader />}
-              {screen === "results" && <ResultsScreen results={results} onMenu={() => setScreen("landing")} onCatalogue={() => navigateTo("catalogue")} onSelectPerfume={handleSelectPerfume} />}
+              {screen === "results" && (
+                <ResultsScreen 
+                  results={results} 
+                  onMenu={() => setScreen("landing")} 
+                  onCatalogue={() => navigateTo("catalogue")} 
+                  onSelectPerfume={(p) => setSelectedPerfume(p)} 
+                />
+              )}
               {screen === "catalogue" && <CatalogueScreen onMenu={() => setScreen("landing")} />}
             </motion.div>
           )}
@@ -148,16 +155,16 @@ const Index = () => {
         {selectedPerfume && (
           <motion.div 
             key={`perfume-${selectedPerfume.id}`} 
-            initial={{ y: "100%", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
             className="fixed inset-0 z-[150] bg-[#1D1E1F] overflow-y-auto"
           >
             <PerfumePage 
               perfume={selectedPerfume} 
               onClose={() => setSelectedPerfume(null)} 
-              onSelectPerfume={handleSelectPerfume} 
+              onSelectPerfume={(p) => setSelectedPerfume(p)} 
             />
           </motion.div>
         )}

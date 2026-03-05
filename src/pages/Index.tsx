@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Library, ArrowLeft, User } from "lucide-react";
 import LandingScreen from "@/components/LandingScreen";
@@ -10,6 +10,7 @@ import GoldenRain from "@/components/GoldenRain";
 import PerfumePage from "@/components/PerfumePage"; 
 import { Gender, NoteCategory, matchPerfumes, Perfume } from "@/data/perfumes";
 
+// Définition des écrans selon ta logique
 type ScreenType = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
 
 const Index = () => {
@@ -19,82 +20,71 @@ const Index = () => {
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
-  // FONCTION DE NAVIGATION AVEC MÉMOIRE RÉELLE
+  // FONCTION DE NAVIGATION PARFAITE
   const navigateTo = (nextScreen: ScreenType) => {
     if (nextScreen === screen) return;
-    
-    // On capture l'écran actuel juste avant de changer
-    setHistory((prevHistory) => {
-      const updatedHistory = [...prevHistory, screen];
-      console.log("Navigation vers:", nextScreen, "Historique:", updatedHistory);
-      return updatedHistory;
-    });
-    
+    // On ajoute l'écran actuel à l'historique
+    setHistory((prev) => [...prev, screen]);
     setScreen(nextScreen);
   };
 
-  // RETOUR ÉTAPE PAR ÉTAPE
+  // LOGIQUE DE RETOUR STRICTE (TON SCHÉMA)
   const handleBack = () => {
-    // 1. Si une fiche parfum est ouverte, on la ferme (priorité absolue)
+    // Si une fiche parfum (Vos accords) est ouverte, on la ferme
     if (selectedPerfume) {
       setSelectedPerfume(null);
       return;
     }
 
-    // 2. Si on a un historique, on remonte d'un cran
+    // On récupère le dernier écran de l'historique
     if (history.length > 0) {
       const newHistory = [...history];
-      const lastVisitedScreen = newHistory.pop(); // On retire le dernier écran
+      const previousScreen = newHistory.pop(); // On retire le dernier
       
-      if (lastVisitedScreen) {
-        // Sécurité pour ne pas boucler sur l'animation de chargement
-        if (lastVisitedScreen === "analyzing") {
-          const skipLoader = newHistory.pop();
-          setScreen(skipLoader || "landing");
-          setHistory(newHistory);
-        } else {
-          setScreen(lastVisitedScreen);
-          setHistory(newHistory);
-        }
+      if (previousScreen) {
+        setScreen(previousScreen);
+        setHistory(newHistory);
       }
     } else {
-      // 3. Cas de secours : retour au menu
+      // Sécurité si historique vide
       setScreen("landing");
     }
   };
 
   const handleGender = (g: Gender) => { 
     setGender(g); 
-    navigateTo("pyramid"); 
+    navigateTo("pyramid"); // Étape 2 : Cartes / Choix notes
   };
 
   const handleValidate = useCallback((top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[]) => {
     const matches = matchPerfumes(gender, top, heart, base);
     setResults(matches);
     
-    // On enregistre l'étape de la pyramide dans l'historique
+    // Étape 3 : Architecture / Analyzing
     navigateTo("analyzing");
     
+    // Étape 4 : Univers / Results (Automatique après loader)
     setTimeout(() => {
-      // On passe aux résultats sans polluer l'historique avec le loader
       setScreen("results");
     }, 4000);
-  }, [gender, screen]);
+  }, [gender]);
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
       
+      {/* Fond visuel */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
+      {/* NAVIGATION */}
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
         <div className="flex flex-col gap-3 pointer-events-auto">
-          {/* BOUTON RETOUR : Visible si historique ou si on n'est pas sur le landing */}
-          {(history.length > 0 || screen !== "landing" || selectedPerfume) && (
+          {/* BOUTON RETOUR : Cache uniquement sur le menu principal sans fiche ouverte */}
+          {(screen !== "landing" || selectedPerfume) && (
             <button 
               onClick={handleBack}
-              className="w-12 h-12 rounded-full border border-white/10 bg-black/80 backdrop-blur-xl flex items-center justify-center text-white hover:bg-amber-500/20 hover:border-amber-500/50 transition-all shadow-2xl"
+              className="w-12 h-12 rounded-full border border-white/10 bg-black/80 backdrop-blur-xl flex items-center justify-center text-white hover:bg-amber-500/20 hover:border-amber-500/40 transition-all shadow-2xl"
             >
               <ArrowLeft size={20} />
             </button>
@@ -123,9 +113,10 @@ const Index = () => {
           {!selectedPerfume && (
             <motion.div 
               key={screen} 
-              initial={{ opacity: 0, x: 10 }} 
-              animate={{ opacity: 1, x: 0 }} 
-              exit={{ opacity: 0, x: -10 }} 
+              initial={{ opacity: 0, scale: 0.98 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              exit={{ opacity: 0, scale: 1.02 }} 
+              transition={{ duration: 0.4 }}
               className="h-full w-full"
             >
               {screen === "landing" && (
@@ -140,17 +131,18 @@ const Index = () => {
               {screen === "results" && (
                 <ResultsScreen 
                   results={results} 
-                  onMenu={() => setScreen("landing")} 
+                  onMenu={() => { setScreen("landing"); setHistory([]); }} 
                   onCatalogue={() => navigateTo("catalogue")} 
                   onSelectPerfume={(p) => setSelectedPerfume(p)} 
                 />
               )}
-              {screen === "catalogue" && <CatalogueScreen onMenu={() => setScreen("landing")} />}
+              {screen === "catalogue" && <CatalogueScreen onMenu={() => { setScreen("landing"); setHistory([]); }} />}
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
+      {/* FICHE PARFUM (Vos accords parfaits) */}
       <AnimatePresence>
         {selectedPerfume && (
           <motion.div 

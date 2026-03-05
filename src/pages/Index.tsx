@@ -1,134 +1,79 @@
-import { useState, useCallback } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Library, Home, ArrowLeft, User } from "lucide-react";
-import LandingScreen from "@/components/LandingScreen";
-import PyramidScreen from "@/components/PyramidScreen";
-import ResultsScreen from "@/components/ResultsScreen";
-import CatalogueScreen from "@/components/CatalogueScreen";
-import AnalyzingLoader from "@/components/AnalyzingLoader";
-import GoldenRain from "@/components/GoldenRain";
-import PerfumePage from "@/components/PerfumePage"; 
-import { Gender, NoteCategory, matchPerfumes, Perfume } from "@/data/perfumes";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { PERFUMES } from "@/data/perfumes";
+import PerfumeCard from "@/components/PerfumeCard";
+import PerfumePage from "@/components/PerfumePage";
+import { Perfume } from "@/data/perfumes";
 
 const Index = () => {
-  const [screen, setScreen] = useState<"landing" | "pyramid" | "analyzing" | "results" | "catalogue">("landing");
-  const [gender, setGender] = useState<Gender>("homme");
-  const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
-  const handleGender = (g: Gender) => { 
-    setGender(g); 
-    setScreen("pyramid"); 
-  };
-
-  const handleValidate = useCallback((top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[]) => {
-    const matches = matchPerfumes(gender, top, heart, base);
-    setResults(matches);
-    setScreen("analyzing");
-    setTimeout(() => setScreen("results"), 4000);
-  }, [gender]);
-
-  const handleSelectPerfume = (perfume: Perfume | null) => {
-    if (perfume) {
-      setSelectedPerfume(null);
-      setTimeout(() => {
-        setSelectedPerfume(perfume);
-      }, 10);
-    } else {
-      setSelectedPerfume(null);
-    }
-  };
-
   return (
-    <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
-      
-      {/* 1. FOND VISUEL */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        {screen !== "landing" && !selectedPerfume && <GoldenRain />}
+    <main className="relative min-h-screen bg-black overflow-x-hidden">
+      {/* --- VIDÉO D'ARRIÈRE-PLAN (MISE À JOUR) --- */}
+      <div className="fixed inset-0 z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover opacity-60" // Opacité réglée pour laisser respirer le texte
+        >
+          <source src="/bg-parfum.mp4" type="video/mp4" />
+          {/* Fallback au cas où la vidéo ne charge pas */}
+          Your browser does not support the video tag.
+        </video>
+        {/* Overlay pour le contraste des textes */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
       </div>
 
-      {/* 2. NAVIGATION FIXE */}
-      <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
-        {/* COLONNE GAUCHE : RETOUR + PROFIL */}
-        <div className="flex flex-col gap-3 pointer-events-auto">
-          {(screen !== "landing" || selectedPerfume) && (
-            <button 
-              onClick={() => selectedPerfume ? handleSelectPerfume(null) : setScreen("landing")}
-              className="w-12 h-12 rounded-full border border-white/10 bg-black/80 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-2xl"
-            >
-              <ArrowLeft size={20} />
-            </button>
-          )}
-          
-          {/* NOUVEL EMPLACEMENT DU BOUTON PROFIL (SANS TEXTE) */}
-          <button 
-            onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
-            className="w-12 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-            title={`Profil actuel : ${gender}`}
+      {/* --- CONTENU DE LA PAGE --- */}
+      <div className="relative z-10">
+        <section className="max-w-7xl mx-auto px-6 pt-32 pb-20">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-24"
           >
-            <User size={20} />
-          </button>
-        </div>
+            <h2 className="text-[10px] uppercase tracking-[0.8em] text-amber-500 font-black mb-4">
+              La Haute Parfumerie
+            </h2>
+            <h1 className="text-5xl md:text-8xl font-extralight tracking-tighter text-white uppercase italic">
+              FZ Parfums
+            </h1>
+          </motion.div>
 
-        {/* COLONNE DROITE : ACCUEIL + CATALOGUE */}
-        <div className="flex gap-3 pointer-events-auto">
-          <button 
-            onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
-            className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-          >
-            <Home size={20} />
-          </button>
-          
-          <button 
-            onClick={() => {setScreen("catalogue"); handleSelectPerfume(null);}} 
-            className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-          >
-            <Library size={20} />
-          </button>
-        </div>
-      </nav>
+          {/* GRILLE DES PARFUMS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {PERFUMES.map((perfume) => (
+              <PerfumeCard
+                key={perfume.id}
+                perfume={perfume}
+                onClick={() => setSelectedPerfume(perfume)}
+              />
+            ))}
+          </div>
+        </section>
+      </div>
 
-      {/* 3. ÉCRANS PRINCIPAUX */}
-      <main className="relative z-10 h-full w-full">
-        <AnimatePresence mode="wait">
-          {!selectedPerfume && (
-            <motion.div 
-              key={screen} 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }} 
-              className="h-full w-full"
-            >
-              {screen === "landing" && <LandingScreen onSelectGender={handleGender} />}
-              {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={() => setScreen("landing")} />}
-              {screen === "analyzing" && <AnalyzingLoader />}
-              {screen === "results" && <ResultsScreen results={results} onMenu={() => setScreen("landing")} onCatalogue={() => setScreen("catalogue")} onSelectPerfume={handleSelectPerfume} />}
-              {screen === "catalogue" && <CatalogueScreen onMenu={() => setScreen("landing")} />}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-
-      {/* 4. OVERLAY FICHE PARFUM */}
+      {/* --- MODALE DÉTAILLÉE (C'est ici que s'affiche ta PerfumePage) --- */}
       <AnimatePresence>
         {selectedPerfume && (
-          <motion.div 
-            key={`perfume-${selectedPerfume.id}`} 
-            initial={{ y: "100%", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[150] bg-[#1D1E1F] overflow-y-auto"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black"
           >
-            <PerfumePage 
-              perfume={selectedPerfume} 
-              onClose={() => handleSelectPerfume(null)} 
-              onSelectPerfume={handleSelectPerfume} 
+            <PerfumePage
+              perfume={selectedPerfume}
+              onClose={() => setSelectedPerfume(null)}
+              onSelectPerfume={(p) => setSelectedPerfume(p)}
             />
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </main>
   );
 };
 

@@ -42,25 +42,14 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
       
-      {/* 1. FOND VISUEL - FORÇAGE DE LA NOUVELLE VIDÉO */}
+      {/* 1. FOND VISUEL */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <video
-          key="main-bg-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover opacity-50"
-        >
-          {/* L'espace est remplacé par %20 pour garantir la lecture sur tous les navigateurs */}
-          <source src="/videos/Fz%20perfums%20video.mp4?v=1" type="video/mp4" />
-        </video>
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
-        <div className="absolute inset-0 bg-black/40" />
       </div>
 
       {/* 2. NAVIGATION FIXE */}
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
+        {/* COLONNE GAUCHE : RETOUR + PROFIL */}
         <div className="flex flex-col gap-3 pointer-events-auto">
           {(screen !== "landing" || selectedPerfume) && (
             <button 
@@ -71,6 +60,7 @@ const Index = () => {
             </button>
           )}
           
+          {/* NOUVEL EMPLACEMENT DU BOUTON PROFIL (SANS TEXTE) */}
           <button 
             onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
             className="w-12 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
@@ -80,6 +70,7 @@ const Index = () => {
           </button>
         </div>
 
+        {/* COLONNE DROITE : ACCUEIL + CATALOGUE */}
         <div className="flex gap-3 pointer-events-auto">
           <button 
             onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 

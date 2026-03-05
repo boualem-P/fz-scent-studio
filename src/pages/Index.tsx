@@ -42,14 +42,14 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
       
-      {/* 1. FOND VISUEL */}
+      {/* 1. FOND VISUEL - ÉLÉMENTS DE PARTICULES UNIQUEMENT */}
       <div className="fixed inset-0 z-0 pointer-events-none">
+        {/* On n'affiche GoldenRain que si on n'est pas sur le Landing (car le Landing a sa propre vidéo) */}
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
       {/* 2. NAVIGATION FIXE */}
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
-        {/* COLONNE GAUCHE : RETOUR + PROFIL */}
         <div className="flex flex-col gap-3 pointer-events-auto">
           {(screen !== "landing" || selectedPerfume) && (
             <button 
@@ -60,7 +60,6 @@ const Index = () => {
             </button>
           )}
           
-          {/* NOUVEL EMPLACEMENT DU BOUTON PROFIL (SANS TEXTE) */}
           <button 
             onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
             className="w-12 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
@@ -70,7 +69,6 @@ const Index = () => {
           </button>
         </div>
 
-        {/* COLONNE DROITE : ACCUEIL + CATALOGUE */}
         <div className="flex gap-3 pointer-events-auto">
           <button 
             onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
@@ -118,7 +116,7 @@ const Index = () => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[150] bg-[#1D1E1F] overflow-y-auto"
+            className="fixed inset-0 z-[150] bg-[#050505] overflow-y-auto"
           >
             <PerfumePage 
               perfume={selectedPerfume} 

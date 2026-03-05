@@ -10,55 +10,66 @@ import GoldenRain from "@/components/GoldenRain";
 import PerfumePage from "@/components/PerfumePage"; 
 import { Gender, NoteCategory, matchPerfumes, Perfume } from "@/data/perfumes";
 
+type ScreenType = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
+
 const Index = () => {
-  const [screen, setScreen] = useState<"landing" | "pyramid" | "analyzing" | "results" | "catalogue">("landing");
+  const [screen, setScreen] = useState<ScreenType>("landing");
+  const [history, setHistory] = useState<ScreenType[]>([]); // Historique de navigation
   const [gender, setGender] = useState<Gender>("homme");
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
-  const handleGender = (g: Gender) => { 
-    setGender(g); 
-    setScreen("pyramid"); 
+  // Fonction pour changer d'écran en enregistrant l'ancien dans l'historique
+  const navigateTo = (nextScreen: ScreenType) => {
+    if (nextScreen !== screen) {
+      setHistory((prev) => [...prev, screen]);
+      setScreen(nextScreen);
+    }
   };
 
-  // LOGIQUE DE RETOUR INTELLIGENT
+  const handleGender = (g: Gender) => { 
+    setGender(g); 
+    navigateTo("pyramid"); 
+  };
+
+  // LOGIQUE DE RETOUR RÉEL (HISTORIQUE)
   const handleBack = () => {
     if (selectedPerfume) {
-      setSelectedPerfume(null); // Ferme la fiche parfum et revient à l'écran précédent
+      setSelectedPerfume(null);
       return;
     }
 
-    switch (screen) {
-      case "pyramid":
-        setScreen("landing");
-        break;
-      case "results":
-        setScreen("pyramid"); // Retourne à la pyramide pour changer ses notes
-        break;
-      case "catalogue":
-        setScreen("landing"); // Ou "results" si tu veux une logique plus complexe
-        break;
-      case "analyzing":
+    if (history.length > 0) {
+      const lastScreen = history[history.length - 1];
+      const newHistory = history.slice(0, -1);
+      
+      // On évite de rester bloqué sur l'écran d'analyse
+      if (lastScreen === "analyzing") {
         setScreen("pyramid");
-        break;
-      default:
-        setScreen("landing");
+        setHistory(newHistory.slice(0, -1));
+      } else {
+        setScreen(lastScreen);
+        setHistory(newHistory);
+      }
+    } else {
+      setScreen("landing");
     }
   };
 
   const handleValidate = useCallback((top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[]) => {
     const matches = matchPerfumes(gender, top, heart, base);
     setResults(matches);
-    setScreen("analyzing");
-    setTimeout(() => setScreen("results"), 4000);
-  }, [gender]);
+    navigateTo("analyzing");
+    setTimeout(() => {
+        // Pour l'analyse, on remplace l'entrée 'analyzing' par 'results' 
+        // pour ne pas revenir sur le loader lors d'un retour arrière
+        setScreen("results");
+    }, 4000);
+  }, [gender, screen]);
 
   const handleSelectPerfume = (perfume: Perfume | null) => {
     if (perfume) {
-      setSelectedPerfume(null);
-      setTimeout(() => {
-        setSelectedPerfume(perfume);
-      }, 10);
+      setSelectedPerfume(perfume);
     } else {
       setSelectedPerfume(null);
     }
@@ -71,22 +82,20 @@ const Index = () => {
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      {/* NAVIGATION MISE À JOUR */}
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
         <div className="flex flex-col gap-3 pointer-events-auto">
-          {/* BOUTON RETOUR INTELLIGENT */}
+          {/* Le bouton retour s'affiche si on n'est pas à l'accueil OU si une fiche est ouverte */}
           {(screen !== "landing" || selectedPerfume) && (
             <button 
               onClick={handleBack}
               className="w-12 h-12 rounded-full border border-white/10 bg-black/80 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-2xl"
-              title="Retour"
             >
               <ArrowLeft size={20} />
             </button>
           )}
           
           <button 
-            onClick={() => {setScreen("landing"); setSelectedPerfume(null);}} 
+            onClick={() => { setScreen("landing"); setHistory([]); setSelectedPerfume(null); }} 
             className="w-12 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
           >
             <User size={20} />
@@ -95,7 +104,7 @@ const Index = () => {
 
         <div className="flex gap-3 pointer-events-auto">
           <button 
-            onClick={() => {setScreen("catalogue"); setSelectedPerfume(null);}} 
+            onClick={() => { navigateTo("catalogue"); setSelectedPerfume(null); }} 
             className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
           >
             <Library size={20} />
@@ -116,13 +125,13 @@ const Index = () => {
               {screen === "landing" && (
                 <LandingScreen 
                   onSelectGender={handleGender} 
-                  onCatalogue={() => setScreen("catalogue")}
+                  onCatalogue={() => navigateTo("catalogue")}
                   onProfile={() => {}} 
                 />
               )}
               {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={() => setScreen("landing")} />}
               {screen === "analyzing" && <AnalyzingLoader />}
-              {screen === "results" && <ResultsScreen results={results} onMenu={() => setScreen("landing")} onCatalogue={() => setScreen("catalogue")} onSelectPerfume={handleSelectPerfume} />}
+              {screen === "results" && <ResultsScreen results={results} onMenu={() => setScreen("landing")} onCatalogue={() => navigateTo("catalogue")} onSelectPerfume={handleSelectPerfume} />}
               {screen === "catalogue" && <CatalogueScreen onMenu={() => setScreen("landing")} />}
             </motion.div>
           )}

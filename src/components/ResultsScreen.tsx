@@ -1,112 +1,125 @@
-
 import { motion } from "framer-motion";
-import { Gender } from "@/data/perfumes";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
-import { User } from "lucide-react";
+import { Perfume } from "@/data/perfumes";
+import { Trophy, RotateCcw, Library } from "lucide-react";
 
-interface LandingScreenProps {
-  onSelectGender: (gender: Gender) => void;
+interface ResultsScreenProps {
+  results: { perfume: Perfume; matchPercent: number }[];
+  onMenu: () => void;
   onCatalogue: () => void;
-  onProfile: () => void;
+  onSelectPerfume: (perfume: Perfume) => void;
 }
 
-const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
-  // Chemin direct vers ton fichier uploade dans /public
-  const videoSrc = "/bg-parfum.mp4";
+const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
+  if (results.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+          <h2 className="font-display text-3xl text-primary">Aucun résultat</h2>
+          <p className="text-muted-foreground max-w-md">
+            Aucun parfum ne correspond à votre sélection. Essayez d'autres combinaisons de notes.
+          </p>
+          <button
+            onClick={onMenu}
+            className="px-8 py-3 border border-primary/30 text-primary hover:bg-primary hover:text-black transition-all"
+          >
+            Recommencer
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-center bg-black overflow-hidden">
-      
-      {/* 1. TA VIDÉO D'ARRIÈRE-PLAN (Source locale) */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover opacity-60"
-        >
-          <source src={videoSrc} type="video/mp4" />
-          Votre navigateur ne supporte pas la vidéo.
-        </video>
-        {/* Filtre de contraste pour le texte doré */}
-        <div className="absolute inset-0 bg-black/40 z-10" />
-      </div>
-
-      {/* 2. BOUTON PROFIL (À gauche, discret et élégant) */}
-      <div className="absolute top-8 left-8 z-50">
-        <motion.button
-          whileHover={springHover}
-          whileTap={springTap}
-          onClick={onProfile}
-          className="flex items-center justify-center w-10 h-10 rounded-full border border-[#D4AF37]/30 bg-black/40 text-[#D4AF37] backdrop-blur-md transition-all duration-500 hover:border-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.3)]"
-        >
-          <User size={18} />
-        </motion.button>
-      </div>
-
-      {/* SECTION TITRE & SLOGAN */}
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 pt-24">
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="mb-12 relative z-20"
+        className="w-full max-w-4xl space-y-8"
       >
-        <motion.h1 
-          variants={staggerItem}
-          className="font-display text-6xl md:text-8xl lg:text-9xl text-gold-gradient tracking-tighter mb-4"
-        >
-          Fz Parfums
-        </motion.h1>
+        <motion.div variants={staggerItem} className="text-center space-y-3">
+          <Trophy className="w-10 h-10 text-primary mx-auto" />
+          <h2 className="font-display text-4xl md:text-5xl text-primary tracking-tight">
+            Vos Accords
+          </h2>
+          <p className="text-muted-foreground text-sm tracking-widest uppercase">
+            {results.length} parfum{results.length > 1 ? "s" : ""} sélectionné{results.length > 1 ? "s" : ""}
+          </p>
+        </motion.div>
 
-        <motion.p
-          variants={staggerItem}
-          className="font-serif italic text-lg md:text-2xl tracking-[0.1em] text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F7EF8A] to-[#D4AF37] drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]"
-        >
-          L'art de flaconner l'inoubliable.
-        </motion.p>
-      </motion.div>
-
-      {/* SECTION BOUTONS */}
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        animate="show"
-        className="flex flex-col items-center gap-8 relative z-20"
-      >
-        <div className="flex flex-wrap justify-center gap-4 md:gap-8">
-          {(["homme", "femme", "mixte"] as Gender[]).map((gender) => (
+        <div className="grid gap-6 md:grid-cols-3">
+          {results.map(({ perfume, matchPercent }, index) => (
             <motion.button
-              key={gender}
+              key={perfume.id}
               variants={staggerItem}
               whileHover={springHover}
               whileTap={springTap}
-              onClick={() => onSelectGender(gender)}
-              className="px-8 py-4 min-w-[140px] font-display text-sm tracking-[0.2em] uppercase border border-primary/30 bg-black/40 text-primary hover:bg-primary hover:text-black transition-all duration-500 backdrop-blur-sm gold-border-glow shadow-lg"
+              onClick={() => onSelectPerfume(perfume)}
+              className="group relative p-6 border border-primary/20 bg-black/40 backdrop-blur-sm text-left hover:border-primary/60 transition-all duration-500 rounded-sm"
             >
-              {gender}
+              {index === 0 && (
+                <span className="absolute -top-3 left-4 px-3 py-0.5 bg-primary text-black text-[10px] font-display tracking-widest uppercase">
+                  Meilleur accord
+                </span>
+              )}
+
+              <div className="space-y-4">
+                <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-display text-2xl">
+                  {perfume.name.charAt(0)}
+                </div>
+
+                <div>
+                  <h3 className="font-display text-lg text-primary group-hover:text-primary/90 transition-colors">
+                    {perfume.name}
+                  </h3>
+                  <p className="text-muted-foreground text-xs tracking-wider uppercase mt-1">
+                    {perfume.brand}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">Compatibilité</span>
+                    <span className="text-primary font-display">{matchPercent}%</span>
+                  </div>
+                  <div className="h-1 bg-primary/10 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${matchPercent}%` }}
+                      transition={{ delay: 0.5 + index * 0.2, duration: 1 }}
+                      className="h-full bg-gradient-to-r from-primary/60 to-primary rounded-full"
+                    />
+                  </div>
+                </div>
+
+                <p className="text-muted-foreground/60 text-xs line-clamp-2">
+                  {perfume.concentration} · {perfume.gender}
+                </p>
+              </div>
             </motion.button>
           ))}
         </div>
 
-        {/* LIEN CATALOGUE */}
-        <motion.button
-          variants={staggerItem}
-          onClick={onCatalogue}
-          className="font-body text-[10px] uppercase tracking-[0.5em] text-primary/60 hover:text-primary transition-colors border-b border-primary/20 pb-1"
-        >
-          Découvrir la collection
-        </motion.button>
-
-        <motion.p
-          variants={staggerItem}
-          className="font-body text-[10px] md:text-xs uppercase tracking-[0.5em] text-primary/40 animate-pulse mt-4"
-        >
-          Cliquez pour commencer l'aventure
-        </motion.p>
+        <motion.div variants={staggerItem} className="flex justify-center gap-4 pt-4">
+          <button
+            onClick={onMenu}
+            className="flex items-center gap-2 px-6 py-3 border border-primary/20 text-primary/70 hover:text-primary hover:border-primary/40 transition-all text-xs tracking-widest uppercase"
+          >
+            <RotateCcw size={14} />
+            Recommencer
+          </button>
+          <button
+            onClick={onCatalogue}
+            className="flex items-center gap-2 px-6 py-3 border border-primary/20 text-primary/70 hover:text-primary hover:border-primary/40 transition-all text-xs tracking-widest uppercase"
+          >
+            <Library size={14} />
+            Catalogue
+          </button>
+        </motion.div>
       </motion.div>
     </div>
   );
 };
 
-export default LandingScreen;
+export default ResultsScreen;

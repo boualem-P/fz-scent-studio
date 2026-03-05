@@ -13,16 +13,16 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const [isScrolled, setIsScrolled] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Détecteur de scroll pour l'effet Blur du Header
+  // Détecteur de scroll pour activer l'effet
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      setIsScrolled(window.scrollY > 30);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Algorithme de recommandations (Même marque ou notes communes)
+  // Algorithme de recommandations de proximité
   const recommendations = PERFUMES.filter((p) => {
     if (p.id === perfume.id) return false;
     return p.brand === perfume.brand || p.topNotes.some(n => perfume.topNotes.includes(n));
@@ -37,32 +37,32 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   return (
     <div className="relative min-h-screen bg-[#050505] text-white pb-40 overflow-x-hidden selection:bg-amber-200 selection:text-black font-sans">
       
-      {/* --- HEADER AVEC EFFET FLOU GIVRÉ DYNAMIQUE --- */}
-      <header className="sticky top-0 z-[100] w-full h-20 flex items-center justify-between px-10 transition-all duration-500">
-        {/* Calque de flou forcé (méthode la plus compatible) */}
-        <AnimatePresence>
-          {isScrolled && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 -z-10 bg-zinc-900/60 backdrop-blur-[30px] border-b border-white/10 shadow-2xl"
-            />
-          )}
-        </AnimatePresence>
-
+      {/* --- HEADER AVEC FORCE-BLUR GIVRÉ (SOLUTION FINALE LOVABLE) --- */}
+      <header 
+        style={{
+          backgroundColor: isScrolled ? 'rgba(12, 12, 12, 0.7)' : 'transparent',
+          backdropFilter: isScrolled ? 'blur(24px) saturate(160%)' : 'none',
+          WebkitBackdropFilter: isScrolled ? 'blur(24px) saturate(160%)' : 'none',
+          borderBottom: isScrolled ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid transparent',
+        }}
+        className="sticky top-0 z-[999] w-full h-20 flex items-center justify-between px-10 transition-all duration-500"
+      >
         <div className="flex flex-col relative z-10">
           <span className={`text-[9px] uppercase tracking-[0.6em] font-black italic transition-colors duration-500 ${isScrolled ? "text-amber-500" : "text-amber-500/40"}`}>
             Signature Collection
           </span>
-          {isScrolled && (
-            <motion.span 
-              initial={{ y: 5, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-              className="text-[10px] uppercase tracking-widest text-white/80 font-light mt-1"
-            >
-              {perfume.name}
-            </motion.span>
-          )}
+          <AnimatePresence>
+            {isScrolled && (
+              <motion.span 
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 5 }}
+                className="text-[11px] uppercase tracking-widest text-zinc-100 font-light mt-1"
+              >
+                {perfume.name}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </div>
 
         <button 
@@ -73,28 +73,28 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
         </button>
       </header>
 
-      {/* --- TITRE CENTRALISÉ HAUT-MILIEU --- */}
+      {/* --- TITRE CENTRALISÉ --- */}
       <motion.div 
         initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full flex flex-col items-center justify-center py-20 px-6 text-center"
+        className="w-full flex flex-col items-center justify-center py-24 px-6 text-center"
       >
-        <h1 className="text-7xl md:text-[11rem] font-extralight italic tracking-tighter uppercase leading-none mb-8">
+        <h1 className="text-7xl md:text-[10rem] font-extralight italic tracking-tighter uppercase leading-none mb-8">
           {perfume.name}
         </h1>
         <div className="flex items-center gap-10">
-          <div className="h-[0.5px] w-20 bg-gradient-to-r from-transparent to-white/30" />
+          <div className="h-[0.5px] w-20 bg-gradient-to-r from-transparent to-white/20" />
           <p className="text-amber-500 tracking-[1em] uppercase text-[12px] font-black pl-[1em]">{perfume.brand}</p>
-          <div className="h-[0.5px] w-20 bg-gradient-to-l from-transparent to-white/30" />
+          <div className="h-[0.5px] w-20 bg-gradient-to-l from-transparent to-white/20" />
         </div>
       </motion.div>
 
       <div className="max-w-7xl mx-auto px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-24 items-start">
           
-          {/* --- GAUCHE : VISUEL & DESCRIPTION --- */}
+          {/* GAUCHE : VISUEL & DESCRIPTION */}
           <div className="lg:col-span-5 space-y-16">
-            <motion.div className="group relative aspect-[3/4.5] rounded-[4rem] overflow-hidden border border-white/[0.05] shadow-[0_50px_100px_-30px_rgba(0,0,0,1)]">
+            <motion.div className="group relative aspect-[3/4.5] rounded-[3.5rem] overflow-hidden border border-white/[0.05] shadow-2xl">
               <img src={perfume.image} className="w-full h-full object-cover transition-transform duration-[4s] group-hover:scale-110" alt={perfume.name} />
               <div className="absolute inset-0 bg-black/10" />
               <div className="absolute bottom-10 left-10 flex items-center gap-4 bg-black/40 backdrop-blur-3xl px-6 py-3 rounded-full border border-white/10">
@@ -107,7 +107,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
             </div>
           </div>
 
-          {/* --- DROITE : JAUGES & NOTES (AGRANDIES + GOLD NÉON) --- */}
+          {/* DROITE : JAUGES LIQUIDE GOLD NÉON & POURCENTAGES AGRANDIS */}
           <div className="lg:col-span-7 space-y-24">
             <div className="space-y-20">
               <h3 className="text-[12px] uppercase tracking-[0.6em] text-zinc-600 font-bold border-b border-white/5 pb-8 italic italic">Architecture des Essences</h3>
@@ -115,20 +115,20 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
               {stats.map((s, i) => (
                 <div key={i} className="group">
                   <div className="flex justify-between items-end mb-8 px-1">
-                    <span className="text-[18px] uppercase tracking-[0.4em] text-zinc-200 font-light flex items-center gap-6">
+                    <span className="text-[18px] uppercase tracking-[0.4em] text-zinc-200 font-light flex items-center gap-6 italic">
                       <span className="text-amber-500/50">{s.icon}</span> {s.label}
                     </span>
-                    <span className="text-amber-400 text-[28px] font-extralight tracking-tighter italic" style={{ textShadow: '0 0 25px rgba(251, 191, 36, 0.5)' }}>
+                    <span className="text-amber-400 text-[28px] font-extralight tracking-tighter italic" style={{ textShadow: '0 0 25px rgba(251, 191, 36, 0.4)' }}>
                        {s.val}<span className="text-[11px] ml-2 opacity-40 font-bold tracking-normal">% VOL</span>
                     </span>
                   </div>
                   
-                  {/* JAUGES BOUTEILLE GOLD NÉON */}
-                  <div className="h-6 bg-zinc-950 w-full relative rounded-full border border-white/10 overflow-hidden backdrop-blur-md shadow-inner">
+                  {/* JAUGE EFFET FLACON REMPLI */}
+                  <div className="h-6 bg-zinc-950 w-full relative rounded-full border border-white/10 overflow-hidden backdrop-blur-md">
                     <motion.div 
                       initial={{ width: 0 }} animate={{ width: `${s.val}%` }}
                       transition={{ duration: 3, ease: [0.16, 1, 0.3, 1], delay: i * 0.3 }}
-                      className="h-full relative rounded-full overflow-hidden shadow-[0_0_40px_rgba(251,191,36,0.4)]"
+                      className="h-full relative rounded-full overflow-hidden shadow-[0_0_40px_rgba(251,191,36,0.3)]"
                       style={{ background: 'linear-gradient(90deg, #92400e 0%, #fbbf24 50%, #fffbeb 100%)' }}
                     >
                       <motion.div animate={{ x: ["-100%", "100%"] }} transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
@@ -136,7 +136,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                     </motion.div>
                   </div>
 
-                  {/* SOUS-NOTES CERCLES (AGRANDIS AVEC GRAIN PHOTO) */}
+                  {/* SOUS-NOTES CERCLES AVEC EFFET GRAIN PHOTO */}
                   <div className="flex flex-wrap gap-8 mt-12">
                     {s.notes.map((note, idx) => (
                       <div key={idx} className="flex flex-col items-center gap-4 group/note cursor-pointer">
@@ -160,7 +160,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           <div className="flex items-center justify-between mb-16 px-4">
             <div className="space-y-2">
               <h3 className="text-[12px] uppercase tracking-[0.6em] text-zinc-600 font-black italic italic">Collections Analogues</h3>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-500/40 italic">Inspirations de la maison</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-500/40 italic italic">Inspirations de la maison</p>
             </div>
             <div className="flex gap-4 items-center">
                <span className="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-light italic italic">Slide to explore</span>
@@ -168,7 +168,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
             </div>
           </div>
 
-          <motion.div ref={carouselRef} className="cursor-grab active:cursor-grabbing overflow-hidden">
+          <motion.div ref={carouselRef} className="cursor-grab active:cursor-grabbing overflow-hidden group/carousel">
             <motion.div 
               drag="x"
               dragConstraints={{ right: 0, left: -((recommendations.length * 360) - window.innerWidth + 100) }}
@@ -188,8 +188,8 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                     </div>
                   </div>
                   <div className="space-y-2 px-4">
-                    <p className="text-[9px] uppercase tracking-[0.5em] text-zinc-600 font-black italic italic">{rec.brand}</p>
-                    <p className="text-[13px] font-extralight uppercase tracking-[0.2em] text-zinc-300 group-hover:text-amber-200 transition-colors truncate italic italic">{rec.name}</p>
+                    <p className="text-[9px] uppercase tracking-[0.5em] text-zinc-600 font-black italic italic italic">{rec.brand}</p>
+                    <p className="text-[13px] font-extralight uppercase tracking-[0.3em] text-zinc-300 group-hover:text-amber-200 transition-colors truncate italic italic italic">{rec.name}</p>
                   </div>
                 </motion.button>
               ))}

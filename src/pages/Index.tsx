@@ -97,10 +97,10 @@ const Index = () => {
               className="h-full w-full"
             >
               {screen === "landing" && (
-                <LandingScreen 
-                  onSelectGender={handleGender} 
+                <LandingScreen
+                  onSelectGender={handleGender}
                   onCatalogue={() => setScreen("catalogue")}
-                  onProfile={() => {}} // Ajout de la prop manquante pour éviter l'erreur
+                  onProfile={() => {}}
                 />
               )}
               {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={() => setScreen("landing")} />}

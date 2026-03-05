@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Library, Home, ArrowLeft, User } from "lucide-react";
+import { Library, ArrowLeft, User } from "lucide-react";
 import LandingScreen from "@/components/LandingScreen";
 import PyramidScreen from "@/components/PyramidScreen";
 import ResultsScreen from "@/components/ResultsScreen";
@@ -19,6 +19,31 @@ const Index = () => {
   const handleGender = (g: Gender) => { 
     setGender(g); 
     setScreen("pyramid"); 
+  };
+
+  // LOGIQUE DE RETOUR INTELLIGENT
+  const handleBack = () => {
+    if (selectedPerfume) {
+      setSelectedPerfume(null); // Ferme la fiche parfum et revient à l'écran précédent
+      return;
+    }
+
+    switch (screen) {
+      case "pyramid":
+        setScreen("landing");
+        break;
+      case "results":
+        setScreen("pyramid"); // Retourne à la pyramide pour changer ses notes
+        break;
+      case "catalogue":
+        setScreen("landing"); // Ou "results" si tu veux une logique plus complexe
+        break;
+      case "analyzing":
+        setScreen("pyramid");
+        break;
+      default:
+        setScreen("landing");
+    }
   };
 
   const handleValidate = useCallback((top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[]) => {
@@ -42,27 +67,27 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
       
-      {/* 1. FOND VISUEL (Particules dorées hors accueil) */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      {/* 2. NAVIGATION FIXE (Z-INDEX ÉLEVÉ) */}
+      {/* NAVIGATION MISE À JOUR */}
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
         <div className="flex flex-col gap-3 pointer-events-auto">
+          {/* BOUTON RETOUR INTELLIGENT */}
           {(screen !== "landing" || selectedPerfume) && (
             <button 
-              onClick={() => selectedPerfume ? handleSelectPerfume(null) : setScreen("landing")}
+              onClick={handleBack}
               className="w-12 h-12 rounded-full border border-white/10 bg-black/80 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-2xl"
+              title="Retour"
             >
               <ArrowLeft size={20} />
             </button>
           )}
           
           <button 
-            onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
+            onClick={() => {setScreen("landing"); setSelectedPerfume(null);}} 
             className="w-12 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-            title={`Profil : ${gender}`}
           >
             <User size={20} />
           </button>
@@ -70,14 +95,7 @@ const Index = () => {
 
         <div className="flex gap-3 pointer-events-auto">
           <button 
-            onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
-            className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-          >
-            <Home size={20} />
-          </button>
-          
-          <button 
-            onClick={() => {setScreen("catalogue"); handleSelectPerfume(null);}} 
+            onClick={() => {setScreen("catalogue"); setSelectedPerfume(null);}} 
             className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
           >
             <Library size={20} />
@@ -85,7 +103,6 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* 3. ÉCRANS PRINCIPAUX */}
       <main className="relative z-10 h-full w-full">
         <AnimatePresence mode="wait">
           {!selectedPerfume && (
@@ -97,10 +114,10 @@ const Index = () => {
               className="h-full w-full"
             >
               {screen === "landing" && (
-                <LandingScreen
-                  onSelectGender={handleGender}
+                <LandingScreen 
+                  onSelectGender={handleGender} 
                   onCatalogue={() => setScreen("catalogue")}
-                  onProfile={() => {}}
+                  onProfile={() => {}} 
                 />
               )}
               {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={() => setScreen("landing")} />}
@@ -112,7 +129,6 @@ const Index = () => {
         </AnimatePresence>
       </main>
 
-      {/* 4. OVERLAY FICHE PARFUM */}
       <AnimatePresence>
         {selectedPerfume && (
           <motion.div 
@@ -125,7 +141,7 @@ const Index = () => {
           >
             <PerfumePage 
               perfume={selectedPerfume} 
-              onClose={() => handleSelectPerfume(null)} 
+              onClose={() => setSelectedPerfume(null)} 
               onSelectPerfume={handleSelectPerfume} 
             />
           </motion.div>

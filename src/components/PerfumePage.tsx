@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
 import { Perfume, PERFUMES } from "@/data/perfumes";
 import { useRef, useEffect, useState } from "react";
@@ -13,16 +13,16 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const [isScrolled, setIsScrolled] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // --- DÉTECTEUR DE SCROLL POUR LE HEADER BLUR ---
+  // Détecteur de scroll pour l'effet Blur du Header
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
+      setIsScrolled(window.scrollY > 40);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // RECOMMANDATIONS (Algorithme de proximité)
+  // Algorithme de recommandations (Même marque ou notes communes)
   const recommendations = PERFUMES.filter((p) => {
     if (p.id === perfume.id) return false;
     return p.brand === perfume.brand || p.topNotes.some(n => perfume.topNotes.includes(n));
@@ -37,62 +37,69 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   return (
     <div className="relative min-h-screen bg-[#050505] text-white pb-40 overflow-x-hidden selection:bg-amber-200 selection:text-black font-sans">
       
-      {/* 7. HEADER AVEC EFFET FLOU GIVRÉ (CORRIGÉ POUR VISIBILITÉ MAXIMALE) */}
-      <header 
-        className={`sticky top-0 z-[100] w-full h-20 flex items-center justify-between px-10 transition-all duration-500 border-b ${
-          isScrolled 
-          ? "bg-zinc-900/60 backdrop-blur-[40px] border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.8)]" 
-          : "bg-transparent border-transparent"
-        }`}
-      >
-        <div className="flex flex-col">
+      {/* --- HEADER AVEC EFFET FLOU GIVRÉ DYNAMIQUE --- */}
+      <header className="sticky top-0 z-[100] w-full h-20 flex items-center justify-between px-10 transition-all duration-500">
+        {/* Calque de flou forcé (méthode la plus compatible) */}
+        <AnimatePresence>
+          {isScrolled && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 -z-10 bg-zinc-900/60 backdrop-blur-[30px] border-b border-white/10 shadow-2xl"
+            />
+          )}
+        </AnimatePresence>
+
+        <div className="flex flex-col relative z-10">
           <span className={`text-[9px] uppercase tracking-[0.6em] font-black italic transition-colors duration-500 ${isScrolled ? "text-amber-500" : "text-amber-500/40"}`}>
             Signature Collection
           </span>
           {isScrolled && (
             <motion.span 
-              initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-              className="text-[11px] uppercase tracking-[0.2em] text-white font-light mt-1"
+              initial={{ y: 5, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+              className="text-[10px] uppercase tracking-widest text-white/80 font-light mt-1"
             >
               {perfume.name}
             </motion.span>
           )}
         </div>
+
         <button 
           onClick={onClose} 
-          className="group w-10 h-10 flex items-center justify-center rounded-full border border-white/10 bg-white/5 hover:bg-white/20 transition-all"
+          className="relative z-10 group w-10 h-10 flex items-center justify-center rounded-full border border-white/10 bg-white/5 hover:bg-white/20 transition-all"
         >
-          <X size={20} className="group-hover:rotate-90 transition-transform duration-500 text-white" />
+          <X size={18} className="group-hover:rotate-90 transition-transform duration-500 text-white" />
         </button>
       </header>
 
-      {/* 1. TITRE CENTRALISÉ HAUT-MILIEU */}
+      {/* --- TITRE CENTRALISÉ HAUT-MILIEU --- */}
       <motion.div 
-        initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full flex flex-col items-center justify-center py-24 px-6 text-center"
+        className="w-full flex flex-col items-center justify-center py-20 px-6 text-center"
       >
-        <h1 className="text-7xl md:text-[11rem] font-extralight italic tracking-tighter uppercase leading-none mb-10">
+        <h1 className="text-7xl md:text-[11rem] font-extralight italic tracking-tighter uppercase leading-none mb-8">
           {perfume.name}
         </h1>
         <div className="flex items-center gap-10">
-          <div className="h-[0.5px] w-20 bg-gradient-to-r from-transparent to-white/20" />
-          <p className="text-amber-500 tracking-[1em] uppercase text-[13px] font-black pl-[1em]">{perfume.brand}</p>
-          <div className="h-[0.5px] w-20 bg-gradient-to-l from-transparent to-white/20" />
+          <div className="h-[0.5px] w-20 bg-gradient-to-r from-transparent to-white/30" />
+          <p className="text-amber-500 tracking-[1em] uppercase text-[12px] font-black pl-[1em]">{perfume.brand}</p>
+          <div className="h-[0.5px] w-20 bg-gradient-to-l from-transparent to-white/30" />
         </div>
       </motion.div>
 
       <div className="max-w-7xl mx-auto px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-24 items-start">
           
-          {/* GAUCHE : VISUEL & DESCRIPTION */}
+          {/* --- GAUCHE : VISUEL & DESCRIPTION --- */}
           <div className="lg:col-span-5 space-y-16">
             <motion.div className="group relative aspect-[3/4.5] rounded-[4rem] overflow-hidden border border-white/[0.05] shadow-[0_50px_100px_-30px_rgba(0,0,0,1)]">
-              <img src={perfume.image} className="w-full h-full object-cover transition-transform duration-[4s] group-hover:scale-105" alt={perfume.name} />
-              <div className="absolute inset-0 bg-black/10 transition-opacity group-hover:opacity-0" />
+              <img src={perfume.image} className="w-full h-full object-cover transition-transform duration-[4s] group-hover:scale-110" alt={perfume.name} />
+              <div className="absolute inset-0 bg-black/10" />
               <div className="absolute bottom-10 left-10 flex items-center gap-4 bg-black/40 backdrop-blur-3xl px-6 py-3 rounded-full border border-white/10">
                 <Calendar size={14} className="text-amber-200/70" />
-                <span className="text-[9px] uppercase tracking-[0.3em] font-medium text-zinc-300 italic">Distillation {perfume.year}</span>
+                <span className="text-[9px] uppercase tracking-[0.3em] font-medium text-zinc-300 italic italic">Assemblage {perfume.year}</span>
               </div>
             </motion.div>
             <div className="px-10 border-l border-white/5 py-2">
@@ -100,10 +107,10 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
             </div>
           </div>
 
-          {/* DROITE : JAUGES & NOTES (AGRANDIES + GOLD NÉON) */}
+          {/* --- DROITE : JAUGES & NOTES (AGRANDIES + GOLD NÉON) --- */}
           <div className="lg:col-span-7 space-y-24">
             <div className="space-y-20">
-              <h3 className="text-[12px] uppercase tracking-[0.6em] text-zinc-600 font-bold border-b border-white/5 pb-8 italic">Architecture des Essences</h3>
+              <h3 className="text-[12px] uppercase tracking-[0.6em] text-zinc-600 font-bold border-b border-white/5 pb-8 italic italic">Architecture des Essences</h3>
               
               {stats.map((s, i) => (
                 <div key={i} className="group">
@@ -152,16 +159,16 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
         <div className="mt-48 pt-24 border-t border-white/[0.05]">
           <div className="flex items-center justify-between mb-16 px-4">
             <div className="space-y-2">
-              <h3 className="text-[12px] uppercase tracking-[0.6em] text-zinc-600 font-black italic">Collections Analogues</h3>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-500/40">Inspirations de la maison</p>
+              <h3 className="text-[12px] uppercase tracking-[0.6em] text-zinc-600 font-black italic italic">Collections Analogues</h3>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-amber-500/40 italic">Inspirations de la maison</p>
             </div>
             <div className="flex gap-4 items-center">
-               <span className="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-light italic">Slide to explore</span>
+               <span className="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-light italic italic">Slide to explore</span>
                <ChevronRight size={16} className="text-zinc-700" />
             </div>
           </div>
 
-          <motion.div ref={carouselRef} className="cursor-grab active:cursor-grabbing overflow-hidden group/carousel">
+          <motion.div ref={carouselRef} className="cursor-grab active:cursor-grabbing overflow-hidden">
             <motion.div 
               drag="x"
               dragConstraints={{ right: 0, left: -((recommendations.length * 360) - window.innerWidth + 100) }}
@@ -181,8 +188,8 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                     </div>
                   </div>
                   <div className="space-y-2 px-4">
-                    <p className="text-[9px] uppercase tracking-[0.5em] text-zinc-600 font-black italic">{rec.brand}</p>
-                    <p className="text-[13px] font-extralight uppercase tracking-[0.2em] text-zinc-300 group-hover:text-amber-200 transition-colors truncate italic">{rec.name}</p>
+                    <p className="text-[9px] uppercase tracking-[0.5em] text-zinc-600 font-black italic italic">{rec.brand}</p>
+                    <p className="text-[13px] font-extralight uppercase tracking-[0.2em] text-zinc-300 group-hover:text-amber-200 transition-colors truncate italic italic">{rec.name}</p>
                   </div>
                 </motion.button>
               ))}

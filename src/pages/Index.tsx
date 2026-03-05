@@ -42,14 +42,13 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
       
-      {/* 1. FOND VISUEL */}
+      {/* 1. FOND VISUEL (Particules dorées hors accueil) */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      {/* 2. NAVIGATION FIXE */}
+      {/* 2. NAVIGATION FIXE (Z-INDEX ÉLEVÉ) */}
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
-        {/* COLONNE GAUCHE : RETOUR + PROFIL */}
         <div className="flex flex-col gap-3 pointer-events-auto">
           {(screen !== "landing" || selectedPerfume) && (
             <button 
@@ -60,17 +59,15 @@ const Index = () => {
             </button>
           )}
           
-          {/* NOUVEL EMPLACEMENT DU BOUTON PROFIL (SANS TEXTE) */}
           <button 
             onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
             className="w-12 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-            title={`Profil actuel : ${gender}`}
+            title={`Profil : ${gender}`}
           >
             <User size={20} />
           </button>
         </div>
 
-        {/* COLONNE DROITE : ACCUEIL + CATALOGUE */}
         <div className="flex gap-3 pointer-events-auto">
           <button 
             onClick={() => {setScreen("landing"); handleSelectPerfume(null);}} 
@@ -99,7 +96,13 @@ const Index = () => {
               exit={{ opacity: 0 }} 
               className="h-full w-full"
             >
-              {screen === "landing" && <LandingScreen onSelectGender={handleGender} />}
+              {screen === "landing" && (
+                <LandingScreen 
+                  onSelectGender={handleGender} 
+                  onCatalogue={() => setScreen("catalogue")}
+                  onProfile={() => {}} // Ajout de la prop manquante pour éviter l'erreur
+                />
+              )}
               {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={() => setScreen("landing")} />}
               {screen === "analyzing" && <AnalyzingLoader />}
               {screen === "results" && <ResultsScreen results={results} onMenu={() => setScreen("landing")} onCatalogue={() => setScreen("catalogue")} onSelectPerfume={handleSelectPerfume} />}

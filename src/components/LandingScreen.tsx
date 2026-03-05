@@ -10,7 +10,7 @@ interface LandingScreenProps {
 }
 
 const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
-  const videoSrc = "/videos/Fz perfums video.mp4";
+  const videoSrc = "/videos/fz-perfums-video.mp4";
 
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-center bg-black overflow-hidden">

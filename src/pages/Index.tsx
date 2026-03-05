@@ -14,16 +14,47 @@ type ScreenType = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
 
 const Index = () => {
   const [screen, setScreen] = useState<ScreenType>("landing");
-  const [history, setHistory] = useState<ScreenType[]>([]); // Historique de navigation
+  const [history, setHistory] = useState<ScreenType[]>([]);
   const [gender, setGender] = useState<Gender>("homme");
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
-  // Fonction pour changer d'écran en enregistrant l'ancien dans l'historique
+  // FONCTION DE NAVIGATION ROBUSTE
   const navigateTo = (nextScreen: ScreenType) => {
-    if (nextScreen !== screen) {
-      setHistory((prev) => [...prev, screen]);
-      setScreen(nextScreen);
+    if (nextScreen === screen) return;
+    
+    // On ajoute l'écran actuel à l'historique AVANT de changer
+    setHistory((prev) => [...prev, screen]);
+    setScreen(nextScreen);
+  };
+
+  // RETOUR PRÉCIS
+  const handleBack = () => {
+    // Si une fiche parfum est ouverte, on la ferme simplement
+    if (selectedPerfume) {
+      setSelectedPerfume(null);
+      return;
+    }
+
+    // Si on a un historique, on prend le dernier élément
+    if (history.length > 0) {
+      const newHistory = [...history];
+      const previousScreen = newHistory.pop(); // Récupère et enlève le dernier écran
+      
+      if (previousScreen) {
+        // Sécurité : si le précédent était l'analyse, on remonte encore d'un cran
+        if (previousScreen === "analyzing") {
+          const skipAnalysis = newHistory.pop();
+          setScreen(skipAnalysis || "landing");
+          setHistory(newHistory);
+        } else {
+          setScreen(previousScreen);
+          setHistory(newHistory);
+        }
+      }
+    } else {
+      // Si l'historique est vide, retour forcé à l'accueil
+      setScreen("landing");
     }
   };
 
@@ -32,47 +63,22 @@ const Index = () => {
     navigateTo("pyramid"); 
   };
 
-  // LOGIQUE DE RETOUR RÉEL (HISTORIQUE)
-  const handleBack = () => {
-    if (selectedPerfume) {
-      setSelectedPerfume(null);
-      return;
-    }
-
-    if (history.length > 0) {
-      const lastScreen = history[history.length - 1];
-      const newHistory = history.slice(0, -1);
-      
-      // On évite de rester bloqué sur l'écran d'analyse
-      if (lastScreen === "analyzing") {
-        setScreen("pyramid");
-        setHistory(newHistory.slice(0, -1));
-      } else {
-        setScreen(lastScreen);
-        setHistory(newHistory);
-      }
-    } else {
-      setScreen("landing");
-    }
-  };
-
   const handleValidate = useCallback((top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[]) => {
     const matches = matchPerfumes(gender, top, heart, base);
     setResults(matches);
+    
+    // On navigue vers l'analyse
     navigateTo("analyzing");
+    
+    // Après 4s, on remplace l'écran par les résultats
+    // Note: On ne veut pas que "analyzing" pollue l'historique lors du retour
     setTimeout(() => {
-        // Pour l'analyse, on remplace l'entrée 'analyzing' par 'results' 
-        // pour ne pas revenir sur le loader lors d'un retour arrière
-        setScreen("results");
+      setScreen("results");
     }, 4000);
   }, [gender, screen]);
 
-  const handleSelectPerfume = (perfume: Perfume | null) => {
-    if (perfume) {
-      setSelectedPerfume(perfume);
-    } else {
-      setSelectedPerfume(null);
-    }
+  const handleSelectPerfume = (perfume: Perfume) => {
+    setSelectedPerfume(perfume);
   };
 
   return (
@@ -84,8 +90,8 @@ const Index = () => {
 
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
         <div className="flex flex-col gap-3 pointer-events-auto">
-          {/* Le bouton retour s'affiche si on n'est pas à l'accueil OU si une fiche est ouverte */}
-          {(screen !== "landing" || selectedPerfume) && (
+          {/* BOUTON RETOUR : Affiché si historique présent ou fiche ouverte */}
+          {(history.length > 0 || selectedPerfume) && (
             <button 
               onClick={handleBack}
               className="w-12 h-12 rounded-full border border-white/10 bg-black/80 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-2xl"

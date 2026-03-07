@@ -11,129 +11,87 @@ interface CatalogueModalProps {
 
 const NoteBubble = ({ note }: { note: NoteDetail }) => {
   const imgUrl = getIngredientImage(note.name);
-
   return (
     <motion.div variants={staggerItem} className="flex flex-col items-center gap-1.5 min-w-[60px]">
       <div className="w-14 h-14 rounded-full border border-primary/20 shadow-lg shadow-primary/10 overflow-hidden relative group">
-        <img
-          src={imgUrl}
-          alt={note.name}
-          loading="lazy"
-          className="w-full h-full object-cover ingredient-img ingredient-img-idle"
-        />
+        <img src={imgUrl} alt={note.name} className="w-full h-full object-cover ingredient-img" />
         <div className="absolute inset-0 ingredient-overlay" />
       </div>
-      <span className="text-[9px] font-body text-foreground/70 tracking-wider text-center leading-tight max-w-[65px]">
-        {note.name}
-      </span>
+      <span className="text-[9px] font-body text-foreground/70 tracking-wider text-center leading-tight max-w-[65px]">{note.name}</span>
     </motion.div>
   );
 };
 
-const NoteRow = ({
-  icon: Icon,
-  label,
-  notes,
-}: {
-  icon: React.ElementType;
-  label: string;
-  notes: NoteDetail[];
-}) => (
-  <div className="mb-4">
-    <div className="flex items-center gap-2 mb-2">
-      <Icon className="w-3.5 h-3.5 text-primary" />
+const NoteRow = ({ icon: Icon, label, notes }: { icon: any; label: string; notes: NoteDetail[] }) => (
+  <div className="mb-6">
+    <div className="flex items-center gap-2 mb-3">
+      <Icon className="w-4 h-4 text-primary" />
       <span className="text-[10px] font-body tracking-[0.15em] uppercase text-primary/70">{label}</span>
     </div>
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      animate="show"
-      className="flex gap-4 flex-wrap"
-    >
-      {notes.map((note) => (
-        <NoteBubble key={note.name} note={note} />
-      ))}
+    <motion.div variants={staggerContainer} initial="hidden" animate="show" className="flex gap-4 flex-wrap">
+      {notes.map((note) => <NoteBubble key={note.name} note={note} />)}
     </motion.div>
   </div>
 );
 
-const PerfumeInitialsLarge = ({ name }: { name: string }) => {
-  const initials = name
-    .split(/[\s'-]+/)
-    .filter((w) => w.length > 0 && w[0] === w[0].toUpperCase())
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join("");
-
-  return (
-    <div className="w-40 h-56 rounded-sm bg-gradient-to-b from-primary/20 to-transparent border border-primary/30 flex items-center justify-center">
-      <span className="font-display text-5xl text-primary/80 tracking-wider">{initials}</span>
-    </div>
-  );
-};
-
 const CatalogueModal = ({ perfume, onClose }: CatalogueModalProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.85 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.85 }}
+      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9, y: 20 }}
       transition={{ duration: 0.5, ease: luxuryEase }}
       onClick={(e) => e.stopPropagation()}
-      className="relative bg-card/95 border border-primary/30 gold-border-glow w-full flex overflow-hidden backdrop-blur-lg"
+      className="relative bg-card/95 border border-primary/30 gold-border-glow w-full max-w-4xl flex flex-col md:flex-row overflow-hidden backdrop-blur-xl max-h-[90vh]"
     >
-      {/* Gold corner accents */}
-      <div className="absolute top-0 left-0 w-10 h-10 border-t border-l border-primary/60" />
-      <div className="absolute top-0 right-0 w-10 h-10 border-t border-r border-primary/60" />
-      <div className="absolute bottom-0 left-0 w-10 h-10 border-b border-l border-primary/60" />
-      <div className="absolute bottom-0 right-0 w-10 h-10 border-b border-r border-primary/60" />
+      {/* Bouton Fermer */}
+      <button onClick={onClose} className="absolute top-4 right-4 z-50 p-2 text-primary/60 hover:text-primary transition-colors bg-black/20 rounded-full border border-primary/10">
+        <X size={20} />
+      </button>
 
-      {/* Glassmorphism placeholder side */}
-      <div className="w-1/3 bg-secondary/20 flex items-center justify-center p-8">
+      {/* Côté Image (Généreux) */}
+      <div className="w-full md:w-2/5 bg-secondary/30 flex items-center justify-center p-12 relative min-h-[300px]">
+        <div className="absolute inset-0 opacity-30" style={{ background: "radial-gradient(circle at center, var(--primary) 0%, transparent 70%)" }} />
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: luxuryEase, delay: 0.2 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="relative z-10 w-full h-full flex items-center justify-center"
         >
-          <PerfumeInitialsLarge name={perfume.name} />
+          {perfume.image ? (
+            <img 
+              src={perfume.image} 
+              alt={perfume.name} 
+              className="max-w-full max-h-full object-contain drop-shadow-[0_20px_50px_rgba(212,175,55,0.3)] mix-blend-lighten"
+            />
+          ) : (
+             <div className="text-primary/20 font-display text-8xl uppercase">{perfume.name.substring(0,1)}</div>
+          )}
         </motion.div>
       </div>
 
-      {/* Content side */}
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        animate="show"
-        className="flex-1 p-8 flex flex-col overflow-y-auto"
-      >
-        <motion.p variants={staggerItem} className="text-[10px] font-body tracking-[0.3em] uppercase text-muted-foreground mb-1">
+      {/* Côté Contenu (Infos) */}
+      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="flex-1 p-8 md:p-12 flex flex-col overflow-y-auto bg-black/40">
+        <motion.p variants={staggerItem} className="text-[11px] font-body tracking-[0.4em] uppercase text-primary/60 mb-2">
           {perfume.brand}
         </motion.p>
-        <motion.h2 variants={staggerItem} className="font-display text-3xl text-gold-gradient mb-2">
+        <motion.h2 variants={staggerItem} className="font-display text-4xl lg:text-5xl text-gold-gradient mb-4">
           {perfume.name}
         </motion.h2>
 
-        <motion.div variants={staggerItem} className="flex items-center gap-3 mb-4">
-          <span className="text-[10px] font-body tracking-wider text-muted-foreground uppercase">
-            {perfume.gender === "homme" ? "Homme" : perfume.gender === "femme" ? "Femme" : "Mixte"}
-          </span>
+        <motion.div variants={staggerItem} className="flex items-center gap-4 mb-6 text-[10px] font-body tracking-[0.2em] text-muted-foreground uppercase border-y border-primary/10 py-3">
+          <span>{perfume.gender}</span>
           <span className="text-primary/30">•</span>
-          <span className="text-[10px] font-body tracking-wider text-muted-foreground">
-            {perfume.concentration}
-          </span>
+          <span>{perfume.concentration}</span>
           <span className="text-primary/30">•</span>
-          <span className="text-[10px] font-body tracking-wider text-muted-foreground">
-            {perfume.year}
-          </span>
+          <span>{perfume.year}</span>
         </motion.div>
 
-        <motion.div variants={staggerItem} className="gold-divider w-16 mb-4" />
-
-        <motion.p variants={staggerItem} className="text-sm text-foreground/80 leading-relaxed font-body mb-6 italic">
-          "{perfume.description}"
+        <motion.p variants={staggerItem} className="text-base text-foreground/80 leading-relaxed font-body mb-10 italic border-l-2 border-primary/20 pl-6 py-2">
+          {perfume.description}
         </motion.p>
 
-        <div className="mt-auto">
+        <div className="space-y-2">
           <NoteRow icon={Sparkles} label="Notes de Tête" notes={perfume.topNotesDetailed} />
           <NoteRow icon={Flower2} label="Notes de Cœur" notes={perfume.heartNotesDetailed} />
           <NoteRow icon={TreePine} label="Notes de Fond" notes={perfume.baseNotesDetailed} />

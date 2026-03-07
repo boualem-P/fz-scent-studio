@@ -560,5 +560,53 @@ export const PERFUMES: Perfume[] = [
     heartNotesDetailed: [{ name: "Lait de coco" }, { name: "Ylang-Ylang" }, { name: "Héliotrope" }],
     baseNotesDetailed: [{ name: "Musc" }, { name: "Benjoin" }, { name: "Cèdre" }],
     image: "https://fimgs.net/mdimg/perfume/m.15261.jpg"
+  },
+  {
+    id: "la-nuit-tresor",
+    name: "La Nuit Trésor",
+    brand: "Lancôme",
+    gender: "femme",
+    year: 2015,
+    concentration: "Eau de Parfum",
+    description: "Un philtre d'amour du XXIème siècle, boisé oriental et gourmand.",
+    topNotes: ["fruitees", "hesperides"],
+    heartNotes: ["florales", "fruitees"],
+    baseNotes: ["gourmandes", "ambrees"],
+    topNotesDetailed: [{ name: "Poire" }, { name: "Bergamote" }, { name: "Tangerine" }],
+    heartNotesDetailed: [{ name: "Orchidée de vanille" }, { name: "Rose noire" }, { name: "Fraise" }, { name: "Fruit de la passion" }],
+    baseNotesDetailed: [{ name: "Praliné" }, { name: "Caramel" }, { name: "Litchi" }, { name: "Vanille" }, { name: "Patchouli" }, { name: "Encens" }, { name: "Café" }, { name: "Réglisse" }],
+    image: "https://fimgs.net/mdimg/perfume/m.29157.jpg"
+  },
+  {
+    id: "si-armani",
+    name: "Sì",
+    brand: "Giorgio Armani",
+    gender: "femme",
+    year: 2013,
+    concentration: "Eau de Parfum",
+    description: "Un hommage à la féminité moderne, un mélange irrésistible de grâce, de force et d'esprit indépendant.",
+    topNotes: ["fruitees"],
+    heartNotes: ["florales"],
+    baseNotes: ["boisees", "ambrees"],
+    topNotesDetailed: [{ name: "Bourgeon de cassis" }],
+    heartNotesDetailed: [{ name: "Rose de Mai" }, { name: "Freesia" }],
+    baseNotesDetailed: [{ name: "Vanille" }, { name: "Patchouli" }, { name: "Ambroxan" }, { name: "Notes boisées" }],
+    image: "https://fimgs.net/mdimg/perfume/m.18453.jpg"
+  },
+  {
+    id: "coco-mademoiselle-chanel",
+    name: "Coco Mademoiselle",
+    brand: "Chanel",
+    gender: "femme",
+    year: 2001,
+    concentration: "Eau de Parfum",
+    description: "L'essence d'une femme libre et audacieuse, un oriental frais et aérien.",
+    topNotes: ["hesperides"],
+    heartNotes: ["florales"],
+    baseNotes: ["boisees", "ambrees", "musquees"],
+    topNotesDetailed: [{ name: "Orange" }, { name: "Mandarine" }, { name: "Fleur d'oranger" }, { name: "Bergamote" }],
+    heartNotesDetailed: [{ name: "Mimosa" }, { name: "Jasmin" }, { name: "Rose de Turquie" }, { name: "Ylang-Ylang" }],
+    baseNotesDetailed: [{ name: "Patchouli" }, { name: "Musc blanc" }, { name: "Vanille" }, { name: "Vétiver" }, { name: "Fève tonka" }, { name: "Opoponax" }],
+    image: "https://fimgs.net/mdimg/perfume/m.611.jpg"
   }
 ];

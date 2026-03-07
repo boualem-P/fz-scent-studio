@@ -84,12 +84,12 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         </motion.p>
       </motion.div>
 
-      {/* SELECTION GENRE - 2 BOUTONS VERTICAUX EFFET MIROIR */}
+      {/* SELECTION GENRE - 2 BOUTONS VERTICAUX MIROIR */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="flex flex-col items-center gap-12 relative z-20 mb-12"
+        className="flex flex-col items-center gap-10 relative z-20 mb-12"
       >
         <div className="flex justify-center gap-8 md:gap-16">
           {(["homme", "femme"] as Gender[]).map((gender) => (
@@ -99,22 +99,22 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
               whileHover={{ scale: 1.05, y: -5 }}
               whileTap={springTap}
               onClick={() => onSelectGender(gender)}
-              className="group relative w-32 h-48 md:w-40 md:h-60 flex items-center justify-center overflow-hidden border border-primary/20 bg-black/40 backdrop-blur-md transition-all duration-700 hover:border-primary/60 shadow-2xl"
+              className="group relative w-32 h-52 md:w-40 md:h-64 flex items-center justify-center overflow-hidden border border-primary/20 bg-black/40 backdrop-blur-md transition-all duration-700 hover:border-primary/60 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
             >
-              {/* EFFET MIROIR BRILLANT (SHINE) */}
-              <div className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+              {/* EFFET MIROIR / BRILLANCE AU SURVOL */}
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
               
-              {/* REFLET FIXE TYPE MIROIR */}
-              <div className="absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity duration-700 bg-[linear-gradient(110deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.4)_45%,rgba(255,255,255,0.8)_50%,rgba(255,255,255,0.4)_55%,rgba(255,255,255,0)_100%)] bg-[length:200%_100%] animate-mirror-shimmer" />
+              {/* REFLET STATIQUE TYPE VERRE */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50" />
 
-              <span className="relative z-10 font-display text-xs md:text-sm tracking-[0.3em] uppercase text-primary group-hover:text-white transition-colors">
+              <span className="relative z-10 font-display text-xs md:text-sm tracking-[0.4em] uppercase text-primary group-hover:text-white transition-colors duration-500">
                 {gender}
               </span>
             </motion.button>
           ))}
         </div>
 
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-4">
           <motion.button
             variants={staggerItem}
             onClick={onCatalogue}
@@ -124,6 +124,13 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
           </motion.button>
         </div>
       </motion.div>
+
+      {/* CSS INLINE POUR L'ANIMATION MIROIR SI PAS DANS TAILWIND.CONFIG */}
+      <style>{`
+        @keyframes shimmer {
+          100% { transform: translateX(100%); }
+        }
+      `}</style>
     </div>
   );
 };

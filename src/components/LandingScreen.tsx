@@ -12,7 +12,6 @@ interface LandingScreenProps {
 const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
   const videoSrc = "/videofz.mp4";
 
-  // Fonction pour basculer en plein écran
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
@@ -39,7 +38,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
 
-      {/* BOUTON PROFIL (TOP LEFT) */}
+      {/* BOUTON PROFIL */}
       <div className="absolute top-8 left-8 z-50">
         <motion.button
           whileHover={springHover}
@@ -51,20 +50,19 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         </motion.button>
       </div>
 
-      {/* BOUTON FULLSCREEN (BOTTOM LEFT) */}
+      {/* BOUTON FULLSCREEN */}
       <div className="absolute bottom-8 left-8 z-50">
         <motion.button
           whileHover={springHover}
           whileTap={springTap}
           onClick={toggleFullScreen}
           className="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-black/20 text-white/50 backdrop-blur-sm transition-all duration-500 hover:text-white hover:border-white/40"
-          title="Plein écran"
         >
           <Maximize size={16} />
         </motion.button>
       </div>
 
-      {/* TITRE ET SLOGAN - HAUT & CHIC */}
+      {/* TITRE ET SLOGAN */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
@@ -81,35 +79,42 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         <motion.p
           variants={staggerItem}
           className="font-serif text-[11px] md:text-sm tracking-[0.6em] text-primary/90 uppercase leading-relaxed italic"
-          style={{ fontStyle: 'italic', fontWeight: 300 }}
         >
           L'art de flaconner l'inoubliable
         </motion.p>
       </motion.div>
 
-      {/* BOUTONS DE SÉLECTION (BOTTOM) */}
+      {/* SELECTION GENRE - 2 BOUTONS VERTICAUX EFFET MIROIR */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="flex flex-col items-center gap-8 relative z-20 mb-12"
+        className="flex flex-col items-center gap-12 relative z-20 mb-12"
       >
-        <div className="flex flex-wrap justify-center gap-4 md:gap-8">
-          {(["homme", "femme", "mixte"] as Gender[]).map((gender) => (
+        <div className="flex justify-center gap-8 md:gap-16">
+          {(["homme", "femme"] as Gender[]).map((gender) => (
             <motion.button
               key={gender}
               variants={staggerItem}
-              whileHover={springHover}
+              whileHover={{ scale: 1.05, y: -5 }}
               whileTap={springTap}
               onClick={() => onSelectGender(gender)}
-              className="px-8 py-4 min-w-[140px] font-display text-sm tracking-[0.2em] uppercase border border-primary/30 bg-black/40 text-primary hover:bg-primary hover:text-black transition-all duration-500 backdrop-blur-sm shadow-lg"
+              className="group relative w-32 h-48 md:w-40 md:h-60 flex items-center justify-center overflow-hidden border border-primary/20 bg-black/40 backdrop-blur-md transition-all duration-700 hover:border-primary/60 shadow-2xl"
             >
-              {gender}
+              {/* EFFET MIROIR BRILLANT (SHINE) */}
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+              
+              {/* REFLET FIXE TYPE MIROIR */}
+              <div className="absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity duration-700 bg-[linear-gradient(110deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.4)_45%,rgba(255,255,255,0.8)_50%,rgba(255,255,255,0.4)_55%,rgba(255,255,255,0)_100%)] bg-[length:200%_100%] animate-mirror-shimmer" />
+
+              <span className="relative z-10 font-display text-xs md:text-sm tracking-[0.3em] uppercase text-primary group-hover:text-white transition-colors">
+                {gender}
+              </span>
             </motion.button>
           ))}
         </div>
 
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-6">
           <motion.button
             variants={staggerItem}
             onClick={onCatalogue}
@@ -117,13 +122,6 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
           >
             Découvrir la collection
           </motion.button>
-
-          <motion.p
-            variants={staggerItem}
-            className="font-body text-[9px] uppercase tracking-[0.6em] text-primary/30 animate-pulse mt-2"
-          >
-            Commencer l'expérience
-          </motion.p>
         </div>
       </motion.div>
     </div>

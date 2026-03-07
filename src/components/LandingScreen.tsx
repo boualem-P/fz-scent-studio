@@ -23,7 +23,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center p-6 text-center bg-black overflow-hidden">
       
-      {/* VIDÉO D'ARRIÈRE-PLAN */}
+      {/* 1. VIDÉO D'ARRIÈRE-PLAN */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <video
           key={videoSrc}
@@ -38,7 +38,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
 
-      {/* BOUTON PROFIL */}
+      {/* 2. BOUTON PROFIL (HAUT GAUCHE) */}
       <div className="absolute top-8 left-8 z-50">
         <motion.button
           whileHover={springHover}
@@ -50,7 +50,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         </motion.button>
       </div>
 
-      {/* BOUTON FULLSCREEN */}
+      {/* 3. BOUTON PLEIN ÉCRAN (BAS GAUCHE) */}
       <div className="absolute bottom-8 left-8 z-50">
         <motion.button
           whileHover={springHover}
@@ -62,7 +62,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         </motion.button>
       </div>
 
-      {/* TITRE ET SLOGAN */}
+      {/* 4. TITRE ET SOUS-TITRE (HAUT CENTRE) */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
@@ -84,7 +84,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         </motion.p>
       </motion.div>
 
-      {/* SELECTION GENRE - 2 BOUTONS VERTICAUX MIROIR */}
+      {/* 5. SELECTION GENRE - 2 BOUTONS VERTICAUX AVEC EFFET CATALOGUE */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
@@ -99,14 +99,9 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
               whileHover={{ scale: 1.05, y: -5 }}
               whileTap={springTap}
               onClick={() => onSelectGender(gender)}
-              className="group relative w-32 h-52 md:w-40 md:h-64 flex items-center justify-center overflow-hidden border border-primary/20 bg-black/40 backdrop-blur-md transition-all duration-700 hover:border-primary/60 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+              /* Utilisation de la même classe que le catalogue : card-shimmer-effect */
+              className="glass-card card-shimmer-effect relative w-32 h-52 md:w-40 md:h-64 flex items-center justify-center overflow-hidden border border-primary/20 bg-black/40 backdrop-blur-md transition-all duration-700 hover:border-primary/60 shadow-2xl"
             >
-              {/* EFFET MIROIR / BRILLANCE AU SURVOL */}
-              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
-              
-              {/* REFLET STATIQUE TYPE VERRE */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50" />
-
               <span className="relative z-10 font-display text-xs md:text-sm tracking-[0.4em] uppercase text-primary group-hover:text-white transition-colors duration-500">
                 {gender}
               </span>
@@ -124,13 +119,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
           </motion.button>
         </div>
       </motion.div>
-
-      {/* CSS INLINE POUR L'ANIMATION MIROIR SI PAS DANS TAILWIND.CONFIG */}
-      <style>{`
-        @keyframes shimmer {
-          100% { transform: translateX(100%); }
-        }
-      `}</style>
+      
     </div>
   );
 };

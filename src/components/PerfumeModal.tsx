@@ -58,19 +58,12 @@ const NoteRow = ({
 );
 
 const PerfumeModal = ({ perfume, onClose }: PerfumeModalProps) => {
-  const initials = perfume.name
-    .split(/[\s'-]+/)
-    .filter((w) => w.length > 0 && w[0] === w[0].toUpperCase())
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join("");
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md p-4"
       onClick={onClose}
     >
       <motion.div
@@ -79,22 +72,26 @@ const PerfumeModal = ({ perfume, onClose }: PerfumeModalProps) => {
         exit={{ opacity: 0, scale: 0.85 }}
         transition={{ duration: 0.5, ease: luxuryEase }}
         onClick={(e) => e.stopPropagation()}
-        className="relative bg-card/95 border border-primary/30 gold-border-glow max-w-3xl w-full mx-6 flex overflow-hidden backdrop-blur-lg"
+        className="relative bg-card/95 border border-primary/30 gold-border-glow max-w-3xl w-full flex flex-col md:flex-row overflow-hidden backdrop-blur-lg max-h-[90vh]"
       >
-        <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/60" />
-        <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-primary/60" />
-        <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-primary/60" />
-        <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/60" />
+        <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-primary/60 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-primary/60 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-primary/60 pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-primary/60 pointer-events-none" />
 
-        {/* Glassmorphism placeholder */}
-        <div className="w-1/3 bg-secondary/30 flex items-center justify-center p-6">
+        {/* VISUEL CORRIGÉ DANS LA MODALE */}
+        <div className="md:w-1/3 bg-secondary/30 flex items-center justify-center p-6 border-b md:border-b-0 md:border-r border-white/5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: luxuryEase, delay: 0.2 }}
-            className="w-32 h-48 rounded-sm bg-gradient-to-b from-primary/20 to-transparent border border-primary/30 flex items-center justify-center"
+            className="perfume-img-container gold-frame !h-64 md:!h-80 bg-gradient-to-b from-primary/10 to-transparent"
           >
-            <span className="font-display text-4xl text-primary/80 tracking-wider">{initials}</span>
+            <img 
+              src={perfume.image} 
+              alt={perfume.name} 
+              className="perfume-img"
+            />
           </motion.div>
         </div>
 
@@ -107,7 +104,7 @@ const PerfumeModal = ({ perfume, onClose }: PerfumeModalProps) => {
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-muted-foreground hover:text-primary transition-colors"
+            className="absolute top-4 right-4 text-muted-foreground hover:text-primary transition-colors z-10"
           >
             <X className="w-5 h-5" />
           </button>
@@ -134,7 +131,7 @@ const PerfumeModal = ({ perfume, onClose }: PerfumeModalProps) => {
             "{perfume.description}"
           </motion.p>
 
-          <div className="mt-auto">
+          <div className="mt-auto space-y-6">
             <NoteRow icon={Sparkles} label="Notes de Tête" notes={perfume.topNotesDetailed} />
             <NoteRow icon={Flower2} label="Notes de Cœur" notes={perfume.heartNotesDetailed} />
             <NoteRow icon={TreePine} label="Notes de Fond" notes={perfume.baseNotesDetailed} />

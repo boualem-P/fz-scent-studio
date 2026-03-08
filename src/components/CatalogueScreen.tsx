@@ -39,6 +39,7 @@ const PerfumeImage = ({ perfume }: { perfume: Perfume }) => {
 const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showNotes, setShowNotes] = useState(false);
 
   const MAX_SEARCH_LENGTH = 100;
   const sanitizeSearchInput = (input: string): string => {

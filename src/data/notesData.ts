@@ -46,12 +46,12 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Épices": "https://www.mgc-prevention.fr/wp-content/uploads/2016/10/epices_592527149.jpg",
 
   // ─── AROMATICS ───────────────────────────────────────
-  "Menthe": "https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=150&q=80",
-  "Basilic": "https://images.unsplash.com/photo-1618164435735-413d3b066c9a?auto=format&fit=crop&w=150&q=80",
-  "Romarin": "https://images.unsplash.com/photo-1515586000433-45406d8e6662?auto=format&fit=crop&w=150&q=80",
-  "Thym": "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=150&q=80",
-  "Eucalyptus": "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?auto=format&fit=crop&w=150&q=80",
-  "Sauge": "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=150&q=80",
+  "Menthe": "https://media.istockphoto.com/id/935393534/fr/photo/feuilles-de-menthe-fra%C3%AEche-isol%C3%A9s-sur-fond-blanc-menthe-menthe-poivr%C3%A9e-bouchent-n.jpg?s=612x612&w=0&k=20&c=faMcrD1M5Wp-wkBbjA9doe6X9BvzSfj1NluS7xN8Lfk=",
+  "Basilic": "https://img.freepik.com/photos-gratuite/feuilles-vertes-fraiches-basilic-nom-latin-ocimum-basilicum_181624-40506.jpg?semt=ais_hybrid&w=740&q=80",
+  "Romarin": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY8YzelrtQ5H88CRElbZdhawGJRHwS7hNRDQ&s",
+  "Thym": "https://media.istockphoto.com/id/611746162/fr/photo/thym-frais-d%C3%A9tails-de-la-plante.jpg?s=612x612&w=0&k=20&c=XrRWpf-rCEhl4hzXPHv9IgQuf0N-J1snuLjZuGiGgS8=",
+  "Eucalyptus": "https://thumbs.dreamstime.com/b/branche-eucalyptus-avec-fleurs-isol%C3%A9es-sur-fond-blanc-327580608.jpg",
+  "Sauge": "https://media.istockphoto.com/id/183812930/fr/photo/sauge.jpg?s=612x612&w=0&k=20&c=b4TTz_eshPG5GTXuROmeZb-w5-wrKVVvVe1HP-1m9AM=",
 
   // ─── WOODS ───────────────────────────────────────────
   "Santal": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=150&q=80",

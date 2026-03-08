@@ -105,9 +105,9 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Aldéhydes": "https://thumbs.dreamstime.com/b/usine-d-herbe-de-poissons-de-lizardtail-de-heartleaf-de-cordata-de-houttuynia-29944862.jpg",
 
   // ─── GREEN NOTES ─────────────────────────────────────
-  "Feuille de violette": "https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=150&q=80",
-  "Herbe coupée": "https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=150&q=80",
-  "Galbanum": "https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=150&q=80",
+  "Feuille de violette": "https://thumbs.dreamstime.com/b/feuille-violette-brillante-violet-brillant-illustration-papier-teintes-contraste-feuilles-vertes-image-ai-g%C3%A9n%C3%A9r%C3%A9-321263383.jpg",
+  "Herbe coupée": "https://img.freepik.com/photos-gratuite/beaux-champs-ble-vert-ukraine-pousses-ble-vert-dans-champ-gros-plan-protection-ecologie-du-concept-explorez-beaute-du-monde_169016-15540.jpg?semt=ais_hybrid&w=740&q=80",
+  "Gaumlban": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG6Zrn2AGtSTomshuB4ChZVv-YLAV0T2vcJA&s",
 
   // ─── MUSK & LEATHER ──────────────────────────────────
   "Musc": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=150&q=80",

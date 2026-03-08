@@ -1,12 +1,12 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
-import { Perfume, PERFUMES } from "@/data/perfumes";
+import { Perfume, PERFUMES, generateHotspots } from "@/data/database";
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 
-const HOTSPOTS = [
-  { id: "cap", top: "12%", left: "50%", title: "Le Couronnement", description: "Un design hermétique préservant l'intégrité absolue des essences." },
-  { id: "center", top: "45%", left: "50%", title: "L'Âme du Parfum", description: "Une concentration exceptionnelle pour une tenue de plus de 12 heures." },
-  { id: "base", top: "78%", left: "50%", title: "Sillage Signature", description: "Des notes de fond sélectionnées pour leur rareté et leur projection élégante." },
+const HOTSPOT_POSITIONS = [
+  { id: "cap", top: "12%", left: "50%" },
+  { id: "heart", top: "45%", left: "50%" },
+  { id: "base", top: "78%", left: "50%" },
 ];
 
 interface PerfumePageProps {
@@ -18,6 +18,7 @@ interface PerfumePageProps {
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
+  const hotspots = useMemo(() => generateHotspots(perfume), [perfume]);
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -298,37 +299,40 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                 />
                 <div className="perfume-shine-overlay" />
 
-                {/* Luxury Hotspots */}
-                {HOTSPOTS.map((hs) => (
-                  <div key={hs.id} className="absolute z-10" style={{ top: hs.top, left: hs.left, transform: "translate(-50%, -50%)" }}>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setActiveHotspot(activeHotspot === hs.id ? null : hs.id); }}
-                      className="hotspot-btn group relative w-5 h-5 rounded-full flex items-center justify-center"
-                    >
-                      <span className="absolute inset-0 rounded-full bg-amber-400/40 hotspot-ping" />
-                      <span className="absolute inset-0 rounded-full bg-amber-400/20 hotspot-ping" style={{ animationDelay: "0.5s" }} />
-                      <span className="relative w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_hsl(43_72%_52%/0.6)]" />
-                    </button>
+                {/* Luxury Hotspots - Dynamic per perfume */}
+                {HOTSPOT_POSITIONS.map((pos) => {
+                  const hotspotData = hotspots[pos.id as keyof typeof hotspots];
+                  return (
+                    <div key={pos.id} className="absolute z-10" style={{ top: pos.top, left: pos.left, transform: "translate(-50%, -50%)" }}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setActiveHotspot(activeHotspot === pos.id ? null : pos.id); }}
+                        className="hotspot-btn group relative w-5 h-5 rounded-full flex items-center justify-center"
+                      >
+                        <span className="absolute inset-0 rounded-full bg-amber-400/40 hotspot-ping" />
+                        <span className="absolute inset-0 rounded-full bg-amber-400/20 hotspot-ping" style={{ animationDelay: "0.5s" }} />
+                        <span className="relative w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_hsl(43_72%_52%/0.6)]" />
+                      </button>
 
-                    <AnimatePresence>
-                      {activeHotspot === hs.id && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.85, y: 8 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.85, y: 8 }}
-                          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                          className="hotspot-tooltip absolute left-1/2 -translate-x-1/2 mt-4 w-56 z-50"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="hotspot-tooltip-inner p-5 rounded-xl">
-                            <h4 className="font-display text-amber-200 text-sm font-semibold mb-2 tracking-wide">{hs.title}</h4>
-                            <p className="text-[11px] leading-relaxed text-zinc-400 font-light">{hs.description}</p>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
+                      <AnimatePresence>
+                        {activeHotspot === pos.id && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.85, y: 8 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.85, y: 8 }}
+                            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                            className="hotspot-tooltip absolute left-1/2 -translate-x-1/2 mt-4 w-56 z-50"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="hotspot-tooltip-inner p-5 rounded-xl">
+                              <h4 className="font-display text-amber-200 text-sm font-semibold mb-2 tracking-wide">{hotspotData.title}</h4>
+                              <p className="text-[11px] leading-relaxed text-zinc-400 font-light">{hotspotData.description}</p>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
               </motion.div>
 
               {/* Click outside to close hotspot */}

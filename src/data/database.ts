@@ -2,6 +2,12 @@ export interface NoteDetail {
   name: string;
 }
 
+export interface PerfumeHotspots {
+  cap: { title: string; description: string };
+  heart: { title: string; description: string };
+  base: { title: string; description: string };
+}
+
 export interface Perfume {
   id: string;
   name: string;
@@ -17,6 +23,59 @@ export interface Perfume {
   topNotesDetailed: NoteDetail[];
   heartNotesDetailed: NoteDetail[];
   baseNotesDetailed: NoteDetail[];
+  hotspots?: PerfumeHotspots;
+}
+
+const joinNotes = (notes: string[]): string => {
+  if (notes.length === 0) return "essences rares";
+  if (notes.length === 1) return notes[0];
+  return notes.slice(0, -1).join(", ") + " et " + notes[notes.length - 1];
+};
+
+const capPhrases = [
+  (notes: string) => `Un design hermétique préservant l'éclat vibrant de ${notes}, capturant leur fraîcheur à l'état pur.`,
+  (notes: string) => `Une architecture de verre scellant la vivacité de ${notes} dans un écrin d'exception.`,
+  (notes: string) => `Le couronnement parfait, protégeant l'intensité de ${notes} contre le passage du temps.`,
+  (notes: string) => `Un bouchon d'orfèvre conçu pour préserver la pureté cristalline de ${notes}.`,
+];
+
+const heartPhrases = [
+  (notes: string) => `Révèle un cœur envoûtant de ${notes}, une signature olfactive d'une profondeur rare.`,
+  (notes: string) => `Au cœur de la composition, ${notes} s'enlacent dans une harmonie sensuelle et captivante.`,
+  (notes: string) => `L'âme du parfum vibre à travers ${notes}, créant une aura magnétique et inoubliable.`,
+  (notes: string) => `Une concentration exceptionnelle de ${notes} pour une tenue qui transcende les heures.`,
+];
+
+const basePhrases = [
+  (notes: string) => `Un sillage persistant de ${notes}, une empreinte de caractère qui dure au-delà de 12 heures.`,
+  (notes: string) => `Les notes de fond de ${notes} laissent un sillage noble et enveloppant sur la peau.`,
+  (notes: string) => `La signature finale repose sur ${notes}, des essences rares sélectionnées pour leur projection élégante.`,
+  (notes: string) => `${notes} composent un fond majestueux, un écho luxueux qui accompagne chaque mouvement.`,
+];
+
+const hashCode = (s: string): number => {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+};
+
+export function generateHotspots(perfume: Perfume): PerfumeHotspots {
+  if (perfume.hotspots) return perfume.hotspots;
+  const h = hashCode(perfume.id);
+  return {
+    cap: {
+      title: "Le Couronnement",
+      description: capPhrases[h % capPhrases.length](joinNotes(perfume.topNotes)),
+    },
+    heart: {
+      title: "L'Âme du Parfum",
+      description: heartPhrases[(h >> 2) % heartPhrases.length](joinNotes(perfume.heartNotes)),
+    },
+    base: {
+      title: "Sillage Signature",
+      description: basePhrases[(h >> 4) % basePhrases.length](joinNotes(perfume.baseNotes)),
+    },
+  };
 }
 
 export const PERFUMES: Perfume[] = [

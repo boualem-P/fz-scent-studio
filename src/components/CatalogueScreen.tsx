@@ -60,6 +60,10 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
     return () => { document.body.style.overflow = "auto"; };
   }, [selected]);
 
+  if (showNotes) {
+    return <NotesDiagnostic onBack={() => setShowNotes(false)} />;
+  }
+
   return (
     <div className="min-h-screen w-screen flex flex-col bg-background overflow-y-auto relative p-6 lg:p-8 pb-40 gold-frame">
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />

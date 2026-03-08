@@ -371,11 +371,18 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                   <div className="flex flex-wrap gap-8 mt-12">
                     {s.notes.map((note, idx) => (
                       <div key={idx} className="flex flex-col items-center gap-4 group/note">
-                        <div className="relative w-20 h-20 rounded-full overflow-hidden border border-white/10 p-[1px] group-hover/note:border-amber-400/80 transition-all duration-700">
-                          <img src={`https://images.unsplash.com/photo-1615485290382-441e4d0c9cb5?w=200&h=200&fit=crop&q=80`} 
-                            className="w-full h-full object-cover grayscale opacity-30 group-hover/note:grayscale-0 group-hover/note:opacity-100 transition-all duration-1000" alt={note.name} />
+                        <div className="note-bubble-container">
+                          <img 
+                            src={getIngredientImage(note.name)} 
+                            loading="lazy"
+                            className="note-bubble-img" 
+                            alt={note.name}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=150&h=150&fit=crop&q=80";
+                            }}
+                          />
                         </div>
-                        <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 group-hover/note:text-amber-200 transition-colors font-medium">{note.name}</span>
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 group-hover/note:text-amber-200 transition-colors font-medium max-w-[80px] text-center leading-tight">{note.name}</span>
                       </div>
                     ))}
                   </div>

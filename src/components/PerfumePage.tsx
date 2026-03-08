@@ -44,6 +44,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     const ny = (e.clientY - rect.top) / rect.height;
     mouseX.set(nx);
     mouseY.set(ny);
+    mousePosRef.current = { x: nx, y: ny };
     const dx = e.clientX - prevMousePos.current.x;
     const dy = e.clientY - prevMousePos.current.y;
     mouseSpeedRef.current = Math.min(Math.sqrt(dx*dx + dy*dy), 40);

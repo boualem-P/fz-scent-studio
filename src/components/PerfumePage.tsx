@@ -1,7 +1,7 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
 import { Perfume, PERFUMES } from "@/data/perfumes";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 
 interface PerfumePageProps {
   perfume: Perfume;
@@ -12,6 +12,24 @@ interface PerfumePageProps {
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+
+  // 3D Parallax tilt
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+  const rotateX = useSpring(useTransform(mouseY, [0, 1], [6, -6]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(mouseX, [0, 1], [-6, 6]), { stiffness: 150, damping: 20 });
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set((e.clientX - rect.left) / rect.width);
+    mouseY.set((e.clientY - rect.top) / rect.height);
+  }, [mouseX, mouseY]);
+
+  const handleMouseLeave = useCallback(() => {
+    mouseX.set(0.5);
+    mouseY.set(0.5);
+  }, [mouseX, mouseY]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -95,19 +113,34 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           
           {/* VISUEL AGRANDI */}
           <div className="lg:col-span-5 space-y-16">
-            <div className="perfume-img-container gold-frame !h-[550px] md:!h-[650px] bg-zinc-950/20">
-              <img 
-                src={perfume.image} 
-                className="perfume-img" 
-                alt={perfume.name} 
-              />
+            <div 
+              ref={imageContainerRef}
+              className="perfume-img-container perfume-studio-lighting gold-frame !h-[550px] md:!h-[650px] bg-zinc-950/20"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              style={{ perspective: 800 }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                className="relative"
+                style={{ rotateX, rotateY, transformStyle: "preserve-3d", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
+              >
+                <img 
+                  src={perfume.image} 
+                  className="perfume-img" 
+                  alt={perfume.name} 
+                />
+                <div className="perfume-shine-overlay" />
+              </motion.div>
               <div className="absolute bottom-10 left-10 flex items-center gap-4 bg-black/60 backdrop-blur-3xl px-6 py-3 rounded-full border border-white/10">
                 <Calendar size={14} className="text-amber-200/70" />
                 <span className="text-[9px] uppercase tracking-[0.3em] font-medium text-zinc-300 italic">Lancement {perfume.year}</span>
               </div>
             </div>
             <div className="relative">
-                <span className="absolute -top-10 -left-4 text-8xl text-white/5 font-serif">“</span>
+                <span className="absolute -top-10 -left-4 text-8xl text-white/5 font-serif">"</span>
                 <p className="text-zinc-400 text-2xl md:text-3xl leading-relaxed font-extralight italic px-10 border-l border-amber-500/20">
                     {perfume.description}
                 </p>

@@ -58,15 +58,15 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Interactive Gold Dust Canvas - "Brise d'Or" (Golden Breeze)
+  // Interactive Golden Rain Canvas - "Pluie d'Or"
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const COLORS = ["#D4AF37", "#F59E0B", "#FFF7ED"];
-    const COUNT = 90;
+    const RAINDROP_COUNT = 60;
+    const GOLD_COLOR = "#D4AF37";
 
     const resize = () => {
       canvas.width = canvas.offsetWidth * window.devicePixelRatio;
@@ -76,19 +76,16 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     resize();
     window.addEventListener("resize", resize);
 
-    if (particlesRef.current.length === 0) {
+    // Initialize raindrops if not already done
+    if (raindropsRef.current.length === 0) {
       const w = canvas.offsetWidth, h = canvas.offsetHeight;
-      particlesRef.current = Array.from({ length: COUNT }, () => ({
+      raindropsRef.current = Array.from({ length: RAINDROP_COUNT }, () => ({
         x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.8,  // 2-3x faster base velocity
-        vy: -0.3 - Math.random() * 0.6,    // Gentle upward drift
-        size: 0.8 + Math.random() * 2,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        alpha: 0.08 + Math.random() * 0.25,
-        glowSize: 4 + Math.random() * 8,
-        phase: Math.random() * Math.PI * 2,      // Sinusoidal sway phase
-        pulsePhase: Math.random() * Math.PI * 2, // Glow pulse phase
+        y: Math.random() * h - h, // Start above the canvas
+        speed: 1.5 + Math.random() * 2.5, // Varying speeds for depth
+        length: 40 + Math.random() * 80, // Varying lengths
+        opacity: 0.08 + Math.random() * 0.15, // Varying opacities for 3D depth
+        glowSize: 3 + Math.random() * 6,
       }));
     }
 
@@ -96,68 +93,43 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       const w = canvas.offsetWidth, h = canvas.offsetHeight;
       ctx.clearRect(0, 0, w, h);
 
-      timeRef.current += 0.016; // ~60fps time increment
-      const time = timeRef.current;
+      // Get tilt offset for parallax interaction
+      const tiltX = (tiltRef.current.x - 0.5) * 2; // -1 to 1
+      const angleOffset = tiltX * 8; // Slight angle shift based on tilt (max ±8px horizontal drift)
 
-      const speed = mouseSpeedRef.current;
-      mouseSpeedRef.current *= 0.92;
-      const intensity = Math.min(speed / 15, 1);
-
-      // Bottle center for push effect (normalized to canvas)
-      const bottleCx = w * 0.5;
-      const bottleCy = h * 0.45;
-      const pushRadius = Math.min(w, h) * 0.25;
-
-      particlesRef.current.forEach(p => {
-        const boost = 1 + intensity * 1.5;
-
-        // Sinusoidal swaying motion (gentle wave)
-        const swayAmplitude = 0.8 + intensity * 0.5;
-        const swayFrequency = 1.2;
-        const sway = Math.sin(time * swayFrequency + p.phase) * swayAmplitude;
-
-        // Base movement with sway
-        p.x += (p.vx + sway * 0.3) * boost;
-        p.y += p.vy * boost;
-
-        // Interactive "push" effect - particles pushed away from bottle center
-        const dx = p.x - bottleCx;
-        const dy = p.y - bottleCy;
-        const distToBottle = Math.sqrt(dx * dx + dy * dy);
+      raindropsRef.current.forEach(drop => {
+        // Update position - falling down with slight angle based on tilt
+        drop.y += drop.speed;
+        const xDrift = angleOffset * (drop.speed / 3); // Faster drops drift more
         
-        if (distToBottle < pushRadius && intensity > 0.1) {
-          const pushStrength = (1 - distToBottle / pushRadius) * intensity * 3;
-          const angle = Math.atan2(dy, dx);
-          p.x += Math.cos(angle) * pushStrength;
-          p.y += Math.sin(angle) * pushStrength;
+        // Reset when off screen
+        if (drop.y > h + drop.length) {
+          drop.y = -drop.length;
+          drop.x = Math.random() * w;
         }
-
-        // Wrap around edges
-        if (p.x > w) p.x = 0;
-        if (p.x < 0) p.x = w;
-        if (p.y < 0) p.y = h;
-        if (p.y > h) p.y = 0;
-
-        // Radial fade from center for focus on bottle
-        const cx = w / 2, cy = h / 2;
-        const distFromCenter = Math.sqrt((p.x - cx) ** 2 + (p.y - cy) ** 2);
-        const maxDist = Math.max(w, h) * 0.5;
-        const edgeFade = Math.max(0, 1 - (distFromCenter / maxDist) * 0.3);
-
-        // Subtle pulse effect (flickering glow)
-        const pulse = 0.7 + 0.3 * Math.sin(time * 2.5 + p.pulsePhase);
         
-        const dynamicAlpha = p.alpha * pulse * (0.6 + intensity * 0.4) * edgeFade;
-        if (dynamicAlpha < 0.01) return;
+        // Wrap horizontal position
+        let drawX = drop.x + xDrift;
+        if (drawX > w) drawX -= w;
+        if (drawX < 0) drawX += w;
+
+        // Draw the golden raindrop as a vertical gradient line
+        const gradient = ctx.createLinearGradient(drawX, drop.y, drawX, drop.y + drop.length);
+        gradient.addColorStop(0, `rgba(212, 175, 55, 0)`);
+        gradient.addColorStop(0.3, `rgba(212, 175, 55, ${drop.opacity})`);
+        gradient.addColorStop(0.7, `rgba(212, 175, 55, ${drop.opacity})`);
+        gradient.addColorStop(1, `rgba(212, 175, 55, 0)`);
 
         ctx.save();
-        ctx.globalAlpha = dynamicAlpha;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = p.glowSize * pulse * (1 + intensity * 1.2);
-        ctx.fillStyle = p.color;
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = GOLD_COLOR;
+        ctx.shadowBlur = drop.glowSize;
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.moveTo(drawX, drop.y);
+        ctx.lineTo(drawX, drop.y + drop.length);
+        ctx.stroke();
         ctx.restore();
       });
 

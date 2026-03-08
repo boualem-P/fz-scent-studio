@@ -438,6 +438,13 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           </motion.div>
         </div>
       </div>
+
+      {/* Note Zoom Modal */}
+      <NoteZoomModal
+        noteName={zoomedNote?.name ?? null}
+        noteImage={zoomedNote?.image ?? ""}
+        onClose={() => setZoomedNote(null)}
+      />
     </div>
   );
 };

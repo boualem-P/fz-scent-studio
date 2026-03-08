@@ -61,11 +61,11 @@ const CATEGORIES: { label: string; keys: string[] }[] = [
   },
 ];
 
-const NoteCard = ({ name, url }: { name: string; url: string }) => {
+const NoteCard = ({ name, url, onZoom }: { name: string; url: string; onZoom: () => void }) => {
   const [broken, setBroken] = useState(false);
 
   return (
-    <motion.div variants={staggerItem} className="flex flex-col items-center gap-2">
+    <motion.div variants={staggerItem} className="flex flex-col items-center gap-2 cursor-pointer" onClick={onZoom}>
       <div
         className={`w-20 h-20 rounded-full overflow-hidden border-2 transition-all duration-300 shadow-lg ${
           broken ? "border-red-500 shadow-red-500/30" : "border-primary/50 shadow-primary/20"

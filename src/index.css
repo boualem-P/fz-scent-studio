@@ -270,4 +270,16 @@
     will-change: transform, opacity;
     pointer-events: none;
   }
+
+  /* --- GOLD DUST CANVAS --- */
+  .gold-dust-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    transform: translateZ(0);
+    will-change: transform;
+  }
 }

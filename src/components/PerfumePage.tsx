@@ -1,7 +1,7 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
 import { Perfume, PERFUMES } from "@/data/perfumes";
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 
 const HOTSPOTS = [
   { id: "cap", top: "12%", left: "50%", title: "Le Couronnement", description: "Un design hermétique préservant l'intégrité absolue des essences." },
@@ -20,6 +20,10 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Array<{x:number;y:number;vx:number;vy:number;size:number;color:string;alpha:number;baseSpeed:number}>>([]);
+  const animFrameRef = useRef<number>(0);
+  const mouseSpeedRef = useRef(0);
 
   // 3D Parallax tilt
   const mouseX = useMotionValue(0.5);
@@ -30,10 +34,17 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const mistX = useTransform(mouseX, [0, 1], [15, -15]);
   const mistY = useTransform(mouseY, [0, 1], [10, -10]);
 
+  const prevMousePos = useRef({ x: 0, y: 0 });
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    mouseX.set((e.clientX - rect.left) / rect.width);
-    mouseY.set((e.clientY - rect.top) / rect.height);
+    const nx = (e.clientX - rect.left) / rect.width;
+    const ny = (e.clientY - rect.top) / rect.height;
+    mouseX.set(nx);
+    mouseY.set(ny);
+    const dx = e.clientX - prevMousePos.current.x;
+    const dy = e.clientY - prevMousePos.current.y;
+    mouseSpeedRef.current = Math.min(Math.sqrt(dx*dx + dy*dy), 40);
+    prevMousePos.current = { x: e.clientX, y: e.clientY };
   }, [mouseX, mouseY]);
 
   const handleMouseLeave = useCallback(() => {
@@ -42,11 +53,90 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   }, [mouseX, mouseY]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Gold Dust Canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const COLORS = ["#D4AF37", "#F59E0B", "#FFF7ED", "#D4AF37", "#F59E0B"];
+    const COUNT = 100;
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+      canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    if (particlesRef.current.length === 0) {
+      const w = canvas.offsetWidth, h = canvas.offsetHeight;
+      particlesRef.current = Array.from({ length: COUNT }, () => {
+        const baseSpeed = 0.15 + Math.random() * 0.3;
+        return {
+          x: Math.random() * w, y: Math.random() * h,
+          vx: (Math.random() - 0.5) * baseSpeed,
+          vy: -Math.random() * baseSpeed - 0.1,
+          size: 0.5 + Math.random() * 2.5,
+          color: COLORS[Math.floor(Math.random() * COLORS.length)],
+          alpha: 0.15 + Math.random() * 0.5,
+          baseSpeed,
+        };
+      });
+    }
+
+    const draw = () => {
+      const w = canvas.offsetWidth, h = canvas.offsetHeight;
+      ctx.clearRect(0, 0, w, h);
+
+      // Edge fade via radial gradient mask
+      const grd = ctx.createRadialGradient(w/2, h/2, w*0.15, w/2, h/2, w*0.55);
+      grd.addColorStop(0, "rgba(0,0,0,1)");
+      grd.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.globalCompositeOperation = "source-over";
+
+      const speed = mouseSpeedRef.current;
+      mouseSpeedRef.current *= 0.95; // decay
+
+      const intensity = Math.min(speed / 20, 1);
+
+      particlesRef.current.forEach(p => {
+        const boost = 1 + intensity * 4;
+        p.x += p.vx * boost + (Math.random() - 0.5) * intensity * 2;
+        p.y += p.vy * boost + (Math.random() - 0.5) * intensity;
+        if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+        if (p.x < -10) p.x = w + 10;
+        if (p.x > w + 10) p.x = -10;
+
+        const dynamicAlpha = p.alpha * (0.6 + intensity * 0.4);
+        const blur = p.size * (2 + intensity * 3);
+
+        ctx.save();
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = blur;
+        ctx.globalAlpha = dynamicAlpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      animFrameRef.current = requestAnimationFrame(draw);
+    };
+
+    animFrameRef.current = requestAnimationFrame(draw);
+    return () => {
+      cancelAnimationFrame(animFrameRef.current);
+      window.removeEventListener("resize", resize);
+    };
   }, []);
 
   const recommendations = PERFUMES.filter((p) => {
@@ -63,6 +153,9 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   return (
     <div className="relative min-h-screen bg-[#050505] text-white pb-40 overflow-x-hidden selection:bg-amber-200 selection:text-black font-sans">
       
+      {/* --- GOLD DUST CANVAS --- */}
+      <canvas ref={canvasRef} className="gold-dust-canvas" />
+
       {/* --- HEADER --- */}
       <div className="sticky top-0 z-[999] w-full h-24 pointer-events-none">
         <AnimatePresence>

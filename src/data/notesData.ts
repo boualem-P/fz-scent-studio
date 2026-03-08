@@ -107,10 +107,10 @@ export const NOTES_IMAGES: Record<string, string> = {
   // ─── GREEN NOTES ─────────────────────────────────────
   "Feuille de violette": "https://thumbs.dreamstime.com/b/feuille-violette-brillante-violet-brillant-illustration-papier-teintes-contraste-feuilles-vertes-image-ai-g%C3%A9n%C3%A9r%C3%A9-321263383.jpg",
   "Herbe coupée": "https://img.freepik.com/photos-gratuite/beaux-champs-ble-vert-ukraine-pousses-ble-vert-dans-champ-gros-plan-protection-ecologie-du-concept-explorez-beaute-du-monde_169016-15540.jpg?semt=ais_hybrid&w=740&q=80",
-  "Gaumlban": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG6Zrn2AGtSTomshuB4ChZVv-YLAV0T2vcJA&s",
+  "Gaumlban": "https://png.pngtree.com/thumb_back/fh260/background/20231010/pngtree-lush-green-grass-field-a-captivating-background-with-vibrant-patterns-and-image_13628310.png",
 
   // ─── MUSK & LEATHER ──────────────────────────────────
-  "Musc": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=150&q=80",
+  "Musc": "https://media.istockphoto.com/id/1389488308/fr/photo/grandes-fleurs-de-mauve-musqu%C3%A9e.jpg?s=612x612&w=0&k=20&c=YZVQ1v3Heq5HJ-yedH9lxGRlLIaiuMMRt5aOvGh_SQs=",
   "Musc blanc": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=150&q=80",
   "Cuir": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=150&q=80",
   "Civette": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=150&q=80",

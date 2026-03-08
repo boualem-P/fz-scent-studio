@@ -33,17 +33,17 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Fleur de Tabac": "https://pensezsauvage.org/IMG/jpg/semences_de_tabac_aile_bio.jpg",
 
   // ─── SPICES ──────────────────────────────────────────
-  "Poivre": "https://images.unsplash.com/photo-1599909533601-aa023a72ff4a?auto=format&fit=crop&w=150&q=80",
-  "Poivre Rose": "https://images.unsplash.com/photo-1599909533601-aa023a72ff4a?auto=format&fit=crop&w=150&q=80",
-  "Poivre de Sichuan": "https://images.unsplash.com/photo-1599909533601-aa023a72ff4a?auto=format&fit=crop&w=150&q=80",
-  "Gingembre": "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=150&q=80",
-  "Cardamome": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=150&q=80",
-  "Cannelle": "https://images.unsplash.com/photo-1587132137056-bfbf0166836e?auto=format&fit=crop&w=150&q=80",
-  "Clou de Girofle": "https://images.unsplash.com/photo-1599909533601-aa023a72ff4a?auto=format&fit=crop&w=150&q=80",
-  "Muscade": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=150&q=80",
-  "Safran": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=150&q=80",
-  "Baies de Genièvre": "https://images.unsplash.com/photo-1599909533601-aa023a72ff4a?auto=format&fit=crop&w=150&q=80",
-  "Épices": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=150&q=80",
+  "Poivre": "https://thumbs.dreamstime.com/b/tas-frais%C3%A9-ou-moulu-de-poivre-noir-d-isolement-sur-le-fond-blanc-front-view-143209481.jpg",
+  "Poivre Rose": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy68QcnTdnE0gdP-PDGwPZNKArSN386GfYMA&s",
+  "Poivre de Sichuan": "https://static.wixstatic.com/media/7c0cb6_5c38eb946e64411eb66f5c73a33415e3~mv2.jpg/v1/fill/w_560,h_560,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/7c0cb6_5c38eb946e64411eb66f5c73a33415e3~mv2.jpg",
+  "Gingembre": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlJtMdQmJ2JFlcmdsalxqNg7vzSS1DEj1XvA&s",
+  "Cardamome": "https://media.istockphoto.com/id/1331297760/fr/photo/gousses-de-cardamome-et-graines-isol%C3%A9es-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=M9pEbeZLkCjCCa96ILlaRJPSTR4v2Xf9_6td4Wmr71M=",
+  "Cannelle": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlj2mRYrtQpL1hAiiIHEVKSoXJEFJGUWb1-g&s",
+  "Clou de Girofle": "https://png.pngtree.com/png-vector/20201127/ourmid/pngtree-clove-png-image_2411283.jpg",
+  "Muscade": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbNdJLp6eo1mzDioLyw0Vzyzf8RBkXkBp5aQ&s",
+  "Safran": "https://pommedambre.com/app/uploads/2021/08/safran-moulu_13320678-1-scaled.jpeg",
+  "Baies de Genièvre": "https://thumbs.dreamstime.com/b/baies-de-gen%C3%A9vrier-d-isolement-56630956.jpg",
+  "Épices": "https://www.mgc-prevention.fr/wp-content/uploads/2016/10/epices_592527149.jpg",
 
   // ─── AROMATICS ───────────────────────────────────────
   "Menthe": "https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=150&q=80",

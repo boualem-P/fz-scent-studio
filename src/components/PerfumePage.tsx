@@ -373,7 +373,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                       <div key={idx} className="flex flex-col items-center gap-4 group/note">
                         <div className="note-bubble-container">
                           <img 
-                            src={getIngredientImage(note.name)} 
+                            src={getNoteImage(note.name)} 
                             loading="lazy"
                             className="note-bubble-img" 
                             alt={note.name}

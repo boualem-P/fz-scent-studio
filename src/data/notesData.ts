@@ -9,12 +9,12 @@ const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1596040033229-a9821ebd0
 
 export const NOTES_IMAGES: Record<string, string> = {
   // ─── CITRUS / HESPÉRIDÉS ─────────────────────────────
-  "Bergamote": "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?auto=format&fit=crop&w=150&q=80",
-  "Citron": "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=150&q=80",
+  "Bergamote": "https://www.grocerymart.com.my/202/bergamot-.jpg",
+  "Citron": "https://png.pngtree.com/png-vector/20250508/ourmid/pngtree-lemon-png-image_16221455.png",
   "Orange": "https://images.unsplash.com/photo-1582979512210-99b6a53386f9?auto=format&fit=crop&w=150&q=80",
-  "Mandarine": "https://images.unsplash.com/photo-1547514701-42fee1a45a41?auto=format&fit=crop&w=150&q=80",
+  "Mandarine": "https://png.pngtree.com/png-vector/20210528/ourmid/pngtree-citrus-flesh-juice-png-image_3357191.jpg",
   "Pamplemousse": "https://images.unsplash.com/photo-1577234286642-fc512a5f8f11?auto=format&fit=crop&w=150&q=80",
-  "Yuzu": "https://images.unsplash.com/photo-1604977042946-1eecc30f269e?auto=format&fit=crop&w=150&q=80",
+  "Yuzu": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW61VWxqrxj-d9wQPXbGGJG_2edgfXCMHQSw&s",
   "Verveine": "https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=150&q=80",
   "Néroli": "https://images.unsplash.com/photo-1490750967868-88aa4f44baee?auto=format&fit=crop&w=150&q=80",
 

@@ -111,13 +111,13 @@ export const NOTES_IMAGES: Record<string, string> = {
 
   // ─── MUSK & LEATHER ──────────────────────────────────
   "Musc": "https://media.istockphoto.com/id/1389488308/fr/photo/grandes-fleurs-de-mauve-musqu%C3%A9e.jpg?s=612x612&w=0&k=20&c=YZVQ1v3Heq5HJ-yedH9lxGRlLIaiuMMRt5aOvGh_SQs=",
-  "Musc blanc": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=150&q=80",
-  "Cuir": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=150&q=80",
-  "Civette": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=150&q=80",
-  "Tabac": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=150&q=80",
+  "Musc blanc": "https://media.istockphoto.com/id/864520024/fr/photo/ambrette.jpg?s=612x612&w=0&k=20&c=zyDN8G993yiByT_BQCo0KIUGCUQTUXer7hEvx4PcERI=",
+  "Cuir": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdoJIex_fU14J9ospvHmjeTTpG_-6Xjq5Gvw&s",
+  "Civette": "https://media.istockphoto.com/id/1436739435/fr/photo/ciboulette-%C3%A0-lail-isol%C3%A9e-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=aWkf5GodH7PtdV5q8AOVvbyalB4hiHAzID4hoNhZY3k=",
+  "Tabac": "https://img.pikbest.com/ai/illus_our/20230427/798052d67767baa5e01d539c36e38154.jpg!w700wp",
 
   // ─── MOSS ────────────────────────────────────────────
-  "Mousse de Chêne": "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=150&q=80",
+  "Mousse de Chêne": "https://cdn.shopify.com/s/files/1/0681/1772/5436/files/parfum-bougies-mousse-chene.webp",
 };
 
 /**

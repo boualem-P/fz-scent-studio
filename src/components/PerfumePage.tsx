@@ -1,7 +1,7 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
 import { Perfume, PERFUMES } from "@/data/perfumes";
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 
 const HOTSPOTS = [
   { id: "cap", top: "12%", left: "50%", title: "Le Couronnement", description: "Un design hermétique préservant l'intégrité absolue des essences." },

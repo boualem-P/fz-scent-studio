@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PERFUMES, Perfume } from "@/data/perfumes";
-import { X, Search } from "lucide-react";
+import { X, Search, Leaf } from "lucide-react";
 import CatalogueModal from "./CatalogueModal";
+import NotesDiagnostic from "./NotesDiagnostic";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 
 interface CatalogueScreenProps {
@@ -38,6 +39,7 @@ const PerfumeImage = ({ perfume }: { perfume: Perfume }) => {
 const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showNotes, setShowNotes] = useState(false);
 
   const MAX_SEARCH_LENGTH = 100;
   const sanitizeSearchInput = (input: string): string => {
@@ -58,13 +60,17 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
     return () => { document.body.style.overflow = "auto"; };
   }, [selected]);
 
+  if (showNotes) {
+    return <NotesDiagnostic onBack={() => setShowNotes(false)} />;
+  }
+
   return (
     <div className="min-h-screen w-screen flex flex-col bg-background overflow-y-auto relative p-6 lg:p-8 pb-40 gold-frame">
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
 
-      {/* Barre de Recherche */}
-      <div className="absolute top-6 left-6 lg:top-8 lg:left-8 z-30 w-48 md:w-64">
-        <div className="relative group">
+      {/* Barre de Recherche + Bouton Notes */}
+      <div className="absolute top-6 left-6 lg:top-8 lg:left-8 z-30 flex items-center gap-2">
+        <div className="relative group w-48 md:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors" size={16} />
           <input
             type="text"
@@ -79,6 +85,13 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
             </button>
           )}
         </div>
+        <button
+          onClick={() => setShowNotes(true)}
+          className="h-9 px-3 flex items-center gap-1.5 rounded-full bg-black/40 border border-primary/20 text-primary/60 hover:text-primary hover:border-primary/50 backdrop-blur-xl transition-all text-[10px] font-body tracking-widest uppercase"
+        >
+          <Leaf size={14} />
+          Notes
+        </button>
       </div>
 
       {/* Header */}

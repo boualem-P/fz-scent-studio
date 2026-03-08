@@ -42,16 +42,14 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     const ny = (e.clientY - rect.top) / rect.height;
     mouseX.set(nx);
     mouseY.set(ny);
-    mousePosRef.current = { x: nx, y: ny };
-    const dx = e.clientX - prevMousePos.current.x;
-    const dy = e.clientY - prevMousePos.current.y;
-    mouseSpeedRef.current = Math.min(Math.sqrt(dx*dx + dy*dy), 40);
+    tiltRef.current = { x: nx, y: ny };
     prevMousePos.current = { x: e.clientX, y: e.clientY };
   }, [mouseX, mouseY]);
 
   const handleMouseLeave = useCallback(() => {
     mouseX.set(0.5);
     mouseY.set(0.5);
+    tiltRef.current = { x: 0.5, y: 0.5 };
   }, [mouseX, mouseY]);
 
   useEffect(() => {

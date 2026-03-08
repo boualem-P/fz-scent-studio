@@ -2,7 +2,7 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
 import { Perfume, generateHotspots, getRelatedPerfumes } from "@/data/database";
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
-import { getNoteImage } from "@/data/notesData";
+import { getNoteImage } from "@/data/notesData"; // HD note images
 
 const HOTSPOT_POSITIONS = [
   { id: "cap", top: "12%", left: "50%" },

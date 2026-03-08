@@ -2,6 +2,7 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
 import { Perfume, generateHotspots, getRelatedPerfumes } from "@/data/database";
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
+import { getIngredientImage } from "@/data/olfactory-visuals";
 
 const HOTSPOT_POSITIONS = [
   { id: "cap", top: "12%", left: "50%" },

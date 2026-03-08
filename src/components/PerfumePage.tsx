@@ -34,10 +34,17 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const mistX = useTransform(mouseX, [0, 1], [15, -15]);
   const mistY = useTransform(mouseY, [0, 1], [10, -10]);
 
+  const prevMousePos = useRef({ x: 0, y: 0 });
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    mouseX.set((e.clientX - rect.left) / rect.width);
-    mouseY.set((e.clientY - rect.top) / rect.height);
+    const nx = (e.clientX - rect.left) / rect.width;
+    const ny = (e.clientY - rect.top) / rect.height;
+    mouseX.set(nx);
+    mouseY.set(ny);
+    const dx = e.clientX - prevMousePos.current.x;
+    const dy = e.clientY - prevMousePos.current.y;
+    mouseSpeedRef.current = Math.min(Math.sqrt(dx*dx + dy*dy), 40);
+    prevMousePos.current = { x: e.clientX, y: e.clientY };
   }, [mouseX, mouseY]);
 
   const handleMouseLeave = useCallback(() => {

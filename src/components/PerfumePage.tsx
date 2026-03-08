@@ -3,6 +3,12 @@ import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-rea
 import { Perfume, PERFUMES } from "@/data/perfumes";
 import { useRef, useEffect, useState, useCallback } from "react";
 
+const HOTSPOTS = [
+  { id: "cap", top: "12%", left: "50%", title: "Le Couronnement", description: "Un design hermétique préservant l'intégrité absolue des essences." },
+  { id: "center", top: "45%", left: "50%", title: "L'Âme du Parfum", description: "Une concentration exceptionnelle pour une tenue de plus de 12 heures." },
+  { id: "base", top: "78%", left: "50%", title: "Sillage Signature", description: "Des notes de fond sélectionnées pour leur rareté et leur projection élégante." },
+];
+
 interface PerfumePageProps {
   perfume: Perfume;
   onClose: () => void;
@@ -11,6 +17,7 @@ interface PerfumePageProps {
 
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
@@ -133,8 +140,46 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                   alt={perfume.name} 
                 />
                 <div className="perfume-shine-overlay" />
+
+                {/* Luxury Hotspots */}
+                {HOTSPOTS.map((hs) => (
+                  <div key={hs.id} className="absolute z-10" style={{ top: hs.top, left: hs.left, transform: "translate(-50%, -50%)" }}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setActiveHotspot(activeHotspot === hs.id ? null : hs.id); }}
+                      className="hotspot-btn group relative w-5 h-5 rounded-full flex items-center justify-center"
+                    >
+                      <span className="absolute inset-0 rounded-full bg-amber-400/40 hotspot-ping" />
+                      <span className="absolute inset-0 rounded-full bg-amber-400/20 hotspot-ping" style={{ animationDelay: "0.5s" }} />
+                      <span className="relative w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_hsl(43_72%_52%/0.6)]" />
+                    </button>
+
+                    <AnimatePresence>
+                      {activeHotspot === hs.id && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.85, y: 8 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.85, y: 8 }}
+                          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                          className="hotspot-tooltip absolute left-1/2 -translate-x-1/2 mt-4 w-56 z-50"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="hotspot-tooltip-inner p-5 rounded-xl">
+                            <h4 className="font-display text-amber-200 text-sm font-semibold mb-2 tracking-wide">{hs.title}</h4>
+                            <p className="text-[11px] leading-relaxed text-zinc-400 font-light">{hs.description}</p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))}
               </motion.div>
-              <div className="absolute bottom-10 left-10 flex items-center gap-4 bg-black/60 backdrop-blur-3xl px-6 py-3 rounded-full border border-white/10">
+
+              {/* Click outside to close hotspot */}
+              {activeHotspot && (
+                <div className="absolute inset-0 z-[5]" onClick={() => setActiveHotspot(null)} />
+              )}
+
+              <div className="absolute bottom-10 left-10 z-20 flex items-center gap-4 bg-black/60 backdrop-blur-3xl px-6 py-3 rounded-full border border-white/10">
                 <Calendar size={14} className="text-amber-200/70" />
                 <span className="text-[9px] uppercase tracking-[0.3em] font-medium text-zinc-300 italic">Lancement {perfume.year}</span>
               </div>

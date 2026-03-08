@@ -281,5 +281,6 @@
     pointer-events: none;
     transform: translateZ(0);
     will-change: transform;
+    mix-blend-mode: screen;
   }
 }

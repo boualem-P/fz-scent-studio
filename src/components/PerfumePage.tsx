@@ -1,7 +1,72 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
+import { 
+  X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus,
+  Citrus, Flower2, TreePine, Sparkles, Cherry, Leaf, Shell, Flame, Cookie, Heart
+} from "lucide-react";
 import { Perfume, generateHotspots, getRelatedPerfumes } from "@/data/database";
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
+
+// Icon mapping for olfactory note categories
+const getNoteIcon = (noteName: string) => {
+  const name = noteName.toLowerCase();
+  
+  // Hespéridés (Citrus)
+  if (name.includes("citron") || name.includes("bergamote") || name.includes("orange") || 
+      name.includes("mandarine") || name.includes("pamplemousse") || name.includes("yuzu") ||
+      name.includes("lime") || name.includes("cédrat")) {
+    return Citrus;
+  }
+  // Florales
+  if (name.includes("rose") || name.includes("jasmin") || name.includes("tubéreuse") || 
+      name.includes("ylang") || name.includes("fleur") || name.includes("pivoine") ||
+      name.includes("iris") || name.includes("violette") || name.includes("mimosa") ||
+      name.includes("géranium") || name.includes("magnolia") || name.includes("lys")) {
+    return Flower2;
+  }
+  // Boisées
+  if (name.includes("santal") || name.includes("cèdre") || name.includes("vétiver") || 
+      name.includes("oud") || name.includes("gaïac") || name.includes("bois") ||
+      name.includes("cyprès") || name.includes("pin")) {
+    return TreePine;
+  }
+  // Fruitées
+  if (name.includes("fraise") || name.includes("framboise") || name.includes("pêche") || 
+      name.includes("abricot") || name.includes("pomme") || name.includes("poire") ||
+      name.includes("cassis") || name.includes("mangue") || name.includes("ananas") ||
+      name.includes("mûre") || name.includes("cerise") || name.includes("litchi")) {
+    return Cherry;
+  }
+  // Aromatiques / Vertes
+  if (name.includes("menthe") || name.includes("basilic") || name.includes("romarin") || 
+      name.includes("lavande") || name.includes("thym") || name.includes("sauge") ||
+      name.includes("herbe") || name.includes("feuille") || name.includes("galbanum")) {
+    return Leaf;
+  }
+  // Marines
+  if (name.includes("marine") || name.includes("algue") || name.includes("iode") || 
+      name.includes("lotus") || name.includes("aquatique") || name.includes("océan")) {
+    return Shell;
+  }
+  // Épicées / Ambrées
+  if (name.includes("poivre") || name.includes("cannelle") || name.includes("girofle") || 
+      name.includes("cardamome") || name.includes("safran") || name.includes("muscade") ||
+      name.includes("gingembre") || name.includes("encens") || name.includes("ambre") ||
+      name.includes("myrrhe") || name.includes("benjoin")) {
+    return Flame;
+  }
+  // Gourmandes
+  if (name.includes("vanille") || name.includes("tonka") || name.includes("caramel") || 
+      name.includes("chocolat") || name.includes("praliné") || name.includes("miel") ||
+      name.includes("café") || name.includes("coco")) {
+    return Cookie;
+  }
+  // Musquées / Cuir
+  if (name.includes("musc") || name.includes("cuir") || name.includes("patchouli")) {
+    return Heart;
+  }
+  // Default
+  return Sparkles;
+};
 
 const HOTSPOT_POSITIONS = [
   { id: "cap", top: "12%", left: "50%" },
@@ -368,15 +433,20 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                     </motion.div>
                   </div>
                   <div className="flex flex-wrap gap-8 mt-12">
-                    {s.notes.map((note, idx) => (
-                      <div key={idx} className="flex flex-col items-center gap-4 group/note">
-                        <div className="relative w-20 h-20 rounded-full overflow-hidden border border-white/10 p-[1px] group-hover/note:border-amber-400/80 transition-all duration-700">
-                          <img src={`https://images.unsplash.com/photo-1615485290382-441e4d0c9cb5?w=200&h=200&fit=crop&q=80`} 
-                            className="w-full h-full object-cover grayscale opacity-30 group-hover/note:grayscale-0 group-hover/note:opacity-100 transition-all duration-1000" alt={note.name} />
+                    {s.notes.map((note, idx) => {
+                      const IconComponent = getNoteIcon(note.name);
+                      return (
+                        <div key={idx} className="flex flex-col items-center gap-4 group/note">
+                          <div className="relative w-16 h-16 rounded-full flex items-center justify-center border border-amber-500/20 bg-amber-500/5 group-hover/note:border-amber-400/80 group-hover/note:bg-amber-500/10 transition-all duration-700 group-hover/note:shadow-[0_0_20px_rgba(251,191,36,0.3)]">
+                            <IconComponent 
+                              size={24} 
+                              className="text-amber-500/60 group-hover/note:text-amber-400 transition-colors duration-500" 
+                            />
+                          </div>
+                          <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 group-hover/note:text-amber-200 transition-colors font-medium text-center max-w-[80px]">{note.name}</span>
                         </div>
-                        <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 group-hover/note:text-amber-200 transition-colors font-medium">{note.name}</span>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               ))}

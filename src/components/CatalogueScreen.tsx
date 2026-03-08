@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PERFUMES, Perfume } from "@/data/perfumes";
-import { X, Search } from "lucide-react";
+import { X, Search, Leaf } from "lucide-react";
 import CatalogueModal from "./CatalogueModal";
+import NotesDiagnostic from "./NotesDiagnostic";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 
 interface CatalogueScreenProps {

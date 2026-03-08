@@ -93,18 +93,22 @@
     transform: scale(1.05);
   }
 
-  /* Diagonal luxury shine sweep */
+  /* Diagonal luxury shine sweep overlay */
   @keyframes luxury-shine {
     0%, 80% { transform: translateX(-150%) rotate(-45deg); }
     100%    { transform: translateX(250%) rotate(-45deg); }
   }
 
-  .perfume-shine {
-    position: relative;
-    overflow: visible;
+  .perfume-shine-overlay {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+    border-radius: inherit;
   }
 
-  .perfume-shine::after {
+  .perfume-shine-overlay::after {
     content: '';
     position: absolute;
     top: -50%;
@@ -121,8 +125,6 @@
     );
     transform: translateX(-150%) rotate(-45deg);
     animation: luxury-shine 5s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 2;
   }
 
   /* --- EFFETS LUXE --- */

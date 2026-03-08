@@ -124,13 +124,15 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                className="relative"
                 style={{ rotateX, rotateY, transformStyle: "preserve-3d", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <img 
                   src={perfume.image} 
-                  className="perfume-img perfume-shine" 
+                  className="perfume-img" 
                   alt={perfume.name} 
                 />
+                <div className="perfume-shine-overlay" />
               </motion.div>
               <div className="absolute bottom-10 left-10 flex items-center gap-4 bg-black/60 backdrop-blur-3xl px-6 py-3 rounded-full border border-white/10">
                 <Calendar size={14} className="text-amber-200/70" />

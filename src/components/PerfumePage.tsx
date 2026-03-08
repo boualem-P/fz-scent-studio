@@ -3,6 +3,7 @@ import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-rea
 import { Perfume, generateHotspots, getRelatedPerfumes } from "@/data/database";
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { getNoteImage } from "@/data/notesData"; // HD note images
+import NoteZoomModal from "@/components/NoteZoomModal";
 
 const HOTSPOT_POSITIONS = [
   { id: "cap", top: "12%", left: "50%" },
@@ -19,6 +20,7 @@ interface PerfumePageProps {
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
+  const [zoomedNote, setZoomedNote] = useState<{ name: string; image: string } | null>(null);
   const hotspots = useMemo(() => generateHotspots(perfume), [perfume]);
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
@@ -370,7 +372,11 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                   </div>
                   <div className="flex flex-wrap gap-8 mt-12">
                     {s.notes.map((note, idx) => (
-                      <div key={idx} className="flex flex-col items-center gap-4 group/note">
+                      <div
+                        key={idx}
+                        className="flex flex-col items-center gap-4 group/note cursor-pointer"
+                        onClick={() => setZoomedNote({ name: note.name, image: getNoteImage(note.name) })}
+                      >
                         <div className="note-bubble-container">
                           <img 
                             src={getNoteImage(note.name)} 
@@ -432,6 +438,13 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           </motion.div>
         </div>
       </div>
+
+      {/* Note Zoom Modal */}
+      <NoteZoomModal
+        noteName={zoomedNote?.name ?? null}
+        noteImage={zoomedNote?.image ?? ""}
+        onClose={() => setZoomedNote(null)}
+      />
     </div>
   );
 };

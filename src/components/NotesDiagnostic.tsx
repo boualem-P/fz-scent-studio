@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { NOTES_IMAGES } from "@/data/notesData";
+import NoteZoomModal from "@/components/NoteZoomModal";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 
 interface NotesDiagnosticProps {
@@ -60,11 +61,11 @@ const CATEGORIES: { label: string; keys: string[] }[] = [
   },
 ];
 
-const NoteCard = ({ name, url }: { name: string; url: string }) => {
+const NoteCard = ({ name, url, onZoom }: { name: string; url: string; onZoom: () => void }) => {
   const [broken, setBroken] = useState(false);
 
   return (
-    <motion.div variants={staggerItem} className="flex flex-col items-center gap-2">
+    <motion.div variants={staggerItem} className="flex flex-col items-center gap-2 cursor-pointer" onClick={onZoom}>
       <div
         className={`w-20 h-20 rounded-full overflow-hidden border-2 transition-all duration-300 shadow-lg ${
           broken ? "border-red-500 shadow-red-500/30" : "border-primary/50 shadow-primary/20"
@@ -90,6 +91,7 @@ const NoteCard = ({ name, url }: { name: string; url: string }) => {
 
 const NotesDiagnostic = ({ onBack }: NotesDiagnosticProps) => {
   const totalNotes = Object.keys(NOTES_IMAGES).length;
+  const [zoomedNote, setZoomedNote] = useState<{ name: string; image: string } | null>(null);
 
   return (
     <div className="min-h-screen w-screen flex flex-col bg-background overflow-y-auto relative p-6 lg:p-8 pb-40 gold-frame">
@@ -137,12 +139,20 @@ const NotesDiagnostic = ({ onBack }: NotesDiagnosticProps) => {
                   key={key}
                   name={key}
                   url={NOTES_IMAGES[key] || ""}
+                  onZoom={() => setZoomedNote({ name: key, image: NOTES_IMAGES[key] || "" })}
                 />
               ))}
             </motion.div>
           </motion.section>
         ))}
       </div>
+
+      {/* Zoom Modal */}
+      <NoteZoomModal
+        noteName={zoomedNote?.name ?? null}
+        noteImage={zoomedNote?.image ?? ""}
+        onClose={() => setZoomedNote(null)}
+      />
     </div>
   );
 };

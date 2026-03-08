@@ -22,11 +22,9 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Array<{x:number;y:number;vx:number;vy:number;size:number;color:string;alpha:number;glowSize:number;phase:number;pulsePhase:number}>>([]);
+  const raindropsRef = useRef<Array<{x:number;y:number;speed:number;length:number;opacity:number;glowSize:number}>>([]);
   const animFrameRef = useRef<number>(0);
-  const mouseSpeedRef = useRef(0);
-  const timeRef = useRef(0);
-  const mousePosRef = useRef({ x: 0.5, y: 0.5 });
+  const tiltRef = useRef({ x: 0.5, y: 0.5 });
 
   // 3D Parallax tilt
   const mouseX = useMotionValue(0.5);

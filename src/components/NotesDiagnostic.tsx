@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { NOTES_IMAGES } from "@/data/notesData";
+import NoteZoomModal from "@/components/NoteZoomModal";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 
 interface NotesDiagnosticProps {

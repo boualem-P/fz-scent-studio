@@ -25,12 +25,12 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Ylang-Ylang": "https://png.pngtree.com/png-clipart/20241013/original/pngtree-ylang-flower-png-image_16315299.png",
   "Fleur d'Oranger": "https://lallanature.com/wp-content/uploads/2020/08/eau-de-fleur-doranger-1280x800.jpg",
   "Géranium": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1ev56SrgogQ_YfNi-0QlkLMYQrPJA1QUsrw&s",
-  "Pivoine": "https://images.unsplash.com/photo-1562690868-60bbe7293e94?auto=format&fit=crop&w=150&q=80",
-  "Iris": "https://images.unsplash.com/photo-1589994160839-163cd867cfe8?auto=format&fit=crop&w=150&q=80",
-  "Violette": "https://images.unsplash.com/photo-1518882605630-8eb328eb69f1?auto=format&fit=crop&w=150&q=80",
-  "Mimosa": "https://images.unsplash.com/photo-1518882605630-8eb328eb69f1?auto=format&fit=crop&w=150&q=80",
-  "Lavande": "https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=150&q=80",
-  "Fleur de Tabac": "https://images.unsplash.com/photo-1518882605630-8eb328eb69f1?auto=format&fit=crop&w=150&q=80",
+  "Pivoine": "https://i.pinimg.com/736x/14/d6/cd/14d6cddd1fe5346d79d438e89cce0a39.jpg",
+  "Iris": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJe1jK73W4KnuqMk2PByMTyLZDfMuJsqhzUg&s",
+  "Violette": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM5SwkdSnYYli-D6Pxj1l55bYkTFv4LWaDZQ&s",
+  "Mimosa": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDeffXmqYV712w8PBTjmqY4JA6PhA5w53iBg&s",
+  "Lavande": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGB63vsr4DISXdsVRM8z4ZSgKdEW4SRJWkew&s",
+  "Fleur de Tabac": "https://pensezsauvage.org/IMG/jpg/semences_de_tabac_aile_bio.jpg",
 
   // ─── SPICES ──────────────────────────────────────────
   "Poivre": "https://images.unsplash.com/photo-1599909533601-aa023a72ff4a?auto=format&fit=crop&w=150&q=80",

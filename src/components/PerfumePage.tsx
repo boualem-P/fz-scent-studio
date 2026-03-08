@@ -298,37 +298,40 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                 />
                 <div className="perfume-shine-overlay" />
 
-                {/* Luxury Hotspots */}
-                {HOTSPOTS.map((hs) => (
-                  <div key={hs.id} className="absolute z-10" style={{ top: hs.top, left: hs.left, transform: "translate(-50%, -50%)" }}>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setActiveHotspot(activeHotspot === hs.id ? null : hs.id); }}
-                      className="hotspot-btn group relative w-5 h-5 rounded-full flex items-center justify-center"
-                    >
-                      <span className="absolute inset-0 rounded-full bg-amber-400/40 hotspot-ping" />
-                      <span className="absolute inset-0 rounded-full bg-amber-400/20 hotspot-ping" style={{ animationDelay: "0.5s" }} />
-                      <span className="relative w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_hsl(43_72%_52%/0.6)]" />
-                    </button>
+                {/* Luxury Hotspots - Dynamic per perfume */}
+                {HOTSPOT_POSITIONS.map((pos) => {
+                  const hotspotData = hotspots[pos.id as keyof typeof hotspots];
+                  return (
+                    <div key={pos.id} className="absolute z-10" style={{ top: pos.top, left: pos.left, transform: "translate(-50%, -50%)" }}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setActiveHotspot(activeHotspot === pos.id ? null : pos.id); }}
+                        className="hotspot-btn group relative w-5 h-5 rounded-full flex items-center justify-center"
+                      >
+                        <span className="absolute inset-0 rounded-full bg-amber-400/40 hotspot-ping" />
+                        <span className="absolute inset-0 rounded-full bg-amber-400/20 hotspot-ping" style={{ animationDelay: "0.5s" }} />
+                        <span className="relative w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_hsl(43_72%_52%/0.6)]" />
+                      </button>
 
-                    <AnimatePresence>
-                      {activeHotspot === hs.id && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.85, y: 8 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.85, y: 8 }}
-                          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                          className="hotspot-tooltip absolute left-1/2 -translate-x-1/2 mt-4 w-56 z-50"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="hotspot-tooltip-inner p-5 rounded-xl">
-                            <h4 className="font-display text-amber-200 text-sm font-semibold mb-2 tracking-wide">{hs.title}</h4>
-                            <p className="text-[11px] leading-relaxed text-zinc-400 font-light">{hs.description}</p>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
+                      <AnimatePresence>
+                        {activeHotspot === pos.id && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.85, y: 8 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.85, y: 8 }}
+                            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                            className="hotspot-tooltip absolute left-1/2 -translate-x-1/2 mt-4 w-56 z-50"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="hotspot-tooltip-inner p-5 rounded-xl">
+                              <h4 className="font-display text-amber-200 text-sm font-semibold mb-2 tracking-wide">{hotspotData.title}</h4>
+                              <p className="text-[11px] leading-relaxed text-zinc-400 font-light">{hotspotData.description}</p>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
               </motion.div>
 
               {/* Click outside to close hotspot */}

@@ -2,7 +2,7 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
 import { Perfume, generateHotspots, getRelatedPerfumes } from "@/data/database";
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
-import { getIngredientImage } from "@/data/olfactory-visuals";
+import { getNoteImage } from "@/data/notesData";
 
 const HOTSPOT_POSITIONS = [
   { id: "cap", top: "12%", left: "50%" },
@@ -373,7 +373,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                       <div key={idx} className="flex flex-col items-center gap-4 group/note">
                         <div className="note-bubble-container">
                           <img 
-                            src={getIngredientImage(note.name)} 
+                            src={getNoteImage(note.name)} 
                             loading="lazy"
                             className="note-bubble-img" 
                             alt={note.name}

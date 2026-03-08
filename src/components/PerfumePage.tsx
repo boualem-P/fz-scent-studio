@@ -1,7 +1,72 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
+import { 
+  X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus,
+  Citrus, Flower2, TreePine, Sparkles, Cherry, Leaf, Shell, Flame, Cookie, Heart
+} from "lucide-react";
 import { Perfume, generateHotspots, getRelatedPerfumes } from "@/data/database";
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
+
+// Icon mapping for olfactory note categories
+const getNoteIcon = (noteName: string) => {
+  const name = noteName.toLowerCase();
+  
+  // Hespéridés (Citrus)
+  if (name.includes("citron") || name.includes("bergamote") || name.includes("orange") || 
+      name.includes("mandarine") || name.includes("pamplemousse") || name.includes("yuzu") ||
+      name.includes("lime") || name.includes("cédrat")) {
+    return Citrus;
+  }
+  // Florales
+  if (name.includes("rose") || name.includes("jasmin") || name.includes("tubéreuse") || 
+      name.includes("ylang") || name.includes("fleur") || name.includes("pivoine") ||
+      name.includes("iris") || name.includes("violette") || name.includes("mimosa") ||
+      name.includes("géranium") || name.includes("magnolia") || name.includes("lys")) {
+    return Flower2;
+  }
+  // Boisées
+  if (name.includes("santal") || name.includes("cèdre") || name.includes("vétiver") || 
+      name.includes("oud") || name.includes("gaïac") || name.includes("bois") ||
+      name.includes("cyprès") || name.includes("pin")) {
+    return TreePine;
+  }
+  // Fruitées
+  if (name.includes("fraise") || name.includes("framboise") || name.includes("pêche") || 
+      name.includes("abricot") || name.includes("pomme") || name.includes("poire") ||
+      name.includes("cassis") || name.includes("mangue") || name.includes("ananas") ||
+      name.includes("mûre") || name.includes("cerise") || name.includes("litchi")) {
+    return Cherry;
+  }
+  // Aromatiques / Vertes
+  if (name.includes("menthe") || name.includes("basilic") || name.includes("romarin") || 
+      name.includes("lavande") || name.includes("thym") || name.includes("sauge") ||
+      name.includes("herbe") || name.includes("feuille") || name.includes("galbanum")) {
+    return Leaf;
+  }
+  // Marines
+  if (name.includes("marine") || name.includes("algue") || name.includes("iode") || 
+      name.includes("lotus") || name.includes("aquatique") || name.includes("océan")) {
+    return Shell;
+  }
+  // Épicées / Ambrées
+  if (name.includes("poivre") || name.includes("cannelle") || name.includes("girofle") || 
+      name.includes("cardamome") || name.includes("safran") || name.includes("muscade") ||
+      name.includes("gingembre") || name.includes("encens") || name.includes("ambre") ||
+      name.includes("myrrhe") || name.includes("benjoin")) {
+    return Flame;
+  }
+  // Gourmandes
+  if (name.includes("vanille") || name.includes("tonka") || name.includes("caramel") || 
+      name.includes("chocolat") || name.includes("praliné") || name.includes("miel") ||
+      name.includes("café") || name.includes("coco")) {
+    return Cookie;
+  }
+  // Musquées / Cuir
+  if (name.includes("musc") || name.includes("cuir") || name.includes("patchouli")) {
+    return Heart;
+  }
+  // Default
+  return Sparkles;
+};
 
 const HOTSPOT_POSITIONS = [
   { id: "cap", top: "12%", left: "50%" },

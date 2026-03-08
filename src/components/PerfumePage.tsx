@@ -20,6 +20,10 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Array<{x:number;y:number;vx:number;vy:number;size:number;color:string;alpha:number;baseSpeed:number}>>([]);
+  const animFrameRef = useRef<number>(0);
+  const mouseSpeedRef = useRef(0);
 
   // 3D Parallax tilt
   const mouseX = useMotionValue(0.5);

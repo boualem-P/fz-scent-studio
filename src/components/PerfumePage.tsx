@@ -137,6 +137,14 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                 <span className="text-[9px] uppercase tracking-[0.3em] font-medium text-zinc-300 italic">Lancement {perfume.year}</span>
               </div>
             </div>
+            <div className="relative">
+                <span className="absolute -top-10 -left-4 text-8xl text-white/5 font-serif">"</span>
+                <p className="text-zinc-400 text-2xl md:text-3xl leading-relaxed font-extralight italic px-10 border-l border-amber-500/20">
+                    {perfume.description}
+                </p>
+            </div>
+          </div>
+
           {/* JAUGES ET NOTES */}
           <div className="lg:col-span-7 space-y-24">
             <div className="space-y-20">

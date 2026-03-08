@@ -372,7 +372,11 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                   </div>
                   <div className="flex flex-wrap gap-8 mt-12">
                     {s.notes.map((note, idx) => (
-                      <div key={idx} className="flex flex-col items-center gap-4 group/note">
+                      <div
+                        key={idx}
+                        className="flex flex-col items-center gap-4 group/note cursor-pointer"
+                        onClick={() => setZoomedNote({ name: note.name, image: getNoteImage(note.name) })}
+                      >
                         <div className="note-bubble-container">
                           <img 
                             src={getNoteImage(note.name)} 

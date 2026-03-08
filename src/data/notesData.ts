@@ -84,17 +84,17 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Coumarine": "https://media.istockphoto.com/id/1217356340/photo/fragrant-tonka-beans-for-baking-and-cooking-on-dark-background.jpg?s=612x612&w=0&k=20&c=gD4lAi1xe9AP49GspdYKDDXVy9NN495Aa_61fxixp14=",
 
   // ─── FRUITS ──────────────────────────────────────────
-  "Pomme": "https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?auto=format&fit=crop&w=150&q=80",
-  "Pomme verte": "https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?auto=format&fit=crop&w=150&q=80",
-  "Poire": "https://images.unsplash.com/photo-1514756331096-242fdeb70d4a?auto=format&fit=crop&w=150&q=80",
-  "Bourgeon de Cassis": "https://images.unsplash.com/photo-1515942140440-bc864ab2b015?auto=format&fit=crop&w=150&q=80",
-  "Fraise": "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=150&q=80",
-  "Framboise": "https://images.unsplash.com/photo-1577069861033-55d04cec4ef5?auto=format&fit=crop&w=150&q=80",
+  "Pomme": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGlhJ9z_OYQIPCAKKd--_EpLf7EbkD4-vdyg&s",
+  "Pomme verte": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTD25wgHX69phUcoi1Tfl0sYy7EsjDIckYRoQ&s",
+  "Poire": "https://media.istockphoto.com/id/1299073137/fr/photo/poires-isol%C3%A9es-un-fruit-vert-et-demi-de-poire-avec-la-lame-sur-le-fond-blanc-tranche-de-poire.jpg?s=612x612&w=0&k=20&c=79UeSZyzkKAs9D5uVLSPFLLK1NnNiyS-5R9eFUYTPrA=",
+  "Bourgeon de Cassis": "https://thumbs.dreamstime.com/b/curry-noir-de-baies-avec-feuille-verte-fruits-frais-isol%C3%A9s-sur-fond-blanc-345087256.jpg",
+  "Fraise": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScGEdhbPH4Gulol5glAmc4m2wCNpC0-66ESg&s",
+  "Framboise": "https://media.istockphoto.com/id/648967314/fr/photo/framboise-avec-feuilles-isol%C3%A9-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=Ou-KHQxSEhrVS6CYNkrrz7bQcpclClikveOlG_4ilBI=",
   "Mûre": "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?auto=format&fit=crop&w=150&q=80",
-  "Mangue": "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=150&q=80",
-  "Ananas": "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=150&q=80",
-  "Pêche": "https://images.unsplash.com/photo-1595124216650-1ce2e54b8644?auto=format&fit=crop&w=150&q=80",
-  "Abricot": "https://images.unsplash.com/photo-1595124216650-1ce2e54b8644?auto=format&fit=crop&w=150&q=80",
+  "Mangue": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMIadzY6k35gyv_LM9D333pdWuNwiSsonvaQ&s",
+  "Ananas": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWlGn3bDORTrIUISN5vcNEiEzkvwF_PizIAg&s",
+  "Pêche": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpwcwVGPVJlGvRQnS8pfJ4SmhEfOGBmy0OXQ&s",
+  "Abricot": "https://media.istockphoto.com/id/178782797/fr/photo/des-abricots-isol%C3%A9-sur-blanc.jpg?s=612x612&w=0&k=20&c=dFeVDM5x0i3oavli2t5Fsx6MwhFSrltg31l32ntUHCg=",
 
   // ─── MARINE / AQUATIC ────────────────────────────────
   "Iode": "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=150&q=80",

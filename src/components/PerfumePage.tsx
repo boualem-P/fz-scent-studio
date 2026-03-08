@@ -3,6 +3,12 @@ import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-rea
 import { Perfume, PERFUMES } from "@/data/perfumes";
 import { useRef, useEffect, useState, useCallback } from "react";
 
+const HOTSPOTS = [
+  { id: "cap", top: "12%", left: "50%", title: "Le Couronnement", description: "Un design hermétique préservant l'intégrité absolue des essences." },
+  { id: "center", top: "45%", left: "50%", title: "L'Âme du Parfum", description: "Une concentration exceptionnelle pour une tenue de plus de 12 heures." },
+  { id: "base", top: "78%", left: "50%", title: "Sillage Signature", description: "Des notes de fond sélectionnées pour leur rareté et leur projection élégante." },
+];
+
 interface PerfumePageProps {
   perfume: Perfume;
   onClose: () => void;
@@ -11,6 +17,7 @@ interface PerfumePageProps {
 
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 

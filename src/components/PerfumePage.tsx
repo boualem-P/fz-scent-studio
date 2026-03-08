@@ -3,6 +3,7 @@ import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-rea
 import { Perfume, generateHotspots, getRelatedPerfumes } from "@/data/database";
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { getNoteImage } from "@/data/notesData"; // HD note images
+import NoteZoomModal from "@/components/NoteZoomModal";
 
 const HOTSPOT_POSITIONS = [
   { id: "cap", top: "12%", left: "50%" },

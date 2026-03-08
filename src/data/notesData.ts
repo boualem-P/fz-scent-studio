@@ -97,12 +97,12 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Abricot": "https://media.istockphoto.com/id/178782797/fr/photo/des-abricots-isol%C3%A9-sur-blanc.jpg?s=612x612&w=0&k=20&c=dFeVDM5x0i3oavli2t5Fsx6MwhFSrltg31l32ntUHCg=",
 
   // ─── MARINE / AQUATIC ────────────────────────────────
-  "Iode": "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=150&q=80",
-  "Algues": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=150&q=80",
-  "Lotus": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=150&q=80",
-  "Concombre": "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?auto=format&fit=crop&w=150&q=80",
+  "Iode": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPjUpaMZHPVJZntJ-dxDBEcRQoC86LbQItIg&s",
+  "Algues": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVKBHTrGGG4Z4nYID8BT6d38m4w_gcipbuQQ&s",
+  "Lotus": "https://img.freepik.com/photos-premium/belle-fleur-lotus-surface-etang_38535-73.jpg",
+  "Concombre": "https://thumbs.dreamstime.com/b/blanc-de-concombre-8624699.jpg",
   "Calone": "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=150&q=80",
-  "Aldéhydes": "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=150&q=80",
+  "Aldéhydes": "https://thumbs.dreamstime.com/b/usine-d-herbe-de-poissons-de-lizardtail-de-heartleaf-de-cordata-de-houttuynia-29944862.jpg",
 
   // ─── GREEN NOTES ─────────────────────────────────────
   "Feuille de violette": "https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=150&q=80",

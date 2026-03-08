@@ -26,6 +26,9 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const mouseY = useMotionValue(0.5);
   const rotateX = useSpring(useTransform(mouseY, [0, 1], [6, -6]), { stiffness: 150, damping: 20 });
   const rotateY = useSpring(useTransform(mouseX, [0, 1], [-6, 6]), { stiffness: 150, damping: 20 });
+  // Mist reactive drift (opposite to tilt)
+  const mistX = useTransform(mouseX, [0, 1], [15, -15]);
+  const mistY = useTransform(mouseY, [0, 1], [10, -10]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();

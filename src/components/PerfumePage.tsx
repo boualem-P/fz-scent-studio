@@ -26,6 +26,9 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const mouseY = useMotionValue(0.5);
   const rotateX = useSpring(useTransform(mouseY, [0, 1], [6, -6]), { stiffness: 150, damping: 20 });
   const rotateY = useSpring(useTransform(mouseX, [0, 1], [-6, 6]), { stiffness: 150, damping: 20 });
+  // Mist reactive drift (opposite to tilt)
+  const mistX = useTransform(mouseX, [0, 1], [15, -15]);
+  const mistY = useTransform(mouseY, [0, 1], [10, -10]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -127,6 +130,24 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
               onMouseLeave={handleMouseLeave}
               style={{ perspective: 800 }}
             >
+              {/* Golden Mist Layer */}
+              <motion.div className="golden-mist-layer" style={{ x: mistX, y: mistY, willChange: "transform" }}>
+                <div className="mist-blob mist-blob-1" />
+                <div className="mist-blob mist-blob-2" />
+                <div className="mist-blob mist-blob-3" />
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <div key={i} className="golden-particle" style={{
+                    left: `${15 + Math.random() * 70}%`,
+                    bottom: `${Math.random() * 40}%`,
+                    animationDelay: `${Math.random() * 6}s`,
+                    animationDuration: `${4 + Math.random() * 5}s`,
+                    width: `${2 + Math.random() * 3}px`,
+                    height: `${2 + Math.random() * 3}px`,
+                    opacity: 0.15 + Math.random() * 0.25,
+                  }} />
+                ))}
+              </motion.div>
+
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}

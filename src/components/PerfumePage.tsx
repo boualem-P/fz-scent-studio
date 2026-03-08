@@ -22,7 +22,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Array<{x:number;y:number;vx:number;vy:number;size:number;color:string;alpha:number;baseSpeed:number;type:'sparkle'|'dust';streak:number}>>([]);
+  const particlesRef = useRef<Array<{x:number;y:number;vx:number;vy:number;size:number;color:string;alpha:number;glowSize:number}>>([]);
   const animFrameRef = useRef<number>(0);
   const mouseSpeedRef = useRef(0);
 
@@ -59,16 +59,15 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Gold Dust Canvas
+  // Interactive Gold Dust Canvas (subtle, elegant)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const SPARKLE_COLORS = ["#D4AF37", "#F59E0B", "#FFF7ED"];
-    const DUST_COLORS = ["#D4AF37", "#92400e", "#B8860B"];
-    const COUNT = 110;
+    const COLORS = ["#D4AF37", "#F59E0B", "#FFF7ED"];
+    const COUNT = 90;
 
     const resize = () => {
       canvas.width = canvas.offsetWidth * window.devicePixelRatio;
@@ -80,96 +79,56 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
 
     if (particlesRef.current.length === 0) {
       const w = canvas.offsetWidth, h = canvas.offsetHeight;
-      particlesRef.current = Array.from({ length: COUNT }, () => {
-        const isSparkle = Math.random() < 0.35;
-        const baseSpeed = isSparkle ? (1.5 + Math.random() * 2.5) : (2 + Math.random() * 3);
-        return {
-          x: Math.random() * w, y: Math.random() * h,
-          vx: baseSpeed * (0.7 + Math.random() * 0.3),
-          vy: -baseSpeed * (0.5 + Math.random() * 0.5),
-          size: isSparkle ? (1 + Math.random() * 2.5) : (0.5 + Math.random() * 1.5),
-          color: isSparkle
-            ? SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)]
-            : DUST_COLORS[Math.floor(Math.random() * DUST_COLORS.length)],
-          alpha: isSparkle ? (0.4 + Math.random() * 0.5) : (0.08 + Math.random() * 0.15),
-          baseSpeed,
-          type: isSparkle ? 'sparkle' as const : 'dust' as const,
-          streak: isSparkle ? 0 : (3 + Math.random() * 8),
-        };
-      });
+      particlesRef.current = Array.from({ length: COUNT }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        size: 0.8 + Math.random() * 2,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        alpha: 0.05 + Math.random() * 0.25,
+        glowSize: 4 + Math.random() * 8,
+      }));
     }
-
-    let turbulenceDecay = 0;
 
     const draw = () => {
       const w = canvas.offsetWidth, h = canvas.offsetHeight;
-      ctx.fillStyle = "rgba(5, 5, 5, 0.15)";
-      ctx.fillRect(0, 0, w, h);
+      ctx.clearRect(0, 0, w, h);
 
       const speed = mouseSpeedRef.current;
-      mouseSpeedRef.current *= 0.93;
-
-      const intensity = Math.min(speed / 15, 1);
-      if (intensity > 0.1) {
-        turbulenceDecay = Math.min(turbulenceDecay + intensity * 0.15, 1);
-      } else {
-        turbulenceDecay *= 0.97;
-      }
-
-      const cx = w / 2, cy = h / 2;
+      mouseSpeedRef.current *= 0.95;
+      const intensity = Math.min(speed / 20, 1);
 
       particlesRef.current.forEach(p => {
-        const boost = 1 + intensity * 3;
+        const boost = 1 + intensity * 2.5;
 
+        p.x += p.vx * boost + (Math.random() - 0.5) * intensity * 1.5;
+        p.y += p.vy * boost + (Math.random() - 0.5) * intensity * 1.5;
+
+        // Wrap around edges
+        if (p.x > w) p.x = 0;
+        if (p.x < 0) p.x = w;
+        if (p.y > h) p.y = 0;
+        if (p.y < 0) p.y = h;
+
+        // Radial fade from center for focus on bottle
+        const cx = w / 2, cy = h / 2;
         const dx = p.x - cx, dy = p.y - cy;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const maxDist = w * 0.4;
-        const swirlFactor = turbulenceDecay * Math.max(0, 1 - dist / maxDist) * 3;
-        const angle = Math.atan2(dy, dx) + Math.PI * 0.5;
+        const maxDist = Math.max(w, h) * 0.5;
+        const edgeFade = Math.max(0, 1 - (dist / maxDist) * 0.3);
 
-        p.x += p.vx * boost + Math.cos(angle) * swirlFactor + (Math.random() - 0.5) * intensity * 3;
-        p.y += p.vy * boost + Math.sin(angle) * swirlFactor + (Math.random() - 0.5) * intensity * 2;
-
-        if (p.x > w + 20) { p.x = -20; p.y = h * (0.5 + Math.random() * 0.5); }
-        if (p.y < -20) { p.y = h + 20; p.x = Math.random() * w * 0.5; }
-        if (p.x < -20) p.x = w + 20;
-        if (p.y > h + 20) { p.y = -20; p.x = Math.random() * w; }
-
-        const edgeFadeX = Math.min(p.x / (w * 0.15), 1, (w - p.x) / (w * 0.25));
-        const edgeFadeY = Math.min(p.y / (h * 0.1), 1, (h - p.y) / (h * 0.1));
-        const edgeFade = Math.max(0, Math.min(edgeFadeX, edgeFadeY));
-
-        const dynamicAlpha = p.alpha * (0.7 + intensity * 0.3) * edgeFade;
+        const dynamicAlpha = p.alpha * (0.6 + intensity * 0.4) * edgeFade;
         if (dynamicAlpha < 0.01) return;
 
         ctx.save();
         ctx.globalAlpha = dynamicAlpha;
-
-        if (p.type === 'sparkle') {
-          ctx.shadowColor = p.color;
-          ctx.shadowBlur = p.size * (3 + intensity * 5);
-          ctx.fillStyle = p.color;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          const streakLen = p.streak * boost;
-          const vAngle = Math.atan2(p.vy, p.vx);
-          const grad = ctx.createLinearGradient(
-            p.x - Math.cos(vAngle) * streakLen, p.y - Math.sin(vAngle) * streakLen,
-            p.x, p.y
-          );
-          grad.addColorStop(0, "transparent");
-          grad.addColorStop(1, p.color);
-          ctx.strokeStyle = grad;
-          ctx.lineWidth = p.size;
-          ctx.lineCap = "round";
-          ctx.beginPath();
-          ctx.moveTo(p.x - Math.cos(vAngle) * streakLen, p.y - Math.sin(vAngle) * streakLen);
-          ctx.lineTo(p.x, p.y);
-          ctx.stroke();
-        }
-
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = p.glowSize * (1 + intensity * 1.5);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
         ctx.restore();
       });
 

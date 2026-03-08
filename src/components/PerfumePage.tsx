@@ -175,10 +175,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     };
   }, []);
 
-  const recommendations = PERFUMES.filter((p) => {
-    if (p.id === perfume.id) return false;
-    return p.brand === perfume.brand || p.topNotes.some(n => perfume.topNotes.includes(n));
-  }).slice(0, 8);
+  const recommendations = useMemo(() => getRelatedPerfumes(perfume, 5), [perfume]);
 
   const stats = [
     { label: "Envolée (Tête)", val: 85, icon: <Wind size={20}/>, notes: perfume.topNotesDetailed },

@@ -78,6 +78,61 @@ export function generateHotspots(perfume: Perfume): PerfumeHotspots {
   };
 }
 
+/**
+ * Get related perfumes with gender compatibility and note matching.
+ * Always returns at least 5 perfumes.
+ */
+export function getRelatedPerfumes(perfume: Perfume, minCount: number = 5): Perfume[] {
+  const validGenders = getCompatibleGenders(perfume.gender);
+  const allNotes = [...perfume.topNotes, ...perfume.heartNotes, ...perfume.baseNotes];
+  
+  // Filter candidates by gender (excluding current perfume)
+  const genderMatches = PERFUMES.filter(
+    (p) => p.id !== perfume.id && validGenders.includes(p.gender)
+  );
+  
+  // Level 1: Score by common notes
+  const scored = genderMatches.map((p) => {
+    const pNotes = [...p.topNotes, ...p.heartNotes, ...p.baseNotes];
+    const commonNotes = allNotes.filter((n) => 
+      pNotes.some((pn) => pn.toLowerCase() === n.toLowerCase())
+    ).length;
+    const sameBrand = p.brand === perfume.brand ? 2 : 0;
+    return { perfume: p, score: commonNotes + sameBrand };
+  });
+  
+  // Sort by score descending
+  scored.sort((a, b) => b.score - a.score);
+  
+  // Take perfumes with at least 1 common note
+  const noteMatches = scored.filter((s) => s.score > 0).map((s) => s.perfume);
+  
+  // Level 2 Fallback: If not enough, fill with remaining gender-compatible perfumes
+  if (noteMatches.length >= minCount) {
+    return noteMatches.slice(0, 8);
+  }
+  
+  const remaining = genderMatches.filter(
+    (p) => !noteMatches.some((m) => m.id === p.id)
+  );
+  
+  const result = [...noteMatches, ...remaining].slice(0, Math.max(minCount, 8));
+  return result;
+}
+
+function getCompatibleGenders(gender: "homme" | "femme" | "unisexe"): string[] {
+  switch (gender) {
+    case "femme":
+      return ["femme", "unisexe"];
+    case "homme":
+      return ["homme", "unisexe"];
+    case "unisexe":
+      return ["unisexe", "femme", "homme"]; // Prioritize unisexe first
+    default:
+      return ["femme", "homme", "unisexe"];
+  }
+}
+
 export const PERFUMES: Perfume[] = [
   // --- TES 14 FICHES PERSONNELLES (MISES À JOUR EN HD) ---
   {

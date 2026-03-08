@@ -62,7 +62,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Interactive Gold Dust Canvas (subtle, elegant)
+  // Interactive Gold Dust Canvas - "Brise d'Or" (Golden Breeze)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -85,12 +85,14 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       particlesRef.current = Array.from({ length: COUNT }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
+        vx: (Math.random() - 0.5) * 0.8,  // 2-3x faster base velocity
+        vy: -0.3 - Math.random() * 0.6,    // Gentle upward drift
         size: 0.8 + Math.random() * 2,
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        alpha: 0.05 + Math.random() * 0.25,
+        alpha: 0.08 + Math.random() * 0.25,
         glowSize: 4 + Math.random() * 8,
+        phase: Math.random() * Math.PI * 2,      // Sinusoidal sway phase
+        pulsePhase: Math.random() * Math.PI * 2, // Glow pulse phase
       }));
     }
 
@@ -98,36 +100,64 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       const w = canvas.offsetWidth, h = canvas.offsetHeight;
       ctx.clearRect(0, 0, w, h);
 
+      timeRef.current += 0.016; // ~60fps time increment
+      const time = timeRef.current;
+
       const speed = mouseSpeedRef.current;
-      mouseSpeedRef.current *= 0.95;
-      const intensity = Math.min(speed / 20, 1);
+      mouseSpeedRef.current *= 0.92;
+      const intensity = Math.min(speed / 15, 1);
+
+      // Bottle center for push effect (normalized to canvas)
+      const bottleCx = w * 0.5;
+      const bottleCy = h * 0.45;
+      const pushRadius = Math.min(w, h) * 0.25;
 
       particlesRef.current.forEach(p => {
-        const boost = 1 + intensity * 2.5;
+        const boost = 1 + intensity * 1.5;
 
-        p.x += p.vx * boost + (Math.random() - 0.5) * intensity * 1.5;
-        p.y += p.vy * boost + (Math.random() - 0.5) * intensity * 1.5;
+        // Sinusoidal swaying motion (gentle wave)
+        const swayAmplitude = 0.8 + intensity * 0.5;
+        const swayFrequency = 1.2;
+        const sway = Math.sin(time * swayFrequency + p.phase) * swayAmplitude;
+
+        // Base movement with sway
+        p.x += (p.vx + sway * 0.3) * boost;
+        p.y += p.vy * boost;
+
+        // Interactive "push" effect - particles pushed away from bottle center
+        const dx = p.x - bottleCx;
+        const dy = p.y - bottleCy;
+        const distToBottle = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distToBottle < pushRadius && intensity > 0.1) {
+          const pushStrength = (1 - distToBottle / pushRadius) * intensity * 3;
+          const angle = Math.atan2(dy, dx);
+          p.x += Math.cos(angle) * pushStrength;
+          p.y += Math.sin(angle) * pushStrength;
+        }
 
         // Wrap around edges
         if (p.x > w) p.x = 0;
         if (p.x < 0) p.x = w;
-        if (p.y > h) p.y = 0;
         if (p.y < 0) p.y = h;
+        if (p.y > h) p.y = 0;
 
         // Radial fade from center for focus on bottle
         const cx = w / 2, cy = h / 2;
-        const dx = p.x - cx, dy = p.y - cy;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        const distFromCenter = Math.sqrt((p.x - cx) ** 2 + (p.y - cy) ** 2);
         const maxDist = Math.max(w, h) * 0.5;
-        const edgeFade = Math.max(0, 1 - (dist / maxDist) * 0.3);
+        const edgeFade = Math.max(0, 1 - (distFromCenter / maxDist) * 0.3);
 
-        const dynamicAlpha = p.alpha * (0.6 + intensity * 0.4) * edgeFade;
+        // Subtle pulse effect (flickering glow)
+        const pulse = 0.7 + 0.3 * Math.sin(time * 2.5 + p.pulsePhase);
+        
+        const dynamicAlpha = p.alpha * pulse * (0.6 + intensity * 0.4) * edgeFade;
         if (dynamicAlpha < 0.01) return;
 
         ctx.save();
         ctx.globalAlpha = dynamicAlpha;
         ctx.shadowColor = p.color;
-        ctx.shadowBlur = p.glowSize * (1 + intensity * 1.5);
+        ctx.shadowBlur = p.glowSize * pulse * (1 + intensity * 1.2);
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);

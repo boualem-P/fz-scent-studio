@@ -1,6 +1,6 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
-import { Perfume, PERFUMES, generateHotspots } from "@/data/database";
+import { Perfume, generateHotspots, getRelatedPerfumes } from "@/data/database";
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 
 const HOTSPOT_POSITIONS = [

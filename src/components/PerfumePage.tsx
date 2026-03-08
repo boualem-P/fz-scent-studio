@@ -153,6 +153,9 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   return (
     <div className="relative min-h-screen bg-[#050505] text-white pb-40 overflow-x-hidden selection:bg-amber-200 selection:text-black font-sans">
       
+      {/* --- GOLD DUST CANVAS --- */}
+      <canvas ref={canvasRef} className="gold-dust-canvas" />
+
       {/* --- HEADER --- */}
       <div className="sticky top-0 z-[999] w-full h-24 pointer-events-none">
         <AnimatePresence>

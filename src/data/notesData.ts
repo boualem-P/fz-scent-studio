@@ -72,16 +72,16 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Labdanum": "https://t4.ftcdn.net/jpg/05/18/61/03/360_F_518610333_hdSPiHAQf3QEJXz0RRprSWdsmFi54Wa8.jpg",
 
   // ─── GOURMAND ────────────────────────────────────────
-  "Vanille": "https://images.unsplash.com/photo-1631206753348-db44968fd440?auto=format&fit=crop&w=150&q=80",
-  "Fève Tonka": "https://images.unsplash.com/photo-1631206753348-db44968fd440?auto=format&fit=crop&w=150&q=80",
-  "Tonka": "https://images.unsplash.com/photo-1631206753348-db44968fd440?auto=format&fit=crop&w=150&q=80",
-  "Caramel": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=150&q=80",
-  "Chocolat": "https://images.unsplash.com/photo-1481391319762-47dff72954d9?auto=format&fit=crop&w=150&q=80",
-  "Cacao": "https://images.unsplash.com/photo-1481391319762-47dff72954d9?auto=format&fit=crop&w=150&q=80",
-  "Praliné": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=150&q=80",
-  "Miel": "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=150&q=80",
-  "Café": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=150&q=80",
-  "Coumarine": "https://images.unsplash.com/photo-1631206753348-db44968fd440?auto=format&fit=crop&w=150&q=80",
+  "Vanille": "https://media.istockphoto.com/id/1090972218/fr/photo/s%C3%A9cher-les-fruits-vanille-et-orchid%C3%A9e-vanille.jpg?s=612x612&w=0&k=20&c=ef1UsOrrByG41Fo8lHO0XIqOEkEDcfRfodFduAVwZZw=",
+  "Fève Tonka": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvHvB5Lqd4ZkAgh__-H5QAlpQCVjcuotFtvw&s",
+  "Tonka": "https://t4.ftcdn.net/jpg/17/54/89/81/360_F_1754898160_roXxgZqwXTnerzjHd50qqjwizlkHFVvx.jpg",
+  "Caramel": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9WLP16T6JjklrvODAvgaa95R74oevMgMJMg&s",
+  "Chocolat": "https://media.istockphoto.com/id/1400452697/fr/photo/barre-de-chocolat-noir-avec-f%C3%A8ves-de-cacao.jpg?s=612x612&w=0&k=20&c=MeDSWrVPCuJQeQtOkiLNIxhNAtp7mVjKNvVD95JcxgM=",
+  "Cacao": "https://i.pinimg.com/736x/da/cb/70/dacb70d73a663794edf34978af5294f0.jpg",
+  "Praliné": "https://thumbs.dreamstime.com/b/d%C3%A9licieuse-pralin%C3%A9-au-chocolat-faite-de-et-vermicelles-432451243.jpg",
+  "Miel": "https://media.istockphoto.com/id/1445503284/fr/photo/miel-isol%C3%A9-sur-le-fond-blanc.jpg?s=612x612&w=0&k=20&c=KLj2iYJ7w60Pln3XAs_yDyTZhc-nBIHxnGncnSp29Y4=",
+  "Café": "https://thumbs.dreamstime.com/b/granos-de-caf%C3%A9-tostados-en-fondo-r%C3%BAstico-texturado-fotograf%C3%ADa-alta-resoluci%C3%B3n-cierre-asados-esparcidos-una-superficie-c%C3%A1lida-393023802.jpg",
+  "Coumarine": "https://media.istockphoto.com/id/1217356340/photo/fragrant-tonka-beans-for-baking-and-cooking-on-dark-background.jpg?s=612x612&w=0&k=20&c=gD4lAi1xe9AP49GspdYKDDXVy9NN495Aa_61fxixp14=",
 
   // ─── FRUITS ──────────────────────────────────────────
   "Pomme": "https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?auto=format&fit=crop&w=150&q=80",

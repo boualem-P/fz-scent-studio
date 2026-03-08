@@ -7,22 +7,7 @@ export type Gender = "homme" | "femme" | "unisexe" | "mixte";
 
 export interface NoteDetail { name: string; }
 
-export interface Perfume {
-  id: string;
-  name: string;
-  brand: string;
-  gender: string;
-  year: number;
-  concentration: string;
-  description: string;
-  topNotes: string[];
-  heartNotes: string[];
-  baseNotes: string[];
-  topNotesDetailed: NoteDetail[];
-  heartNotesDetailed: NoteDetail[];
-  baseNotesDetailed: NoteDetail[];
-  image: string;
-}
+export type { Perfume } from "./database";
 
 // Mappage pour l'affichage (labels)
 export const NOTE_LABELS: Record<string, string> = {

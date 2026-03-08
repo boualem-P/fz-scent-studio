@@ -18,6 +18,7 @@ interface PerfumePageProps {
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
+  const hotspots = useMemo(() => generateHotspots(perfume), [perfume]);
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);

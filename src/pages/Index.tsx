@@ -20,28 +20,38 @@ const Index = () => {
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
-  // 1. FONCTION DE NAVIGATION (Enregistre l'étape actuelle avant de changer)
+  // ✨ NOUVEAU — State pour la vague de lumière
+  const [showWipe, setShowWipe] = useState(false);
+
+  // 1. FONCTION DE NAVIGATION MISE À JOUR
   const navigateTo = (nextScreen: ScreenType) => {
     if (nextScreen === screen) return;
-    setHistory((prev) => [...prev, screen]);
-    setScreen(nextScreen);
+
+    // Déclenche la vague uniquement landing → pyramid
+    if (screen === "landing" && nextScreen === "pyramid") {
+      setShowWipe(true);
+      setTimeout(() => {
+        setHistory((prev) => [...prev, screen]);
+        setScreen(nextScreen);
+      }, 500);
+    } else {
+      setHistory((prev) => [...prev, screen]);
+      setScreen(nextScreen);
+    }
   };
 
-  // 2. LOGIQUE DE RETOUR BLINDÉE (Respecte ta logique 4-3-2-1)
+  // 2. LOGIQUE DE RETOUR BLINDÉE (inchangée)
   const handleBack = () => {
-    // Si la fiche "Vos accords parfaits" (PerfumePage) est ouverte, on la ferme d'abord
     if (selectedPerfume) {
       setSelectedPerfume(null);
       return;
     }
 
-    // Sinon, on remonte l'historique des écrans
     if (history.length > 0) {
       const newHistory = [...history];
       const previousScreen = newHistory.pop();
       
       if (previousScreen) {
-        // Sécurité : Si l'écran précédent était le chargement, on remonte encore d'un cran
         if (previousScreen === "analyzing") {
           const skipLoader = newHistory.pop();
           setScreen(skipLoader || "landing");
@@ -52,7 +62,6 @@ const Index = () => {
         }
       }
     } else {
-      // Si aucun historique, retour forcé au menu
       setScreen("landing");
     }
   };
@@ -68,29 +77,32 @@ const Index = () => {
     
     navigateTo("analyzing");
     
-    // Transition automatique vers "Univers Olfactif" (Results)
     setTimeout(() => {
       setScreen("results");
     }, 4000);
   }, [gender]);
 
   const handleSelectPerfume = (perfume: Perfume) => {
-    // Note : On ne change pas l'écran, on ouvre juste l'overlay
     setSelectedPerfume(perfume);
   };
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
       
-      {/* Fond de particules (actif partout sauf sur le menu) */}
+      {/* Fond de particules */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
+      {/* ✨ VAGUE DE LUMIÈRE DORÉE */}
+      <LightWipeTransition 
+        isVisible={showWipe} 
+        onComplete={() => setShowWipe(false)} 
+      />
+
       {/* NAVIGATION GLOBALE */}
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
         <div className="flex flex-col gap-3 pointer-events-auto">
-          {/* BOUTON RETOUR INTELLIGENT */}
           {(screen !== "landing" || selectedPerfume) && (
             <button 
               onClick={handleBack}
@@ -165,7 +177,7 @@ const Index = () => {
         </AnimatePresence>
       </main>
 
-      {/* OVERLAY FICHE PARFUM (Point 4 de ta logique) */}
+      {/* OVERLAY FICHE PARFUM */}
       <AnimatePresence>
         {selectedPerfume && (
           <motion.div 

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { X, Sparkles, Flower2, TreePine } from "lucide-react";
 import { Perfume, NoteDetail } from "@/data/perfumes";
-import { getIngredientImage } from "@/data/olfactory-visuals";
+import { getNoteImage } from "@/data/notesData";
 import { staggerContainer, staggerItem, luxuryEase } from "@/lib/animations";
 
 interface PerfumeModalProps {
@@ -10,7 +10,7 @@ interface PerfumeModalProps {
 }
 
 const NoteBubble = ({ note }: { note: NoteDetail }) => {
-  const imgUrl = getIngredientImage(note.name);
+  const imgUrl = getNoteImage(note.name);
 
   return (
     <motion.div variants={staggerItem} className="flex flex-col items-center gap-1.5 min-w-[55px]">

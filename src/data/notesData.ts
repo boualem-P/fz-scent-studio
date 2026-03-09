@@ -151,21 +151,36 @@ export const NOTES_IMAGES: Record<string, string> = {
  * 1. Cherche la correspondance exacte (insensible à la casse).
  * 2. Si non trouvé, cherche si un mot-clé existe (ex: "Vanille noire" -> "Vanille").
  */
+/**
+ * Sécurise une URL : force https et retourne DEFAULT_IMAGE si vide.
+ */
+function secureUrl(url: string): string {
+  if (!url) return DEFAULT_IMAGE;
+  return url.replace(/^http:\/\//i, "https://");
+}
+
+/**
+ * Récupère l'image d'une note avec fallback intelligent.
+ * 1. Cherche la correspondance exacte (insensible à la casse).
+ * 2. Si non trouvé, cherche par mot-clé trié par longueur décroissante
+ *    (évite que "Vanille" écrase "Vanille noire").
+ */
 export function getNoteImage(name: string): string {
   if (!name) return DEFAULT_IMAGE;
-  
+
   const normalizedName = name.toLowerCase().trim();
   const keys = Object.keys(NOTES_IMAGES);
 
   // 1. Recherche exacte
   const exactMatch = keys.find(k => k.toLowerCase() === normalizedName);
-  if (exactMatch) return NOTES_IMAGES[exactMatch];
+  if (exactMatch) return secureUrl(NOTES_IMAGES[exactMatch]);
 
-  // 2. Recherche par mot-clé (Fallback)
-  const fallbackMatch = keys.find(k => {
+  // 2. Recherche par mot-clé — clés triées par longueur décroissante
+  const sortedKeys = [...keys].sort((a, b) => b.length - a.length);
+  const fallbackMatch = sortedKeys.find(k => {
     const keyLower = k.toLowerCase();
     return normalizedName.includes(keyLower) || keyLower.includes(normalizedName);
   });
 
-  return fallbackMatch ? NOTES_IMAGES[fallbackMatch] : DEFAULT_IMAGE;
+  return fallbackMatch ? secureUrl(NOTES_IMAGES[fallbackMatch]) : DEFAULT_IMAGE;
 }

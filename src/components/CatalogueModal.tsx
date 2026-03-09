@@ -10,7 +10,7 @@ interface CatalogueModalProps {
 }
 
 const NoteBubble = ({ note }: { note: NoteDetail }) => {
-  const imgUrl = getIngredientImagNotee);
+  const imgUrl = getNoteImage(note.name);
   return (
     <motion.div variants={staggerItem} className="flex flex-col items-center gap-1.5 min-w-[60px]">
       <div className="w-14 h-14 rounded-full border border-primary/20 shadow-lg shadow-primary/10 overflow-hidden relative group">

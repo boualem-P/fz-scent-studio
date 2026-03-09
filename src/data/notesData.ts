@@ -65,8 +65,8 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Oud": "https://t3.ftcdn.net/jpg/01/40/25/80/360_F_140258049_BouSqnArYQtcl3PWCGMtEBG9spCkEDBF.jpg",
   "Bouleau": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlUmLWLFbrebY-pMBUd7qf5iRgIe8TTjy6xQ&s",
   "Palissandre": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1jFnnDDLFhyLppaTvHs-nLgjYFBLx6BA81A&s",
-  "Bois de cachemire": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=300&q=80",
-  "Bois ambrés": "https://images.unsplash.com/photo-1583445095369-9c651e7e5d30?auto=format&fit=crop&w=300&q=80",
+  "Bois de cachemire": "https://media.istockphoto.com/id/874320972/fr/photo/texture-bois-motif-grunge.jpg?s=612x612&w=0&k=20&c=HHhWpzkI37AJbEiSXwgUQiVp8pTBm3C98Njl-ff-C4M=",
+  "Bois ambrés": "https://www.hbes.fr/app/uploads/bois-dambre.jpg",
 
   // ─── AMBER & RESINS ──────────────────────────────────
   "Ambre": "https://media.istockphoto.com/id/1356213244/fr/photo/ambre-naturel-un-morceau-dambre-naturel-opaque-jaune-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=dDRryxccAfwaczmreErOsDimsz-6NAqnKaTARROe-AE=",

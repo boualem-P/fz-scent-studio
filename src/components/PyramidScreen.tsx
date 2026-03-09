@@ -12,16 +12,46 @@ const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ',
 
 const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string }[]> = {
   top: [
-    { id: "hesperides", label: "Citron & Bergamote", img: "https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=400", sub: "Fraîcheur vive" },
-    { id: "marines", label: "Brise Marine", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400", sub: "Notes aquatiques" }
+    { 
+      id: "hesperides", 
+      label: "Lumière du Matin", 
+      img: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=400", 
+      sub: "Fraîcheur & Légèreté" 
+    },
+    { 
+      id: "marines", 
+      label: "Souffle Marin", 
+      img: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=400", 
+      sub: "Fraîcheur Océanique & Pure" 
+    }
   ],
   heart: [
-    { id: "florales", label: "Rose & Jasmin", img: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?q=80&w=400", sub: "Cœur romantique" },
-    { id: "epicees", label: "Poivre & Gingembre", img: "https://images.unsplash.com/photo-1599940824399-b87987cb94e5?q=80&w=400", sub: "Épices froides" }
+    { 
+      id: "florales", 
+      label: "Jardin Secret", 
+      img: "https://images.unsplash.com/photo-1487530811015-780de7f3f8e4?q=80&w=400", 
+      sub: "Floral & Délicat" 
+    },
+    { 
+      id: "epicees", 
+      label: "Nuit Précieuse", 
+      img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=400", 
+      sub: "Intense & Mystérieux" 
+    }
   ],
   base: [
-    { id: "boisees", label: "Santal & Cèdre", img: "https://images.unsplash.com/photo-1585675100414-add2e465a136?q=80&w=400", sub: "Structure boisée" },
-    { id: "gourmandes", label: "Vanille & Caramel", img: "https://images.unsplash.com/photo-1595589949475-394e277c082b?q=80&w=400", sub: "Notes sucrées" }
+    { 
+      id: "boisees", 
+      label: "Bois Sacré", 
+      img: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=400", 
+      sub: "Chaleureux & Profond" 
+    },
+    { 
+      id: "gourmandes", 
+      label: "Peau de Soie", 
+      img: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?q=80&w=400", 
+      sub: "Sensuel & Enveloppant" 
+    }
   ]
 };
 

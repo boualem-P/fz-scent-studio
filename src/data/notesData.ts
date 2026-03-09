@@ -19,10 +19,10 @@ export const NOTES_IMAGES: Record<string, string> = {
 
   // ─── FLORALS ─────────────────────────────────────────
   "Rose": "https://upload.wikimedia.org/wikipedia/commons/5/51/Small_Red_Rose.JPG",
-  "Absolu de rose": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80",
+  "Absolu de rose": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLTHwrqP-uO_CO7OvPZcuNYixztKRLmsZ_zA&s",
   "Jasmin": "https://media.istockphoto.com/id/862596276/fr/photo/fleurs-blanches-de-jasmin-sur-fond-isol%C3%A9-blanc.jpg?s=612x612&w=0&k=20&c=1WG34C782a96vaIdndA0I5-oqXxbzcr6SviOKesI5uw=",
   "Tubéreuse": "https://www.biolandes.com/wp-content/uploads/photo-produit-F2960.jpg",
-  "Ylang-Ylang": "https://png.pngtree.com/png-clipart/20241013/original/pngtree-ylang-flower-png-image_16315299.png",
+  "Ylang-Ylang": "https://t4.ftcdn.net/jpg/00/34/90/31/360_F_34903143_mTqdY4T9w6yykmq4Bx41jiTrpoUAgpPI.jpg",
   "Fleur d'Oranger": "https://lallanature.com/wp-content/uploads/2020/08/eau-de-fleur-doranger-1280x800.jpg",
   "Géranium": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1ev56SrgogQ_YfNi-0QlkLMYQrPJA1QUsrw&s",
   "Pivoine": "https://i.pinimg.com/736x/14/d6/cd/14d6cddd1fe5346d79d438e89cce0a39.jpg",
@@ -31,7 +31,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Mimosa": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDeffXmqYV712w8PBTjmqY4JA6PhA5w53iBg&s",
   "Lavande": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGB63vsr4DISXdsVRM8z4ZSgKdEW4SRJWkew&s",
   "Fleur de Tabac": "https://pensezsauvage.org/IMG/jpg/semences_de_tabac_aile_bio.jpg",
-  "Pétales de fleurs": "https://images.unsplash.com/photo-1560717789-0ac7c58ac90a?auto=format&fit=crop&w=300&q=80",
+  "Pétales de fleurs": "https://img.pikbest.com/origin/09/39/67/368pIkbEsTytN.png!w700wp",
 
   // ─── SPICES ──────────────────────────────────────────
   "Poivre": "https://thumbs.dreamstime.com/b/tas-frais%C3%A9-ou-moulu-de-poivre-noir-d-isolement-sur-le-fond-blanc-front-view-143209481.jpg",

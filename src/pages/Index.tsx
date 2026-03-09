@@ -113,12 +113,7 @@ const Index = () => {
             </button>
           )}
           
-          <button 
-            onClick={() => { setScreen("landing"); setHistory([]); setSelectedPerfume(null); }} 
-            className="w-12 h-12 rounded-full border border-amber-500/30 bg-black/80 text-amber-500 backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-          >
-            <User size={20} />
-          </button>
+          <ProfileSheet />
         </div>
 
         <div className="flex gap-3 pointer-events-auto">

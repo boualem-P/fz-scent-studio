@@ -38,17 +38,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         <div className="absolute inset-0 bg-black/40 z-10" />
       </div>
 
-      {/* 2. BOUTON PROFIL (HAUT GAUCHE) */}
-      <div className="absolute top-8 left-8 z-50">
-        <motion.button
-          whileHover={springHover}
-          whileTap={springTap}
-          onClick={onProfile}
-          className="flex items-center justify-center w-10 h-10 rounded-full border border-primary/30 bg-black/40 text-primary backdrop-blur-md transition-all duration-500 hover:border-primary hover:shadow-[0_0_15px_rgba(212,175,55,0.3)]"
-        >
-          <User size={18} />
-        </motion.button>
-      </div>
+      {/* Bouton profil retiré — désormais global via ProfileSheet */}
 
       {/* 3. BOUTON PLEIN ÉCRAN (BAS GAUCHE) */}
       <div className="absolute bottom-8 left-8 z-50">

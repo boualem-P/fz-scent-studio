@@ -15,13 +15,13 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
     { 
       id: "hesperides", 
       label: "Lumière du Matin", 
-      img: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=400", 
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", 
       sub: "Fraîcheur & Légèreté" 
     },
     { 
       id: "marines", 
       label: "Souffle Marin", 
-      img: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=400", 
+      img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", 
       sub: "Fraîcheur Océanique & Pure" 
     }
   ],
@@ -29,7 +29,7 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
     { 
       id: "florales", 
       label: "Jardin Secret", 
-      img: "https://images.unsplash.com/photo-1487530811015-780de7f3f8e4?q=80&w=400", 
+      img: "https://img.freepik.com/photos-premium/jardin-banc-fleurs-dans-herbe_1022944-31664.jpg", 
       sub: "Floral & Délicat" 
     },
     { 
@@ -48,8 +48,8 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
     },
     { 
       id: "gourmandes", 
-      label: "Peau de Soie", 
-      img: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?q=80&w=400", 
+      label: "Secret Sucré", 
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS3Ep3wqjOI04sfMmjIifqwGl-xq6UjhTlZg&s", 
       sub: "Sensuel & Enveloppant" 
     }
   ]

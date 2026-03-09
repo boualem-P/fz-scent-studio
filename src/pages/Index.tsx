@@ -9,6 +9,7 @@ import AnalyzingLoader from "@/components/AnalyzingLoader";
 import GoldenRain from "@/components/GoldenRain";
 import PerfumePage from "@/components/PerfumePage"; 
 import { Gender, NoteCategory, matchPerfumes, Perfume } from "@/data/perfumes";
+import LightWipeTransition from "@/components/LightWipeTransition";
 
 type ScreenType = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
 

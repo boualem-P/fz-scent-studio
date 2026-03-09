@@ -23,6 +23,12 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       label: "Souffle Marin", 
       img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", 
       sub: "Fraîcheur Océanique & Pure" 
+    },
+    { 
+      id: "fruitees", 
+      label: "Douceur Fruitée", 
+      img: "https://static.vecteezy.com/system/resources/thumbnails/053/277/426/small/spring-fruit-scene-designed-to-integrate-seamlessly-with-your-text-or-graphics-photo.jpeg", 
+      sub: "Léger & Pétillant" 
     }
   ],
   heart: [
@@ -37,6 +43,12 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       label: "Nuit Précieuse", 
       img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=400", 
       sub: "Intense & Mystérieux" 
+    },
+    { 
+      id: "musquees", 
+      label: "Chaleur Dorée", 
+      img: "https://png.pngtree.com/thumb_back/fh260/background/20241017/pngtree-heavenly-stairs-leading-to-the-golden-gates-of-heaven-image_16409825.jpg", 
+      sub: "Ambré & Enveloppant" 
     }
   ],
   base: [
@@ -77,7 +89,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const steps = ["top", "heart", "base"];
   const notesAvailable = NOTES_DATA[steps[currentStep]];
   const currentNote = notesAvailable[noteIndex];
-  const nextNote = notesAvailable[noteIndex + 1] || (currentStep < 2 ? NOTES_DATA[steps[currentStep + 1]][0] : null);
 
   const x = useMotionValue(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
@@ -110,10 +121,12 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const size = 300;
   const center = size / 2;
   const radius = size * 0.38;
+
   const getPointPos = (index: number, intensity: number) => {
     const angle = (Math.PI * 2 * index) / FAMILIES.length - Math.PI / 2;
     return { x: center + radius * intensity * Math.cos(angle), y: center + radius * intensity * Math.sin(angle) };
   };
+
   const updateIntensity = (index: number, info: any) => {
     const rect = document.getElementById('radar-svg')?.getBoundingClientRect();
     if (!rect) return;
@@ -124,12 +137,15 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     newInts[index] = Math.min(Math.max(distance / radius, 0.1), 1);
     setIntensities(newInts);
   };
+
   const points = intensities.map((inst, i) => getPointPos(i, inst));
   const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
       <AnimatePresence mode="wait">
+
+        {/* LOADER DE TRANSITION */}
         {isAnalyzing ? (
           <motion.div
             key="loader"
@@ -139,14 +155,14 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-10 text-center"
           >
             <div className="relative mb-8">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="w-20 h-20 border-t-2 border-b-2 border-amber-500 rounded-full"
-                />
-                <div className="absolute inset-0 flex items-center justify-center text-amber-500 opacity-50">
-                    <Loader2 size={24} className="animate-spin" />
-                </div>
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="w-20 h-20 border-t-2 border-b-2 border-amber-500 rounded-full"
+              />
+              <div className="absolute inset-0 flex items-center justify-center text-amber-500 opacity-50">
+                <Loader2 size={24} className="animate-spin" />
+              </div>
             </div>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
@@ -156,9 +172,21 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               {analysisText}
             </motion.p>
           </motion.div>
+
         ) : screen === 'swipe' ? (
-          <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm flex flex-col items-center relative">
-            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Affinez vos désirs</h2>
+
+          /* ÉCRAN SWIPE — 8 CARTES */
+          <motion.div
+            key="swipe-container"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="w-full max-w-sm flex flex-col items-center relative"
+          >
+            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">
+              Affinez vos désirs
+            </h2>
+
             <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
               <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
                 <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg">
@@ -168,9 +196,10 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                   <Smile size={48} strokeWidth={1.5} />
                 </motion.div>
               </div>
+
               <AnimatePresence mode="popLayout">
-                <motion.div 
-                  key={`${steps[currentStep]}-${noteIndex}`} 
+                <motion.div
+                  key={`${steps[currentStep]}-${noteIndex}`}
                   style={{ x }}
                   drag="x"
                   dragConstraints={{ left: 0, right: 0 }}
@@ -188,50 +217,108 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                   <div className="w-full h-full flex flex-col pointer-events-none">
                     <img src={currentNote.img} className="w-full h-2/3 object-cover" />
                     <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center">
-                      <h3 className="text-2xl font-light text-black mb-1 uppercase tracking-tighter">{currentNote.label}</h3>
-                      <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">{currentNote.sub}</p>
+                      <h3 className="text-2xl font-light text-black mb-1 uppercase tracking-tighter">
+                        {currentNote.label}
+                      </h3>
+                      <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">
+                        {currentNote.sub}
+                      </p>
                     </div>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
-            <p className="text-white text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">Balayez pour choisir</p>
+
+            <p className="text-white text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">
+              Balayez pour choisir
+            </p>
           </motion.div>
+
         ) : screen === 'map' ? (
-          <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="w-full max-w-md flex flex-col items-center justify-center">
+
+          /* ÉCRAN RADAR */
+          <motion.div
+            key="map"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="w-full max-w-md flex flex-col items-center justify-center"
+          >
             <div className="flex flex-col items-center mb-10 text-center">
               <h2 className="text-2xl font-bold uppercase tracking-[0.3em] text-white">Architecture Olfactive</h2>
               <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
-              <p className="text-amber-500/80 text-[10px] font-bold uppercase tracking-[0.15em]">Modelez l'intensité de vos accords</p>
+              <p className="text-amber-500/80 text-[10px] font-bold uppercase tracking-[0.15em]">
+                Modelez l'intensité de vos accords
+              </p>
             </div>
+
             <div className="relative">
               <svg id="radar-svg" width={size} height={size}>
-                {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => ( <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" /> ))}
-                {FAMILIES.map((_, i) => { const p = getPointPos(i, 1); return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#222" />; })}
+                {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => (
+                  <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" />
+                ))}
+                {FAMILIES.map((_, i) => {
+                  const p = getPointPos(i, 1);
+                  return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#222" />;
+                })}
                 <polygon points={polygonPath} fill="rgba(245, 158, 11, 0.2)" stroke="#f59e0b" strokeWidth="2" />
                 {points.map((p, i) => (
                   <motion.g key={i}>
-                    <motion.circle cx={p.x} cy={p.y} r="25" fill="transparent" drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} onDrag={(_, info) => updateIntensity(i, info)} />
+                    <motion.circle
+                      cx={p.x} cy={p.y} r="25"
+                      fill="transparent"
+                      drag
+                      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                      onDrag={(_, info) => updateIntensity(i, info)}
+                    />
                     <circle cx={p.x} cy={p.y} r="6" fill="#f59e0b" className="pointer-events-none shadow-xl" />
                   </motion.g>
                 ))}
               </svg>
-              {FAMILIES.map((f, i) => { const p = getPointPos(i, 1.28); return <div key={i} className="absolute text-[9px] font-black text-zinc-500 uppercase tracking-tighter" style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}>{f}</div>; })}
+              {FAMILIES.map((f, i) => {
+                const p = getPointPos(i, 1.28);
+                return (
+                  <div
+                    key={i}
+                    className="absolute text-[9px] font-black text-zinc-500 uppercase tracking-tighter"
+                    style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}
+                  >
+                    {f}
+                  </div>
+                );
+              })}
             </div>
-            <button onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")} className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]">Finaliser le profil</button>
+
+            <button
+              onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")}
+              className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]"
+            >
+              Finaliser le profil
+            </button>
           </motion.div>
+
         ) : (
-          <motion.div key="atm" initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-lg flex flex-col items-center justify-center">
-            {/* TITRE PRESTIGIEUX PAGE C */}
+
+          /* ÉCRAN UNIVERS OLFACTIF */
+          <motion.div
+            key="atm"
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-lg flex flex-col items-center justify-center"
+          >
             <div className="flex flex-col items-center mb-10 text-center">
               <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Univers Olfactif</h2>
               <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
-              <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">Définissez le sillage de votre destinée</p>
+              <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">
+                Définissez le sillage de votre destinée
+              </p>
             </div>
 
             <div className="grid grid-cols-1 gap-4 w-full px-4">
               {ATMOSPHERES.map((atm) => (
-                <button key={atm.id} onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id)}
+                <button
+                  key={atm.id}
+                  onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id)}
                   className="group relative h-28 rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center p-6 hover:border-amber-500/50 transition-all text-left"
                 >
                   <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" />
@@ -248,6 +335,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
             </div>
           </motion.div>
         )}
+
       </AnimatePresence>
     </div>
   );

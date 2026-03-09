@@ -75,7 +75,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Myrrhe": "https://media.istockphoto.com/id/1409930753/fr/photo/r%C3%A9sine-de-myrrhe-isol%C3%A9e-sur-fond-blanc-pile-de-commiphora-myrrha-naturel-opoponax-de-myrrhe.jpg?s=612x612&w=0&k=20&c=aBq4IsCJTbKOp1_VG9wBgPd0BHSzbXgRHigW3SMYJYA=",
   "Benjoin": "https://media.istockphoto.com/id/596390248/fr/photo/loban-biologique.jpg?s=612x612&w=0&k=20&c=mCxUhbqCopoTYQrFVAM4wBgTCcD-tM3-Om0kPsIG4HQ=",
   "Labdanum": "https://t4.ftcdn.net/jpg/05/18/61/03/360_F_518610333_hdSPiHAQf3QEJXz0RRprSWdsmFi54Wa8.jpg",
-  "Ambre kétal": "https://images.unsplash.com/photo-1583445095369-9c651e7e5d30?auto=format&fit=crop&w=300&q=80",
+  "Ambre kétal": "https://www.shutterstock.com/image-illustration/amber-mixed-transparent-crystals-3d-600nw-2512558977.jpg",
 
   // ─── GOURMAND ────────────────────────────────────────
   "Vanille": "https://media.istockphoto.com/id/1090972218/fr/photo/s%C3%A9cher-les-fruits-vanille-et-orchid%C3%A9e-vanille.jpg?s=612x612&w=0&k=20&c=ef1UsOrrByG41Fo8lHO0XIqOEkEDcfRfodFduAVwZZw=",
@@ -88,7 +88,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Miel": "https://media.istockphoto.com/id/1445503284/fr/photo/miel-isol%C3%A9-sur-le-fond-blanc.jpg?s=612x612&w=0&k=20&c=KLj2iYJ7w60Pln3XAs_yDyTZhc-nBIHxnGncnSp29Y4=",
   "Café": "https://thumbs.dreamstime.com/b/granos-de-caf%C3%A9-tostados-en-fondo-r%C3%BAstico-texturado-fotograf%C3%ADa-alta-resoluci%C3%B3n-cierre-asados-esparcidos-una-superficie-c%C3%A1lida-393023802.jpg",
   "Coumarine": "https://media.istockphoto.com/id/1217356340/photo/fragrant-tonka-beans-for-baking-and-cooking-on-dark-background.jpg?s=612x612&w=0&k=20&c=gD4lAi1xe9AP49GspdYKDDXVy9NN495Aa_61fxixp14=",
-  "Infusion de vanille": "https://images.unsplash.com/photo-1509358740172-675d78e7293d?auto=format&fit=crop&w=300&q=80",
+  "Infusion de vanille": "https://www.prova.fr/wp-content/uploads/2023/07/Infusion-Vanille_Plan-de-travail-1-copie-1000x1000.png",
 
   // ─── FRUITS ──────────────────────────────────────────
   "Pomme": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGlhJ9z_OYQIPCAKKd--_EpLf7EbkD4-vdyg&s",
@@ -97,13 +97,13 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Bourgeon de Cassis": "https://thumbs.dreamstime.com/b/curry-noir-de-baies-avec-feuille-verte-fruits-frais-isol%C3%A9s-sur-fond-blanc-345087256.jpg",
   "Fraise": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScGEdhbPH4Gulol5glAmc4m2wCNpC0-66ESg&s",
   "Framboise": "https://media.istockphoto.com/id/648967314/fr/photo/framboise-avec-feuilles-isol%C3%A9-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=Ou-KHQxSEhrVS6CYNkrrz7bQcpclClikveOlG_4ilBI=",
-  "Mûre": "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?auto=format&fit=crop&w=150&q=80",
+  "Mûre": "https://www.alimentarium.org/sites/default/files/media/image/2016-11/shutterstock_Tim_UR_mure_158496539_WEB_0_0.jpg",
   "Mangue": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMIadzY6k35gyv_LM9D333pdWuNwiSsonvaQ&s",
   "Ananas": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWlGn3bDORTrIUISN5vcNEiEzkvwF_PizIAg&s",
   "Pêche": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpwcwVGPVJlGvRQnS8pfJ4SmhEfOGBmy0OXQ&s",
   "Abricot": "https://media.istockphoto.com/id/178782797/fr/photo/des-abricots-isol%C3%A9-sur-blanc.jpg?s=612x612&w=0&k=20&c=dFeVDM5x0i3oavli2t5Fsx6MwhFSrltg31l32ntUHCg=",
-  "Nectar de poire": "https://images.unsplash.com/photo-1514756331096-242fdeb70d4a?auto=format&fit=crop&w=300&q=80",
-  "Lait de coco": "https://images.unsplash.com/photo-1543158034-7bc603957827?auto=format&fit=crop&w=300&q=80",
+  "Nectar de poire": "https://st4.depositphotos.com/16122460/41076/i/450/depositphotos_410766528-stock-photo-fresh-pear-juice-glass-bottle.jpg",
+  "Lait de coco": "https://static.vecteezy.com/ti/photos-gratuite/t2/57230782-cremeux-noix-de-coco-lait-eclabousser-dans-noix-de-coco-coquille-photo.jpg",
 
   // ─── MARINE / AQUATIC ────────────────────────────────
   "Iode": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPjUpaMZHPVJZntJ-dxDBEcRQoC86LbQItIg&s",

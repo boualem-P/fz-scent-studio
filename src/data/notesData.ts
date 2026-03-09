@@ -9,7 +9,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   // ─── CITRUS / HESPÉRIDÉS ─────────────────────────────
   "Bergamote": "https://www.grocerymart.com.my/202/bergamot-.jpg",
   "Citron": "https://media.istockphoto.com/id/1389128157/fr/photo/fruit-citronn%C3%A9-avec-feuille-isol%C3%A9e-citron-entier-et-demi-avec-des-feuilles-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=Ilhfen4bwWI5Xfp7A9EoxcEZ7jm_kjsTlI9eL-y-AzI=",
-  "Orange": "https://t4.ftcdn.net/jpg/00/61/19/53/360_F_61195341_rR4lMptEspj16GvOdmy0MaMznSRveh2M.jpg",
+  "Orange": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvLdCdM4vI1YyN_iYrqf4Gfj-0g2hJMzx2pg&s",
   "Mandarine": "https://media.istockphoto.com/id/504384796/fr/photo/tangerines-m%C3%BBrs-frais.jpg?s=612x612&w=0&k=20&c=h60UUnfVB6ik_cT1b8lW31nU9iynyuH72QflMCOGkVQ=",
   "Pamplemousse": "https://images.unsplash.com/photo-1577234286642-fc512a5f8f11?auto=format&fit=crop&w=150&q=80",
   "Yuzu": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW61VWxqrxj-d9wQPXbGGJG_2edgfXCMHQSw&s",
@@ -22,7 +22,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Absolu de rose": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLTHwrqP-uO_CO7OvPZcuNYixztKRLmsZ_zA&s",
   "Jasmin": "https://media.istockphoto.com/id/862596276/fr/photo/fleurs-blanches-de-jasmin-sur-fond-isol%C3%A9-blanc.jpg?s=612x612&w=0&k=20&c=1WG34C782a96vaIdndA0I5-oqXxbzcr6SviOKesI5uw=",
   "Tubéreuse": "https://www.biolandes.com/wp-content/uploads/photo-produit-F2960.jpg",
-  "Ylang-Ylang": "https://t4.ftcdn.net/jpg/00/34/90/31/360_F_34903143_mTqdY4T9w6yykmq4Bx41jiTrpoUAgpPI.jpg",
+  "Ylang-Ylang": "https://media.istockphoto.com/id/671330648/fr/photo/arbre-%C3%A0-fleurs-dylang-ylang.jpg?s=612x612&w=0&k=20&c=yluNyzZIHmg4WU--WgNB6LfZYnJOdZ_7vlI9kiVlPyY=",
   "Fleur d'Oranger": "https://lallanature.com/wp-content/uploads/2020/08/eau-de-fleur-doranger-1280x800.jpg",
   "Géranium": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1ev56SrgogQ_YfNi-0QlkLMYQrPJA1QUsrw&s",
   "Pivoine": "https://i.pinimg.com/736x/14/d6/cd/14d6cddd1fe5346d79d438e89cce0a39.jpg",

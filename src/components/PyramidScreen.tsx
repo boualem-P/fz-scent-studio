@@ -10,28 +10,25 @@ interface PyramidScreenProps {
 
 const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'VERT'];
 
-const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, hints: string }[]> = {
+const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string }[]> = {
   top: [
     { 
       id: "hesperides", 
       label: "Lumière du Matin", 
       img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", 
-      sub: "Fraîcheur & Légèreté",
-      hints: "Agrumes · Zestes · Fraîcheur vive"
+      sub: "Fraîcheur & Légèreté" 
     },
     { 
       id: "marines", 
       label: "Souffle Marin", 
       img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", 
-      sub: "Fraîcheur Océanique & Pure",
-      hints: "Embruns · Sel marin · Air iodé"
+      sub: "Fraîcheur Océanique & Pure" 
     },
     { 
       id: "fruitees", 
       label: "Douceur Fruitée", 
-      img: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?q=80&w=400", 
-      sub: "Léger & Pétillant",
-      hints: "Fruits frais · Baies · Nectars"
+      img: "https://static.vecteezy.com/system/resources/thumbnails/053/277/426/small/spring-fruit-scene-designed-to-integrate-seamlessly-with-your-text-or-graphics-photo.jpeg", 
+      sub: "Léger & Pétillant" 
     }
   ],
   heart: [
@@ -39,22 +36,19 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       id: "florales", 
       label: "Jardin Secret", 
       img: "https://img.freepik.com/photos-premium/jardin-banc-fleurs-dans-herbe_1022944-31664.jpg", 
-      sub: "Floral & Délicat",
-      hints: "Fleurs blanches · Pétales · Rosée"
+      sub: "Floral & Délicat" 
     },
     { 
       id: "epicees", 
       label: "Nuit Précieuse", 
       img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=400", 
-      sub: "Intense & Mystérieux",
-      hints: "Épices chaudes · Résines · Fumée"
+      sub: "Intense & Mystérieux" 
     },
     { 
       id: "musquees", 
       label: "Chaleur Dorée", 
-      img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=400", 
-      sub: "Ambré & Enveloppant",
-      hints: "Musc · Ambre · Poudre dorée"
+      img: "https://png.pngtree.com/thumb_back/fh260/background/20241017/pngtree-heavenly-stairs-leading-to-the-golden-gates-of-heaven-image_16409825.jpg", 
+      sub: "Ambré & Enveloppant" 
     }
   ],
   base: [
@@ -62,15 +56,13 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       id: "boisees", 
       label: "Bois Sacré", 
       img: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=400", 
-      sub: "Chaleureux & Profond",
-      hints: "Bois nobles · Mousse · Racines"
+      sub: "Chaleureux & Profond" 
     },
     { 
       id: "gourmandes", 
       label: "Secret Sucré", 
       img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS3Ep3wqjOI04sfMmjIifqwGl-xq6UjhTlZg&s", 
-      sub: "Sensuel & Enveloppant",
-      hints: "Vanille · Miel · Douceurs chaudes"
+      sub: "Sensuel & Enveloppant" 
     }
   ]
 };

@@ -153,7 +153,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
     <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
       <AnimatePresence mode="wait">
 
-        {/* LOADER DE TRANSITION */}
+        {/* LOADER */}
         {isAnalyzing ? (
           <motion.div
             key="loader"
@@ -183,7 +183,7 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
 
         ) : screen === 'swipe' ? (
 
-          /* ÉCRAN SWIPE — 8 CARTES */
+          /* ÉCRAN SWIPE */
           <motion.div
             key="swipe-container"
             initial={{ opacity: 0 }}
@@ -195,7 +195,9 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
               Affinez vos désirs
             </h2>
 
-            <div className="relative w-full aspect-[3/4.2] mb-12 flex items-center justify-center">
+            <div className="relative w-full mb-12" style={{ height: '520px' }}>
+
+              {/* ICONES GAUCHE / DROITE */}
               <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
                 <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg">
                   <Frown size={48} strokeWidth={1.5} />
@@ -220,43 +222,41 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                   animate={{ x: 0, scale: 1, opacity: 1 }}
                   exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10"
+                  className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10 flex flex-col"
                 >
-                  <div className="w-full h-full flex flex-col pointer-events-none">
-
-                    {/* PARTIE IMAGE — 60% */}
+                  {/* IMAGE — 55% */}
+                  <div className="w-full flex-shrink-0" style={{ height: '55%' }}>
                     <img
                       src={currentNote.img}
-                      className="w-full object-cover"
-                      style={{ height: '60%' }}
+                      className="w-full h-full object-cover"
                     />
+                  </div>
 
-                    {/* PARTIE TEXTE — 40% */}
-                    <div className="px-6 pt-4 pb-3 text-center bg-white flex flex-col justify-center gap-1" style={{ height: '40%' }}>
-                      
-                      {/* TITRE */}
-                      <h3 className="text-xl font-light text-black uppercase tracking-tighter leading-tight">
-                        {currentNote.label}
-                      </h3>
+                  {/* TEXTE — 45% */}
+                  <div className="w-full flex-1 px-5 py-4 text-center bg-white flex flex-col items-center justify-center gap-2 pointer-events-none">
 
-                      {/* SOUS-TITRE */}
-                      <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">
-                        {currentNote.sub}
-                      </p>
+                    {/* TITRE */}
+                    <h3 className="text-lg font-semibold text-black uppercase tracking-tight leading-tight">
+                      {currentNote.label}
+                    </h3>
 
-                      {/* SÉPARATEUR DORÉ */}
-                      <div className="flex items-center justify-center gap-2 my-1">
-                        <div className="h-[1px] w-8 bg-amber-400/40" />
-                        <div className="w-1 h-1 rounded-full bg-amber-400/60" />
-                        <div className="h-[1px] w-8 bg-amber-400/40" />
-                      </div>
+                    {/* SOUS-TITRE */}
+                    <p className="text-amber-500 text-[11px] font-bold uppercase tracking-widest">
+                      {currentNote.sub}
+                    </p>
 
-                      {/* HINTS OLFACTIFS */}
-                      <p className="text-zinc-400 text-[9px] font-medium tracking-[0.15em] uppercase leading-relaxed">
-                        {currentNote.hints}
-                      </p>
-
+                    {/* SÉPARATEUR */}
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="h-[1px] w-10 bg-amber-400/50" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
+                      <div className="h-[1px] w-10 bg-amber-400/50" />
                     </div>
+
+                    {/* HINTS */}
+                    <p className="text-zinc-500 text-[10px] font-medium tracking-[0.12em] uppercase">
+                      {currentNote.hints}
+                    </p>
+
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -375,15 +375,3 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
 };
 
 export default PyramidScreen;
-```
-
----
-
-## Ce qui a changé dans la partie texte :
-```
-AVANT                          APRÈS
-──────────────────────         ──────────────────────
-  LUMIÈRE DU MATIN    →          LUMIÈRE DU MATIN      ← remonté
-  Fraîcheur & Légèreté →         Fraîcheur & Légèreté  ← remonté
-                                 ── ● ──               ← séparateur doré
-                                 Agrumes · Zestes · Fraîcheur vive ← hints ✨

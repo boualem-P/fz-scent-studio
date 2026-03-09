@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { NOTES_IMAGES } from "@/data/notesData";
+import { NOTES_IMAGES, getNoteImage } from "@/data/notesData";
 import NoteZoomModal from "@/components/NoteZoomModal";
 import { staggerContainer, staggerItem } from "@/lib/animations";
 
@@ -9,57 +9,92 @@ interface NotesDiagnosticProps {
   onBack: () => void;
 }
 
-// Categories extracted from notesData.ts comment structure
-const CATEGORIES: { label: string; keys: string[] }[] = [
+/**
+ * Catégories dérivées dynamiquement : chaque catégorie définit un test
+ * d'appartenance. Toute clé de NOTES_IMAGES non classée tombe dans "Autres".
+ */
+const CATEGORY_RULES: { label: string; test: (key: string) => boolean }[] = [
   {
     label: "Hespéridés",
-    keys: ["Bergamote", "Citron", "Orange", "Mandarine", "Pamplemousse", "Yuzu", "Verveine", "Néroli"],
+    test: (k) =>
+      /bergamote|citron|orange|mandarine|pamplemousse|yuzu|verveine|néroli|bigarade/i.test(k),
   },
   {
     label: "Florales",
-    keys: ["Rose", "Jasmin", "Tubéreuse", "Ylang-Ylang", "Fleur d'Oranger", "Géranium", "Pivoine", "Iris", "Violette", "Mimosa", "Lavande", "Fleur de Tabac"],
+    test: (k) =>
+      /rose|absolu de rose|jasmin|tubéreuse|ylang|fleur d'oranger|géranium|pivoine|iris|violette|mimosa|lavande|fleur de tabac|pétales|héliotrope/i.test(k),
   },
   {
     label: "Épicées",
-    keys: ["Poivre", "Poivre Rose", "Poivre de Sichuan", "Gingembre", "Cardamome", "Cannelle", "Clou de Girofle", "Muscade", "Safran", "Baies de Genièvre", "Épices"],
+    test: (k) =>
+      /poivre|gingembre|cardamome|cannelle|clou de girofle|muscade|safran|baies de genièvre|épices|carvi|coriandre|baies roses/i.test(k),
   },
   {
     label: "Aromatiques",
-    keys: ["Menthe", "Basilic", "Romarin", "Thym", "Eucalyptus", "Sauge"],
+    test: (k) => /menthe|basilic|romarin|thym|eucalyptus|sauge/i.test(k),
   },
   {
     label: "Boisées",
-    keys: ["Santal", "Cèdre", "Patchouli", "Vétiver", "Gaïac", "Oud", "Bouleau", "Palissandre"],
+    test: (k) =>
+      /santal|cèdre|patchouli|vétiver|gaïac|oud|bouleau|palissandre|bois de cachemire|bois ambrés/i.test(k),
   },
   {
     label: "Ambrées & Résines",
-    keys: ["Ambre", "Ambre gris", "Encens", "Myrrhe", "Benjoin", "Labdanum"],
+    test: (k) =>
+      /ambre|encens|myrrhe|benjoin|labdanum|ciste|opoponax|styrax/i.test(k),
   },
   {
     label: "Gourmandes",
-    keys: ["Vanille", "Fève Tonka", "Tonka", "Caramel", "Chocolat", "Cacao", "Praliné", "Miel", "Café", "Coumarine"],
+    test: (k) =>
+      /vanille|fève tonka|tonka|caramel|chocolat|cacao|praliné|miel|café|coumarine|infusion de vanille|sucre roux/i.test(k),
   },
   {
     label: "Fruitées",
-    keys: ["Pomme", "Pomme verte", "Poire", "Bourgeon de Cassis", "Fraise", "Framboise", "Mûre", "Mangue", "Ananas", "Pêche", "Abricot"],
+    test: (k) =>
+      /pomme|poire|cassis|fraise|framboise|mûre|mangue|ananas|pêche|abricot|nectar|lait de coco/i.test(k),
   },
   {
     label: "Marines / Aquatiques",
-    keys: ["Iode", "Algues", "Lotus", "Concombre", "Calone", "Aldéhydes"],
+    test: (k) =>
+      /iode|marine|marin|algues|lotus|concombre|calone|aldéhydes/i.test(k),
   },
   {
     label: "Vertes",
-    keys: ["Feuille de violette", "Herbe coupée", "Galbanum"],
+    test: (k) => /feuille de violette|herbe coupée|galbanum|notes vertes/i.test(k),
   },
   {
     label: "Musquées & Cuirées",
-    keys: ["Musc", "Musc blanc", "Cuir", "Civette", "Tabac"],
+    test: (k) => /musc|cuir|civette|tabac|notes poudrées/i.test(k),
   },
   {
     label: "Mousses",
-    keys: ["Mousse de Chêne"],
+    test: (k) => /mousse/i.test(k),
   },
 ];
+
+function buildDynamicCategories(): { label: string; keys: string[] }[] {
+  const allKeys = Object.keys(NOTES_IMAGES);
+  const assigned = new Set<string>();
+  const result: { label: string; keys: string[] }[] = [];
+
+  for (const rule of CATEGORY_RULES) {
+    const matched = allKeys.filter((k) => !assigned.has(k) && rule.test(k));
+    if (matched.length > 0) {
+      result.push({ label: rule.label, keys: matched });
+      matched.forEach((k) => assigned.add(k));
+    }
+  }
+
+  // Catch-all for uncategorized notes
+  const remaining = allKeys.filter((k) => !assigned.has(k));
+  if (remaining.length > 0) {
+    result.push({ label: "Autres", keys: remaining });
+  }
+
+  return result;
+}
+
+const CATEGORIES = buildDynamicCategories();
 
 const NoteCard = ({ name, url, onZoom }: { name: string; url: string; onZoom: () => void }) => {
   const [broken, setBroken] = useState(false);
@@ -138,8 +173,8 @@ const NotesDiagnostic = ({ onBack }: NotesDiagnosticProps) => {
                 <NoteCard
                   key={key}
                   name={key}
-                  url={NOTES_IMAGES[key] || ""}
-                  onZoom={() => setZoomedNote({ name: key, image: NOTES_IMAGES[key] || "" })}
+                  url={getNoteImage(key)}
+                  onZoom={() => setZoomedNote({ name: key, image: getNoteImage(key) })}
                 />
               ))}
             </motion.div>

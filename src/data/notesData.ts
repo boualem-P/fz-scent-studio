@@ -32,7 +32,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Lavande": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGB63vsr4DISXdsVRM8z4ZSgKdEW4SRJWkew&s",
   "Fleur de Tabac": "https://pensezsauvage.org/IMG/jpg/semences_de_tabac_aile_bio.jpg",
   "Pétales de fleurs": "https://img.pikbest.com/origin/09/39/67/368pIkbEsTytN.png!w700wp",
-  "Héliotrope": "https://images.unsplash.com/photo-1518882605630-8eb328eb69f1?q=80&w=300&auto=format",
+  "Héliotrope": "https://media.istockphoto.com/id/1743304873/fr/photo/fleurs-dh%C3%A9liotrope.jpg?s=612x612&w=0&k=20&c=65p2ASsuECr7-2yNei-ZB0lx5E_CCK-iO71vmPhDqyI=",
 
   // ─── SPICES ──────────────────────────────────────────
   "Poivre": "https://thumbs.dreamstime.com/b/tas-frais%C3%A9-ou-moulu-de-poivre-noir-d-isolement-sur-le-fond-blanc-front-view-143209481.jpg",
@@ -49,7 +49,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Baies de Genièvre": "https://thumbs.dreamstime.com/b/baies-de-gen%C3%A9vrier-d-isolement-56630956.jpg",
   "Épices": "https://www.mgc-prevention.fr/wp-content/uploads/2016/10/epices_592527149.jpg",
   "Carvi": "https://png.pngtree.com/thumb_back/fh260/background/20240614/pngtree-cumin-seeds-pile-of-cumin-seeds-or-caraway-isolated-on-white-image_15754366.jpg",
-  "Coriandre": "https://images.unsplash.com/photo-1588877329975-b44a106e503d?q=80&w=300&auto=format",
+  "Coriandre": "https://png.pngtree.com/thumb_back/fh260/background/20250602/pngtree-fresh-cilantro-leaves-arranged-on-a-white-background-vibrant-healthy-image-image_17363948.jpg",
 
   // ─── AROMATICS ───────────────────────────────────────
   "Menthe": "https://media.istockphoto.com/id/935393534/fr/photo/feuilles-de-menthe-fra%C3%AEche-isol%C3%A9s-sur-fond-blanc-menthe-menthe-poivr%C3%A9e-bouchent-n.jpg?s=612x612&w=0&k=20&c=faMcrD1M5Wp-wkBbjA9doe6X9BvzSfj1NluS7xN8Lfk=",
@@ -78,16 +78,16 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Myrrhe": "https://media.istockphoto.com/id/1409930753/fr/photo/r%C3%A9sine-de-myrrhe-isol%C3%A9e-sur-fond-blanc-pile-de-commiphora-myrrha-naturel-opoponax-de-myrrhe.jpg?s=612x612&w=0&k=20&c=aBq4IsCJTbKOp1_VG9wBgPd0BHSzbXgRHigW3SMYJYA=",
   "Benjoin": "https://media.istockphoto.com/id/596390248/fr/photo/loban-biologique.jpg?s=612x612&w=0&k=20&c=mCxUhbqCopoTYQrFVAM4wBgTCcD-tM3-Om0kPsIG4HQ=",
   "Labdanum": "https://t4.ftcdn.net/jpg/05/18/61/03/360_F_518610333_hdSPiHAQf3QEJXz0RRprSWdsmFi54Wa8.jpg",
-  "Ciste": "https://images.unsplash.com/photo-1635943051862-97230495861b?q=80&w=300&auto=format",
-  "Ciste Labdanum": "https://images.unsplash.com/photo-1635943051862-97230495861b?q=80&w=300&auto=format",
+  "Ciste": "https://img.freepik.com/photos-gratuite/balloon-campanulaceae-flower_1388-41.jpg?semt=ais_hybrid&w=740&q=80",
+  "Ciste Labdanum": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzBROkRoC0ygFain9Brsz_t_1AcdFFywhgyQ&s",
   "Ambre kétal": "https://www.shutterstock.com/image-illustration/amber-mixed-transparent-crystals-3d-600nw-2512558977.jpg",
-  "Opoponax": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=300&auto=format",
-  "Styrax": "https://images.unsplash.com/photo-1541448554466-93aa8039e145?q=80&w=300&auto=format",
-  "Ambre rouge": "https://images.unsplash.com/photo-1583445095369-9c651e7e5d30?q=80&w=300&auto=format",
+  "Opoponax": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkMah0OIiKEXQItttBt4T3vNsNHwxA_m3WUQ&s",
+  "Styrax": "https://media.istockphoto.com/id/1328112394/fr/photo/fleur-blanche-du-storax-japonais.jpg?s=612x612&w=0&k=20&c=Sl8-3Cj9m8vP0hPzVq-Af_VBO0KCjKPaK2sVT6s8M58=",
+  "Ambre rouge": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_E_HqT8r7GH1VSr9k34cPf-m4j8rZ6I1n5w&s",
 
   // ─── GOURMAND (Ajouts: Vanille Noire...) ─────────────
   "Vanille": "https://media.istockphoto.com/id/1090972218/fr/photo/s%C3%A9cher-les-fruits-vanille-et-orchid%C3%A9e-vanille.jpg?s=612x612&w=0&k=20&c=ef1UsOrrByG41Fo8lHO0XIqOEkEDcfRfodFduAVwZZw=",
-  "Vanille noire": "https://images.unsplash.com/photo-1509358740172-675d78e7293d?q=80&w=300&auto=format",
+  "Vanille noire": "https://myspicesland.com/wp-content/uploads/2025/09/VANILLE-POMPONA-NOIRE3-1-scaled.jpg",
   "Fève Tonka": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvHvB5Lqd4ZkAgh__-H5QAlpQCVjcuotFtvw&s",
   "Tonka": "https://t4.ftcdn.net/jpg/17/54/89/81/360_F_1754898160_roXxgZqwXTnerzjHd50qqjwizlkHFVvx.jpg",
   "Caramel": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9WLP16T6JjklrvODAvgaa95R74oevMgMJMg&s",
@@ -98,7 +98,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Café": "https://thumbs.dreamstime.com/b/granos-de-caf%C3%A9-tostados-en-fondo-r%C3%BAstico-texturado-fotograf%C3%ADa-alta-resoluci%C3%B3n-cierre-asados-esparcidos-una-superficie-c%C3%A1lida-393023802.jpg",
   "Coumarine": "https://media.istockphoto.com/id/1217356340/photo/fragrant-tonka-beans-for-baking-and-cooking-on-dark-background.jpg?s=612x612&w=0&k=20&c=gD4lAi1xe9AP49GspdYKDDXVy9NN495Aa_61fxixp14=",
   "Infusion de vanille": "https://www.prova.fr/wp-content/uploads/2023/07/Infusion-Vanille_Plan-de-travail-1-copie-1000x1000.png",
-  "Sucre roux": "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?q=80&w=300&auto=format",
+  "Sucre roux": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4LXH_Z2a7bBmEYhRQZ1C92cj_tCMrvxFKKg&s",
 
   // ─── FRUITS ──────────────────────────────────────────
   "Pomme": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGlhJ9z_OYQIPCAKKd--_EpLf7EbkD4-vdyg&s",
@@ -117,9 +117,9 @@ export const NOTES_IMAGES: Record<string, string> = {
 
   // ─── MARINE / AQUATIC ────────────────────────────────
   "Iode": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPjUpaMZHPVJZntJ-dxDBEcRQoC86LbQItIg&s",
-  "Notes marines": "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=300&auto=format",
-  "Note marine": "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=300&auto=format",
-  "Accord marin": "https://images.unsplash.com/photo-1518413033454-1c393e204969?q=80&w=300&auto=format",
+  "Notes marines": "https://api-assets.wikiparfum.com/_resized/1fcvyygroqvmwm0yc00nfds7b6l0cwvwe88kd5tny77gu9urat7c42np3hum-w1000-q85.jpg",
+  "Note marine": "https://www.olfastory.com/sites/default/files/styles/400x400/public/note-marine.jpg?itok=JGdyt73f",
+  "Accord marin": "https://dw5gv07eh08co.cloudfront.net/media/perfumes/thumb/EaudeMer_thumbnail.jpg",
   "Algues": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVKBHTrGGG4Z4nYID8BT6d38m4w_gcipbuQQ&s",
   "Lotus": "https://img.freepik.com/photos-premium/belle-fleur-lotus-surface-etang_38535-73.jpg",
   "Concombre": "https://thumbs.dreamstime.com/b/blanc-de-concombre-8624699.jpg",
@@ -131,14 +131,14 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Herbe coupée": "https://img.freepik.com/photos-gratuite/beaux-champs-ble-vert-ukraine-pousses-ble-vert-dans-champ-gros-plan-protection-ecologie-du-concept-explorez-beaute-du-monde_169016-15540.jpg?semt=ais_hybrid&w=740&q=80",
   "Galbanum": "https://png.pngtree.com/thumb_back/fh260/background/20231010/pngtree-lush-green-grass-field-a-captivating-background-with-vibrant-patterns-and-image_13628310.png",
   "Notes vertes": "https://carrementbelle.com/blog/wp-content/uploads/2020/12/notes-vertes-parfum.jpg",
-  "Notes poudrées": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=300&auto=format",
+  "Notes poudrées": "https://www.olfastory.com/sites/default/files/styles/400x400/public/notes-poudrees.jpg?itok=J6TKpmpN",
 
   // ─── MUSK & LEATHER ──────────────────────────────────
   "Musc": "https://media.istockphoto.com/id/1389488308/fr/photo/grandes-fleurs-de-mauve-musqu%C3%A9e.jpg?s=612x612&w=0&k=20&c=YZVQ1v3Heq5HJ-yedH9lxGRlLIaiuMMRt5aOvGh_SQs=",
   "Musc blanc": "https://media.istockphoto.com/id/864520024/fr/photo/ambrette.jpg?s=612x612&w=0&k=20&c=zyDN8G993yiByT_BQCo0KIUGCUQTUXer7hEvx4PcERI=",
   "Muscs blancs": "https://media.istockphoto.com/id/864520024/fr/photo/ambrette.jpg?s=612x612&w=0&k=20&c=zyDN8G993yiByT_BQCo0KIUGCUQTUXer7hEvx4PcERI=",
   "Cuir": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdoJIex_fU14J9ospvHmjeTTpG_-6Xjq5Gvw&s",
-  "Accord de cuir": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=300&q=80",
+  "Accord de cuir": "https://img.pikbest.com/wp/202344/black-leather-texture-detailed-close-up-of-ideal-background-image_9935682.jpg!w700wp",
   "Civette": "https://media.istockphoto.com/id/1436739435/fr/photo/ciboulette-%C3%A0-lail-isol%C3%A9e-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=aWkf5GodH7PtdV5q8AOVvbyalB4hiHAzID4hoNhZY3k=",
   "Tabac": "https://img.pikbest.com/ai/illus_our/20230427/798052d67767baa5e01d539c36e38154.jpg!w700wp",
 

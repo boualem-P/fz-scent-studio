@@ -216,10 +216,14 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10 flex flex-col"
                 >
+                  {/* Couche invisible de capture du drag */}
+                  <div className="absolute inset-0 z-50 touch-none" />
+
                   {/* IMAGE — 55% */}
-                  <div className="w-full flex-shrink-0" style={{ height: '55%' }}>
+                  <div className="w-full flex-shrink-0 pointer-events-none" style={{ height: '55%' }}>
                     <img
                       src={currentNote.img}
+                      draggable="false"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -243,11 +247,6 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                       <div className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
                       <div className="h-[1px] w-10 bg-amber-400/50" />
                     </div>
-
-                    {/* HINTS */}
-                    <p className="text-zinc-500 text-[10px] font-medium tracking-[0.12em] uppercase">
-                      {currentNote.hints}
-                    </p>
 
                   </div>
                 </motion.div>

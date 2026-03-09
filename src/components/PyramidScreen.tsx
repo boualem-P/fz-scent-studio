@@ -10,25 +10,28 @@ interface PyramidScreenProps {
 
 const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'VERT'];
 
-const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string }[]> = {
+const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, hints: string }[]> = {
   top: [
     { 
       id: "hesperides", 
       label: "Lumière du Matin", 
       img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", 
-      sub: "Fraîcheur & Légèreté" 
+      sub: "Fraîcheur & Légèreté",
+      hints: "Agrumes · Zestes · Fraîcheur vive"
     },
     { 
       id: "marines", 
       label: "Souffle Marin", 
       img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", 
-      sub: "Fraîcheur Océanique & Pure" 
+      sub: "Fraîcheur Océanique & Pure",
+      hints: "Embruns · Sel marin · Air iodé"
     },
     { 
       id: "fruitees", 
       label: "Douceur Fruitée", 
-      img: "https://static.vecteezy.com/system/resources/thumbnails/053/277/426/small/spring-fruit-scene-designed-to-integrate-seamlessly-with-your-text-or-graphics-photo.jpeg", 
-      sub: "Léger & Pétillant" 
+      img: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?q=80&w=400", 
+      sub: "Léger & Pétillant",
+      hints: "Fruits frais · Baies · Nectars"
     }
   ],
   heart: [
@@ -36,19 +39,22 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       id: "florales", 
       label: "Jardin Secret", 
       img: "https://img.freepik.com/photos-premium/jardin-banc-fleurs-dans-herbe_1022944-31664.jpg", 
-      sub: "Floral & Délicat" 
+      sub: "Floral & Délicat",
+      hints: "Fleurs blanches · Pétales · Rosée"
     },
     { 
       id: "epicees", 
       label: "Nuit Précieuse", 
       img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=400", 
-      sub: "Intense & Mystérieux" 
+      sub: "Intense & Mystérieux",
+      hints: "Épices chaudes · Résines · Fumée"
     },
     { 
       id: "musquees", 
       label: "Chaleur Dorée", 
-      img: "https://png.pngtree.com/thumb_back/fh260/background/20241017/pngtree-heavenly-stairs-leading-to-the-golden-gates-of-heaven-image_16409825.jpg", 
-      sub: "Ambré & Enveloppant" 
+      img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=400", 
+      sub: "Ambré & Enveloppant",
+      hints: "Musc · Ambre · Poudre dorée"
     }
   ],
   base: [
@@ -56,13 +62,15 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       id: "boisees", 
       label: "Bois Sacré", 
       img: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=400", 
-      sub: "Chaleureux & Profond" 
+      sub: "Chaleureux & Profond",
+      hints: "Bois nobles · Mousse · Racines"
     },
     { 
       id: "gourmandes", 
       label: "Secret Sucré", 
       img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS3Ep3wqjOI04sfMmjIifqwGl-xq6UjhTlZg&s", 
-      sub: "Sensuel & Enveloppant" 
+      sub: "Sensuel & Enveloppant",
+      hints: "Vanille · Miel · Douceurs chaudes"
     }
   ]
 };
@@ -215,14 +223,39 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
                   className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10"
                 >
                   <div className="w-full h-full flex flex-col pointer-events-none">
-                    <img src={currentNote.img} className="w-full h-2/3 object-cover" />
-                    <div className="p-8 text-center bg-white h-1/3 flex flex-col justify-center">
-                      <h3 className="text-2xl font-light text-black mb-1 uppercase tracking-tighter">
+
+                    {/* PARTIE IMAGE — 60% */}
+                    <img
+                      src={currentNote.img}
+                      className="w-full object-cover"
+                      style={{ height: '60%' }}
+                    />
+
+                    {/* PARTIE TEXTE — 40% */}
+                    <div className="px-6 pt-4 pb-3 text-center bg-white flex flex-col justify-center gap-1" style={{ height: '40%' }}>
+                      
+                      {/* TITRE */}
+                      <h3 className="text-xl font-light text-black uppercase tracking-tighter leading-tight">
                         {currentNote.label}
                       </h3>
+
+                      {/* SOUS-TITRE */}
                       <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">
                         {currentNote.sub}
                       </p>
+
+                      {/* SÉPARATEUR DORÉ */}
+                      <div className="flex items-center justify-center gap-2 my-1">
+                        <div className="h-[1px] w-8 bg-amber-400/40" />
+                        <div className="w-1 h-1 rounded-full bg-amber-400/60" />
+                        <div className="h-[1px] w-8 bg-amber-400/40" />
+                      </div>
+
+                      {/* HINTS OLFACTIFS */}
+                      <p className="text-zinc-400 text-[9px] font-medium tracking-[0.15em] uppercase leading-relaxed">
+                        {currentNote.hints}
+                      </p>
+
                     </div>
                   </div>
                 </motion.div>
@@ -342,3 +375,15 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
 };
 
 export default PyramidScreen;
+```
+
+---
+
+## Ce qui a changé dans la partie texte :
+```
+AVANT                          APRÈS
+──────────────────────         ──────────────────────
+  LUMIÈRE DU MATIN    →          LUMIÈRE DU MATIN      ← remonté
+  Fraîcheur & Légèreté →         Fraîcheur & Légèreté  ← remonté
+                                 ── ● ──               ← séparateur doré
+                                 Agrumes · Zestes · Fraîcheur vive ← hints ✨

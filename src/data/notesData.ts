@@ -117,7 +117,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Feuille de violette": "https://thumbs.dreamstime.com/b/feuille-violette-brillante-violet-brillant-illustration-papier-teintes-contraste-feuilles-vertes-image-ai-g%C3%A9n%C3%A9r%C3%A9-321263383.jpg",
   "Herbe coupée": "https://img.freepik.com/photos-gratuite/beaux-champs-ble-vert-ukraine-pousses-ble-vert-dans-champ-gros-plan-protection-ecologie-du-concept-explorez-beaute-du-monde_169016-15540.jpg?semt=ais_hybrid&w=740&q=80",
   "Galbanum": "https://png.pngtree.com/thumb_back/fh260/background/20231010/pngtree-lush-green-grass-field-a-captivating-background-with-vibrant-patterns-and-image_13628310.png",
-  "Notes vertes": "https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=300&q=80",
+  "Notes vertes": "https://carrementbelle.com/blog/wp-content/uploads/2020/12/notes-vertes-parfum.jpg",
 
   // ─── MUSK & LEATHER ──────────────────────────────────
   "Musc": "https://media.istockphoto.com/id/1389488308/fr/photo/grandes-fleurs-de-mauve-musqu%C3%A9e.jpg?s=612x612&w=0&k=20&c=YZVQ1v3Heq5HJ-yedH9lxGRlLIaiuMMRt5aOvGh_SQs=",

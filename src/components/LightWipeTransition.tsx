@@ -14,6 +14,8 @@ interface Particle {
   delay: number;
   opacity: number;
   blur: number;
+  driftX: number;
+  rotate: number;
 }
 
 const LightWipeTransition = ({ isVisible, onComplete }: LightWipeTransitionProps) => {
@@ -21,8 +23,7 @@ const LightWipeTransition = ({ isVisible, onComplete }: LightWipeTransitionProps
 
   useEffect(() => {
     if (isVisible) {
-      // Génère 60 particules aléatoires
-      const generated = Array.from({ length: 60 }, (_, i) => ({
+      const generated: Particle[] = Array.from({ length: 60 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         size: Math.random() * 6 + 2,
@@ -30,6 +31,8 @@ const LightWipeTransition = ({ isVisible, onComplete }: LightWipeTransitionProps
         delay: Math.random() * 0.6,
         opacity: Math.random() * 0.7 + 0.3,
         blur: Math.random() * 2,
+        driftX: (Math.random() - 0.5) * 40,
+        rotate: Math.random() * 360,
       }));
       setParticles(generated);
     }
@@ -56,26 +59,26 @@ const LightWipeTransition = ({ isVisible, onComplete }: LightWipeTransitionProps
             transition={{ duration: 1.4, ease: "easeInOut" }}
           />
 
-          {/* Particules dorées */}
+          {/* Particules dorées — valeurs fixes depuis le state */}
           {particles.map((p) => (
             <motion.div
               key={p.id}
               className="absolute rounded-full"
               style={{
                 left: `${p.x}%`,
+                top: "-10px",
                 width: p.size,
                 height: p.size,
                 background: `radial-gradient(circle, rgba(255,215,0,${p.opacity}) 0%, rgba(245,158,11,${p.opacity * 0.6}) 50%, transparent 100%)`,
                 filter: `blur(${p.blur}px)`,
                 boxShadow: `0 0 ${p.size * 2}px rgba(245,158,11,0.6)`,
-                top: "-10px",
               }}
               initial={{ y: -20, opacity: 0 }}
               animate={{
                 y: ["0vh", "110vh"],
                 opacity: [0, p.opacity, p.opacity, 0],
-                x: [0, (Math.random() - 0.5) * 40],
-                rotate: [0, Math.random() * 360],
+                x: [0, p.driftX],
+                rotate: [0, p.rotate],
               }}
               transition={{
                 duration: p.duration,
@@ -85,7 +88,7 @@ const LightWipeTransition = ({ isVisible, onComplete }: LightWipeTransitionProps
             />
           ))}
 
-          {/* Ligne horizontale dorée qui descend */}
+          {/* Ligne lumineuse qui descend */}
           <motion.div
             className="absolute left-0 right-0 h-[1px]"
             style={{
@@ -97,7 +100,7 @@ const LightWipeTransition = ({ isVisible, onComplete }: LightWipeTransitionProps
             transition={{ duration: 1.2, ease: "easeInOut", delay: 0.1 }}
           />
 
-          {/* Texte luxe central */}
+          {/* Texte central luxe */}
           <motion.div
             className="absolute inset-0 flex items-center justify-center"
             initial={{ opacity: 0, scale: 0.95 }}
@@ -108,6 +111,7 @@ const LightWipeTransition = ({ isVisible, onComplete }: LightWipeTransitionProps
               Votre essence vous attend...
             </p>
           </motion.div>
+
         </motion.div>
       )}
     </AnimatePresence>
@@ -115,23 +119,3 @@ const LightWipeTransition = ({ isVisible, onComplete }: LightWipeTransitionProps
 };
 
 export default LightWipeTransition;
-```
-
----
-
-## Fichier 2 — `index.tsx` reste **identique** 
-
-Bonne nouvelle — pas besoin de modifier `index.tsx` ! Le composant `LightWipeTransition` est déjà intégré avec le bon `showWipe` state depuis la dernière version. ✅
-
----
-
-## Résultat 🎬
-```
-Clic HOMME ou FEMME
-       ↓
-Écran noir
-60 particules dorées tombent (~1.2s)
-Ligne lumineuse descend
-"Votre essence vous attend..."
-       ↓
-Cartes interactives apparaissent

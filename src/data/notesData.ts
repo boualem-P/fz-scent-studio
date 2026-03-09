@@ -37,7 +37,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   // ─── SPICES ──────────────────────────────────────────
   "Poivre": "https://thumbs.dreamstime.com/b/tas-frais%C3%A9-ou-moulu-de-poivre-noir-d-isolement-sur-le-fond-blanc-front-view-143209481.jpg",
   "Poivre Rose": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy68QcnTdnE0gdP-PDGwPZNKArSN386GfYMA&s",
-  "Baies roses": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy68QcnTdnE0gdP-PDGwPZNKArSN386GfYMA&s",
+  "Baies roses": "https://media.istockphoto.com/id/2158605314/fr/photo/grains-de-poivre-rose-frais-sur-branche-isol%C3%A9e-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=RHcHVLiYvrZdA52PqUBfpvim9xqcFmecNaGn8e9Nvcs=",
   "Poivre noir": "https://www.consoglobe.com/wp-content/uploads/2016/09/poivre-noir_shutterstock_1013574415.jpg",
   "Poivre de Sichuan": "https://static.wixstatic.com/media/7c0cb6_5c38eb946e64411eb66f5c73a33415e3~mv2.jpg/v1/fill/w_560,h_560,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/7c0cb6_5c38eb946e64411eb66f5c73a33415e3~mv2.jpg",
   "Gingembre": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlJtMdQmJ2JFlcmdsalxqNg7vzSS1DEj1XvA&s",

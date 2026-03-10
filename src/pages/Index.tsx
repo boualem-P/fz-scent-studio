@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Library, ArrowLeft } from "lucide-react";
 import ProfileSheet from "@/components/ProfileSheet";
@@ -9,10 +9,21 @@ import CatalogueScreen from "@/components/CatalogueScreen";
 import AnalyzingLoader from "@/components/AnalyzingLoader";
 import GoldenRain from "@/components/GoldenRain";
 import PerfumePage from "@/components/PerfumePage"; 
-import { Gender, NoteCategory, matchPerfumes, Perfume } from "@/data/perfumes";
+import { Gender, NoteCategory, matchPerfumes, Perfume, perfumes } from "@/data/perfumes"; // Ajout de l'import 'perfumes'
 import LightWipeTransition from "@/components/LightWipeTransition";
 
 type ScreenType = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
+
+// ✨ NOUVEAU — Fonction d'extraction exhaustive pour synchroniser les boutons avec la database
+const getAllDatabaseNotes = (perfumesList: Perfume[]) => {
+  const notesSet = new Set<string>();
+  perfumesList.forEach(perfume => {
+    if (perfume.notes?.top) perfume.notes.top.forEach(n => notesSet.add(n));
+    if (perfume.notes?.middle) perfume.notes.middle.forEach(n => notesSet.add(n));
+    if (perfume.notes?.base) perfume.notes.base.forEach(n => notesSet.add(n));
+  });
+  return Array.from(notesSet).sort((a, b) => a.localeCompare(b));
+};
 
 const Index = () => {
   const [screen, setScreen] = useState<ScreenType>("landing");
@@ -20,15 +31,14 @@ const Index = () => {
   const [gender, setGender] = useState<Gender>("homme");
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
-
-  // ✨ NOUVEAU — State pour la vague de lumière
   const [showWipe, setShowWipe] = useState(false);
 
-  // 1. FONCTION DE NAVIGATION MISE À JOUR
+  // ✨ NOUVEAU — On génère la liste des notes une seule fois pour toute l'app
+  const availableNotes = useMemo(() => getAllDatabaseNotes(perfumes), []);
+
   const navigateTo = (nextScreen: ScreenType) => {
     if (nextScreen === screen) return;
 
-    // Déclenche la vague uniquement landing → pyramid
     if (screen === "landing" && nextScreen === "pyramid") {
       setShowWipe(true);
       setTimeout(() => {
@@ -41,7 +51,6 @@ const Index = () => {
     }
   };
 
-  // 2. LOGIQUE DE RETOUR BLINDÉE (inchangée)
   const handleBack = () => {
     if (selectedPerfume) {
       setSelectedPerfume(null);
@@ -75,7 +84,6 @@ const Index = () => {
   const handleValidate = useCallback((top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[]) => {
     const matches = matchPerfumes(gender, top, heart, base);
     setResults(matches);
-    
     navigateTo("analyzing");
     
     setTimeout(() => {
@@ -90,18 +98,15 @@ const Index = () => {
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
       
-      {/* Fond de particules */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
 
-      {/* ✨ VAGUE DE LUMIÈRE DORÉE */}
       <LightWipeTransition 
         isVisible={showWipe} 
         onComplete={() => setShowWipe(false)} 
       />
 
-      {/* NAVIGATION GLOBALE */}
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
         <div className="flex flex-col gap-3 pointer-events-auto">
           {(screen !== "landing" || selectedPerfume) && (
@@ -112,7 +117,6 @@ const Index = () => {
               <ArrowLeft size={20} />
             </button>
           )}
-          
           <ProfileSheet />
         </div>
 
@@ -165,7 +169,9 @@ const Index = () => {
 
               {screen === "catalogue" && (
                 <CatalogueScreen 
-                  onMenu={handleBack} 
+                  onMenu={handleBack}
+                  // ✨ On passe les notes extraites au catalogue pour les filtres
+                  availableNotes={availableNotes} 
                 />
               )}
             </motion.div>
@@ -173,7 +179,6 @@ const Index = () => {
         </AnimatePresence>
       </main>
 
-      {/* OVERLAY FICHE PARFUM */}
       <AnimatePresence>
         {selectedPerfume && (
           <motion.div 

@@ -2,14 +2,13 @@ import { PERFUMES as DB_PERFUMES } from "./database";
 
 export const PERFUMES = DB_PERFUMES;
 
-export type NoteCategory = string; // Plus flexible pour éviter les erreurs de frappe
+export type NoteCategory = string;
 export type Gender = "homme" | "femme" | "unisexe" | "mixte";
 
 export interface NoteDetail { name: string; }
 
 export type { Perfume } from "./database";
 
-// Mappage pour l'affichage (labels)
 export const NOTE_LABELS: Record<string, string> = {
   hesperides: "Hespéridés", aromatiques: "Aromatiques", marines: "Marines",
   "epices-fraiches": "Épices Fraîches", "fruits-legers": "Fruits Légers",
@@ -18,14 +17,25 @@ export const NOTE_LABELS: Record<string, string> = {
   gourmandes: "Gourmandes", musquees: "Musquées", mousses: "Mousses",
 };
 
+// ── Familles boostées par atmosphère ─────────────────────────────────────────
+// Chaque atmosphère favorise certaines familles olfactives (+20pts par famille)
+const ATMOSPHERE_BOOST: Record<string, string[]> = {
+  soir:       ['epicees', 'ambrees', 'musquees', 'boisees'],  // intense & magnétique
+  quotidien:  ['hesperides', 'florales', 'marines', 'fruitees'], // léger & lumineux
+  business:   ['boisees', 'aromatiques', 'musquees'],          // assuré & subtil
+  rendezvous: ['florales', 'gourmandes', 'musquees'],          // sensuel & captivant
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
 export function matchPerfumes(
   gender: string | null,
   selectedTop: string[],
   selectedHeart: string[],
   selectedBase: string[],
-  radarIntensities?: Record<string, number>  // ← nouveau paramètre optionnel
+  radarIntensities?: Record<string, number>,
+  atmosphere?: string
 ): { perfume: any; matchPercent: number }[] {
-  
+
   // 1. FILTRAGE DU GENRE
   const candidates = PERFUMES.filter((p) => {
     if (!gender) return true;
@@ -54,6 +64,9 @@ export function matchPerfumes(
     { key: "mousses", words: ["mousse", "terreux", "humide"] }
   ];
 
+  // Familles à booster selon l'atmosphère choisie
+  const boostedFamilies = atmosphere ? (ATMOSPHERE_BOOST[atmosphere] || []) : [];
+
   const scored = candidates.map((perfume) => {
     let score = 0;
     const content = (
@@ -63,11 +76,10 @@ export function matchPerfumes(
       perfume.baseNotes.join(" ")
     ).toLowerCase();
 
+    // 2. SCORE PAR CHOIX UTILISATEUR (cartes swipées)
     userChoices.forEach(choice => {
-      // Score de base si le mot est présent dans la fiche
       let basePoints = content.includes(choice) ? 30 : 0;
 
-      // Points bonus via les règles de la famille
       const rule = rules.find(r => r.key === choice);
       let rulePoints = 0;
       if (rule) {
@@ -76,18 +88,28 @@ export function matchPerfumes(
         });
       }
 
-      // ── APPLICATION DU MULTIPLICATEUR RADAR ──────────────────────────────
-      // Si l'utilisateur a monté l'intensité de cette famille sur le radar,
-      // on amplifie le score. Intensité 0.5 = neutre (×1), 1.0 = ×1.5, 0.1 = ×0.6
+      // Multiplicateur radar
       const radarMultiplier = radarIntensities?.[choice]
-        ? 0.5 + radarIntensities[choice]   // range : 0.6 (min) → 1.5 (max)
+        ? 0.5 + radarIntensities[choice]
         : 1;
-      // ─────────────────────────────────────────────────────────────────────
 
       score += (basePoints + rulePoints) * radarMultiplier;
     });
 
-    // GARANTIE DE RÉSULTAT
+    // 3. BONUS ATMOSPHÈRE ────────────────────────────────────────────────────
+    // Pour chaque famille boostée par l'atmosphère, on vérifie si le parfum
+    // contient des mots-clés de cette famille et on ajoute des points bonus
+    boostedFamilies.forEach(family => {
+      const rule = rules.find(r => r.key === family);
+      if (rule) {
+        rule.words.forEach(word => {
+          if (content.includes(word)) score += 20;
+        });
+      }
+    });
+    // ────────────────────────────────────────────────────────────────────────
+
+    // 4. GARANTIE DE RÉSULTAT
     let finalPercent = Math.min(Math.round(score), 98);
     if (finalPercent < 40) {
       finalPercent = 50 + Math.floor(Math.random() * 20);
@@ -96,7 +118,6 @@ export function matchPerfumes(
     return { perfume, matchPercent: finalPercent };
   });
 
-  // TRI ET RETOUR
   return scored
     .sort((a, b) => b.matchPercent - a.matchPercent)
     .slice(0, 6);

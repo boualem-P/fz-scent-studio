@@ -102,7 +102,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     setInternalBackHandler(() => {
       if (isAnalyzing) return true; // bloque pendant le loader
       if (screen === 'atmosphere') { setScreen('map'); return true; }
-      if (screen === 'map') { setScreen('swipe'); return true; }
+      if (screen === 'map') { setScreen('swipe'); setCurrentStep(0); setNoteIndex(0); return true; }
       return false; // swipe = premier écran → retour vers landing géré par index.tsx
     });
   }, [screen, isAnalyzing, setInternalBackHandler]);

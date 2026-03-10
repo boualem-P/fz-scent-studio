@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";  // ← useRef ajouté
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Library, ArrowLeft } from "lucide-react";
 import ProfileSheet from "@/components/ProfileSheet";
@@ -22,10 +22,8 @@ const Index = () => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
   const [showWipe, setShowWipe] = useState(false);
 
-  // ── Ref vers la fonction de retour interne de PyramidScreen ────────────────
-  // null quand on n'est pas sur pyramid, ou quand PyramidScreen est sur 'swipe'
   const pyramidInternalBackRef = useRef<(() => boolean) | null>(null);
-  // ───────────────────────────────────────────────────────────────────────────
+  const catalogueInternalBackRef = useRef<(() => boolean) | null>(null);
 
   // Mise à jour : Extraction des 99 sous-notes classées par catégories
   const availableNotesByCategory = useMemo(() => {
@@ -36,7 +34,6 @@ const Index = () => {
   };
 
   PERFUMES.forEach(p => {
-    // On force l'extraction de TOUTES les notes détaillées
     p.topNotesDetailed?.forEach(n => { if(n.name) categories.top.add(n.name) });
     p.heartNotesDetailed?.forEach(n => { if(n.name) categories.heart.add(n.name) });
     p.baseNotesDetailed?.forEach(n => { if(n.name) categories.base.add(n.name) });
@@ -79,12 +76,15 @@ const Index = () => {
       return;
     }
 
-    // ── Si on est sur pyramid, PyramidScreen gère le retour en interne d'abord ──
     if (screen === "pyramid" && pyramidInternalBackRef.current) {
       const handledInternally = pyramidInternalBackRef.current();
       if (handledInternally) return;
     }
-    // ───────────────────────────────────────────────────────────────────────────
+
+    if (screen === "catalogue" && catalogueInternalBackRef.current) {
+      const handledInternally = catalogueInternalBackRef.current();
+      if (handledInternally) return;
+    }
 
     if (history.length > 0) {
       const newHistory = [...history];
@@ -174,7 +174,7 @@ const Index = () => {
                 <PyramidScreen
                   onValidate={handleValidate}
                   onMenu={handleBack}
-                  setInternalBackHandler={(fn) => { pyramidInternalBackRef.current = fn; }}  // ← prop ajoutée
+                  setInternalBackHandler={(fn) => { pyramidInternalBackRef.current = fn; }}
                 />
               )}
               {screen === "analyzing" && <AnalyzingLoader />}
@@ -189,7 +189,8 @@ const Index = () => {
               {screen === "catalogue" && (
                 <CatalogueScreen 
                   onMenu={handleBack} 
-                  availableNotes={availableNotesByCategory} 
+                  availableNotes={availableNotesByCategory}
+                  setInternalBackHandler={(fn) => { catalogueInternalBackRef.current = fn; }}
                 />
               )}
             </motion.div>

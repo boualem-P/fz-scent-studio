@@ -22,14 +22,13 @@ const Index = () => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
   const [showWipe, setShowWipe] = useState(false);
 
-  // Correction : Extraction sécurisée des notes
+  // Extraction sécurisée des notes (stable via useMemo)
   const availableNotes = useMemo(() => {
     const notesSet = new Set<string>();
-    // On utilise PERFUMES (la constante) pour garantir la stabilité
     PERFUMES.forEach(perfume => {
-      if (perfume.notes?.top) perfume.notes.top.forEach(n => notesSet.add(n));
-      if (perfume.notes?.middle) perfume.notes.middle.forEach(n => notesSet.add(n));
-      if (perfume.notes?.base) perfume.notes.base.forEach(n => notesSet.add(n));
+      perfume.topNotes?.forEach(n => notesSet.add(n));
+      perfume.heartNotes?.forEach(n => notesSet.add(n));
+      perfume.baseNotes?.forEach(n => notesSet.add(n));
     });
     return Array.from(notesSet).sort((a, b) => a.localeCompare(b));
   }, []);
@@ -161,7 +160,6 @@ const Index = () => {
               {screen === "catalogue" && (
                 <CatalogueScreen 
                   onMenu={handleBack} 
-                  availableNotes={availableNotes} 
                 />
               )}
             </motion.div>

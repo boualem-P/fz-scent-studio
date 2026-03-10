@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Library, ArrowLeft } from "lucide-react";
 import ProfileSheet from "@/components/ProfileSheet";
@@ -9,21 +9,10 @@ import CatalogueScreen from "@/components/CatalogueScreen";
 import AnalyzingLoader from "@/components/AnalyzingLoader";
 import GoldenRain from "@/components/GoldenRain";
 import PerfumePage from "@/components/PerfumePage"; 
-import { Gender, NoteCategory, matchPerfumes, Perfume, perfumes } from "@/data/perfumes"; // Ajout de l'import 'perfumes'
+import { Gender, NoteCategory, matchPerfumes, Perfume, PERFUMES } from "@/data/perfumes"; 
 import LightWipeTransition from "@/components/LightWipeTransition";
 
 type ScreenType = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
-
-// ✨ NOUVEAU — Fonction d'extraction exhaustive pour synchroniser les boutons avec la database
-const getAllDatabaseNotes = (perfumesList: Perfume[]) => {
-  const notesSet = new Set<string>();
-  perfumesList.forEach(perfume => {
-    if (perfume.notes?.top) perfume.notes.top.forEach(n => notesSet.add(n));
-    if (perfume.notes?.middle) perfume.notes.middle.forEach(n => notesSet.add(n));
-    if (perfume.notes?.base) perfume.notes.base.forEach(n => notesSet.add(n));
-  });
-  return Array.from(notesSet).sort((a, b) => a.localeCompare(b));
-};
 
 const Index = () => {
   const [screen, setScreen] = useState<ScreenType>("landing");
@@ -33,10 +22,28 @@ const Index = () => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
   const [showWipe, setShowWipe] = useState(false);
 
-  // ✨ NOUVEAU — On génère la liste des notes une seule fois pour toute l'app
-  const availableNotes = useMemo(() => getAllDatabaseNotes(perfumes), []);
+  // Correction : Extraction sécurisée des notes
+  const availableNotes = useMemo(() => {
+    const notesSet = new Set<string>();
+    // On utilise PERFUMES (la constante) pour garantir la stabilité
+    PERFUMES.forEach(perfume => {
+      if (perfume.notes?.top) perfume.notes.top.forEach(n => notesSet.add(n));
+      if (perfume.notes?.middle) perfume.notes.middle.forEach(n => notesSet.add(n));
+      if (perfume.notes?.base) perfume.notes.base.forEach(n => notesSet.add(n));
+    });
+    return Array.from(notesSet).sort((a, b) => a.localeCompare(b));
+  }, []);
 
-  const navigateTo = (nextScreen: ScreenType) => {
+  // Gestion propre du scroll pour éviter les bugs de superposition (vus en console)
+  useEffect(() => {
+    if (selectedPerfume || screen === "analyzing") {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [selectedPerfume, screen]);
+
+  const navigateTo = useCallback((nextScreen: ScreenType) => {
     if (nextScreen === screen) return;
 
     if (screen === "landing" && nextScreen === "pyramid") {
@@ -49,9 +56,9 @@ const Index = () => {
       setHistory((prev) => [...prev, screen]);
       setScreen(nextScreen);
     }
-  };
+  }, [screen]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (selectedPerfume) {
       setSelectedPerfume(null);
       return;
@@ -61,20 +68,18 @@ const Index = () => {
       const newHistory = [...history];
       const previousScreen = newHistory.pop();
       
-      if (previousScreen) {
-        if (previousScreen === "analyzing") {
-          const skipLoader = newHistory.pop();
-          setScreen(skipLoader || "landing");
-          setHistory(newHistory);
-        } else {
-          setScreen(previousScreen);
-          setHistory(newHistory);
-        }
+      if (previousScreen === "analyzing") {
+        const skipLoader = newHistory.pop();
+        setScreen(skipLoader || "landing");
+        setHistory(newHistory);
+      } else {
+        setScreen(previousScreen || "landing");
+        setHistory(newHistory);
       }
     } else {
       setScreen("landing");
     }
-  };
+  }, [history, selectedPerfume]);
 
   const handleGender = (g: Gender) => { 
     setGender(g); 
@@ -89,15 +94,10 @@ const Index = () => {
     setTimeout(() => {
       setScreen("results");
     }, 4000);
-  }, [gender]);
-
-  const handleSelectPerfume = (perfume: Perfume) => {
-    setSelectedPerfume(perfume);
-  };
+  }, [gender, navigateTo]);
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
-      
       <div className="fixed inset-0 z-0 pointer-events-none">
         {screen !== "landing" && !selectedPerfume && <GoldenRain />}
       </div>
@@ -148,29 +148,19 @@ const Index = () => {
                   onProfile={() => {}} 
                 />
               )}
-              
-              {screen === "pyramid" && (
-                <PyramidScreen 
-                  onValidate={handleValidate} 
-                  onMenu={handleBack} 
-                />
-              )}
-
+              {screen === "pyramid" && <PyramidScreen onValidate={handleValidate} onMenu={handleBack} />}
               {screen === "analyzing" && <AnalyzingLoader />}
-
               {screen === "results" && (
                 <ResultsScreen 
                   results={results} 
                   onMenu={handleBack} 
                   onCatalogue={() => navigateTo("catalogue")} 
-                  onSelectPerfume={handleSelectPerfume} 
+                  onSelectPerfume={setSelectedPerfume} 
                 />
               )}
-
               {screen === "catalogue" && (
                 <CatalogueScreen 
-                  onMenu={handleBack}
-                  // ✨ On passe les notes extraites au catalogue pour les filtres
+                  onMenu={handleBack} 
                   availableNotes={availableNotes} 
                 />
               )}
@@ -192,7 +182,7 @@ const Index = () => {
             <PerfumePage 
               perfume={selectedPerfume} 
               onClose={handleBack} 
-              onSelectPerfume={handleSelectPerfume} 
+              onSelectPerfume={setSelectedPerfume} 
             />
           </motion.div>
         )}

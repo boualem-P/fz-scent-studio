@@ -108,8 +108,15 @@ const Index = () => {
     navigateTo("pyramid"); 
   };
 
-  const handleValidate = useCallback((top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[]) => {
-    const matches = matchPerfumes(gender, top, heart, base);
+  // ← radarIntensities ajouté : coefficients multiplicateurs issus du radar
+  const handleValidate = useCallback((
+    top: NoteCategory[],
+    heart: NoteCategory[],
+    base: NoteCategory[],
+    atmosphere?: string,
+    radarIntensities?: Record<string, number>
+  ) => {
+    const matches = matchPerfumes(gender, top, heart, base, radarIntensities);
     setResults(matches);
     navigateTo("analyzing");
     
@@ -167,7 +174,7 @@ const Index = () => {
                 <LandingScreen 
                   onSelectGender={handleGender} 
                   onCatalogue={() => navigateTo("catalogue")}
-                  onProfile={() => {}} 
+                  onProfile={() =>{}} 
                 />
               )}
               {screen === "pyramid" && (

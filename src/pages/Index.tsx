@@ -108,7 +108,6 @@ const Index = () => {
     navigateTo("pyramid"); 
   };
 
-  // ← radarIntensities ajouté : coefficients multiplicateurs issus du radar
   const handleValidate = useCallback((
     top: NoteCategory[],
     heart: NoteCategory[],
@@ -116,7 +115,8 @@ const Index = () => {
     atmosphere?: string,
     radarIntensities?: Record<string, number>
   ) => {
-    const matches = matchPerfumes(gender, top, heart, base, radarIntensities);
+    // ← atmosphere passé à matchPerfumes (seul changement par rapport à ton fichier)
+    const matches = matchPerfumes(gender, top, heart, base, radarIntensities, atmosphere);
     setResults(matches);
     navigateTo("analyzing");
     

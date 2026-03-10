@@ -24,24 +24,25 @@ const Index = () => {
 
   // Mise à jour : Extraction des 99 sous-notes classées par catégories
   const availableNotesByCategory = useMemo(() => {
-    const categories = {
-      top: new Set<string>(),
-      heart: new Set<string>(),
-      base: new Set<string>()
-    };
+  const categories = {
+    top: new Set<string>(),
+    heart: new Set<string>(),
+    base: new Set<string>()
+  };
 
-    PERFUMES.forEach(p => {
-      p.topNotesDetailed?.forEach(n => categories.top.add(n.name));
-      p.heartNotesDetailed?.forEach(n => categories.heart.add(n.name));
-      p.baseNotesDetailed?.forEach(n => categories.base.add(n.name));
-    });
+  PERFUMES.forEach(p => {
+    // On force l'extraction de TOUTES les notes détaillées
+    p.topNotesDetailed?.forEach(n => { if(n.name) categories.top.add(n.name) });
+    p.heartNotesDetailed?.forEach(n => { if(n.name) categories.heart.add(n.name) });
+    p.baseNotesDetailed?.forEach(n => { if(n.name) categories.base.add(n.name) });
+  });
 
-    return {
-      top: Array.from(categories.top).sort((a, b) => a.localeCompare(b)),
-      heart: Array.from(categories.heart).sort((a, b) => a.localeCompare(b)),
-      base: Array.from(categories.base).sort((a, b) => a.localeCompare(b))
-    };
-  }, []);
+  return {
+    top: Array.from(categories.top).sort((a, b) => a.localeCompare(b)),
+    heart: Array.from(categories.heart).sort((a, b) => a.localeCompare(b)),
+    base: Array.from(categories.base).sort((a, b) => a.localeCompare(b))
+  };
+}, []);
 
   // Gestion du scroll pour éviter les conflits visuels
   useEffect(() => {

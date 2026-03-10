@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PERFUMES, Perfume } from "@/data/perfumes";
-import { X, Search, Leaf } from "lucide-react";
+import { X, Search, Leaf, ChevronDown } from "lucide-react";
 import CatalogueModal from "./CatalogueModal";
 import NotesDiagnostic from "./NotesDiagnostic";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
+import { getNoteImage } from "@/data/notesData"; // Import pour les images des notes
 
 interface CatalogueScreenProps {
   onMenu: () => void;
+  availableNotes?: string[]; // La nouvelle prop dynamique
 }
 
-// Nouveau composant Image au lieu des initiales
 const PerfumeImage = ({ perfume }: { perfume: Perfume }) => {
   return (
     <div className="h-32 lg:h-36 flex items-center justify-center mb-3 relative group">
@@ -30,33 +31,40 @@ const PerfumeImage = ({ perfume }: { perfume: Perfume }) => {
           </span>
         )}
       </div>
-      {/* Reflet doré sous le flacon */}
       <div className="absolute bottom-1 w-12 h-1 bg-primary/20 blur-md rounded-full group-hover:bg-primary/40 transition-all" />
     </div>
   );
 };
 
-const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
+const CatalogueScreen = ({ onMenu, availableNotes = [] }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showNotes, setShowNotes] = useState(false);
+  const [isNotesMenuOpen, setIsNotesMenuOpen] = useState(false);
 
   const MAX_SEARCH_LENGTH = 100;
   const sanitizeSearchInput = (input: string): string => {
     return input.slice(0, MAX_SEARCH_LENGTH).trim();
   };
 
-  const filteredPerfumes = PERFUMES.filter((perfume) =>
-    perfume.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    perfume.brand.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filtrage intelligent : par nom, marque OU par note
+  const filteredPerfumes = PERFUMES.filter((perfume) => {
+    const searchLower = searchQuery.toLowerCase();
+    const allNotes = [
+      ...(perfume.notes?.top || []),
+      ...(perfume.notes?.middle || []),
+      ...(perfume.notes?.base || [])
+    ].map(n => n.toLowerCase());
+
+    return (
+      perfume.name.toLowerCase().includes(searchLower) ||
+      perfume.brand.toLowerCase().includes(searchLower) ||
+      allNotes.some(note => note.includes(searchLower))
+    );
+  });
 
   useEffect(() => {
-    if (selected) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = selected ? "hidden" : "auto";
     return () => { document.body.style.overflow = "auto"; };
   }, [selected]);
 
@@ -68,13 +76,13 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
     <div className="min-h-screen w-screen flex flex-col bg-background overflow-y-auto relative p-6 lg:p-8 pb-40 gold-frame">
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
 
-      {/* Barre de Recherche + Bouton Notes */}
-      <div className="absolute top-6 left-6 lg:top-8 lg:left-8 z-30 flex items-center gap-2">
+      {/* Barre de Recherche + Menu Notes Dynamique */}
+      <div className="absolute top-6 left-6 lg:top-8 lg:left-8 z-[100] flex items-center gap-2">
         <div className="relative group w-48 md:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40 group-focus-within:text-primary transition-colors" size={16} />
           <input
             type="text"
-            placeholder="Rechercher..."
+            placeholder="Parfum, marque ou note..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(sanitizeSearchInput(e.target.value))}
             className="w-full bg-black/40 border border-primary/20 rounded-full py-2 pl-10 pr-10 text-xs font-body tracking-wider text-primary outline-none focus:border-primary/60 transition-all placeholder:text-primary/30"
@@ -85,17 +93,64 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
             </button>
           )}
         </div>
-        <button
-          onClick={() => setShowNotes(true)}
-          className="h-9 px-3 flex items-center gap-1.5 rounded-full bg-black/40 border border-primary/20 text-primary/60 hover:text-primary hover:border-primary/50 backdrop-blur-xl transition-all text-[10px] font-body tracking-widest uppercase"
-        >
-          <Leaf size={14} />
-          Notes
-        </button>
+
+        {/* BOUTON NOTES AVEC DROPDOWN */}
+        <div className="relative">
+          <button
+            onClick={() => setIsNotesMenuOpen(!isNotesMenuOpen)}
+            className={`h-9 px-4 flex items-center gap-2 rounded-full bg-black/60 border ${isNotesMenuOpen ? 'border-primary' : 'border-primary/20'} text-primary transition-all text-[10px] font-body tracking-widest uppercase backdrop-blur-xl`}
+          >
+            <Leaf size={14} className={isNotesMenuOpen ? "text-primary" : "text-primary/60"} />
+            <span>Notes</span>
+            <ChevronDown size={12} className={`transition-transform duration-300 ${isNotesMenuOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          <AnimatePresence>
+            {isNotesMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                className="absolute top-11 left-0 w-64 max-h-[400px] overflow-y-auto bg-black/90 border border-primary/30 rounded-2xl backdrop-blur-2xl p-2 custom-scrollbar shadow-2xl"
+              >
+                <div className="grid grid-cols-1 gap-1">
+                  {availableNotes.map((note) => (
+                    <button
+                      key={note}
+                      onClick={() => {
+                        setSearchQuery(note);
+                        setIsNotesMenuOpen(false);
+                      }}
+                      className="flex items-center gap-3 w-full p-2 rounded-xl hover:bg-primary/10 transition-colors group text-left"
+                    >
+                      <img 
+                        src={getNoteImage(note)} 
+                        alt={note} 
+                        className="w-8 h-8 rounded-full object-cover border border-primary/20 group-hover:border-primary/50"
+                      />
+                      <span className="text-[10px] text-primary/70 group-hover:text-primary uppercase tracking-widest truncate">
+                        {note}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="mt-2 pt-2 border-t border-primary/10">
+                  <button 
+                    onClick={() => setShowNotes(true)}
+                    className="w-full py-2 text-[9px] text-center text-primary/40 hover:text-primary uppercase tracking-tighter"
+                  >
+                    Ouvrir le Diagnostic Complet
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Header */}
-      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-10 relative z-20 mt-12 lg:mt-0">
+      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-10 relative z-20 mt-20 lg:mt-0">
         <motion.h2 variants={staggerItem} className="font-display text-3xl lg:text-4xl text-gold-gradient tracking-wider flex items-center justify-center gap-3">
           Catalogue 
           <span className="text-sm font-body text-primary/40 border border-primary/20 px-2 py-0.5 rounded-md">
@@ -131,7 +186,7 @@ const CatalogueScreen = ({ onMenu }: CatalogueScreenProps) => {
           ))
         ) : (
           <div className="col-span-full text-center py-20">
-            <p className="text-primary/40 font-body tracking-widest uppercase text-xs">Aucun parfum trouvé</p>
+            <p className="text-primary/40 font-body tracking-widest uppercase text-xs">Aucun résultat</p>
           </div>
         )}
       </motion.div>

@@ -1,15 +1,27 @@
-import { useState, useEffect } from "react";  // ← useEffect ajouté
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
 
 interface PyramidScreenProps {
-  onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string) => void;
+  onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string, radarIntensities?: Record<string, number>) => void;
   onMenu: () => void;
-  setInternalBackHandler: (fn: () => boolean) => void;  // ← prop ajoutée
+  setInternalBackHandler: (fn: () => boolean) => void;
 }
 
 const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'VERT'];
+
+// Correspondance axe radar → familles olfactives
+const RADAR_TO_FAMILY: Record<string, NoteCategory[]> = {
+  'AGRUMES': ['hesperides'],
+  'ANIMAL':  ['musquees'],
+  'BOISÉ':   ['boisees'],
+  'ÉPICÉ':   ['epicees'],
+  'FLORAL':  ['florales'],
+  'FRUITÉ':  ['fruitees'],
+  'SUCRÉ':   ['gourmandes'],
+  'VERT':    ['marines'],
+};
 
 const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string }[]> = {
   top: [
@@ -95,18 +107,16 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
-  // ── LOGIQUE RETOUR INTERNE ──────────────────────────────────────────────────
-  // Enregistre auprès de index.tsx comment gérer le ← selon l'écran actif.
-  // Retourne true = PyramidScreen gère le retour / false = index.tsx prend le relais.
+  // ── LOGIQUE RETOUR INTERNE ─────────────────────────────────────────────────
   useEffect(() => {
     setInternalBackHandler(() => {
-      if (isAnalyzing) return true; // bloque pendant le loader
+      if (isAnalyzing) return true;
       if (screen === 'atmosphere') { setScreen('map'); return true; }
       if (screen === 'map') { setScreen('swipe'); setCurrentStep(0); setNoteIndex(0); return true; }
-      return false; // swipe = premier écran → retour vers landing géré par index.tsx
+      return false;
     });
   }, [screen, isAnalyzing, setInternalBackHandler]);
-  // ───────────────────────────────────────────────────────────────────────────
+  // ──────────────────────────────────────────────────────────────────────────
 
   const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
     setAnalysisText(text);
@@ -130,6 +140,16 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
       triggerTransition('map', "Harmonisation des essences sélectionnées...");
     }
     x.set(0); 
+  };
+
+  // Construit le dictionnaire radarIntensities { familyId: intensity } à passer à onValidate
+  const buildRadarIntensities = (): Record<string, number> => {
+    const result: Record<string, number> = {};
+    FAMILIES.forEach((family, i) => {
+      const families = RADAR_TO_FAMILY[family] || [];
+      families.forEach(f => { result[f] = intensities[i]; });
+    });
+    return result;
   };
 
   const size = 300;
@@ -356,7 +376,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
               {ATMOSPHERES.map((atm) => (
                 <button
                   key={atm.id}
-                  onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id)}
+                  onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities())}
                   className="group relative h-28 rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center p-6 hover:border-amber-500/50 transition-all text-left"
                 >
                   <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" />

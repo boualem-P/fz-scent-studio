@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";  // ← useEffect ajouté
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
@@ -6,6 +6,7 @@ import { NoteCategory } from "@/data/perfumes";
 interface PyramidScreenProps {
   onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string) => void;
   onMenu: () => void;
+  setInternalBackHandler: (fn: () => boolean) => void;  // ← prop ajoutée
 }
 
 const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'VERT'];
@@ -74,7 +75,7 @@ const ATMOSPHERES = [
   { id: 'rendezvous', label: 'Rendez-vous', icon: <Heart size={24}/>, desc: "Sensuel & Captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400" },
 ];
 
-const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
+const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidScreenProps) => {
   const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere'>('swipe');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisText, setAnalysisText] = useState("");
@@ -93,6 +94,19 @@ const PyramidScreen = ({ onValidate, onMenu }: PyramidScreenProps) => {
   const x = useMotionValue(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
+
+  // ── LOGIQUE RETOUR INTERNE ──────────────────────────────────────────────────
+  // Enregistre auprès de index.tsx comment gérer le ← selon l'écran actif.
+  // Retourne true = PyramidScreen gère le retour / false = index.tsx prend le relais.
+  useEffect(() => {
+    setInternalBackHandler(() => {
+      if (isAnalyzing) return true; // bloque pendant le loader
+      if (screen === 'atmosphere') { setScreen('map'); return true; }
+      if (screen === 'map') { setScreen('swipe'); return true; }
+      return false; // swipe = premier écran → retour vers landing géré par index.tsx
+    });
+  }, [screen, isAnalyzing, setInternalBackHandler]);
+  // ───────────────────────────────────────────────────────────────────────────
 
   const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
     setAnalysisText(text);

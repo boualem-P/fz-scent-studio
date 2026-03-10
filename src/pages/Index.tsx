@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";  // ← useRef ajouté
 import { AnimatePresence, motion } from "framer-motion";
 import { Library, ArrowLeft } from "lucide-react";
 import ProfileSheet from "@/components/ProfileSheet";
@@ -22,29 +22,34 @@ const Index = () => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
   const [showWipe, setShowWipe] = useState(false);
 
-  // Ref vers la fonction de retour interne de PyramidScreen
-  // Quand PyramidScreen est sur 'map' ou 'atmosphere', cette ref pointe vers sa fonction de retour interne
-  // Quand PyramidScreen est sur 'swipe' (premier écran), cette ref est null → le retour global prend le relais
+  // ── Ref vers la fonction de retour interne de PyramidScreen ────────────────
+  // null quand on n'est pas sur pyramid, ou quand PyramidScreen est sur 'swipe'
   const pyramidInternalBackRef = useRef<(() => boolean) | null>(null);
+  // ───────────────────────────────────────────────────────────────────────────
 
+  // Mise à jour : Extraction des 99 sous-notes classées par catégories
   const availableNotesByCategory = useMemo(() => {
-    const categories = {
-      top: new Set<string>(),
-      heart: new Set<string>(),
-      base: new Set<string>()
-    };
-    PERFUMES.forEach(p => {
-      p.topNotesDetailed?.forEach(n => { if(n.name) categories.top.add(n.name) });
-      p.heartNotesDetailed?.forEach(n => { if(n.name) categories.heart.add(n.name) });
-      p.baseNotesDetailed?.forEach(n => { if(n.name) categories.base.add(n.name) });
-    });
-    return {
-      top: Array.from(categories.top).sort((a, b) => a.localeCompare(b)),
-      heart: Array.from(categories.heart).sort((a, b) => a.localeCompare(b)),
-      base: Array.from(categories.base).sort((a, b) => a.localeCompare(b))
-    };
-  }, []);
+  const categories = {
+    top: new Set<string>(),
+    heart: new Set<string>(),
+    base: new Set<string>()
+  };
 
+  PERFUMES.forEach(p => {
+    // On force l'extraction de TOUTES les notes détaillées
+    p.topNotesDetailed?.forEach(n => { if(n.name) categories.top.add(n.name) });
+    p.heartNotesDetailed?.forEach(n => { if(n.name) categories.heart.add(n.name) });
+    p.baseNotesDetailed?.forEach(n => { if(n.name) categories.base.add(n.name) });
+  });
+
+  return {
+    top: Array.from(categories.top).sort((a, b) => a.localeCompare(b)),
+    heart: Array.from(categories.heart).sort((a, b) => a.localeCompare(b)),
+    base: Array.from(categories.base).sort((a, b) => a.localeCompare(b))
+  };
+}, []);
+
+  // Gestion du scroll pour éviter les conflits visuels
   useEffect(() => {
     if (selectedPerfume || screen === "analyzing") {
       document.body.style.overflow = "hidden";
@@ -55,6 +60,7 @@ const Index = () => {
 
   const navigateTo = useCallback((nextScreen: ScreenType) => {
     if (nextScreen === screen) return;
+
     if (screen === "landing" && nextScreen === "pyramid") {
       setShowWipe(true);
       setTimeout(() => {
@@ -68,24 +74,22 @@ const Index = () => {
   }, [screen]);
 
   const handleBack = useCallback(() => {
-    // 1. Si une fiche parfum est ouverte, on la ferme
     if (selectedPerfume) {
       setSelectedPerfume(null);
       return;
     }
 
-    // 2. Si on est sur pyramid, on demande d'abord à PyramidScreen de gérer le retour en interne
-    //    pyramidInternalBackRef.current() retourne true si PyramidScreen a pu reculer en interne
-    //    (ex: atmosphere→map, map→swipe), false si on est déjà sur 'swipe' (premier écran)
+    // ── Si on est sur pyramid, PyramidScreen gère le retour en interne d'abord ──
     if (screen === "pyramid" && pyramidInternalBackRef.current) {
       const handledInternally = pyramidInternalBackRef.current();
-      if (handledInternally) return; // PyramidScreen a géré le retour → on ne pop pas l'historique global
+      if (handledInternally) return;
     }
+    // ───────────────────────────────────────────────────────────────────────────
 
-    // 3. Retour global via l'historique
     if (history.length > 0) {
       const newHistory = [...history];
       const previousScreen = newHistory.pop();
+      
       if (previousScreen === "analyzing") {
         const skipLoader = newHistory.pop();
         setScreen(skipLoader || "landing");
@@ -108,6 +112,7 @@ const Index = () => {
     const matches = matchPerfumes(gender, top, heart, base);
     setResults(matches);
     navigateTo("analyzing");
+    
     setTimeout(() => {
       setScreen("results");
     }, 4000);
@@ -169,9 +174,7 @@ const Index = () => {
                 <PyramidScreen
                   onValidate={handleValidate}
                   onMenu={handleBack}
-                  // On passe le setter de ref : PyramidScreen appellera setInternalBackHandler
-                  // avec sa propre fonction de retour interne dès que son état change
-                  setInternalBackHandler={(fn) => { pyramidInternalBackRef.current = fn; }}
+                  setInternalBackHandler={(fn) => { pyramidInternalBackRef.current = fn; }}  // ← prop ajoutée
                 />
               )}
               {screen === "analyzing" && <AnalyzingLoader />}

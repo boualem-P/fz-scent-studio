@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PERFUMES, Perfume } from "@/data/perfumes";
 import { X, Search, Sparkles, Heart, Anchor, ArrowLeft, Library } from "lucide-react";
-import CatalogueModal from "./CatalogueModal";
+import PerfumePage from "./PerfumePage";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 import { getNoteImage } from "@/data/notesData";
 
@@ -305,13 +305,22 @@ const CatalogueScreen = ({ onMenu, availableNotes }: CatalogueScreenProps) => {
         )}
       </AnimatePresence>
 
-      {/* Modal Détail Parfum */}
+      {/* Fiche Parfum Complète (PerfumePage) */}
       <AnimatePresence>
         {selected && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[500] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4" onClick={() => setSelected(null)}>
-            <div onClick={(e) => e.stopPropagation()}>
-              <CatalogueModal perfume={selected} onClose={() => setSelected(null)} />
-            </div>
+          <motion.div
+            key={`perfume-${selected.id}`}
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            className="fixed inset-0 z-[500] bg-[#1D1E1F] overflow-y-auto"
+          >
+            <PerfumePage
+              perfume={selected}
+              onClose={() => setSelected(null)}
+              onSelectPerfume={setSelected}
+            />
           </motion.div>
         )}
       </AnimatePresence>

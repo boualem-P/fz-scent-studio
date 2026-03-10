@@ -22,18 +22,28 @@ const Index = () => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
   const [showWipe, setShowWipe] = useState(false);
 
-  // Extraction sécurisée des notes (stable via useMemo)
-  const availableNotes = useMemo(() => {
-    const notesSet = new Set<string>();
-    PERFUMES.forEach(perfume => {
-      perfume.topNotes?.forEach(n => notesSet.add(n));
-      perfume.heartNotes?.forEach(n => notesSet.add(n));
-      perfume.baseNotes?.forEach(n => notesSet.add(n));
+  // Mise à jour : Extraction des 99 sous-notes classées par catégories
+  const availableNotesByCategory = useMemo(() => {
+    const categories = {
+      top: new Set<string>(),
+      heart: new Set<string>(),
+      base: new Set<string>()
+    };
+
+    PERFUMES.forEach(p => {
+      p.topNotesDetailed?.forEach(n => categories.top.add(n.name));
+      p.heartNotesDetailed?.forEach(n => categories.heart.add(n.name));
+      p.baseNotesDetailed?.forEach(n => categories.base.add(n.name));
     });
-    return Array.from(notesSet).sort((a, b) => a.localeCompare(b));
+
+    return {
+      top: Array.from(categories.top).sort((a, b) => a.localeCompare(b)),
+      heart: Array.from(categories.heart).sort((a, b) => a.localeCompare(b)),
+      base: Array.from(categories.base).sort((a, b) => a.localeCompare(b))
+    };
   }, []);
 
-  // Gestion propre du scroll pour éviter les bugs de superposition (vus en console)
+  // Gestion du scroll pour éviter les conflits visuels
   useEffect(() => {
     if (selectedPerfume || screen === "analyzing") {
       document.body.style.overflow = "hidden";
@@ -160,6 +170,7 @@ const Index = () => {
               {screen === "catalogue" && (
                 <CatalogueScreen 
                   onMenu={handleBack} 
+                  availableNotes={availableNotesByCategory} 
                 />
               )}
             </motion.div>

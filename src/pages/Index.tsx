@@ -160,7 +160,6 @@ const Index = () => {
               {screen === "catalogue" && (
                 <CatalogueScreen 
                   onMenu={handleBack} 
-                  availableNotes={availableNotes} 
                 />
               )}
             </motion.div>

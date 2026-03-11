@@ -11,7 +11,6 @@ interface PyramidScreenProps {
 
 const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'VERT'];
 
-// Correspondance axe radar → familles olfactives
 const RADAR_TO_FAMILY: Record<string, NoteCategory[]> = {
   'AGRUMES': ['hesperides'],
   'ANIMAL':  ['musquees'],
@@ -23,25 +22,28 @@ const RADAR_TO_FAMILY: Record<string, NoteCategory[]> = {
   'VERT':    ['marines'],
 };
 
-const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string }[]> = {
+const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, tags: string[] }[]> = {
   top: [
     { 
       id: "hesperides", 
       label: "Lumière du Matin", 
       img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", 
-      sub: "Fraîcheur & Légèreté" 
+      sub: "Fraîcheur & Légèreté",
+      tags: ["Bergamote", "Citron", "Mandarine"]
     },
     { 
       id: "marines", 
       label: "Souffle Marin", 
       img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", 
-      sub: "Fraîcheur Océanique & Pure" 
+      sub: "Fraîcheur Océanique & Pure",
+      tags: ["Sel marin", "Algues", "Air iodé"]
     },
     { 
       id: "fruitees", 
       label: "Douceur Fruitée", 
       img: "https://static.vecteezy.com/system/resources/thumbnails/053/277/426/small/spring-fruit-scene-designed-to-integrate-seamlessly-with-your-text-or-graphics-photo.jpeg", 
-      sub: "Léger & Pétillant" 
+      sub: "Léger & Pétillant",
+      tags: ["Pêche", "Framboise", "Cassis"]
     }
   ],
   heart: [
@@ -49,19 +51,22 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       id: "florales", 
       label: "Jardin Secret", 
       img: "https://img.freepik.com/photos-premium/jardin-banc-fleurs-dans-herbe_1022944-31664.jpg", 
-      sub: "Floral & Délicat" 
+      sub: "Floral & Délicat",
+      tags: ["Rose", "Jasmin", "Néroli"]
     },
     { 
       id: "epicees", 
       label: "Nuit Précieuse", 
       img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=400", 
-      sub: "Intense & Mystérieux" 
+      sub: "Intense & Mystérieux",
+      tags: ["Safran", "Cannelle", "Poivre noir"]
     },
     { 
       id: "musquees", 
       label: "Chaleur Dorée", 
       img: "https://png.pngtree.com/thumb_back/fh260/background/20241017/pngtree-heavenly-stairs-leading-to-the-golden-gates-of-heaven-image_16409825.jpg", 
-      sub: "Ambré & Enveloppant" 
+      sub: "Ambré & Enveloppant",
+      tags: ["Musc", "Ambre", "Patchouli"]
     }
   ],
   base: [
@@ -69,13 +74,15 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       id: "boisees", 
       label: "Bois Sacré", 
       img: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=400", 
-      sub: "Chaleureux & Profond" 
+      sub: "Chaleureux & Profond",
+      tags: ["Santal", "Cèdre", "Vétiver"]
     },
     { 
       id: "gourmandes", 
       label: "Secret Sucré", 
       img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS3Ep3wqjOI04sfMmjIifqwGl-xq6UjhTlZg&s", 
-      sub: "Sensuel & Enveloppant" 
+      sub: "Sensuel & Enveloppant",
+      tags: ["Vanille", "Tonka", "Caramel"]
     }
   ]
 };
@@ -142,7 +149,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     x.set(0); 
   };
 
-  // Construit le dictionnaire radarIntensities { familyId: intensity } à passer à onValidate
   const buildRadarIntensities = (): Record<string, number> => {
     const result: Record<string, number> = {};
     FAMILIES.forEach((family, i) => {
@@ -253,8 +259,8 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                   {/* Couche invisible de capture du drag */}
                   <div className="absolute inset-0 z-50 touch-none" />
 
-                  {/* IMAGE — 55% */}
-                  <div className="w-full flex-shrink-0 pointer-events-none" style={{ height: '55%' }}>
+                  {/* IMAGE — 52% */}
+                  <div className="w-full flex-shrink-0 pointer-events-none" style={{ height: '52%' }}>
                     <img
                       src={currentNote.img}
                       draggable="false"
@@ -262,8 +268,8 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                     />
                   </div>
 
-                  {/* TEXTE — 45% */}
-                  <div className="w-full flex-1 px-5 py-4 text-center bg-white flex flex-col items-center justify-center gap-2 pointer-events-none">
+                  {/* TEXTE — 48% */}
+                  <div className="w-full flex-1 px-5 py-3 text-center bg-white flex flex-col items-center justify-center gap-2 pointer-events-none">
 
                     {/* TITRE */}
                     <h3 className="text-lg font-semibold text-black uppercase tracking-tight leading-tight">
@@ -280,6 +286,18 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                       <div className="h-[1px] w-10 bg-amber-400/50" />
                       <div className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
                       <div className="h-[1px] w-10 bg-amber-400/50" />
+                    </div>
+
+                    {/* TAGS OLFACTIFS */}
+                    <div className="flex flex-wrap justify-center gap-1.5 mt-1">
+                      {currentNote.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[9px] font-bold uppercase tracking-wider"
+                        >
+                          {tag}
+                        </span>
+                      ))}
                     </div>
 
                   </div>

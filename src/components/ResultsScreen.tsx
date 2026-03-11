@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 import { Perfume } from "@/data/perfumes";
-import { Trophy, RotateCcw, Library, Sparkles, Crown } from "lucide-react";
+import { Trophy, RotateCcw, Home, Sparkles, Crown } from "lucide-react";
 
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
@@ -283,11 +283,11 @@ const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: Result
             Recommencer
           </button>
           <button
-            onClick={onCatalogue}
+            onClick={onMenu}
             className="group flex items-center gap-2.5 px-8 py-3.5 glass-card gold-border-glow hover:gold-glow transition-all duration-500 text-xs tracking-[0.25em] uppercase text-primary/70 hover:text-primary"
           >
-            <Library size={14} className="group-hover:scale-110 transition-transform duration-500" />
-            Catalogue
+            <Home size={14} className="group-hover:scale-110 transition-transform duration-500" />
+            Menu
           </button>
         </motion.div>
       </motion.div>

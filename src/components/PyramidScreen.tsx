@@ -19,7 +19,7 @@ const RADAR_TO_FAMILY: Record<string, NoteCategory[]> = {
   'FLORAL':  ['florales'],
   'FRUITÉ':  ['fruitees'],
   'SUCRÉ':   ['gourmandes'],
-  'VERT':    ['marines'],
+  'MARINE':    ['marines'],
 };
 
 const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, tags: string[] }[]> = {

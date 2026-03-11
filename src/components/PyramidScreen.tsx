@@ -12,21 +12,26 @@ interface PyramidScreenProps {
 const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'MARINE'];
 
 const RADAR_TO_FAMILY: Record<string, string[]> = {
-  'AGRUMES': ['hesperides'], // Citron, Bergamote, Orange, Agrumes, Mandarine, Pamplemousse
-  
-  'ANIMAL':  ['musquees', 'cuir', 'animal'], // Musc, Ambroxan, Cashmeran + Cuir/Ambre gris
-  
-  'BOISÉ':   ['boisees', 'mousses', 'notes-vertes'], // Cèdre, Santal, Vétiver, Patchouli, Oud, Chêne + Mousse, Terreux, Vert
-  
-  'ÉPICÉ':   ['epices-fraiches', 'epices-chaudes'], // Gingembre, Cardamome, Poivre rose + Cannelle, Safran, Muscade
-  
-  'FLORAL':  ['florales'], // Rose, Jasmin, Iris, Néroli, Violette, Tubéreuse
-  
-  'FRUITÉ':  ['fruitees', 'fruits-legers'], // Pêche, Pomme, Poire, Framboise + Melon, Fruits d'eau
-  
-  'SUCRÉ':   ['gourmandes'], // Vanille, Tonka, Praliné, Caramel, Chocolat, Miel
-  
-  'MARINE':  ['marines'], // Marine, Sel, Iodée, Algues, Aquatique
+  'AGRUMES': ['hesperides'],
+  'ANIMAL':  ['musquees', 'cuir', 'animal'],
+  'BOISÉ':   ['boisees', 'mousses', 'notes-vertes'],
+  'ÉPICÉ':   ['epices-fraiches', 'epices-chaudes'],
+  'FLORAL':  ['florales'],
+  'FRUITÉ':  ['fruitees', 'fruits-legers'],
+  'SUCRÉ':   ['gourmandes'],
+  'MARINE':  ['marines'],
+};
+
+// Icônes custom par axe — null = pas d'icône, texte seul
+const FAMILY_ICONS: Record<string, string | null> = {
+  'AGRUMES': null,
+  'ANIMAL':  null,
+  'BOISÉ':   null,
+  'ÉPICÉ':   null,
+  'FLORAL':  null,
+  'FRUITÉ':  'https://i.ibb.co/Y7WJyHvD/gold-fruit.jpg',
+  'SUCRÉ':   null,
+  'MARINE':  null,
 };
 
 const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, tags: string[] }[]> = {
@@ -358,15 +363,32 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                   </motion.g>
                 ))}
               </svg>
+
+              {/* LABELS DU RADAR — texte blanc + icône dorée si disponible */}
               {FAMILIES.map((f, i) => {
                 const p = getPointPos(i, 1.28);
                 return (
                   <div
                     key={i}
-                    className="absolute text-[9px] font-black text-zinc-500 uppercase tracking-tighter"
+                    className="absolute flex items-center gap-1.5"
                     style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}
                   >
-                    {f}
+                    {/* Label de la famille en blanc éclatant */}
+                    <span className="text-[9px] font-black text-zinc-100 uppercase tracking-[0.1em] whitespace-nowrap">
+                      {f}
+                    </span>
+
+                    {/* Affichage de l'icône dorée si elle existe dans FAMILY_ICONS */}
+                    {FAMILY_ICONS[f] && (
+                      <img
+                        src={FAMILY_ICONS[f]!}
+                        alt={f}
+                        className="w-4 h-4 object-contain"
+                        style={{
+                          filter: "drop-shadow(0px 0px 2px rgba(212, 175, 55, 0.4))"
+                        }}
+                      />
+                    )}
                   </div>
                 );
               })}

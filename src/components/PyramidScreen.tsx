@@ -28,14 +28,14 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       id: "hesperides", 
       label: "Lumière du Matin", 
       img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", 
-      sub: "Fraîcheur & Légèreté",
+      sub: "Éclat Hespéridé",
       tags: ["Bergamote", "Citron", "Mandarine"]
     },
     { 
       id: "marines", 
       label: "Souffle Marin", 
       img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", 
-      sub: "Fraîcheur Océanique & Pure",
+      sub: "Fraîcheur Aquatique & Pure",
       tags: ["Sel marin", "Algues", "Air iodé"]
     },
     { 
@@ -58,14 +58,14 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       id: "epicees", 
       label: "Nuit Précieuse", 
       img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=400", 
-      sub: "Intense & Mystérieux",
+      sub: "Mystère Oriental Épicé",
       tags: ["Safran", "Cannelle", "Poivre noir"]
     },
     { 
       id: "musquees", 
       label: "Chaleur Dorée", 
       img: "https://png.pngtree.com/thumb_back/fh260/background/20241017/pngtree-heavenly-stairs-leading-to-the-golden-gates-of-heaven-image_16409825.jpg", 
-      sub: "Ambré & Enveloppant",
+      sub: "Sillage Ambré",
       tags: ["Musc", "Ambre", "Patchouli"]
     }
   ],
@@ -74,14 +74,14 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
       id: "boisees", 
       label: "Bois Sacré", 
       img: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=400", 
-      sub: "Chaleureux & Profond",
+      sub: "Profondeur Boisée",
       tags: ["Santal", "Cèdre", "Vétiver"]
     },
     { 
       id: "gourmandes", 
       label: "Secret Sucré", 
       img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS3Ep3wqjOI04sfMmjIifqwGl-xq6UjhTlZg&s", 
-      sub: "Sensuel & Enveloppant",
+      sub: "Tentation Gourmande",
       tags: ["Vanille", "Tonka", "Caramel"]
     }
   ]

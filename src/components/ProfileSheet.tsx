@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, X, Lock, Package, Search, CheckCircle, XCircle, Delete } from "lucide-react";
+import { User, X, Lock, Package, Search, CheckCircle, XCircle, Delete, ExternalLink } from "lucide-react";
 import { PERFUMES } from "@/data/perfumes";
+import type { Perfume } from "@/data/perfumes";
+import PerfumePage from "@/components/PerfumePage";
 
 const PIN_CODE = "0000";
 const STORAGE_KEY = "fz_stock_status";
@@ -26,6 +28,7 @@ const ProfileSheet = () => {
   const [pinError, setPinError] = useState(false);
   const [stock, setStock] = useState<StockMap>({});
   const [search, setSearch] = useState("");
+  const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
 
   useEffect(() => { setStock(loadStock()); }, []);
 
@@ -111,9 +114,18 @@ const ProfileSheet = () => {
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed inset-y-0 left-0 z-[301] w-full max-w-2xl bg-[#080808] border-r border-white/5 flex flex-col"
+              transition={{ type: "spring", damping: 28, stiffness: 280 }}
+              className="fixed inset-y-0 left-0 z-[301] w-full max-w-2xl bg-[#080808] border-r border-white/5 flex flex-col overflow-hidden"
             >
+              {/* Gold shimmer line at top */}
+              <motion.div
+                className="absolute top-0 left-0 right-0 h-[1px]"
+                style={{ background: "linear-gradient(90deg, transparent, rgba(245,158,11,0.6), transparent)" }}
+                initial={{ x: "-100%" }}
+                animate={{ x: "100%" }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+              />
+
               <AnimatePresence mode="wait">
                 {!authenticated ? (
                   /* ── PIN SCREEN ── */
@@ -124,15 +136,18 @@ const ProfileSheet = () => {
                     exit={{ opacity: 0, x: -40 }}
                     className="flex flex-col items-center justify-center h-full px-8 gap-8"
                   >
-                    {/* Close */}
                     <button onClick={handleClose} className="absolute top-5 right-5 text-white/40 hover:text-white transition-colors">
                       <X size={20} />
                     </button>
 
-                    {/* Lock icon */}
-                    <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+                      className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center"
+                    >
                       <Lock size={28} className="text-amber-500" />
-                    </div>
+                    </motion.div>
 
                     <div className="text-center space-y-1">
                       <h2 className="text-white text-lg font-medium tracking-[0.25em] uppercase">
@@ -141,7 +156,6 @@ const ProfileSheet = () => {
                       <p className="text-white/20 text-xs">Entrez votre code PIN</p>
                     </div>
 
-                    {/* Dots */}
                     <div className="flex gap-3">
                       {[0, 1, 2, 3].map((i) => (
                         <motion.div
@@ -169,7 +183,6 @@ const ProfileSheet = () => {
                       </motion.p>
                     )}
 
-                    {/* Numpad */}
                     <div className="grid grid-cols-3 gap-3 w-full max-w-[240px]">
                       {keys.map((k, i) => {
                         if (k === "") return <div key={i} />;
@@ -204,7 +217,12 @@ const ProfileSheet = () => {
                     className="flex flex-col h-full"
                   >
                     {/* Header */}
-                    <div className="flex items-center gap-3 p-5 border-b border-white/5">
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="flex items-center gap-3 p-5 border-b border-white/5"
+                    >
                       <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
                         <Package size={18} className="text-amber-500" />
                       </div>
@@ -219,7 +237,7 @@ const ProfileSheet = () => {
                       <button onClick={handleClose} className="text-white/40 hover:text-white transition-colors">
                         <X size={20} />
                       </button>
-                    </div>
+                    </motion.div>
 
                     {/* Search */}
                     <div className="px-5 py-3">
@@ -237,30 +255,68 @@ const ProfileSheet = () => {
                     {/* Grid */}
                     <div className="flex-1 overflow-y-auto px-5 pb-5">
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                        {filtered.map((p) => {
+                        {filtered.map((p, index) => {
                           const inStock = stock[p.id] !== false;
                           return (
-                            <div
+                            <motion.div
                               key={p.id}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: index * 0.04, duration: 0.35, ease: "easeOut" }}
                               className="rounded-2xl border border-white/5 bg-white/[0.02] overflow-hidden"
                             >
-                              {/* Image */}
-                              <div className="relative h-36 bg-zinc-900 flex items-center justify-center">
+                              {/* Image — clickable */}
+                              <div
+                                className="group relative h-36 bg-zinc-900 flex items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-[1.03]"
+                                onClick={() => setSelectedPerfume(p)}
+                              >
                                 <img
                                   src={p.image}
                                   alt={p.name}
                                   draggable={false}
-                                  className={`h-full w-full object-contain mix-blend-lighten p-3 transition-all ${
-                                    !inStock ? "blur-sm opacity-30" : ""
+                                  className={`h-full w-full object-contain mix-blend-lighten p-3 transition-all duration-300 ${
+                                    !inStock ? "blur-[4px] opacity-[0.15]" : ""
                                   }`}
                                 />
-                                {!inStock && (
-                                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                    <span className="px-2.5 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 text-[10px] uppercase tracking-[0.2em] font-bold">
-                                      Épuisé
-                                    </span>
-                                  </div>
-                                )}
+
+                                {/* Hover external link icon */}
+                                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/60 rounded-full p-1 z-10">
+                                  <ExternalLink size={12} className="text-amber-400" />
+                                </div>
+
+                                {/* Out of stock overlay & watermark */}
+                                <AnimatePresence>
+                                  {!inStock && (
+                                    <motion.div
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      exit={{ opacity: 0 }}
+                                      className="absolute inset-0 bg-black/75 flex items-center justify-center pointer-events-none"
+                                    >
+                                      <motion.span
+                                        initial={{ opacity: 0, scale: 0.7 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.7 }}
+                                        transition={{ duration: 0.3, ease: "easeOut" }}
+                                        className="pointer-events-none select-none"
+                                        style={{
+                                          fontSize: "1rem",
+                                          fontWeight: 900,
+                                          letterSpacing: "0.4em",
+                                          color: "rgba(255,255,255,0.90)",
+                                          border: "2px solid rgba(255,255,255,0.5)",
+                                          padding: "6px 14px",
+                                          borderRadius: "4px",
+                                          transform: "rotate(-20deg)",
+                                          textShadow: "0 0 20px rgba(239,68,68,0.8)",
+                                          textTransform: "uppercase",
+                                        }}
+                                      >
+                                        Épuisé
+                                      </motion.span>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
                               </div>
 
                               {/* Info */}
@@ -294,7 +350,7 @@ const ProfileSheet = () => {
                                   </button>
                                 </div>
                               </div>
-                            </div>
+                            </motion.div>
                           );
                         })}
                       </div>
@@ -304,6 +360,25 @@ const ProfileSheet = () => {
               </AnimatePresence>
             </motion.div>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* PerfumePage overlay */}
+      <AnimatePresence>
+        {selectedPerfume && (
+          <motion.div
+            key="perfume-page"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[400]"
+          >
+            <PerfumePage
+              perfume={selectedPerfume}
+              onClose={() => setSelectedPerfume(null)}
+              onSelectPerfume={setSelectedPerfume}
+            />
+          </motion.div>
         )}
       </AnimatePresence>
     </>

@@ -7,6 +7,7 @@ import { Trophy, RotateCcw, Home, Sparkles, Crown } from "lucide-react";
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
   onMenu: () => void;
+  onLanding: () => void; // ← navigation directe vers menu principal
   onCatalogue: () => void;
   onSelectPerfume: (perfume: Perfume) => void;
 }
@@ -17,7 +18,7 @@ const PerfumeInitial = ({ name }: { name: string }) => (
   </div>
 );
 
-const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
+const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
   const [stockStatus, setStockStatus] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -283,7 +284,7 @@ const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: Result
             Recommencer
           </button>
           <button
-            onClick={onMenu}
+            onClick={onLanding}
             className="group flex items-center gap-2.5 px-8 py-3.5 glass-card gold-border-glow hover:gold-glow transition-all duration-500 text-xs tracking-[0.25em] uppercase text-primary/70 hover:text-primary"
           >
             <Home size={14} className="group-hover:scale-110 transition-transform duration-500" />

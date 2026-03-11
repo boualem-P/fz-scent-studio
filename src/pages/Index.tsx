@@ -70,6 +70,13 @@ const Index = () => {
     }
   }, [screen]);
 
+  // ← navigation directe vers le landing (menu principal Homme/Femme)
+  const handleGoToLanding = useCallback(() => {
+    setHistory([]);
+    setSelectedPerfume(null);
+    setScreen("landing");
+  }, []);
+
   const handleBack = useCallback(() => {
     if (selectedPerfume) {
       setSelectedPerfume(null);
@@ -115,7 +122,6 @@ const Index = () => {
     atmosphere?: string,
     radarIntensities?: Record<string, number>
   ) => {
-    // ← atmosphere passé à matchPerfumes (seul changement par rapport à ton fichier)
     const matches = matchPerfumes(gender, top, heart, base, radarIntensities, atmosphere);
     setResults(matches);
     navigateTo("analyzing");
@@ -188,7 +194,8 @@ const Index = () => {
               {screen === "results" && (
                 <ResultsScreen 
                   results={results} 
-                  onMenu={handleBack} 
+                  onMenu={handleBack}
+                  onLanding={handleGoToLanding}
                   onCatalogue={() => navigateTo("catalogue")} 
                   onSelectPerfume={setSelectedPerfume} 
                 />

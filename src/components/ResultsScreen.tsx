@@ -195,7 +195,7 @@ const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: Result
                       <img
                         src={perfume.image}
                         alt={perfume.name}
-                        className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                        className={`w-full h-full object-cover transition-all duration-700 ${stockStatus[perfume.id] === false ? "blur-[4px] opacity-[0.15]" : "opacity-70 group-hover:opacity-100 group-hover:scale-105"}`}
                       />
                     ) : (
                       <div className="w-full h-full min-h-[160px] flex items-center justify-center">
@@ -203,6 +203,33 @@ const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: Result
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/50 pointer-events-none" />
+                    <AnimatePresence>
+                      {stockStatus[perfume.id] === false && (
+                        <>
+                          <div className="absolute inset-0 bg-black/75 pointer-events-none" />
+                          <motion.span
+                            initial={{ opacity: 0, scale: 0.7 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.7 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                            style={{
+                              fontSize: "1rem",
+                              fontWeight: 900,
+                              letterSpacing: "0.4em",
+                              color: "rgba(255,255,255,0.90)",
+                              border: "2px solid rgba(255,255,255,0.5)",
+                              padding: "6px 14px",
+                              borderRadius: "4px",
+                              transform: "translate(-50%, -50%) rotate(-20deg)",
+                              textShadow: "0 0 20px rgba(239,68,68,0.8)",
+                            }}
+                          >
+                            ÉPUISÉ
+                          </motion.span>
+                        </>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   {/* Details */}

@@ -57,14 +57,14 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
     { 
       id: "epicees", 
       label: "Nuit Précieuse", 
-      img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=400", 
+      img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", 
       sub: "Mystère Oriental Épicé",
       tags: ["Safran", "Cannelle", "Poivre noir"]
     },
     { 
       id: "musquees", 
       label: "Chaleur Dorée", 
-      img: "https://png.pngtree.com/thumb_back/fh260/background/20241017/pngtree-heavenly-stairs-leading-to-the-golden-gates-of-heaven-image_16409825.jpg", 
+      img: "https://i.ibb.co/Wp7ygw9k/fzp.png", 
       sub: "Sillage Ambré",
       tags: ["Musc", "Ambre", "Patchouli"]
     }
@@ -80,7 +80,7 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
     { 
       id: "gourmandes", 
       label: "Secret Sucré", 
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS3Ep3wqjOI04sfMmjIifqwGl-xq6UjhTlZg&s", 
+      img: "https://i.ibb.co/8StFqcr/88535382628.png", 
       sub: "Tentation Gourmande",
       tags: ["Vanille", "Tonka", "Caramel"]
     }

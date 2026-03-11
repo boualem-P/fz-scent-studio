@@ -35,7 +35,7 @@ const PerfumeImage = ({ perfume }: { perfume: Perfume }) => (
   </div>
 );
 
-const CatalogueScreen = ({ onMenu, availableNotes }: CatalogueScreenProps) => {
+const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isNotesMenuOpen, setIsNotesMenuOpen] = useState(false);

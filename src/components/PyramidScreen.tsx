@@ -374,7 +374,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                     style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}
                   >
                     {/* Label de la famille en blanc éclatant */}
-                    <span className="text-[9px] font-black text-zinc-100 uppercase tracking-[0.1em] whitespace-nowrap">
+                    <span className="text-[12px] font-black text-zinc-100 uppercase tracking-[0.1em] whitespace-nowrap">
                       {f}
                     </span>
 

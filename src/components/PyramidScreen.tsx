@@ -11,15 +11,22 @@ interface PyramidScreenProps {
 
 const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'MARINE'];
 
-const RADAR_TO_FAMILY: Record<string, NoteCategory[]> = {
-  'AGRUMES': ['hesperides'],
-  'ANIMAL':  ['musquees'],
-  'BOISÉ':   ['boisees'],
-  'ÉPICÉ':   ['epicees'],
-  'FLORAL':  ['florales'],
-  'FRUITÉ':  ['fruitees'],
-  'SUCRÉ':   ['gourmandes'],
-  'MARINE':    ['marines'],
+const RADAR_TO_FAMILY: Record<string, string[]> = {
+  'AGRUMES': ['hesperides'], // Citron, Bergamote, Orange, Agrumes, Mandarine, Pamplemousse
+  
+  'ANIMAL':  ['musquees', 'cuir', 'animal'], // Musc, Ambroxan, Cashmeran + Cuir/Ambre gris
+  
+  'BOISÉ':   ['boisees', 'mousses', 'notes-vertes'], // Cèdre, Santal, Vétiver, Patchouli, Oud, Chêne + Mousse, Terreux, Vert
+  
+  'ÉPICÉ':   ['epices-fraiches', 'epices-chaudes'], // Gingembre, Cardamome, Poivre rose + Cannelle, Safran, Muscade
+  
+  'FLORAL':  ['florales'], // Rose, Jasmin, Iris, Néroli, Violette, Tubéreuse
+  
+  'FRUITÉ':  ['fruitees', 'fruits-legers'], // Pêche, Pomme, Poire, Framboise + Melon, Fruits d'eau
+  
+  'SUCRÉ':   ['gourmandes'], // Vanille, Tonka, Praliné, Caramel, Chocolat, Miel
+  
+  'MARINE':  ['marines'], // Marine, Sel, Iodée, Algues, Aquatique
 };
 
 const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, tags: string[] }[]> = {

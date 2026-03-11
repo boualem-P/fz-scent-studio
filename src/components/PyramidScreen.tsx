@@ -9,7 +9,7 @@ interface PyramidScreenProps {
   setInternalBackHandler: (fn: () => boolean) => void;
 }
 
-const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'VERT'];
+const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'MARINE'];
 
 const RADAR_TO_FAMILY: Record<string, NoteCategory[]> = {
   'AGRUMES': ['hesperides'],

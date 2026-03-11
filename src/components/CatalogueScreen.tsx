@@ -13,6 +13,7 @@ interface CatalogueScreenProps {
     heart: string[];
     base: string[];
   };
+  setInternalBackHandler?: (fn: (() => boolean) | null) => void;
 }
 
 const PerfumeImage = ({ perfume }: { perfume: Perfume }) => (

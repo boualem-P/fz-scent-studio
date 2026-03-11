@@ -18,6 +18,15 @@ const PerfumeInitial = ({ name }: { name: string }) => (
 );
 
 const ResultsScreen = ({ results, onMenu, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
+  const [stockStatus, setStockStatus] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("fz_stock_status");
+      if (saved) setStockStatus(JSON.parse(saved));
+    } catch {}
+  }, []);
+
   if (results.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">

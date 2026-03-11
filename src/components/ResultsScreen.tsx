@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 import { Perfume } from "@/data/perfumes";
 import { Trophy, RotateCcw, Library, Sparkles, Crown } from "lucide-react";

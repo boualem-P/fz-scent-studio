@@ -29,7 +29,7 @@ const FAMILY_ICONS: Record<string, string | null> = {
   'BOISÉ':   null,
   'ÉPICÉ':   null,
   'FLORAL':  null,
-  'FRUITÉ':  goldFruit, // Utilisation du fichier local
+  'FRUITÉ':  null,
   'SUCRÉ':   null,
   'MARINE':  null,
 };

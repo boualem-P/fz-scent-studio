@@ -171,7 +171,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     return result;
   };
 
-  const size = 300;
+  const size = 340;
   const center = size / 2;
   const radius = size * 0.38;
 
@@ -373,13 +373,13 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
               </svg>
 
               {FAMILIES.map((f, i) => {
-                const p = getPointPos(i, 1.45); // On passe de 1.32 à 1.45 pour donner de l'air
+                const p = getPointPos(i, 1.38); // On passe de 1.32 à 1.45 pour donner de l'air
                 const isActive = intensities[i] > 0.7;
                 return (
                   <motion.div
                     key={i}
                     className="absolute flex items-center gap-1.5"
-                    style={{ left: p.x, top: p.y, transform: 'translate(-80%, -50%)' }}
+                    style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}
                     animate={{ 
                       scale: isActive ? 1.1 : 1,
                       opacity: 0.5 + (intensities[i] * 0.5)

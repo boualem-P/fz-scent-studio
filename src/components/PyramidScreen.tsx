@@ -126,6 +126,9 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
+  // Config de ressort pour la "sensibilité" organique
+  const springConfig = { stiffness: 150, damping: 18, mass: 0.8 };
+
   useEffect(() => {
     setInternalBackHandler(() => {
       if (isAnalyzing) return true;
@@ -327,59 +330,80 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             </div>
 
             <div className="relative">
-              <svg id="radar-svg" width={size} height={size}>
+              <svg id="radar-svg" width={size} height={size} className="overflow-visible">
                 {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => (
-                  <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" />
+                  <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" strokeWidth="0.5" />
                 ))}
                 {FAMILIES.map((_, i) => {
                   const p = getPointPos(i, 1);
-                  return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#222" />;
+                  return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#333" strokeDasharray="2 2" />;
                 })}
-                <polygon points={polygonPath} fill="rgba(245, 158, 11, 0.2)" stroke="#f59e0b" strokeWidth="2" />
+                
+                <motion.polygon 
+                  points={polygonPath} 
+                  fill="rgba(245, 158, 11, 0.15)" 
+                  stroke="#f59e0b" 
+                  strokeWidth="2.5" 
+                  animate={{ points: polygonPath }}
+                  transition={{ type: "spring", ...springConfig }}
+                />
+
                 {points.map((p, i) => (
-                  <motion.g key={i}>
+                  <motion.g key={i} animate={{ x: p.x, y: p.y }} transition={{ type: "spring", ...springConfig }}>
                     <motion.circle
-                      cx={p.x} cy={p.y} r="25"
+                      cx={0} cy={0} r="35"
                       fill="transparent"
+                      className="cursor-pointer"
                       drag
                       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                       onDrag={(_, info) => updateIntensity(i, info)}
+                      whileTap={{ scale: 1.2 }}
                     />
-                    <circle cx={p.x} cy={p.y} r="6" fill="#f59e0b" className="pointer-events-none shadow-xl" />
+                    {/* Halo de respiration qui réagit à l'intensité */}
+                    <motion.circle 
+                      cx={0} cy={0} 
+                      r={4 + (intensities[i] * 6)} 
+                      fill="#f59e0b" 
+                      className="pointer-events-none"
+                      style={{ filter: `blur(${intensities[i] * 5}px)`, opacity: 0.5 }}
+                    />
+                    <circle cx={0} cy={0} r="5" fill="#fff" className="pointer-events-none shadow-2xl" />
                   </motion.g>
                 ))}
               </svg>
 
               {FAMILIES.map((f, i) => {
-                const p = getPointPos(i, 1.28);
+                const p = getPointPos(i, 1.32);
+                const isActive = intensities[i] > 0.7;
                 return (
-                  <div
+                  <motion.div
                     key={i}
                     className="absolute flex items-center gap-1.5"
                     style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}
+                    animate={{ 
+                      scale: isActive ? 1.1 : 1,
+                      opacity: 0.5 + (intensities[i] * 0.5)
+                    }}
                   >
                     {FAMILY_ICONS[f] && (
                       <img
                         src={FAMILY_ICONS[f]!}
                         alt={f}
                         className="w-6 h-6 object-contain rounded-full"
-                        style={{
-                          filter: "drop-shadow(0px 0px 2px rgba(212, 175, 55, 0.4))",
-                          mixBlendMode: "screen"
-                        }}
+                        style={{ mixBlendMode: "screen" }}
                       />
                     )}
-                    <span className="text-[12px] font-black text-zinc-100 uppercase tracking-[0.1em] whitespace-nowrap">
+                    <span className={`text-[11px] font-bold uppercase tracking-[0.15em] whitespace-nowrap ${isActive ? 'text-amber-400' : 'text-zinc-400'}`}>
                       {f}
                     </span>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
 
             <button
               onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")}
-              className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px]"
+              className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px] active:scale-95 transition-transform"
             >
               Finaliser le profil
             </button>

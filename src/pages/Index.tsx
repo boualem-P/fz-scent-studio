@@ -190,6 +190,12 @@ const Index = () => {
                   onProfile={() =>{}} 
                 />
               )}
+              {screen === "budget" && (
+                <BudgetScreen
+                  onSelect={handleBudgetSelect}
+                  onBack={handleBack}
+                />
+              )}
               {screen === "pyramid" && (
                 <PyramidScreen
                   onValidate={handleValidate}

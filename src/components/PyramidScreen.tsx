@@ -126,7 +126,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
-  // Config de ressort pour la "sensibilité" organique
   const springConfig = { stiffness: 150, damping: 18, mass: 0.8 };
 
   useEffect(() => {
@@ -173,7 +172,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
   const size = 340;
   const center = size / 2;
-  const radius = size * 0.38;
+  const radius = size * 0.32; // réduit pour laisser de la place aux labels SVG
 
   const getPointPos = (index: number, intensity: number) => {
     const angle = (Math.PI * 2 * index) / FAMILIES.length - Math.PI / 2;
@@ -331,14 +330,18 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
             <div className="relative flex items-center justify-center">
               <svg id="radar-svg" width={size} height={size} className="overflow-visible">
+                {/* Cercles de grille */}
                 {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => (
                   <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" strokeWidth="0.5" />
                 ))}
+
+                {/* Axes */}
                 {FAMILIES.map((_, i) => {
                   const p = getPointPos(i, 1);
                   return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#333" strokeDasharray="2 2" />;
                 })}
-                
+
+                {/* Polygone */}
                 <motion.polygon 
                   points={polygonPath} 
                   fill="rgba(245, 158, 11, 0.15)" 
@@ -348,6 +351,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                   transition={{ type: "spring", ...springConfig }}
                 />
 
+                {/* Points draggables */}
                 {points.map((p, i) => (
                   <motion.g key={i} animate={{ x: p.x, y: p.y }} transition={{ type: "spring", ...springConfig }}>
                     <motion.circle
@@ -359,7 +363,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                       onDrag={(_, info) => updateIntensity(i, info)}
                       whileTap={{ scale: 1.2 }}
                     />
-                    {/* Halo de respiration qui réagit à l'intensité */}
                     <motion.circle 
                       cx={0} cy={0} 
                       r={4 + (intensities[i] * 6)} 
@@ -367,38 +370,31 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                       className="pointer-events-none"
                       style={{ filter: `blur(${intensities[i] * 5}px)`, opacity: 0.5 }}
                     />
-                    <circle cx={0} cy={0} r="5" fill="#fff" className="pointer-events-none shadow-2xl" />
+                    <circle cx={0} cy={0} r="5" fill="#fff" className="pointer-events-none" />
                   </motion.g>
                 ))}
-              </svg>
 
-              {FAMILIES.map((f, i) => {
-                const p = getPointPos(i, 1.38); // On passe de 1.32 à 1.45 pour donner de l'air
-                const isActive = intensities[i] > 0.7;
-                return (
-                  <motion.div
-                    key={i}
-                    className="absolute flex items-center gap-1.5"
-                    style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}
-                    animate={{ 
-                      scale: isActive ? 1.1 : 1,
-                      opacity: 0.5 + (intensities[i] * 0.5)
-                    }}
-                  >
-                    {FAMILY_ICONS[f] && (
-                      <img
-                        src={FAMILY_ICONS[f]!}
-                        alt={f}
-                        className="w-6 h-6 object-contain rounded-full"
-                        style={{ mixBlendMode: "screen" }}
-                      />
-                    )}
-                    <span className={`text-[11px] font-bold uppercase tracking-[0.1em] whitespace-nowrap ${isActive ? 'text-amber-400' : 'text-zinc-400'}`}>
+                {/* ── LABELS EN SVG — zéro décalage ── */}
+                {FAMILIES.map((f, i) => {
+                  const p = getPointPos(i, 1.55);
+                  const isActive = intensities[i] > 0.7;
+                  return (
+                    <text
+                      key={i}
+                      x={p.x}
+                      y={p.y}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fontSize="9"
+                      fontWeight="800"
+                      fill={isActive ? '#f59e0b' : '#71717a'}
+                      style={{ textTransform: 'uppercase', letterSpacing: '0.08em', pointerEvents: 'none' }}
+                    >
                       {f}
-                    </span>
-                  </motion.div>
-                );
-              })}
+                    </text>
+                  );
+                })}
+              </svg>
             </div>
 
             <button

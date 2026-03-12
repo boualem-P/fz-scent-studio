@@ -7,16 +7,16 @@ interface BudgetScreenProps {
 }
 
 const SPHERE_CONFIG = [
-  { id: 1, duration: 6.2, delay: 0.0, offsetClass: "mt-0" },
-  { id: 2, duration: 7.1, delay: 0.5, offsetClass: "mt-6" },
-  { id: 3, duration: 5.4, delay: 1.2, offsetClass: "mt-2" },
-  { id: 4, duration: 8.3, delay: 0.8, offsetClass: "mt-8" },
-  { id: 5, duration: 6.8, delay: 2.0, offsetClass: "mt-1" },
-  { id: 6, duration: 7.5, delay: 1.5, offsetClass: "mt-5" },
-  { id: 7, duration: 5.9, delay: 0.3, offsetClass: "mt-3" },
-  { id: 8, duration: 8.7, delay: 2.3, offsetClass: "mt-7" },
-  { id: 9, duration: 6.5, delay: 1.0, offsetClass: "mt-0" },
-  { id: 10, duration: 7.8, delay: 1.8, offsetClass: "mt-4" },
+  { id: 1 },
+  { id: 2 },
+  { id: 3 },
+  { id: 4 },
+  { id: 5 },
+  { id: 6 },
+  { id: 7 },
+  { id: 8 },
+  { id: 9 },
+  { id: 10 },
 ];
 
 const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
@@ -40,29 +40,21 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
         <div className="w-24 h-px bg-amber-500/40 mt-2" />
       </motion.div>
 
-      {/* Wheel */}
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-        className="relative w-80 h-80 mx-auto mt-8"
-      >
-        {/* Center element */}
+      {/* Wheel (static) */}
+      <div className="relative w-80 h-80 mx-auto mt-8">
+        {/* Center rectangle */}
         <div
-          className="absolute w-16 h-16 rounded-full border border-amber-500/20 flex items-center justify-center"
+          className="absolute w-24 h-10 rounded-xl border border-amber-500/40 bg-black flex items-center justify-center"
           style={{
-            left: 160,
-            top: 160,
+            left: "50%",
+            top: "50%",
             transform: "translate(-50%, -50%)",
-            background: "radial-gradient(circle, rgba(212,175,55,0.15), transparent)",
+            boxShadow: "0 0 15px rgba(212,175,55,0.2)",
           }}
         >
-          <motion.span
-            animate={{ rotate: -360 }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="font-black text-xs tracking-widest text-amber-500/40"
-          >
-            fz
-          </motion.span>
+          <span className="font-black text-[9px] uppercase tracking-[0.2em] text-amber-500">
+            Fz Parfums
+          </span>
         </div>
 
         {SPHERE_CONFIG.map((sphere, i) => {
@@ -81,14 +73,14 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
               animate={{
                 opacity: 1,
                 scale: 1,
-                y: [0, -4, 0, 3, 0],
-                x: [0, 2, 0, -2, 0],
+                y: [0, -5, 0, 5, 0],
+                x: [0, 3, 0, -3, 0],
               }}
               transition={{
-                opacity: { duration: 0.4, delay: sphere.delay * 0.3 },
-                scale: { duration: 0.4, delay: sphere.delay * 0.3 },
-                y: { duration: sphere.duration, repeat: Infinity, ease: "easeInOut", delay: sphere.delay },
-                x: { duration: sphere.duration, repeat: Infinity, ease: "easeInOut", delay: sphere.delay },
+                opacity: { duration: 0.4, delay: i * 0.05 },
+                scale: { duration: 0.4, delay: i * 0.05 },
+                y: { duration: 4 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 },
+                x: { duration: 4 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 },
               }}
               whileHover={{ scale: 1.15, boxShadow: "0 0 35px rgba(212,175,55,0.5)" }}
               whileTap={{ scale: 0.92 }}
@@ -113,17 +105,13 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 />
               )}
-              <motion.span
-                animate={{ rotate: -360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                className="font-black text-sm text-amber-400 relative z-10"
-              >
+              <span className="font-black text-sm text-amber-400 relative z-10">
                 X{sphere.id}
-              </motion.span>
+              </span>
             </motion.button>
           );
         })}
-      </motion.div>
+      </div>
 
       {/* Confirm Button */}
       <AnimatePresence>

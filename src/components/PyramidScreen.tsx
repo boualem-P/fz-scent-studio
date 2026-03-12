@@ -379,21 +379,25 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                     </span>
 
                     {/* Affichage de l'icône dorée si elle existe dans FAMILY_ICONS */}
-                    {FAMILY_ICONS[f] && (
-                      <img
-                        src={FAMILY_ICONS[f]!}
-                        alt={f}
-                        className="w-6 h-6 object-contain rounded-full"
-                        style={{
-                          filter: "drop-shadow(0px 0px 2px rgba(212, 175, 55, 0.4))",
-                         mixBlendMode: "screen"
-                        }}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+{FAMILY_ICONS[f] && (
+  <img
+    src={FAMILY_ICONS[f]!}
+    alt={f}
+    className="w-6 h-6 object-contain rounded-full"
+    style={{
+      filter: "drop-shadow(0px 0px 2px rgba(212, 175, 55, 0.4))",
+      mixBlendMode: "screen"
+    }}
+  />
+)}
+{/* Label de la famille en blanc éclatant */}
+<span className="text-[12px] font-black text-zinc-100 uppercase tracking-[0.1em] whitespace-nowrap">
+  {f}
+</span>
+</div>
+);
+})}
+</div>
 
             <button
               onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")}

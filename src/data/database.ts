@@ -509,7 +509,7 @@ export const PERFUMES: Perfume[] = [
     id: "layton-pdm",
     name: "Layton",
     brand: "Parfums de Marly",
-    image: "https://fimgs.net/mdimg/perfume/social.46633.jpg",
+    image: "https://parfums-de-marly.com/cdn/shop/files/LAYTON-PERFUME-200-PACK1-1X1_CENTERED_b1c0caab-e449-4e3c-9780-195aad3a1ae5.png?v=1759501470&width=1445",
     description: "Une fragrance addictive et élégante qui célèbre la noblesse du 18ème siècle.",
     year: 2016,
     gender: "homme",

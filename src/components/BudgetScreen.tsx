@@ -7,16 +7,16 @@ interface BudgetScreenProps {
 }
 
 const CARDS = [
-  { id: 1, img: "https://images.unsplash.com/photo-1541643600914-78b084683702?w=400" },
-  { id: 2, img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
-  { id: 3, img: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
-  { id: 4, img: "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400" },
-  { id: 5, img: "https://images.unsplash.com/photo-1588776814546-daab30f310ce?w=400" },
-  { id: 6, img: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400" },
-  { id: 7, img: "https://images.unsplash.com/photo-1547887538-047f4264e661?w=400" },
-  { id: 8, img: "https://images.unsplash.com/photo-1564294736434-88a8d216c49e?w=400" },
-  { id: 9, img: "https://images.unsplash.com/photo-1600612253971-7b89b4b97779?w=400" },
-  { id: 10, img: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=400" },
+  { id: 1, img: "https://i.ibb.co/DPHS2KzP/1.png" },
+  { id: 2, img: "https://i.ibb.co/RkXJtWfJ/2-2.png" },
+  { id: 3, img: "https://i.ibb.co/dsK9VzHz/2.png" },
+  { id: 4, img: "https://i.ibb.co/QvVHFsHZ/4-2.png" },
+  { id: 5, img: "https://i.ibb.co/pjKtr2BD/3.png" },
+  { id: 6, img: "https://i.ibb.co/BVPKVysV/6.png" },
+  { id: 7, img: "https://i.ibb.co/zhBS4VrB/4.png" },
+  { id: 8, img: "https://i.ibb.co/yFS1DkPk/8.png" },
+  { id: 9, img: "https://i.ibb.co/67qWvD90/5.png" },
+  { id: 10, img: "https://i.ibb.co/JW6wKySF/10.p" },
 ];
 
 const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {

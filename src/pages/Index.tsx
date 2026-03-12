@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Library, ArrowLeft } from "lucide-react";
+import BudgetScreen from "@/components/BudgetScreen";
 import ProfileSheet from "@/components/ProfileSheet";
 import LandingScreen from "@/components/LandingScreen";
 import PyramidScreen from "@/components/PyramidScreen";

@@ -13,12 +13,13 @@ import PerfumePage from "@/components/PerfumePage";
 import { Gender, NoteCategory, matchPerfumes, Perfume, PERFUMES } from "@/data/perfumes"; 
 import LightWipeTransition from "@/components/LightWipeTransition";
 
-type ScreenType = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
+type ScreenType = "landing" | "budget" | "pyramid" | "analyzing" | "results" | "catalogue";
 
 const Index = () => {
   const [screen, setScreen] = useState<ScreenType>("landing");
   const [history, setHistory] = useState<ScreenType[]>([]);
   const [gender, setGender] = useState<Gender>("homme");
+  const [selectedQuantity, setSelectedQuantity] = useState<number>(3);
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
   const [showWipe, setShowWipe] = useState(false);

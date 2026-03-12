@@ -331,7 +331,7 @@ export const PERFUMES: Perfume[] = [
     id: "nomade-chloe",
     name: "Nomade",
     brand: "Chloé",
-    image: "https://confiseriedubonheur.net/Stalk3r_hGeDKFxAmyy7H5pn/wp-content/uploads/2023/08/27.jpg",
+    image: "https://c.perfumesclub.com/nw/nomadeedp/notas.jpg",
     description: "L'incarnation d'une femme libre et aventureuse.",
     year: 2018,
     gender: "femme",

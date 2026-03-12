@@ -159,7 +159,7 @@ const Index = () => {
               <ArrowLeft size={20} />
             </button>
           )}
-          <ProfileSheet />
+          {screen === "landing" && !selectedPerfume && <ProfileSheet />}
         </div>
 
         <div className="flex gap-3 pointer-events-auto">

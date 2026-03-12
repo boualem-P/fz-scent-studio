@@ -114,7 +114,12 @@ const Index = () => {
 
   const handleGender = (g: Gender) => { 
     setGender(g); 
-    navigateTo("pyramid"); 
+    navigateTo("budget"); 
+  };
+
+  const handleBudgetSelect = (quantity: number) => {
+    setSelectedQuantity(quantity);
+    navigateTo("pyramid");
   };
 
   const handleValidate = useCallback((

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
-import goldFruit from "./gold fruit.svg"; // Import de ton fichier local
+
 
 interface PyramidScreenProps {
   onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string, radarIntensities?: Record<string, number>) => void;
@@ -29,7 +29,7 @@ const FAMILY_ICONS: Record<string, string | null> = {
   'BOISÉ':   null,
   'ÉPICÉ':   null,
   'FLORAL':  null,
-  'FRUITÉ':  goldFruit, // Utilisation du fichier local
+  'FRUITÉ':  null,
   'SUCRÉ':   null,
   'MARINE':  null,
 };

@@ -1,15 +1,9 @@
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
-import { Perfume, generateHotspots, getRelatedPerfumes } from "@/data/database";
-import { useRef, useEffect, useState, useCallback, useMemo } from "react";
+import { Perfume, getRelatedPerfumes } from "@/data/database";
+import { useRef, useEffect, useState, useMemo } from "react";
 import { getNoteImage } from "@/data/notesData";
 import NoteZoomModal from "@/components/NoteZoomModal";
-
-const HOTSPOT_POSITIONS = [
-  { id: "cap", top: "12%", left: "50%" },
-  { id: "heart", top: "45%", left: "50%" },
-  { id: "base", top: "78%", left: "50%" },
-];
 
 interface PerfumePageProps {
   perfume: Perfume;
@@ -19,43 +13,13 @@ interface PerfumePageProps {
 
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
   const [zoomedNote, setZoomedNote] = useState<{ name: string; image: string } | null>(null);
-  const hotspots = useMemo(() => generateHotspots(perfume), [perfume]);
   const carouselRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Array<{x:number;y:number;vx:number;vy:number;size:number;color:string;alpha:number;glowSize:number;phase:number;pulsePhase:number}>>([]);
   const animFrameRef = useRef<number>(0);
   const mouseSpeedRef = useRef(0);
   const timeRef = useRef(0);
-  const mousePosRef = useRef({ x: 0.5, y: 0.5 });
-
-  // 3D Parallax tilt
-  const mouseX = useMotionValue(0.5);
-  const mouseY = useMotionValue(0.5);
-  const rotateX = useSpring(useTransform(mouseY, [0, 1], [6, -6]), { stiffness: 150, damping: 20 });
-  const rotateY = useSpring(useTransform(mouseX, [0, 1], [-6, 6]), { stiffness: 150, damping: 20 });
-  const mistX = useTransform(mouseX, [0, 1], [15, -15]);
-  const mistY = useTransform(mouseY, [0, 1], [10, -10]);
-
-  const prevMousePos = useRef({ x: 0, y: 0 });
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const nx = (e.clientX - rect.left) / rect.width;
-    const ny = (e.clientY - rect.top) / rect.height;
-    mouseX.set(nx);
-    mouseY.set(ny);
-    mousePosRef.current = { x: nx, y: ny };
-    const dx = e.clientX - prevMousePos.current.x;
-    const dy = e.clientY - prevMousePos.current.y;
-    mouseSpeedRef.current = Math.min(Math.sqrt(dx*dx + dy*dy), 40);
-    prevMousePos.current = { x: e.clientX, y: e.clientY };
-  }, [mouseX, mouseY]);
-
-  const handleMouseLeave = useCallback(() => {
-    mouseX.set(0.5);
-    mouseY.set(0.5);
-  }, [mouseX, mouseY]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -206,69 +170,15 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           <div className="space-y-4">
 
             {/* Image bouteille */}
-            <div
-              className="perfume-img-container perfume-studio-lighting gold-frame !h-[320px] bg-zinc-950/20"
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              style={{ perspective: 800 }}
-            >
-              <motion.div className="golden-mist-layer" style={{ x: mistX, y: mistY }}>
-                <div className="mist-blob mist-blob-1" />
-                <div className="mist-blob mist-blob-2" />
-                <div className="mist-blob mist-blob-3" />
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="golden-particle" style={{
-                    left: `${15 + Math.random() * 70}%`,
-                    bottom: `${Math.random() * 40}%`,
-                    animationDelay: `${Math.random() * 6}s`,
-                    animationDuration: `${4 + Math.random() * 5}s`,
-                    width: `${2 + Math.random() * 3}px`,
-                    height: `${2 + Math.random() * 3}px`,
-                    opacity: 0.15 + Math.random() * 0.25,
-                  }} />
-                ))}
-              </motion.div>
-
+            <div className="perfume-img-container perfume-studio-lighting gold-frame !h-[320px] bg-zinc-950/20">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                style={{ rotateX, rotateY, transformStyle: "preserve-3d", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
+                style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <img src={perfume.image} className="perfume-img" alt={perfume.name} />
                 <div className="perfume-shine-overlay" />
-
-                {/* Hotspots */}
-                {HOTSPOT_POSITIONS.map((pos) => {
-                  const hotspotData = hotspots[pos.id as keyof typeof hotspots];
-                  return (
-                    <div key={pos.id} className="absolute z-10" style={{ top: pos.top, left: pos.left, transform: "translate(-50%, -50%)" }}>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setActiveHotspot(activeHotspot === pos.id ? null : pos.id); }}
-                        className="hotspot-btn group relative w-5 h-5 rounded-full flex items-center justify-center"
-                      >
-                        <span className="absolute inset-0 rounded-full bg-amber-400/40 hotspot-ping" />
-                        <span className="absolute inset-0 rounded-full bg-amber-400/20 hotspot-ping" style={{ animationDelay: "0.5s" }} />
-                        <span className="relative w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_hsl(43_72%_52%/0.6)]" />
-                      </button>
-                      <AnimatePresence>
-                        {activeHotspot === pos.id && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.85, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.85, y: 8 }}
-                            className="hotspot-tooltip absolute left-1/2 -translate-x-1/2 mt-4 w-48 z-50"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <div className="hotspot-tooltip-inner p-4 rounded-xl">
-                              <h4 className="font-display text-amber-200 text-xs font-semibold mb-1">{hotspotData.title}</h4>
-                              <p className="text-[10px] leading-relaxed text-zinc-400 font-light">{hotspotData.description}</p>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
               </motion.div>
-              {activeHotspot && <div className="absolute inset-0 z-[5]" onClick={() => setActiveHotspot(null)} />}
 
               {/* Année */}
               <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-xl px-3 py-1.5 rounded-full border border-white/10">
@@ -293,7 +203,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
 
             {stats.map((s, i) => (
               <div key={i} className="space-y-2">
-                {/* Label + jauge */}
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] uppercase tracking-[0.3em] text-zinc-300 font-light flex items-center gap-2">
                     <span className="text-amber-500/60">{s.icon}</span> {s.label}

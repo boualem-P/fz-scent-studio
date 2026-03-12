@@ -364,7 +364,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                 ))}
               </svg>
 
-              {/* LABELS DU RADAR — texte blanc + icône dorée si disponible */}
+              {/* LABELS DU RADAR — icône dorée à gauche + texte blanc à droite */}
               {FAMILIES.map((f, i) => {
                 const p = getPointPos(i, 1.28);
                 return (
@@ -373,31 +373,26 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                     className="absolute flex items-center gap-1.5"
                     style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}
                   >
+                    {/* Icône dorée à gauche si disponible */}
+                    {FAMILY_ICONS[f] && (
+                      <img
+                        src={FAMILY_ICONS[f]!}
+                        alt={f}
+                        className="w-6 h-6 object-contain rounded-full"
+                        style={{
+                          filter: "drop-shadow(0px 0px 2px rgba(212, 175, 55, 0.4))",
+                          mixBlendMode: "screen"
+                        }}
+                      />
+                    )}
                     {/* Label de la famille en blanc éclatant */}
                     <span className="text-[12px] font-black text-zinc-100 uppercase tracking-[0.1em] whitespace-nowrap">
                       {f}
                     </span>
-
-                    {/* Affichage de l'icône dorée si elle existe dans FAMILY_ICONS */}
-{FAMILY_ICONS[f] && (
-  <img
-    src={FAMILY_ICONS[f]!}
-    alt={f}
-    className="w-6 h-6 object-contain rounded-full"
-    style={{
-      filter: "drop-shadow(0px 0px 2px rgba(212, 175, 55, 0.4))",
-      mixBlendMode: "screen"
-    }}
-  />
-)}
-{/* Label de la famille en blanc éclatant */}
-<span className="text-[12px] font-black text-zinc-100 uppercase tracking-[0.1em] whitespace-nowrap">
-  {f}
-</span>
-</div>
-);
-})}
-</div>
+                  </div>
+                );
+              })}
+            </div>
 
             <button
               onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")}

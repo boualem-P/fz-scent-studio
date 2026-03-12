@@ -23,7 +23,7 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
   const [selected, setSelected] = useState<number | null>(null);
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center bg-black overflow-y-auto pb-32">
+    <div className="relative min-h-screen w-full flex flex-col items-center justify-center bg-black overflow-y-auto pb-32">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -41,7 +41,7 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
       </motion.div>
 
       {/* Wheel (static) */}
-      <div className="relative w-80 h-80 mx-auto mt-8">
+      <div className="relative w-80 h-80 mx-auto mt-8 flex-shrink-0">
         {/* Center rectangle */}
         <div
           className="absolute w-24 h-10 rounded-xl border border-amber-500/40 bg-black flex items-center justify-center"
@@ -85,7 +85,7 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
               whileHover={{ scale: 1.15, boxShadow: "0 0 35px rgba(212,175,55,0.5)" }}
               whileTap={{ scale: 0.92 }}
               onClick={() => setSelected(sphere.id)}
-              className={`absolute w-14 h-14 rounded-full flex items-center justify-center cursor-pointer ${
+              className={`absolute w-20 h-20 rounded-full flex items-center justify-center cursor-pointer ${
                 isSelected ? "border-2 border-amber-400" : "border border-amber-500/30"
               }`}
               style={{
@@ -105,7 +105,7 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 />
               )}
-              <span className="font-black text-sm text-amber-400 relative z-10">
+              <span className="font-black text-lg text-amber-400 relative z-10">
                 X{sphere.id}
               </span>
             </motion.button>

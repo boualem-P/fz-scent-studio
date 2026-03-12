@@ -30,7 +30,7 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="pt-24 pb-6 flex flex-col items-center gap-3 px-6"
+        className="pt-24 pb-6 flex flex-col items-center gap-3 px-6 w-full text-center"
       >
         <h1 className="text-2xl font-black uppercase tracking-[0.3em] text-amber-500">
           quelle intensité choisir ?

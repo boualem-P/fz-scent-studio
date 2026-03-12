@@ -41,7 +41,8 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
       </motion.div>
 
       {/* Wheel (static) */}
-      <div className="relative w-80 h-80 mx-auto mt-8 flex-shrink-0">
+      <div className="relative mx-auto mt-8 flex-shrink-0"
+style={{ width: '320px', height: '320px' }}>
         {/* Center rectangle */}
         <div
           className="absolute w-24 h-10 rounded-xl border border-amber-500/40 bg-black flex items-center justify-center"
@@ -59,7 +60,7 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
 
         {SPHERE_CONFIG.map((sphere, i) => {
           const TOTAL = 10;
-          const WHEEL_RADIUS = 130;
+          const WHEEL_RADIUS = 115;
           const CENTER = 160;
           const angle = (2 * Math.PI * i) / TOTAL - Math.PI / 2;
           const sx = CENTER + WHEEL_RADIUS * Math.cos(angle);

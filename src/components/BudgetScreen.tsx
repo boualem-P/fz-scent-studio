@@ -16,7 +16,7 @@ const CARDS = [
   { id: 7, img: "https://i.ibb.co/zhBS4VrB/4.png" },
   { id: 8, img: "https://i.ibb.co/yFS1DkPk/8.png" },
   { id: 9, img: "https://i.ibb.co/67qWvD90/5.png" },
-  { id: 10, img: "https://i.ibb.co/JW6wKySF/10.p" },
+  { id: 10, img: "https://i.ibb.co/JW6wKySF/10.png" },
 ];
 
 const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {

@@ -373,7 +373,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
               </svg>
 
               {FAMILIES.map((f, i) => {
-                const p = getPointPos(i, 1.32);
+                const p = getPointPos(i, 1.45); // On passe de 1.32 à 1.45 pour donner de l'air
                 const isActive = intensities[i] > 0.7;
                 return (
                   <motion.div
@@ -393,7 +393,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                         style={{ mixBlendMode: "screen" }}
                       />
                     )}
-                    <span className={`text-[11px] font-bold uppercase tracking-[0.15em] whitespace-nowrap ${isActive ? 'text-amber-400' : 'text-zinc-400'}`}>
+                    <span className={`text-[11px] font-bold uppercase tracking-[0.1em] whitespace-nowrap ${isActive ? 'text-amber-400' : 'text-zinc-400'}`}>
                       {f}
                     </span>
                   </motion.div>

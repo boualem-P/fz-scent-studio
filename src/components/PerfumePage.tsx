@@ -234,9 +234,9 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       <motion.div 
         initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.5 }}
-        className="w-full flex flex-col items-center justify-center py-20 px-6 text-center"
+        className="w-full flex flex-col items-center justify-center py-8 px-6 text-center"
       >
-        <h1 className="text-6xl md:text-[8rem] lg:text-[10rem] font-extralight italic tracking-tighter uppercase leading-none mb-8">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extralight italic tracking-tighter uppercase leading-none mb-8">
           {perfume.name}
         </h1>
         <div className="flex items-center gap-10">
@@ -247,14 +247,14 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       </motion.div>
 
       {/* --- GRILLE PRINCIPALE --- */}
-      <div className="max-w-7xl mx-auto px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-24 items-start">
           
           {/* VISUEL AGRANDI */}
           <div className="lg:col-span-5 space-y-16">
             <div 
               ref={imageContainerRef}
-              className="perfume-img-container perfume-studio-lighting gold-frame !h-[550px] md:!h-[650px] bg-zinc-950/20"
+              className="perfume-img-container perfume-studio-lighting gold-frame !h-[350px] md:!h-[420px] bg-zinc-950/20"
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               style={{ perspective: 800 }}

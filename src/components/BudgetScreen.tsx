@@ -54,7 +54,7 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: i * 0.08, ease: "easeOut" }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => setSelected(card.id)}
+              onClick={() => setSelected(selected === card.id ? null : card.id)}
               className={`relative rounded-2xl overflow-hidden cursor-pointer mb-3 w-full break-inside-avoid border ${
                 isSelected ? "border-amber-400" : "border-amber-500/20"
               }`}

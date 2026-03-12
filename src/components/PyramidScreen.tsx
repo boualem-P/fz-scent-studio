@@ -383,7 +383,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                       <img
                         src={FAMILY_ICONS[f]!}
                         alt={f}
-                        className="w-6 h-6 object-contain"
+                        className="w-6 h-6 object-contain rounded-full"
                         style={{
                           filter: "drop-shadow(0px 0px 2px rgba(212, 175, 55, 0.4))"
                         }}

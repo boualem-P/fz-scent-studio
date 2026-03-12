@@ -19,19 +19,27 @@ const SPHERE_CONFIG = [
   { id: 10 },
 ];
 
+// Conteneur : 400px × 400px
+// Centre : 200px
+// Rayon : 155px → sphère w-20 (80px) → bord sphère à 155-40=115px du bord conteneur ✅
+const CONTAINER = 400;
+const CENTER = CONTAINER / 2;       // 200
+const WHEEL_RADIUS = 155;
+
 const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
   const [selected, setSelected] = useState<number | null>(null);
 
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center bg-black overflow-y-auto pb-32">
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="pt-24 pb-4 flex flex-col items-center gap-3 px-6"
+        className="pb-4 flex flex-col items-center gap-3 px-6"
       >
-        <h1 className="text-2xl font-display uppercase tracking-[0.3em] text-amber-500">
+        <h1 className="text-2xl font-black uppercase tracking-[0.3em] text-amber-500">
           Votre Sélection
         </h1>
         <p className="text-[10px] uppercase tracking-widest text-zinc-400">
@@ -40,10 +48,12 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
         <div className="w-24 h-px bg-amber-500/40 mt-2" />
       </motion.div>
 
-      {/* Wheel (static) */}
-      <div className="relative mx-auto mt-8 flex-shrink-0"
-style={{ width: '320px', height: '320px' }}>
-        {/* Center rectangle */}
+      {/* Roue */}
+      <div
+        className="relative flex-shrink-0"
+        style={{ width: `${CONTAINER}px`, height: `${CONTAINER}px` }}
+      >
+        {/* Rectangle central — Fz Parfums */}
         <div
           className="absolute w-24 h-10 rounded-xl border border-amber-500/40 bg-black flex items-center justify-center"
           style={{
@@ -58,11 +68,9 @@ style={{ width: '320px', height: '320px' }}>
           </span>
         </div>
 
+        {/* Sphères */}
         {SPHERE_CONFIG.map((sphere, i) => {
-          const TOTAL = 10;
-          const WHEEL_RADIUS = 115;
-          const CENTER = 160;
-          const angle = (2 * Math.PI * i) / TOTAL - Math.PI / 2;
+          const angle = (2 * Math.PI * i) / 10 - Math.PI / 2;
           const sx = CENTER + WHEEL_RADIUS * Math.cos(angle);
           const sy = CENTER + WHEEL_RADIUS * Math.sin(angle);
           const isSelected = selected === sphere.id;
@@ -83,7 +91,7 @@ style={{ width: '320px', height: '320px' }}>
                 y: { duration: 4 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 },
                 x: { duration: 4 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 },
               }}
-              whileHover={{ scale: 1.15, boxShadow: "0 0 35px rgba(212,175,55,0.5)" }}
+              whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.92 }}
               onClick={() => setSelected(sphere.id)}
               className={`absolute w-20 h-20 rounded-full flex items-center justify-center cursor-pointer ${
@@ -114,7 +122,7 @@ style={{ width: '320px', height: '320px' }}>
         })}
       </div>
 
-      {/* Confirm Button */}
+      {/* Bouton Confirmer */}
       <AnimatePresence>
         {selected !== null && (
           <motion.div

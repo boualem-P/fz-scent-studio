@@ -33,10 +33,10 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
         className="pt-24 pb-6 flex flex-col items-center gap-3 px-6"
       >
         <h1 className="text-2xl font-black uppercase tracking-[0.3em] text-amber-500">
-          Votre Sélection
+          quelle intensité choisir ?
         </h1>
         <p className="text-[14px] uppercase tracking-widest text-zinc-400">
-          quelle intensité choisir ?
+          taper pour selectionner
         </p>
         <div className="w-24 h-px bg-amber-500/40 mt-2" />
       </motion.div>

@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Library, ArrowLeft } from "lucide-react";
+import BudgetScreen from "@/components/BudgetScreen";
 import ProfileSheet from "@/components/ProfileSheet";
 import LandingScreen from "@/components/LandingScreen";
 import PyramidScreen from "@/components/PyramidScreen";
@@ -12,12 +13,13 @@ import PerfumePage from "@/components/PerfumePage";
 import { Gender, NoteCategory, matchPerfumes, Perfume, PERFUMES } from "@/data/perfumes"; 
 import LightWipeTransition from "@/components/LightWipeTransition";
 
-type ScreenType = "landing" | "pyramid" | "analyzing" | "results" | "catalogue";
+type ScreenType = "landing" | "budget" | "pyramid" | "analyzing" | "results" | "catalogue";
 
 const Index = () => {
   const [screen, setScreen] = useState<ScreenType>("landing");
   const [history, setHistory] = useState<ScreenType[]>([]);
   const [gender, setGender] = useState<Gender>("homme");
+  const [selectedQuantity, setSelectedQuantity] = useState<number>(3);
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
   const [showWipe, setShowWipe] = useState(false);
@@ -112,7 +114,12 @@ const Index = () => {
 
   const handleGender = (g: Gender) => { 
     setGender(g); 
-    navigateTo("pyramid"); 
+    navigateTo("budget"); 
+  };
+
+  const handleBudgetSelect = (quantity: number) => {
+    setSelectedQuantity(quantity);
+    navigateTo("pyramid");
   };
 
   const handleValidate = useCallback((
@@ -181,6 +188,12 @@ const Index = () => {
                   onSelectGender={handleGender} 
                   onCatalogue={() => navigateTo("catalogue")}
                   onProfile={() =>{}} 
+                />
+              )}
+              {screen === "budget" && (
+                <BudgetScreen
+                  onSelect={handleBudgetSelect}
+                  onBack={handleBack}
                 />
               )}
               {screen === "pyramid" && (

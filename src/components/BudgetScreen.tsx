@@ -6,38 +6,31 @@ interface BudgetScreenProps {
   onBack: () => void;
 }
 
-const SPHERE_CONFIG = [
-  { id: 1 },
-  { id: 2 },
-  { id: 3 },
-  { id: 4 },
-  { id: 5 },
-  { id: 6 },
-  { id: 7 },
-  { id: 8 },
-  { id: 9 },
-  { id: 10 },
+const CARDS = [
+  { id: 1, img: "https://images.unsplash.com/photo-1541643600914-78b084683702?w=400" },
+  { id: 2, img: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=400" },
+  { id: 3, img: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
+  { id: 4, img: "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400" },
+  { id: 5, img: "https://images.unsplash.com/photo-1588776814546-daab30f310ce?w=400" },
+  { id: 6, img: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400" },
+  { id: 7, img: "https://images.unsplash.com/photo-1547887538-047f4264e661?w=400" },
+  { id: 8, img: "https://images.unsplash.com/photo-1564294736434-88a8d216c49e?w=400" },
+  { id: 9, img: "https://images.unsplash.com/photo-1600612253971-7b89b4b97779?w=400" },
+  { id: 10, img: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=400" },
 ];
-
-// Conteneur : 400px × 400px
-// Centre : 200px
-// Rayon : 155px → sphère w-20 (80px) → bord sphère à 155-40=115px du bord conteneur ✅
-const CONTAINER = 400;
-const CENTER = CONTAINER / 2;       // 200
-const WHEEL_RADIUS = 155;
 
 const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
   const [selected, setSelected] = useState<number | null>(null);
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-center bg-black overflow-y-auto pb-32">
+    <div className="relative min-h-screen w-full flex flex-col items-center bg-black overflow-y-auto pb-32">
 
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="pb-4 flex flex-col items-center gap-3 px-6"
+        className="pt-24 pb-6 flex flex-col items-center gap-3 px-6"
       >
         <h1 className="text-2xl font-black uppercase tracking-[0.3em] text-amber-500">
           Votre Sélection
@@ -48,75 +41,60 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
         <div className="w-24 h-px bg-amber-500/40 mt-2" />
       </motion.div>
 
-      {/* Roue */}
-      <div
-        className="relative flex-shrink-0"
-        style={{ width: `${CONTAINER}px`, height: `${CONTAINER}px` }}
-      >
-        {/* Rectangle central — Fz Parfums */}
-        <div
-          className="absolute w-24 h-10 rounded-xl border border-amber-500/40 bg-black flex items-center justify-center"
-          style={{
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            boxShadow: "0 0 15px rgba(212,175,55,0.2)",
-          }}
-        >
-          <span className="font-black text-[9px] uppercase tracking-[0.2em] text-amber-500">
-            Fz Parfums
-          </span>
-        </div>
-
-        {/* Sphères */}
-        {SPHERE_CONFIG.map((sphere, i) => {
-          const angle = (2 * Math.PI * i) / 10 - Math.PI / 2;
-          const sx = CENTER + WHEEL_RADIUS * Math.cos(angle);
-          const sy = CENTER + WHEEL_RADIUS * Math.sin(angle);
-          const isSelected = selected === sphere.id;
+      {/* Masonry grid */}
+      <div className="columns-2 gap-3 px-4 w-full max-w-md">
+        {CARDS.map((card, i) => {
+          const isSelected = selected === card.id;
+          const isOdd = card.id % 2 !== 0;
 
           return (
             <motion.button
-              key={sphere.id}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                y: [0, -5, 0, 5, 0],
-                x: [0, 3, 0, -3, 0],
-              }}
-              transition={{
-                opacity: { duration: 0.4, delay: i * 0.05 },
-                scale: { duration: 0.4, delay: i * 0.05 },
-                y: { duration: 4 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 },
-                x: { duration: 4 + i * 0.3, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 },
-              }}
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={() => setSelected(sphere.id)}
-              className={`absolute w-20 h-20 rounded-full flex items-center justify-center cursor-pointer ${
-                isSelected ? "border-2 border-amber-400" : "border border-amber-500/30"
+              key={card.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.08, ease: "easeOut" }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setSelected(card.id)}
+              className={`relative rounded-2xl overflow-hidden cursor-pointer mb-3 w-full break-inside-avoid border ${
+                isSelected ? "border-amber-400" : "border-amber-500/20"
               }`}
-              style={{
-                left: sx,
-                top: sy,
-                transform: "translate(-50%, -50%)",
-                background: "radial-gradient(circle at 35% 35%, #3a2e00, #1a1400, #000000)",
-                boxShadow: isSelected
-                  ? "0 0 40px rgba(212,175,55,0.8), inset 0 0 20px rgba(212,175,55,0.2)"
-                  : "0 0 20px rgba(212,175,55,0.15), inset 0 0 15px rgba(212,175,55,0.05)",
-              }}
+              style={{ height: isOdd ? "9rem" : "12rem" }}
             >
+              {/* Background image */}
+              <img
+                src={card.img}
+                alt={`X${card.id}`}
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+              />
+
+              {/* Overlay */}
+              <div
+                className={`absolute inset-0 ${
+                  isSelected ? "bg-amber-500/20" : "bg-black/50"
+                }`}
+              />
+
+              {/* Checkmark */}
               {isSelected && (
-                <motion.div
-                  className="absolute inset-0 rounded-full border border-amber-400/50"
-                  animate={{ scale: [1, 1.05, 1], opacity: [0.8, 0.4, 0.8] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                />
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute top-3 right-3 text-amber-400 text-lg font-black z-10"
+                >
+                  ✓
+                </motion.span>
               )}
-              <span className="font-black text-lg text-amber-400 relative z-10">
-                X{sphere.id}
-              </span>
+
+              {/* Label */}
+              <div className="absolute bottom-3 left-3 z-10 text-left">
+                <span className="font-black text-2xl text-white block leading-none">
+                  X{card.id}
+                </span>
+                <span className="text-[9px] uppercase tracking-widest text-amber-400">
+                  fois
+                </span>
+              </div>
             </motion.button>
           );
         })}

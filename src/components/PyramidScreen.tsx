@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
+import goldFruit from "./gold fruit.svg"; // Import de ton fichier local
 
 interface PyramidScreenProps {
   onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string, radarIntensities?: Record<string, number>) => void;
@@ -15,21 +16,20 @@ const RADAR_TO_FAMILY: Record<string, string[]> = {
   'AGRUMES': ['hesperides'],
   'ANIMAL':  ['musquees', 'cuir', 'animal'],
   'BOISÉ':   ['boisees', 'mousses', 'notes-vertes'],
-  'ÉPICÉ':   ['epices-fraiches', 'epices-chaudes'],
+  'ÉPICÉ':   ['epicees', 'epices-fraiches', 'epices-chaudes'],
   'FLORAL':  ['florales'],
   'FRUITÉ':  ['fruitees', 'fruits-legers'],
   'SUCRÉ':   ['gourmandes'],
   'MARINE':  ['marines'],
 };
 
-// Icônes custom par axe — null = pas d'icône, texte seul
 const FAMILY_ICONS: Record<string, string | null> = {
   'AGRUMES': null,
   'ANIMAL':  null,
   'BOISÉ':   null,
   'ÉPICÉ':   null,
   'FLORAL':  null,
-  'FRUITÉ':  'https://i.ibb.co/Y7WJyHvD/gold-fruit.jpg',
+  'FRUITÉ':  goldFruit, // Utilisation du fichier local
   'SUCRÉ':   null,
   'MARINE':  null,
 };
@@ -126,7 +126,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
-  // ── LOGIQUE RETOUR INTERNE ─────────────────────────────────────────────────
   useEffect(() => {
     setInternalBackHandler(() => {
       if (isAnalyzing) return true;
@@ -135,7 +134,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
       return false;
     });
   }, [screen, isAnalyzing, setInternalBackHandler]);
-  // ──────────────────────────────────────────────────────────────────────────
 
   const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
     setAnalysisText(text);
@@ -197,7 +195,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
       <AnimatePresence mode="wait">
 
-        {/* LOADER */}
         {isAnalyzing ? (
           <motion.div
             key="loader"
@@ -227,7 +224,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
         ) : screen === 'swipe' ? (
 
-          /* ÉCRAN SWIPE */
           <motion.div
             key="swipe-container"
             initial={{ opacity: 0 }}
@@ -241,7 +237,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
             <div className="relative w-full mb-12" style={{ height: '520px' }}>
 
-              {/* ICONES GAUCHE / DROITE */}
               <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
                 <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg">
                   <Frown size={48} strokeWidth={1.5} />
@@ -268,39 +263,32 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10 flex flex-col"
                 >
-                  {/* Couche invisible de capture du drag */}
                   <div className="absolute inset-0 z-50 touch-none" />
 
-                  {/* IMAGE — 52% */}
                   <div className="w-full flex-shrink-0 pointer-events-none" style={{ height: '52%' }}>
                     <img
                       src={currentNote.img}
                       draggable="false"
                       className="w-full h-full object-cover"
+                      alt={currentNote.label}
                     />
                   </div>
 
-                  {/* TEXTE — 48% */}
                   <div className="w-full flex-1 px-5 py-3 text-center bg-white flex flex-col items-center justify-center gap-2 pointer-events-none">
-
-                    {/* TITRE */}
                     <h3 className="text-lg font-semibold text-black uppercase tracking-tight leading-tight">
                       {currentNote.label}
                     </h3>
 
-                    {/* SOUS-TITRE */}
                     <p className="text-amber-500 text-[11px] font-bold uppercase tracking-widest">
                       {currentNote.sub}
                     </p>
 
-                    {/* SÉPARATEUR */}
                     <div className="flex items-center justify-center gap-2">
                       <div className="h-[1px] w-10 bg-amber-400/50" />
                       <div className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
                       <div className="h-[1px] w-10 bg-amber-400/50" />
                     </div>
 
-                    {/* TAGS OLFACTIFS */}
                     <div className="flex flex-wrap justify-center gap-1.5 mt-1">
                       {currentNote.tags.map((tag) => (
                         <span
@@ -311,7 +299,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                         </span>
                       ))}
                     </div>
-
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -324,7 +311,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
         ) : screen === 'map' ? (
 
-          /* ÉCRAN RADAR */
           <motion.div
             key="map"
             initial={{ opacity: 0, y: 20 }}
@@ -364,7 +350,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                 ))}
               </svg>
 
-              {/* LABELS DU RADAR — icône dorée à gauche + texte blanc à droite */}
               {FAMILIES.map((f, i) => {
                 const p = getPointPos(i, 1.28);
                 return (
@@ -373,7 +358,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                     className="absolute flex items-center gap-1.5"
                     style={{ left: p.x, top: p.y, transform: 'translate(-50%, -50%)' }}
                   >
-                    {/* Icône dorée à gauche si disponible */}
                     {FAMILY_ICONS[f] && (
                       <img
                         src={FAMILY_ICONS[f]!}
@@ -385,7 +369,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                         }}
                       />
                     )}
-                    {/* Label de la famille en blanc éclatant */}
                     <span className="text-[12px] font-black text-zinc-100 uppercase tracking-[0.1em] whitespace-nowrap">
                       {f}
                     </span>
@@ -404,7 +387,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
         ) : (
 
-          /* ÉCRAN UNIVERS OLFACTIF */
           <motion.div
             key="atm"
             initial={{ opacity: 0, scale: 1.1 }}
@@ -426,7 +408,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                   onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities())}
                   className="group relative h-28 rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center p-6 hover:border-amber-500/50 transition-all text-left"
                 >
-                  <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" />
+                  <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" alt={atm.label} />
                   <div className="relative z-10 flex items-center gap-6 w-full">
                     <div className="p-4 bg-black/60 rounded-xl text-amber-500">{atm.icon}</div>
                     <div>

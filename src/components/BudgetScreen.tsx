@@ -60,7 +60,7 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
               }`}
               style={{ height: isOdd ? "9rem" : "12rem" }}
             >
-              {/* Background image */}
+              {/* Image de fond */}
               <img
                 src={card.img}
                 alt={`X${card.id}`}
@@ -75,7 +75,7 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
                 }`}
               />
 
-              {/* Checkmark */}
+              {/* Checkmark si sélectionné */}
               {isSelected && (
                 <motion.span
                   initial={{ scale: 0 }}
@@ -85,16 +85,6 @@ const BudgetScreen = ({ onSelect, onBack }: BudgetScreenProps) => {
                   ✓
                 </motion.span>
               )}
-
-              {/* Label */}
-              <div className="absolute bottom-3 left-3 z-10 text-left">
-                <span className="font-black text-2xl text-white block leading-none">
-                  X{card.id}
-                </span>
-                <span className="text-[9px] uppercase tracking-widest text-amber-400">
-                  fois
-                </span>
-              </div>
             </motion.button>
           );
         })}

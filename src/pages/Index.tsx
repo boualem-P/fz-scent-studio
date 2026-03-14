@@ -117,8 +117,7 @@ const Index = () => {
     navigateTo("budget"); 
   };
 
-  const handleBudgetSelect = (quantity: number) => {
-    setSelectedQuantity(quantity);
+  const handleAgeValidate = (age: number) => {
     navigateTo("pyramid");
   };
 
@@ -192,7 +191,7 @@ const Index = () => {
               )}
               {screen === "budget" && (
                 <BudgetScreen
-                  onSelect={handleBudgetSelect}
+                  onValidate={handleAgeValidate}
                   onBack={handleBack}
                 />
               )}

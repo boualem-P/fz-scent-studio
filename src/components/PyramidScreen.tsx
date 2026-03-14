@@ -110,6 +110,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere'>('swipe');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisText, setAnalysisText] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
   
   const [currentStep, setCurrentStep] = useState(0);
   const [noteIndex, setNoteIndex] = useState(0);
@@ -127,6 +128,14 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
   const springConfig = { stiffness: 150, damping: 18, mass: 0.8 };
+
+  // ── Détection mobile ──────────────────────────────────────────────
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 768);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   useEffect(() => {
     setInternalBackHandler(() => {
@@ -170,9 +179,10 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     return result;
   };
 
-  const size = 340;
+  // ── Dimensions radar selon device ────────────────────────────────
+  const size   = isMobile ? 240 : 340;
   const center = size / 2;
-  const radius = size * 0.32; // réduit pour laisser de la place aux labels SVG
+  const radius = size * 0.32;
 
   const getPointPos = (index: number, intensity: number) => {
     const angle = (Math.PI * 2 * index) / FAMILIES.length - Math.PI / 2;
@@ -194,9 +204,12 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
+    // Sur mobile on retire touch-none du wrapper pour permettre le scroll,
+    // mais on le garde sur les cartes swipe individuellement
+    <div className={`min-h-screen bg-black text-white flex flex-col items-center px-6 select-none overflow-hidden ${isMobile ? 'pt-10' : 'pt-20'}`}>
       <AnimatePresence mode="wait">
 
+        {/* ── LOADER ── */}
         {isAnalyzing ? (
           <motion.div
             key="loader"
@@ -224,6 +237,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             </motion.p>
           </motion.div>
 
+        /* ── SWIPE ── */
         ) : screen === 'swipe' ? (
 
           <motion.div
@@ -233,18 +247,19 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             exit={{ opacity: 0 }}
             className="w-full max-w-sm flex flex-col items-center relative"
           >
-            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">
+            <h2 className={`font-light italic uppercase tracking-widest text-zinc-400 ${isMobile ? 'text-base mb-5' : 'text-xl mb-8'}`}>
               Affinez vos désirs
             </h2>
 
-            <div className="relative w-full mb-12" style={{ height: '520px' }}>
+            {/* Hauteur de carte réduite sur mobile */}
+            <div className="relative w-full" style={{ height: isMobile ? '380px' : '520px', marginBottom: isMobile ? '24px' : '48px' }}>
 
               <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
                 <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg">
-                  <Frown size={48} strokeWidth={1.5} />
+                  <Frown size={isMobile ? 36 : 48} strokeWidth={1.5} />
                 </motion.div>
                 <motion.div style={{ opacity: smileOpacity }} className="text-white drop-shadow-lg">
-                  <Smile size={48} strokeWidth={1.5} />
+                  <Smile size={isMobile ? 36 : 48} strokeWidth={1.5} />
                 </motion.div>
               </div>
 
@@ -277,7 +292,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                   </div>
 
                   <div className="w-full flex-1 px-5 py-3 text-center bg-white flex flex-col items-center justify-center gap-2 pointer-events-none">
-                    <h3 className="text-lg font-semibold text-black uppercase tracking-tight leading-tight">
+                    <h3 className={`font-semibold text-black uppercase tracking-tight leading-tight ${isMobile ? 'text-base' : 'text-lg'}`}>
                       {currentNote.label}
                     </h3>
 
@@ -311,6 +326,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             </p>
           </motion.div>
 
+        /* ── RADAR ── */
         ) : screen === 'map' ? (
 
           <motion.div
@@ -320,28 +336,34 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             exit={{ opacity: 0 }}
             className="w-full max-w-md flex flex-col items-center justify-center"
           >
-            <div className="flex flex-col items-center mb-10 text-center">
-              <h2 className="text-2xl font-bold uppercase tracking-[0.3em] text-white">Architecture Olfactive</h2>
-              <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
+            <div className={`flex flex-col items-center text-center ${isMobile ? 'mb-5' : 'mb-10'}`}>
+              <h2 className={`font-bold uppercase tracking-[0.3em] text-white ${isMobile ? 'text-lg' : 'text-2xl'}`}>
+                Architecture Olfactive
+              </h2>
+              <div className="w-12 h-[1px] bg-amber-500 my-3 opacity-50" />
               <p className="text-amber-500/80 text-[10px] font-bold uppercase tracking-[0.15em]">
                 Modelez l'intensité de vos accords
               </p>
             </div>
 
             <div className="relative flex items-center justify-center">
-              <svg id="radar-svg" width={size} height={size} className="overflow-visible">
-                {/* Cercles de grille */}
+              {/* Sur mobile : touch-action manipulation pour éviter conflit scroll/drag */}
+              <svg
+                id="radar-svg"
+                width={size}
+                height={size}
+                className="overflow-visible"
+                style={isMobile ? { touchAction: 'none' } : {}}
+              >
                 {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => (
                   <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" strokeWidth="0.5" />
                 ))}
 
-                {/* Axes */}
                 {FAMILIES.map((_, i) => {
                   const p = getPointPos(i, 1);
                   return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#333" strokeDasharray="2 2" />;
                 })}
 
-                {/* Polygone */}
                 <motion.polygon 
                   points={polygonPath} 
                   fill="rgba(245, 158, 11, 0.15)" 
@@ -351,17 +373,18 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                   transition={{ type: "spring", ...springConfig }}
                 />
 
-                {/* Points draggables */}
                 {points.map((p, i) => (
                   <motion.g key={i} animate={{ x: p.x, y: p.y }} transition={{ type: "spring", ...springConfig }}>
+                    {/* Zone de touch plus grande sur mobile */}
                     <motion.circle
-                      cx={0} cy={0} r="35"
+                      cx={0} cy={0} r={isMobile ? 28 : 35}
                       fill="transparent"
                       className="cursor-pointer"
                       drag
                       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                       onDrag={(_, info) => updateIntensity(i, info)}
                       whileTap={{ scale: 1.2 }}
+                      style={{ touchAction: 'none' }}
                     />
                     <motion.circle 
                       cx={0} cy={0} 
@@ -370,11 +393,10 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                       className="pointer-events-none"
                       style={{ filter: `blur(${intensities[i] * 5}px)`, opacity: 0.5 }}
                     />
-                    <circle cx={0} cy={0} r="5" fill="#fff" className="pointer-events-none" />
+                    <circle cx={0} cy={0} r={isMobile ? 4 : 5} fill="#fff" className="pointer-events-none" />
                   </motion.g>
                 ))}
 
-                {/* ── LABELS EN SVG — zéro décalage ── */}
                 {FAMILIES.map((f, i) => {
                   const p = getPointPos(i, 1.55);
                   const isActive = intensities[i] > 0.7;
@@ -385,7 +407,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                       y={p.y}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      fontSize="14"
+                      fontSize={isMobile ? "9" : "14"}
                       fontWeight="800"
                       fill={isActive ? '#f59e0b' : '#71717a'}
                       style={{ textTransform: 'uppercase', letterSpacing: '0.08em', pointerEvents: 'none' }}
@@ -399,12 +421,13 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
             <button
               onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")}
-              className="mt-16 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px] active:scale-95 transition-transform"
+              className={`w-full bg-white text-black rounded-full font-black uppercase tracking-[0.4em] text-[10px] active:scale-95 transition-transform ${isMobile ? 'mt-8 py-4' : 'mt-16 py-5'}`}
             >
               Finaliser le profil
             </button>
           </motion.div>
 
+        /* ── ATMOSPHÈRE ── */
         ) : (
 
           <motion.div
@@ -413,29 +436,36 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             animate={{ opacity: 1, scale: 1 }}
             className="w-full max-w-lg flex flex-col items-center justify-center"
           >
-            <div className="flex flex-col items-center mb-10 text-center">
-              <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Univers Olfactif</h2>
-              <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
+            <div className={`flex flex-col items-center text-center ${isMobile ? 'mb-5' : 'mb-10'}`}>
+              <h2 className={`font-bold uppercase tracking-[0.35em] text-white ${isMobile ? 'text-xl' : 'text-3xl'}`}>
+                Univers Olfactif
+              </h2>
+              <div className="w-12 h-[1px] bg-amber-500 my-3 opacity-50" />
               <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">
                 Définissez le sillage de votre destinée
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 w-full px-4">
+            <div className={`grid grid-cols-1 w-full px-4 ${isMobile ? 'gap-2.5' : 'gap-4'}`}>
               {ATMOSPHERES.map((atm) => (
                 <button
                   key={atm.id}
                   onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities())}
-                  className="group relative h-28 rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center p-6 hover:border-amber-500/50 transition-all text-left"
+                  className={`group relative rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center hover:border-amber-500/50 transition-all text-left ${isMobile ? 'h-20 p-4' : 'h-28 p-6'}`}
                 >
                   <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" alt={atm.label} />
-                  <div className="relative z-10 flex items-center gap-6 w-full">
-                    <div className="p-4 bg-black/60 rounded-xl text-amber-500">{atm.icon}</div>
+                  <div className="relative z-10 flex items-center w-full" style={{ gap: isMobile ? '12px' : '24px' }}>
+                    <div className={`bg-black/60 rounded-xl text-amber-500 ${isMobile ? 'p-2.5' : 'p-4'}`}>
+                      {isMobile
+                        ? <>{atm.id === 'soir' ? <Moon size={18}/> : atm.id === 'quotidien' ? <Sun size={18}/> : atm.id === 'business' ? <Briefcase size={18}/> : <Heart size={18}/>}</>
+                        : atm.icon
+                      }
+                    </div>
                     <div>
-                      <h4 className="text-xl font-light">{atm.label}</h4>
+                      <h4 className={`font-light ${isMobile ? 'text-base' : 'text-xl'}`}>{atm.label}</h4>
                       <p className="text-[9px] uppercase tracking-widest text-zinc-500">{atm.desc}</p>
                     </div>
-                    <ArrowRight className="ml-auto text-zinc-700 group-hover:text-amber-500 transition-colors" />
+                    <ArrowRight className="ml-auto text-zinc-700 group-hover:text-amber-500 transition-colors" size={isMobile ? 16 : 20} />
                   </div>
                 </button>
               ))}

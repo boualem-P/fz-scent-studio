@@ -191,7 +191,7 @@ const Index = () => {
               )}
               {screen === "budget" && (
                 <BudgetScreen
-                  onSelect={handleBudgetSelect}
+                  onValidate={handleAgeValidate}
                   onBack={handleBack}
                 />
               )}

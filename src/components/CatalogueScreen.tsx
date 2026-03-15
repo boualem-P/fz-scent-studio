@@ -38,6 +38,7 @@ const PerfumeImage = ({ perfume }: { perfume: Perfume }) => (
 const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [brandSearchQuery, setBrandSearchQuery] = useState("");
   const [isNotesMenuOpen, setIsNotesMenuOpen] = useState(false);
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
   const [fromHerbier, setFromHerbier] = useState(false);
@@ -149,7 +150,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
             </div>
 
             {/* Titre */}
-            <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-16">
+            <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-10">
               <motion.h2 variants={staggerItem} className="font-display text-4xl lg:text-5xl text-gold-gradient tracking-widest flex items-center justify-center gap-4 italic">
                 Nos Maisons
                 <span className="text-xs font-body text-primary/30 border border-primary/20 px-3 py-1 rounded-full not-italic">
@@ -159,29 +160,54 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               <motion.div variants={staggerItem} className="gold-divider w-40 mx-auto mt-4" />
             </motion.div>
 
+            {/* Barre de recherche maisons */}
+            <div className="relative w-full max-w-sm mx-auto mb-8">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={16} />
+              <input
+                type="text"
+                placeholder="Rechercher une maison..."
+                value={brandSearchQuery}
+                onChange={(e) => setBrandSearchQuery(e.target.value)}
+                className="w-full bg-black/40 border border-primary/20 rounded-full py-3 pl-11 pr-10 text-sm text-primary outline-none focus:border-primary/60 backdrop-blur-xl transition-all"
+              />
+              {brandSearchQuery && (
+                <button onClick={() => setBrandSearchQuery("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary">
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
             {/* Grille des marques */}
             <motion.div variants={staggerContainer} initial="hidden" animate="show"
               className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto w-full">
-              {brands.map((brand) => {
-                const count = PERFUMES.filter(p => p.brand === brand).length;
-                return (
-                  <motion.button
-                    key={brand}
-                    variants={staggerItem}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={springTap}
-                    onClick={() => { setSelectedBrand(brand); setSearchQuery(""); setFromHerbier(false); }}
-                    className="h-40 w-full rounded-2xl bg-zinc-900/60 border border-white/5 hover:border-amber-500/30 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all duration-300"
-                  >
-                    <span className="font-display text-amber-400 text-sm uppercase tracking-widest text-center px-4 leading-relaxed">
-                      {brand}
-                    </span>
-                    <span className="text-[9px] text-primary/30 uppercase tracking-widest font-body">
-                      {count} parfum{count > 1 ? "s" : ""}
-                    </span>
-                  </motion.button>
-                );
-              })}
+              {brands
+                .filter(b => b.toLowerCase().includes(brandSearchQuery.toLowerCase()))
+                .map((brand) => {
+                  const count = PERFUMES.filter(p => p.brand === brand).length;
+                  return (
+                    <motion.button
+                      key={brand}
+                      variants={staggerItem}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={springTap}
+                      onClick={() => { setSelectedBrand(brand); setSearchQuery(""); setFromHerbier(false); }}
+                      className="h-40 w-full rounded-2xl bg-zinc-900/60 border border-white/5 hover:border-amber-500/30 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all duration-300"
+                    >
+                      <span className="font-display text-amber-400 text-sm uppercase tracking-widest text-center px-4 leading-relaxed">
+                        {brand}
+                      </span>
+                      <span className="text-[9px] text-primary/30 uppercase tracking-widest font-body">
+                        {count} parfum{count > 1 ? "s" : ""}
+                      </span>
+                    </motion.button>
+                  );
+                })}
+              {brands.filter(b => b.toLowerCase().includes(brandSearchQuery.toLowerCase())).length === 0 && (
+                <div className="col-span-full text-center py-20 opacity-30 uppercase text-[11px] tracking-[0.4em]">
+                  Maison introuvable
+                </div>
+              )}
             </motion.div>
 
             {/* Bouton Quitter */}

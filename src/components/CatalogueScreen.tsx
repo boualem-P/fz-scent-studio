@@ -35,6 +35,35 @@ const PerfumeImage = ({ perfume }: { perfume: Perfume }) => (
   </div>
 );
 
+// ── Dictionnaire images des maisons ──────────────────────────────
+// Remplace les "URL_ICI" par tes URLs d'images
+const BRAND_IMAGES: Record<string, string> = {
+  "Dior":                     "URL_ICI",
+  "Chanel":                   "URL_ICI",
+  "YSL":                      "URL_ICI",
+  "Lancôme":                  "URL_ICI",
+  "Armani":                   "URL_ICI",
+  "Hermès":                   "URL_ICI",
+  "Versace":                  "URL_ICI",
+  "Creed":                    "URL_ICI",
+  "Le Labo":                  "URL_ICI",
+  "Tom Ford":                 "URL_ICI",
+  "Kilian Paris":             "URL_ICI",
+  "Mancera":                  "URL_ICI",
+  "Azzaro":                   "URL_ICI",
+  "Valentino":                "URL_ICI",
+  "Dolce & Gabbana":          "URL_ICI",
+  "Prada":                    "URL_ICI",
+  "Jean Paul Gaultier":       "URL_ICI",
+  "Viktor&Rolf":              "URL_ICI",
+  "Carolina Herrera":         "URL_ICI",
+  "Guerlain":                 "URL_ICI",
+  "Parfums de Marly":         "URL_ICI",
+  "Maison Francis Kurkdjian": "URL_ICI",
+  "Burberry":                 "URL_ICI",
+  "Acqua di Parma":           "URL_ICI",
+};
+
 const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,12 +73,10 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
   const [fromHerbier, setFromHerbier] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
 
-  // Marques uniques triées
   const brands = useMemo(() => 
     [...new Set(PERFUMES.map(p => p.brand))].sort((a, b) => a.localeCompare(b)),
   []);
 
-  // Parfums filtrés pour le niveau 2
   const filteredPerfumes = useMemo(() => {
     if (!selectedBrand) return [];
     const brandPerfumes = PERFUMES.filter(p => p.brand === selectedBrand);
@@ -67,24 +94,12 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
     return () => { document.body.style.overflow = "auto"; };
   }, [selected, isNotesMenuOpen]);
 
-  // Back handler: niveau 2 → niveau 1
   useEffect(() => {
     if (!setInternalBackHandler) return;
     setInternalBackHandler(() => {
-      if (selected) {
-        setSelected(null);
-        return true;
-      }
-      if (isNotesMenuOpen) {
-        setIsNotesMenuOpen(false);
-        return true;
-      }
-      if (selectedBrand) {
-        setSelectedBrand(null);
-        setSearchQuery("");
-        setFromHerbier(false);
-        return true;
-      }
+      if (selected) { setSelected(null); return true; }
+      if (isNotesMenuOpen) { setIsNotesMenuOpen(false); return true; }
+      if (selectedBrand) { setSelectedBrand(null); setSearchQuery(""); setFromHerbier(false); return true; }
       return false;
     });
     return () => setInternalBackHandler(null);
@@ -185,6 +200,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
                 .filter(b => b.toLowerCase().includes(brandSearchQuery.toLowerCase()))
                 .map((brand) => {
                   const count = PERFUMES.filter(p => p.brand === brand).length;
+                  const brandImg = BRAND_IMAGES[brand];
                   return (
                     <motion.button
                       key={brand}
@@ -192,12 +208,23 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
                       whileHover={{ scale: 1.02 }}
                       whileTap={springTap}
                       onClick={() => { setSelectedBrand(brand); setSearchQuery(""); setFromHerbier(false); }}
-                      className="h-40 w-full rounded-2xl bg-zinc-900/60 border border-white/5 hover:border-amber-500/30 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all duration-300"
+                      className="group h-40 w-full rounded-2xl overflow-hidden border border-white/5 hover:border-amber-500/30 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all duration-300 relative bg-zinc-900/60"
                     >
-                      <span className="font-display text-amber-400 text-sm uppercase tracking-widest text-center px-4 leading-relaxed">
+                      {/* Image de fond si disponible */}
+                      {brandImg && brandImg !== "URL_ICI" && (
+                        <img
+                          src={brandImg}
+                          alt={brand}
+                          className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-300"
+                        />
+                      )}
+                      {/* Overlay sombre */}
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-300" />
+                      {/* Texte */}
+                      <span className="relative z-10 font-display text-amber-400 text-sm uppercase tracking-widest text-center px-4 leading-relaxed">
                         {brand}
                       </span>
-                      <span className="text-[9px] text-primary/30 uppercase tracking-widest font-body">
+                      <span className="relative z-10 text-[9px] text-primary/30 uppercase tracking-widest font-body">
                         {count} parfum{count > 1 ? "s" : ""}
                       </span>
                     </motion.button>
@@ -230,7 +257,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
             transition={{ duration: 0.35 }}
             className="flex-1 flex flex-col relative z-20"
           >
-            {/* Bouton retour herbier */}
             <AnimatePresence>
               {fromHerbier && searchQuery && (
                 <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
@@ -243,7 +269,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               )}
             </AnimatePresence>
 
-            {/* Retour + Titre marque */}
             <div className="flex items-center gap-4 mb-8">
               <button onClick={() => { setSelectedBrand(null); setSearchQuery(""); setFromHerbier(false); }}
                 className="flex items-center gap-2 text-primary/50 hover:text-primary transition-all group">
@@ -252,7 +277,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               </button>
             </div>
 
-            {/* Recherche uniquement dans le niveau 2 */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
               <div className="relative group w-full md:w-96">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={18} />
@@ -267,7 +291,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               </div>
             </div>
 
-            {/* Titre */}
             <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-16">
               <motion.h2 variants={staggerItem} className="font-display text-4xl lg:text-5xl text-gold-gradient tracking-widest flex items-center justify-center gap-4 italic">
                 {fromHerbier && searchQuery ? (
@@ -291,7 +314,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               )}
             </motion.div>
 
-            {/* Grille parfums */}
             <motion.div variants={staggerContainer} initial="hidden" animate="show"
               className="flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 max-w-7xl mx-auto w-full">
               {filteredPerfumes.length > 0 ? (
@@ -310,7 +332,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               )}
             </motion.div>
 
-            {/* Bouton Quitter */}
             {!selected && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center mt-20">
                 <motion.button whileHover={springHover} whileTap={springTap} onClick={onMenu}

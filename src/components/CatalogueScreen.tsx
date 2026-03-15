@@ -61,7 +61,7 @@ const BRAND_IMAGES: Record<string, string> = {
   "Parfums de Marly":         "URL_ICI",
   "Maison Francis Kurkdjian": "URL_ICI",
   "Burberry":                 "URL_ICI",
-  "Acqua di Parma":           "URL_ICI",
+  "Acqua di Parma":           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr7G1eC5Iy0FmM5gq63p9_SPXpOSe-Z62hzw&s",
 };
 
 const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: CatalogueScreenProps) => {

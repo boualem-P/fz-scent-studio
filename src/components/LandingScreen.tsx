@@ -102,15 +102,22 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         <div className="flex flex-col items-center gap-4">
           <motion.button
             variants={staggerItem}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => onSelectGender("unisexe")}
+            className="px-8 py-2.5 border border-amber-500/30 text-amber-400 text-[10px] font-bold uppercase tracking-[0.4em] rounded-full bg-transparent hover:border-amber-500 hover:text-amber-300 hover:bg-amber-500/5 transition-all duration-300"
+          >
+            ✦ Unisex
+          </motion.button>
+
+          <motion.button
+            variants={staggerItem}
             onClick={onCatalogue}
             className="font-body text-[10px] uppercase tracking-[0.5em] text-primary/60 hover:text-primary transition-colors border-b border-primary/20 pb-1"
           >
             Découvrir la collection
           </motion.button>
         </div>
-      </motion.div>
-      
-    </div>
   );
 };
 

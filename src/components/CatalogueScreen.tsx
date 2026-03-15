@@ -62,6 +62,10 @@ const BRAND_IMAGES: Record<string, string> = {
   "Maison Francis Kurkdjian": "https://parfumeriedaquitaine.com/cdn/shop/collections/maison-francis-kurkdjian-5468706.jpg?v=1769620821",
   "Burberry":                 "https://perfumes.ec/cdn/shop/collections/Burberry.png?v=1713560150",
   "Acqua di Parma":           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr7G1eC5Iy0FmM5gq63p9_SPXpOSe-Z62hzw&s",
+  "Chloé":                    "https://i.pinimg.com/1200x/73/42/9f/73429f55db81d87f3210d42192448295.jpg",
+  "Givenchy":                 "https://i.pinimg.com/736x/a6/13/00/a61300eeb04565d30b2c084e6d424fec.jpg",
+  "Paco Rabanne":             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHrdwJieDavm5qELxmGFwwRmsh2WpwWfNpQA&s",
+  
 };
 
 const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: CatalogueScreenProps) => {

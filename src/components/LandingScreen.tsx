@@ -89,9 +89,9 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
               whileHover={{ scale: 1.05, y: -5 }}
               whileTap={springTap}
               onClick={() => onSelectGender(gender)}
-              className="glass-card card-shimmer-effect relative w-32 h-52 md:w-40 md:h-64 flex items-center justify-center overflow-hidden border border-primary/20 bg-black/40 backdrop-blur-md transition-all duration-700 hover:border-primary/60 shadow-2xl"
+              className="relative w-32 h-52 md:w-40 md:h-64 flex items-center justify-center overflow-hidden border border-amber-500/30 bg-transparent backdrop-blur-md transition-all duration-300 hover:border-amber-500 hover:bg-amber-500/5 shadow-2xl rounded-sm"
             >
-              <span className="relative z-10 font-display text-xs md:text-sm tracking-[0.4em] uppercase text-primary group-hover:text-white transition-colors duration-500">
+              <span className="relative z-10 font-display text-xs md:text-sm tracking-[0.4em] uppercase text-amber-400 transition-colors duration-300">
                 {gender}
               </span>
             </motion.button>

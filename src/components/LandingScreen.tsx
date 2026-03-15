@@ -89,7 +89,6 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
               whileHover={{ scale: 1.05, y: -5 }}
               whileTap={springTap}
               onClick={() => onSelectGender(gender)}
-              /* Utilisation de la même classe que le catalogue : card-shimmer-effect */
               className="glass-card card-shimmer-effect relative w-32 h-52 md:w-40 md:h-64 flex items-center justify-center overflow-hidden border border-primary/20 bg-black/40 backdrop-blur-md transition-all duration-700 hover:border-primary/60 shadow-2xl"
             >
               <span className="relative z-10 font-display text-xs md:text-sm tracking-[0.4em] uppercase text-primary group-hover:text-white transition-colors duration-500">
@@ -118,6 +117,9 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
             Découvrir la collection
           </motion.button>
         </div>
+      </motion.div>
+      
+    </div>
   );
 };
 

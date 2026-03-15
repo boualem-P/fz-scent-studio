@@ -107,7 +107,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredNotes.map((note) => (
-            <button key={note} onClick={() => { setSearchQuery(note); setFromHerbier(true); setIsNotesMenuOpen(false); }}
+            <button key={note} onClick={() => { setSearchQuery(note); setFromHerbier(true); setIsNotesMenuOpen(false); setSelectedBrand(selectedBrand); }}
               className="flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-primary/40 hover:bg-primary/5 transition-all group">
               <div className="w-12 h-12 rounded-xl overflow-hidden border border-primary/10 group-hover:border-primary/30 bg-black/40">
                 <img src={getNoteImage(note)} alt={note} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110"
@@ -126,6 +126,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
 
       <AnimatePresence mode="wait">
+
         {/* ═══════════ NIVEAU 1 — MAISONS ═══════════ */}
         {!selectedBrand && (
           <motion.div
@@ -136,6 +137,17 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
             transition={{ duration: 0.35 }}
             className="flex-1 flex flex-col relative z-20"
           >
+            {/* Bouton Herbier en haut à droite */}
+            <div className="flex justify-end mb-4">
+              <button onClick={() => setIsNotesMenuOpen(true)}
+                className="group relative px-6 py-3 rounded-full bg-gradient-to-b from-amber-400/10 to-transparent border border-amber-500/30 text-amber-500 font-display text-[11px] tracking-[0.3em] uppercase hover:border-amber-500 transition-all overflow-hidden">
+                <span className="relative z-10 flex items-center gap-3">
+                  <Sparkles size={14} className="animate-pulse" /> Explorer l'Herbier
+                </span>
+                <div className="absolute inset-0 bg-amber-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+              </button>
+            </div>
+
             {/* Titre */}
             <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-16">
               <motion.h2 variants={staggerItem} className="font-display text-4xl lg:text-5xl text-gold-gradient tracking-widest flex items-center justify-center gap-4 italic">
@@ -214,7 +226,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               </button>
             </div>
 
-            {/* Recherche + Herbier */}
+            {/* Recherche uniquement dans le niveau 2 */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
               <div className="relative group w-full md:w-96">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={18} />
@@ -227,18 +239,10 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary"><X size={16} /></button>
                 )}
               </div>
-              
             </div>
 
             {/* Titre */}
-            <div className="flex justify-end mb-4">
-  <button onClick={() => setIsNotesMenuOpen(true)}
-    className="group relative px-6 py-3 rounded-full bg-gradient-to-b from-amber-400/10 to-transparent border border-amber-500/30 text-amber-500 font-display text-[11px] tracking-[0.3em] uppercase hover:border-amber-500 transition-all overflow-hidden">
-    <span className="relative z-10 flex items-center gap-3"><Sparkles size={14} className="animate-pulse" /> Explorer l'Herbier</span>
-    <div className="absolute inset-0 bg-amber-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-  </button>
-</div>
-<motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-16">
+            <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-16">
               <motion.h2 variants={staggerItem} className="font-display text-4xl lg:text-5xl text-gold-gradient tracking-widest flex items-center justify-center gap-4 italic">
                 {fromHerbier && searchQuery ? (
                   <>

@@ -227,15 +227,18 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary"><X size={16} /></button>
                 )}
               </div>
-              <button onClick={() => setIsNotesMenuOpen(true)}
-                className="group relative px-8 py-3.5 rounded-full bg-gradient-to-b from-amber-400/10 to-transparent border border-amber-500/30 text-amber-500 font-display text-[11px] tracking-[0.3em] uppercase hover:border-amber-500 transition-all shadow-2xl shadow-amber-900/10 overflow-hidden">
-                <span className="relative z-10 flex items-center gap-3"><Sparkles size={14} className="animate-pulse" /> Explorer l'Herbier</span>
-                <div className="absolute inset-0 bg-amber-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-              </button>
+              
             </div>
 
             {/* Titre */}
-            <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-16">
+            <div className="flex justify-end mb-4">
+  <button onClick={() => setIsNotesMenuOpen(true)}
+    className="group relative px-6 py-3 rounded-full bg-gradient-to-b from-amber-400/10 to-transparent border border-amber-500/30 text-amber-500 font-display text-[11px] tracking-[0.3em] uppercase hover:border-amber-500 transition-all overflow-hidden">
+    <span className="relative z-10 flex items-center gap-3"><Sparkles size={14} className="animate-pulse" /> Explorer l'Herbier</span>
+    <div className="absolute inset-0 bg-amber-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+  </button>
+</div>
+<motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-16">
               <motion.h2 variants={staggerItem} className="font-display text-4xl lg:text-5xl text-gold-gradient tracking-widest flex items-center justify-center gap-4 italic">
                 {fromHerbier && searchQuery ? (
                   <>

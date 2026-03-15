@@ -208,7 +208,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
                       whileHover={{ scale: 1.02 }}
                       whileTap={springTap}
                       onClick={() => { setSelectedBrand(brand); setSearchQuery(""); setFromHerbier(false); }}
-                      className="group h-40 w-full rounded-2xl overflow-hidden border border-white/5 hover:border-amber-500/30 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all duration-300 relative bg-zinc-900/60"
+                      className="group h-40 w-full rounded-2xl overflow-hidden border border-white/5 hover:border-amber-500/30 flex flex-col items-end justify-end cursor-pointer transition-all duration-300 relative bg-zinc-900/60"
                     >
                       {/* Image de fond si disponible */}
                       {brandImg && brandImg !== "URL_ICI" && (
@@ -221,12 +221,14 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
                       {/* Overlay sombre */}
                       <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-300" />
                       {/* Texte */}
-                      <span className="relative z-10 font-display text-amber-400 text-sm uppercase tracking-widest text-center px-4 leading-relaxed">
-                        {brand}
-                      </span>
-                      <span className="relative z-10 text-[9px] text-primary/30 uppercase tracking-widest font-body">
-                        {count} parfum{count > 1 ? "s" : ""}
-                      </span>
+                      <div className="relative z-10 w-full px-4 py-3 bg-gradient-to-t from-black/80 to-transparent">
+  <span className="block font-display text-amber-400 text-sm uppercase tracking-widest leading-relaxed">
+    {brand}
+  </span>
+  <span className="block text-[9px] text-primary/30 uppercase tracking-widest font-body">
+    {count} parfum{count > 1 ? "s" : ""}
+  </span>
+</div>
                     </motion.button>
                   );
                 })}

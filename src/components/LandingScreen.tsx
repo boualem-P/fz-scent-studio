@@ -10,7 +10,7 @@ interface LandingScreenProps {
 }
 
 const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
-  const videoSrc = "/videofz.mp4";
+  const videoSrc = "/fzparfumscompilation.mp4";
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {

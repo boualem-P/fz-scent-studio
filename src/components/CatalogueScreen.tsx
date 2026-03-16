@@ -36,7 +36,6 @@ const PerfumeImage = ({ perfume }: { perfume: Perfume }) => (
 );
 
 // ── Dictionnaire images des maisons ──────────────────────────────
-// Remplace les "URL_ICI" par tes URLs d'images
 const BRAND_IMAGES: Record<string, string> = {
   "Dior":                     "https://spnews.com/downloads/6765/download/Dior_logo.png?cb=35a7196f26214e14e4fdac4b6d73ab3c",
   "Chanel":                   "https://www.shutterstock.com/image-vector/chanel-icon-logo-symbol-sign-600nw-2404629953.jpg",
@@ -65,7 +64,6 @@ const BRAND_IMAGES: Record<string, string> = {
   "Chloé":                    "https://i.pinimg.com/1200x/73/42/9f/73429f55db81d87f3210d42192448295.jpg",
   "Givenchy":                 "https://i.pinimg.com/736x/a6/13/00/a61300eeb04565d30b2c084e6d424fec.jpg",
   "Paco Rabanne":             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHrdwJieDavm5qELxmGFwwRmsh2WpwWfNpQA&s",
-  
 };
 
 const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: CatalogueScreenProps) => {
@@ -81,9 +79,12 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
     [...new Set(PERFUMES.map(p => p.brand))].sort((a, b) => a.localeCompare(b)),
   []);
 
+  // ── MODIFICATION : "__ALL__" pour afficher tous les parfums depuis l'herbier ──
   const filteredPerfumes = useMemo(() => {
     if (!selectedBrand) return [];
-    const brandPerfumes = PERFUMES.filter(p => p.brand === selectedBrand);
+    const brandPerfumes = selectedBrand === "__ALL__"
+      ? [...PERFUMES]
+      : PERFUMES.filter(p => p.brand === selectedBrand);
     const sorted = brandPerfumes.sort((a, b) => a.name.localeCompare(b.name));
     if (!searchQuery) return sorted;
     const q = searchQuery.toLowerCase();
@@ -103,7 +104,12 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
     setInternalBackHandler(() => {
       if (selected) { setSelected(null); return true; }
       if (isNotesMenuOpen) { setIsNotesMenuOpen(false); return true; }
-      if (selectedBrand) { setSelectedBrand(null); setSearchQuery(""); setFromHerbier(false); return true; }
+      if (selectedBrand) {
+        setSelectedBrand(null);
+        setSearchQuery("");
+        setFromHerbier(false);
+        return true;
+      }
       return false;
     });
     return () => setInternalBackHandler(null);
@@ -127,7 +133,15 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredNotes.map((note) => (
-            <button key={note} onClick={() => { setSearchQuery(note); setFromHerbier(true); setIsNotesMenuOpen(false); setSelectedBrand(selectedBrand); }}
+            <button key={note} onClick={() => {
+              setSearchQuery(note);
+              setFromHerbier(true);
+              setIsNotesMenuOpen(false);
+              // ── MODIFICATION : si pas de marque sélectionnée → afficher tous les parfums ──
+              if (!selectedBrand) {
+                setSelectedBrand("__ALL__");
+              }
+            }}
               className="flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-primary/40 hover:bg-primary/5 transition-all group">
               <div className="w-12 h-12 rounded-xl overflow-hidden border border-primary/10 group-hover:border-primary/30 bg-black/40">
                 <img src={getNoteImage(note)} alt={note} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110"
@@ -214,7 +228,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
                       onClick={() => { setSelectedBrand(brand); setSearchQuery(""); setFromHerbier(false); }}
                       className="group h-40 w-full rounded-2xl overflow-hidden border border-white/5 hover:border-amber-500/30 flex flex-col items-end justify-end cursor-pointer transition-all duration-300 relative bg-zinc-900/60"
                     >
-                      {/* Image de fond si disponible */}
                       {brandImg && brandImg !== "URL_ICI" && (
                         <img
                           src={brandImg}
@@ -222,17 +235,15 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
                           className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-300"
                         />
                       )}
-                      {/* Overlay sombre */}
                       <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-300" />
-                      {/* Texte */}
                       <div className="relative z-10 w-full px-4 py-3 bg-gradient-to-t from-black/80 to-transparent">
-  <span className="block font-display text-amber-400 text-sm uppercase tracking-widest leading-relaxed">
-    {brand}
-  </span>
-  <span className="block text-[9px] text-primary/30 uppercase tracking-widest font-body">
-    {count} parfum{count > 1 ? "s" : ""}
-  </span>
-</div>
+                        <span className="block font-display text-amber-400 text-sm uppercase tracking-widest leading-relaxed">
+                          {brand}
+                        </span>
+                        <span className="block text-[9px] text-primary/30 uppercase tracking-widest font-body">
+                          {count} parfum{count > 1 ? "s" : ""}
+                        </span>
+                      </div>
                     </motion.button>
                   );
                 })}
@@ -253,7 +264,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
           </motion.div>
         )}
 
-        {/* ═══════════ NIVEAU 2 — PARFUMS D'UNE MAISON ═══════════ */}
+        {/* ═══════════ NIVEAU 2 — PARFUMS ═══════════ */}
         {selectedBrand && (
           <motion.div
             key={`brand-${selectedBrand}`}
@@ -279,7 +290,10 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               <button onClick={() => { setSelectedBrand(null); setSearchQuery(""); setFromHerbier(false); }}
                 className="flex items-center gap-2 text-primary/50 hover:text-primary transition-all group">
                 <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                <span className="text-[10px] uppercase tracking-[0.3em] font-body">Maisons</span>
+                {/* ── MODIFICATION : label retour selon le mode ── */}
+                <span className="text-[10px] uppercase tracking-[0.3em] font-body">
+                  {selectedBrand === "__ALL__" ? "Herbier" : "Maisons"}
+                </span>
               </button>
             </div>
 
@@ -306,7 +320,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
                   </>
                 ) : (
                   <>
-                    {selectedBrand}
+                    {selectedBrand === "__ALL__" ? "Toutes les Maisons" : selectedBrand}
                     <span className="text-xs font-body text-primary/30 border border-primary/20 px-3 py-1 rounded-full not-italic">{filteredPerfumes.length}</span>
                   </>
                 )}

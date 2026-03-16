@@ -12,6 +12,16 @@ interface LandingScreenProps {
 
 const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
   const videoSrc = "/fzparfumscompilation.mp4";
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.play().catch(() => {});
+    const onEnded = () => { v.currentTime = 0; v.play().catch(() => {}); };
+    v.addEventListener("ended", onEnded);
+    return () => v.removeEventListener("ended", onEnded);
+  }, []);
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {

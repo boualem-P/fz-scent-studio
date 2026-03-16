@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Gender } from "@/data/perfumes";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";

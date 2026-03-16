@@ -96,8 +96,8 @@ export const NOTES_IMAGES: Record<string, string> = {
 
   // --- AMBER & RESINS ----------------------------------
   "Ambre": "https://media.istockphoto.com/id/1356213244/fr/photo/ambre-naturel-un-morceau-dambre-naturel-opaque-jaune-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=dDRryxccAfwaczmreErOsDimsz-6NAqnKaTARROe-AE=",
-  "Ambre gris": https://baleinesendirect.org/wp-content/uploads/2024/08/vrai-ambre-gris.jpg",
-  "Amberwood": https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKJWK4U300snE-J9SboK8nhg2P-Q0pokoyhA&s",
+  "Ambre gris": "https://baleinesendirect.org/wp-content/uploads/2024/08/vrai-ambre-gris.jpg",
+  "Amberwood": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKJWK4U300snE-J9SboK8nhg2P-Q0pokoyhA&s",
   "Encens": "https://img.freepik.com/photos-gratuite/porte-encens-resine-encens-au-charbon-bois-brulant-myrrhe-table-bois-rustique_181624-60529.jpg",
   "Oliban": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0hUqwO3qmhTCR3otTPBkYLVjvZNYSDoTDg&s",
   "Myrrhe": "https://media.istockphoto.com/id/1409930753/fr/photo/r%C3%A9sine-de-myrrhe-isol%C3%A9e-sur-fond-blanc-pile-de-commiphora-myrrha-naturel-opoponax-de-myrrhe.jpg?s=612x612&w=0&k=20&c=aBq4IsCJTbKOp1_VG9wBgPd0BHSzbXgRHigW3SMYJYA=",

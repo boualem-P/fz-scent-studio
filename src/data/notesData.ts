@@ -87,7 +87,6 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Oud": "https://t3.ftcdn.net/jpg/01/40/25/80/360_F_140258049_BouSqnArYQtcl3PWCGMtEBG9spCkEDBF.jpg",
   "Gaïac": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjyuJJ90i8osSX5S2tLiDacmsd1wM5iu0J3Q&s",
   "Bouleau": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlUmLWLFbrebY-pMBUd7qf5iRgIe8TTjy6xQ&s",
-  "Bois de cachemire": "https://media.istockphoto.com/id/874320972/fr/photo/texture-bois-motif-grunge.jpg?s=612x612&w=0&k=20&c=HHhWpzkI37AJbEiSXwgUQiVp8pTBm3C98Njl-ff-C4M=",
   "Bois de Cachemire": "https://media.istockphoto.com/id/874320972/fr/photo/texture-bois-motif-grunge.jpg?s=612x612&w=0&k=20&c=HHhWpzkI37AJbEiSXwgUQiVp8pTBm3C98Njl-ff-C4M=",
   "Papyrus": "https://png.pngtree.com/png-vector/20241114/ourmid/pngtree-old-paper-scroll-ancient-papyrus-isolated-on-transparent-background-png-image_14317742.png",
   "Foin": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqk7EGBIgXdIDfl9O_6rMqJLkdGgveq0dkHw&s",
@@ -161,7 +160,6 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Ambrette": "https://matiere-premiere.com/cdn/shop/files/ambrette07webp_copie.webp?v=1747043888&width=640",
   "Cuir": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdoJIex_fU14J9ospvHmjeTTpG_-6Xjq5Gvw&s",
   "Tabac": "https://img.pikbest.com/ai/illus_our/20230427/798052d67767baa5e01d539c36e38154.jpg!w700wp",
-  "Mousse de Chêne": "https://cdn.shopify.com/s/files/1/0681/1772/5436/files/parfum-bougies-mousse-chene.webp",
   "Mousse de chêne": "https://cdn.shopify.com/s/files/1/0681/1772/5436/files/parfum-bougies-mousse-chene.webp",
 
   // --- DIVERS ------------------------------------------
@@ -170,7 +168,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Notes épicées": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy68QcnTdnE0gdP-PDGwPZNKArSN386GfYMA&s",
   "Notes minérales": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjyuJJ90i8osSX5S2tLiDacmsd1wM5iu0J3Q&s",
   "Sel": "https://media.istockphoto.com/id/470344279/fr/photo/sel-de-mer-dans-une-cuill%C3%A8re-en-bois.jpg?s=612x612&w=0&k=20&c=4B9nPTTzV2ZIE5diBFJQ6MXv_S5VkFEy5oYXcBQCkHo=",
-  "Agrumes": "https://t4.ftcdn.net/jpg/00/61/19/53/360_F_61195341_rR4lMptEspj16GvOdmy0MaMznSRveh2M.jpg",
+  "Agrumes": "https://img.freepik.com/vecteurs-libre/composition-realiste-collection-agrumes_1284-15784.jpg?semt=ais_hybrid&w=740&q=80",
   "Épices": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy68QcnTdnE0gdP-PDGwPZNKArSN386GfYMA&s",
   "Feuille de violette": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM5SwkdSnYYli-D6Pxj1l55bYkTFv4LWaDZQ&s",
   "Fleur de Muscadier": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDeffXmqYV712w8PBTjmqY4JA6PhA5w53iBg&s",

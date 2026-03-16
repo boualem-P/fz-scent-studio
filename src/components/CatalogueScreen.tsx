@@ -14,6 +14,7 @@ interface CatalogueScreenProps {
     base: string[];
   };
   setInternalBackHandler?: (fn: (() => boolean) | null) => void;
+  onHerbierChange?: (open: boolean) => void;
 }
 
 const PerfumeImage = ({ perfume }: { perfume: Perfume }) => (
@@ -35,7 +36,6 @@ const PerfumeImage = ({ perfume }: { perfume: Perfume }) => (
   </div>
 );
 
-// ── Dictionnaire images des maisons ──────────────────────────────
 const BRAND_IMAGES: Record<string, string> = {
   "Dior":                     "https://spnews.com/downloads/6765/download/Dior_logo.png?cb=35a7196f26214e14e4fdac4b6d73ab3c",
   "Chanel":                   "https://www.shutterstock.com/image-vector/chanel-icon-logo-symbol-sign-600nw-2404629953.jpg",
@@ -66,7 +66,7 @@ const BRAND_IMAGES: Record<string, string> = {
   "Paco Rabanne":             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHrdwJieDavm5qELxmGFwwRmsh2WpwWfNpQA&s",
 };
 
-const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: CatalogueScreenProps) => {
+const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHerbierChange }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [brandSearchQuery, setBrandSearchQuery] = useState("");
@@ -75,11 +75,20 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
   const [fromHerbier, setFromHerbier] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
 
+  // Helper pour ouvrir/fermer l'herbier et notifier le parent
+  const openHerbier = () => {
+    setIsNotesMenuOpen(true);
+    onHerbierChange?.(true);
+  };
+  const closeHerbier = () => {
+    setIsNotesMenuOpen(false);
+    onHerbierChange?.(false);
+  };
+
   const brands = useMemo(() => 
     [...new Set(PERFUMES.map(p => p.brand))].sort((a, b) => a.localeCompare(b)),
   []);
 
-  // ── MODIFICATION : "__ALL__" pour afficher tous les parfums depuis l'herbier ──
   const filteredPerfumes = useMemo(() => {
     if (!selectedBrand) return [];
     const brandPerfumes = selectedBrand === "__ALL__"
@@ -103,7 +112,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
     if (!setInternalBackHandler) return;
     setInternalBackHandler(() => {
       if (selected) { setSelected(null); return true; }
-      if (isNotesMenuOpen) { setIsNotesMenuOpen(false); return true; }
+      if (isNotesMenuOpen) { closeHerbier(); return true; }
       if (selectedBrand) {
         setSelectedBrand(null);
         setSearchQuery("");
@@ -118,7 +127,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
   const handleBackToHerbier = () => {
     setSearchQuery("");
     setFromHerbier(false);
-    setIsNotesMenuOpen(true);
+    openHerbier();
   };
 
   const NoteSection = ({ title, notes, Icon, colorClass }: { title: string, notes: string[], Icon: any, colorClass: string }) => {
@@ -136,8 +145,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
             <button key={note} onClick={() => {
               setSearchQuery(note);
               setFromHerbier(true);
-              setIsNotesMenuOpen(false);
-              // ── MODIFICATION : si pas de marque sélectionnée → afficher tous les parfums ──
+              closeHerbier();
               if (!selectedBrand) {
                 setSelectedBrand("__ALL__");
               }
@@ -171,9 +179,8 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
             transition={{ duration: 0.35 }}
             className="flex-1 flex flex-col relative z-20"
           >
-            {/* Bouton Herbier en haut à droite */}
             <div className="flex justify-end mb-4">
-              <button onClick={() => setIsNotesMenuOpen(true)}
+              <button onClick={openHerbier}
                 className="group relative px-6 py-3 rounded-full bg-gradient-to-b from-amber-400/10 to-transparent border border-amber-500/30 text-amber-500 font-display text-[11px] tracking-[0.3em] uppercase hover:border-amber-500 transition-all overflow-hidden">
                 <span className="relative z-10 flex items-center gap-3">
                   <Sparkles size={14} className="animate-pulse" /> Explorer l'Herbier
@@ -182,7 +189,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               </button>
             </div>
 
-            {/* Titre */}
             <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-10">
               <motion.h2 variants={staggerItem} className="font-display text-4xl lg:text-5xl text-gold-gradient tracking-widest flex items-center justify-center gap-4 italic">
                 Nos Maisons
@@ -193,7 +199,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               <motion.div variants={staggerItem} className="gold-divider w-40 mx-auto mt-4" />
             </motion.div>
 
-            {/* Barre de recherche maisons */}
             <div className="relative w-full max-w-sm mx-auto mb-8">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/40" size={16} />
               <input
@@ -211,7 +216,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               )}
             </div>
 
-            {/* Grille des marques */}
             <motion.div variants={staggerContainer} initial="hidden" animate="show"
               className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto w-full">
               {brands
@@ -254,7 +258,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               )}
             </motion.div>
 
-            {/* Bouton Quitter */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center mt-20">
               <motion.button whileHover={springHover} whileTap={springTap} onClick={onMenu}
                 className="px-12 py-4 font-display text-xs tracking-[0.4em] uppercase border border-primary/20 text-primary/60 hover:text-primary hover:border-primary/50 transition-all gold-border-glow bg-black/20">
@@ -290,7 +293,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               <button onClick={() => { setSelectedBrand(null); setSearchQuery(""); setFromHerbier(false); }}
                 className="flex items-center gap-2 text-primary/50 hover:text-primary transition-all group">
                 <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                {/* ── MODIFICATION : label retour selon le mode ── */}
                 <span className="text-[10px] uppercase tracking-[0.3em] font-body">
                   {selectedBrand === "__ALL__" ? "Herbier" : "Maisons"}
                 </span>
@@ -385,14 +387,14 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
                 <p className="font-body text-[10px] text-primary/40 uppercase tracking-[0.5em]">Explorez les nuances de votre database</p>
                 <p className="font-body text-[11px] text-amber-500/60 uppercase tracking-[0.4em] mt-3">
                   {availableNotes.top.length + availableNotes.heart.length + availableNotes.base.length} essences répertoriées
-                </p> 
+                </p>
                 <div className="h-px w-48 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent mx-auto mt-8" />
               </div>
               <NoteSection title="Notes de Tête" notes={availableNotes.top} Icon={Sparkles} colorClass="text-amber-400" />
               <NoteSection title="Notes de Cœur" notes={availableNotes.heart} Icon={Heart} colorClass="text-amber-500" />
               <NoteSection title="Notes de Fond" notes={availableNotes.base} Icon={Anchor} colorClass="text-yellow-600" />
               <div className="py-20 text-center">
-                <button onClick={() => setIsNotesMenuOpen(false)}
+                <button onClick={closeHerbier}
                   className="px-10 py-4 border border-white/10 text-[10px] text-primary/30 hover:text-primary uppercase tracking-[0.3em] transition-all rounded-full hover:bg-white/5">
                   Fermer l'herbier
                 </button>

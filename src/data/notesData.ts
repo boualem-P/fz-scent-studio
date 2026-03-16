@@ -8,7 +8,7 @@ const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1596040033229-a9821ebd0
 export const NOTES_IMAGES: Record<string, string> = {
   // --- CITRUS / HESPÉRIDÉS -----------------------------
   "Bergamote": "https://www.grocerymart.com.my/202/bergamot-.jpg",
-  "Citron": https://lepotagerdelili.fr/wp-content/uploads/2021/12/citron.jpg",
+  "Citron": "https://lepotagerdelili.fr/wp-content/uploads/2021/12/citron.jpg",
   "Orange": "https://t4.ftcdn.net/jpg/00/61/19/53/360_F_61195341_rR4lMptEspj16GvOdmy0MaMznSRveh2M.jpg",
   "Mandarine": "https://media.istockphoto.com/id/504384796/fr/photo/tangerines-m%C3%BBrs-frais.jpg?s=612x612&w=0&k=20&c=h60UUnfVB6ik_cT1b8lW31nU9iynyuH72QflMCOGkVQ=",
   "Pamplemousse": "https://images.unsplash.com/photo-1577234286642-fc512a5f8f11?auto=format&fit=crop&w=150&q=80",

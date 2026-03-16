@@ -120,11 +120,11 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Cacao": "https://media.istockphoto.com/id/1400452697/fr/photo/barre-de-chocolat-noir-avec-f%C3%A8ves-de-cacao.jpg?s=612x612&w=0&k=20&c=MeDSWrVPCuJQeQtOkiLNIxhNAtp7mVjKNvVD95JcxgM=",
   "Miel": "https://media.istockphoto.com/id/1445503284/fr/photo/miel-isol%C3%A9-sur-le-fond-blanc.jpg?s=612x612&w=0&k=20&c=KLj2iYJ7w60Pln3XAs_yDyTZhc-nBIHxnGncnSp29Y4=",
   "Café": "https://thumbs.dreamstime.com/b/granos-de-caf%C3%A9-tostados-en-fondo-r%C3%BAstico-texturado-fotograf%C3%ADa-alta-resoluci%C3%B3n-cierre-asados-esparcidos-una-superficie-c%C3%A1lida-393023802.jpg",
-  "Cognac": "https://media.istockphoto.com/id/1155383401/fr/photo/verre-de-cognac.jpg",
+  "Cognac": "https://image.jimcdn.com/app/cms/image/transf/none/path/s1ef3dce6f026268a/backgroundarea/i6e331c83bd18352f/version/1499723507/image.jpg",
   "Bourbon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeSNzDTMAyWf6sFbvoTjb55dUOIMfRF0mFOg&s",
   "Praliné": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9WLP16T6JjklrvODAvgaa95R74oevMgMJMg&s",
   "Coumarine": "https://t4.ftcdn.net/jpg/17/54/89/81/360_F_1754898160_roXxgZqwXTnerzjHd50qqjwizlkHFVvx.jpg",
-  "Amande": "https://media.istockphoto.com/id/1178530049/fr/photo/amandes-isol%C3%A9es-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=1kJB0EjJh6j3Zk6f2FMvg5P9iH1jKB2xKF_EZt6P5PA=",
+  "Amande": "https://www.saveursetvie.fr/wp-content/uploads/2024/06/44bb2c3b-0776-4bd4-8e51-38e3b7862eeb-bienfaitsamandesseniors97f7dadf97.webp",
   "Amande amère": "https://media.istockphoto.com/id/1178530049/fr/photo/amandes-isol%C3%A9es-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=1kJB0EjJh6j3Zk6f2FMvg5P9iH1jKB2xKF_EZt6P5PA=",
   "Réglisse": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlj2mRYrtQpL1hAiiIHEVKSoXJEFJGUWb1-g&s",
 

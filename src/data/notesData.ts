@@ -81,7 +81,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Cèdre de Virginie": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIdPneTy0H8wjOdCkS2VbE5LwtIYwRL9MYbg&s",
   "Cèdre de l'Atlas": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvk8or0k-JxPbrdb55lap_S36CG_I7Fb4xDw&s",
   "Cèdre rouge": "https://m.media-amazon.com/images/I/61L5u4t67cL._AC_UF1000,1000_QL80_.jpg",
-  "Patchouli": https://www.maison-sidonie-champagne.fr/fichiers/browser/images/BLOG/Quest-ce-que-le-patchouli-/plante-patchouli.JPG",
+  "Patchouli": "https://www.maison-sidonie-champagne.fr/fichiers/browser/images/BLOG/Quest-ce-que-le-patchouli-/plante-patchouli.JPG",
   "Vétiver": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjUV1NL_Rxap7iYXMMNZZF1McQEkOVwEyEbA&s",
   "Vétiver fumé": "https://t3.ftcdn.net/jpg/16/92/84/28/360_F_1692842888_Ry0pMEvILDRWOhvANhC78uXQfWccgc28.jpg",
   "Oud": "https://t3.ftcdn.net/jpg/01/40/25/80/360_F_140258049_BouSqnArYQtcl3PWCGMtEBG9spCkEDBF.jpg",

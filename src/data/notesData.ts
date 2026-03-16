@@ -41,7 +41,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Freesia": "https://www.bonparfumeur.com/cdn/shop/articles/freesia-simple-rose-2_62433c3d-d7af-4da1-829e-04e656410f0b.jpg?v=1748246429",
   "Orchidée noire": "https://www.industries-cosmetiques.fr/wp-content/uploads/2016/11/capture98.jpg",
   "Muguet": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzGhIvJb3X2LRj0A5ZvJx9e5FKmV5zPJJVeA&s",
-  "Rose de Damas": "https://upload.wikimedia.org/wikipedia/commons/5/51/Small_Red_Rose.JPG",
+  "Rose de Damas": "https://www.jardindupicvert.com/media/catalog/product/r/o/rosier-ancien-de-damas-rose-de-rescht-18783.jpg",
   "Rose de Bulgarie": "https://blog.visiondumonde.org/wp-content/uploads/2017/05/bulgarie-roses-couverture-2-864x520.jpg",
   "Laurier": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrKZMvXOtke4wY3KTYB9fsxHuESvXHJ7xshA&s",
   "Figue": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7tfbApizQc4oaqIqiAmlP0mJGDDcj6L3fjw&s",
@@ -125,7 +125,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Praliné": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9WLP16T6JjklrvODAvgaa95R74oevMgMJMg&s",
   "Coumarine": "https://t4.ftcdn.net/jpg/17/54/89/81/360_F_1754898160_roXxgZqwXTnerzjHd50qqjwizlkHFVvx.jpg",
   "Amande": "https://www.saveursetvie.fr/wp-content/uploads/2024/06/44bb2c3b-0776-4bd4-8e51-38e3b7862eeb-bienfaitsamandesseniors97f7dadf97.webp",
-  "Amande amère": "https://media.istockphoto.com/id/1178530049/fr/photo/amandes-isol%C3%A9es-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=1kJB0EjJh6j3Zk6f2FMvg5P9iH1jKB2xKF_EZt6P5PA=",
+  "Amande amère": "https://www.laboetgato.fr/48520-large_default/amande-amere-500-g.jpg",
   "Réglisse": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlj2mRYrtQpL1hAiiIHEVKSoXJEFJGUWb1-g&s",
 
   // --- FRUITS ------------------------------------------
@@ -138,7 +138,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Mangue": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMIadzY6k35gyv_LM9D333pdWuNwiSsonvaQ&s",
   "Ananas": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWlGn3bDORTrIUISN5vcNEiEzkvwF_PizIAg&s",
   "Pêche": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpwcwVGPVJlGvRQnS8pfJ4SmhEfOGBmy0OXQ&s",
-  "Melon": "https://media.istockphoto.com/id/1198152954/fr/photo/melon-entier-et-tranch%C3%A9-isol%C3%A9-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=7Z7jyU7VvN4RlH8pHkYkZ7b9OQ3b8gXZBqJqJbMqk3A=",
+  "Melon": "https://observatoire-des-aliments.fr/wp-content/uploads/2014/07/melon-copie.jpg",
   "Prune": "https://media.istockphoto.com/id/512307472/fr/photo/prunes.jpg?s=612x612&w=0&k=20&c=2eXNYHwqGhLhFEFRKmq_aGDV7PqgFrF9rBR_bQRMgGU=",
   "Mûre": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScGEdhbPH4Gulol5glAmc4m2wCNpC0-66ESg&s",
   "Griotte": "https://media.istockphoto.com/id/512307472/fr/photo/prunes.jpg?s=612x612&w=0&k=20&c=2eXNYHwqGhLhFEFRKmq_aGDV7PqgFrF9rBR_bQRMgGU=",
@@ -146,11 +146,11 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Truffe noire": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwNuH8J4EwMdpxR1lilD3r-Spd-rDbkJzK5g&s",
 
   // --- MARINE / AQUATIC --------------------------------
-  "Marine": "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=150&q=80",
-  "Notes marines": "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=150&q=80",
+  "Marine": "https://static.actu.fr/uploads/2026/01/f514ecff4af86f914ecff4af8dd14ev-1-960x612.jpg",
+  "Notes marines": "https://medias.pourlascience.fr/api/v1/images/view/5d246010d286c24c0d17e855/wide_1300/image.jpg",
   "Algues": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVKBHTrGGG4Z4nYID8BT6d38m4w_gcipbuQQ&s",
   "Lotus": "https://img.freepik.com/photos-premium/belle-fleur-lotus-surface-etang_38535-73.jpg",
-  "Calone": "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=150&q=80",
+  "Calone": "https://previews.123rf.com/images/miradrozdowski/miradrozdowski1209/miradrozdowski120900112/15119239-pieces-of-watermelon-and-cantaloupe-melon.jpg",
   "Aldéhydes": "https://thumbs.dreamstime.com/b/usine-d-herbe-de-poissons-de-lizardtail-de-heartleaf-de-cordata-de-houttuynia-29944862.jpg",
 
   // --- MUSK & LEATHER ----------------------------------

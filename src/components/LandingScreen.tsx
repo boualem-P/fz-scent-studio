@@ -94,7 +94,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
         animate="show"
         className="flex flex-col items-center gap-10 relative z-20 mb-12"
       >
-        <div className="flex justify-between w-full px-6">
+        <div className="flex justify-between w-screen px-8">
           {(["homme", "femme"] as Gender[]).map((gender) => (
             <motion.button
               key={gender}

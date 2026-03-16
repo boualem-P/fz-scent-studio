@@ -373,10 +373,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
             <div className="fixed inset-0 pointer-events-none opacity-20" style={{ backgroundImage: "radial-gradient(circle at 50% -20%, #d4af37 0%, transparent 50%)" }} />
             <div className="max-w-6xl mx-auto p-6 lg:p-16 relative z-10">
               <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-20">
-                <button onClick={() => setIsNotesMenuOpen(false)} className="flex items-center gap-3 text-primary/50 hover:text-primary transition-all group">
-                  <ArrowLeft size={24} className="group-hover:-translate-x-2 transition-transform" />
-                  <span className="text-xs uppercase tracking-[0.3em]">Retour</span>
-                </button>
                 <div className="relative w-full md:w-80">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/30" size={16} />
                   <input type="text" placeholder="Chercher une essence..." value={noteSearchQuery}
@@ -387,6 +383,9 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler }: Cat
               <div className="text-center mb-24">
                 <h2 className="font-display text-5xl lg:text-7xl text-gold-gradient tracking-tighter mb-6 italic">L'Herbier Secret</h2>
                 <p className="font-body text-[10px] text-primary/40 uppercase tracking-[0.5em]">Explorez les nuances de votre database</p>
+                <p className="font-body text-[11px] text-amber-500/60 uppercase tracking-[0.4em] mt-3">
+                  {availableNotes.top.length + availableNotes.heart.length + availableNotes.base.length} essences répertoriées
+                </p> 
                 <div className="h-px w-48 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent mx-auto mt-8" />
               </div>
               <NoteSection title="Notes de Tête" notes={availableNotes.top} Icon={Sparkles} colorClass="text-amber-400" />

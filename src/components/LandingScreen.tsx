@@ -37,6 +37,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
       {/* 1. VIDÉO D'ARRIÈRE-PLAN */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <video
+          ref={videoRef}
           key={videoSrc}
           autoPlay
           loop

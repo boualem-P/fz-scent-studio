@@ -122,13 +122,6 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
             ✦ Unisex
           </motion.button>
 
-          <motion.button
-            variants={staggerItem}
-            onClick={onCatalogue}
-            className="font-body text-[10px] uppercase tracking-[0.5em] text-primary/60 hover:text-primary transition-colors border-b border-primary/20 pb-1"
-          >
-            Découvrir la collection
-          </motion.button>
         </div>
       </motion.div>
       

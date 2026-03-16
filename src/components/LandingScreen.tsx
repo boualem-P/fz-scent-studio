@@ -11,7 +11,7 @@ interface LandingScreenProps {
 }
 
 const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
-  const videoSrc = "https://res.cloudinary.com/dljpckkun/video/upload/fl_loop/v1773657709/fzparfumscompilation_rsq1uu.mp4";
+  const videoSrc = "https://res.cloudinary.com/dljpckkun/video/upload/v1773657709/fzparfumscompilation_rsq1uu.mp4";
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -43,6 +43,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
           loop
           muted
           playsInline
+          preload="auto"
           className="w-full h-full object-cover opacity-60"
         >
           <source src={videoSrc} type="video/mp4" />

@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Gender } from "@/data/perfumes";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
@@ -11,6 +12,16 @@ interface LandingScreenProps {
 
 const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreenProps) => {
   const videoSrc = "/fzparfumscompilation.mp4";
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.play().catch(() => {});
+    const onEnded = () => { v.currentTime = 0; v.play().catch(() => {}); };
+    v.addEventListener("ended", onEnded);
+    return () => v.removeEventListener("ended", onEnded);
+  }, []);
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -26,6 +37,7 @@ const LandingScreen = ({ onSelectGender, onCatalogue, onProfile }: LandingScreen
       {/* 1. VIDÉO D'ARRIÈRE-PLAN */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <video
+          ref={videoRef}
           key={videoSrc}
           autoPlay
           loop

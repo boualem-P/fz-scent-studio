@@ -23,32 +23,31 @@ const Index = () => {
   const [results, setResults] = useState<{ perfume: Perfume; matchPercent: number }[]>([]);
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
   const [showWipe, setShowWipe] = useState(false);
+  const [isHerbierOpen, setIsHerbierOpen] = useState(false);
 
   const pyramidInternalBackRef = useRef<(() => boolean) | null>(null);
   const catalogueInternalBackRef = useRef<(() => boolean) | null>(null);
 
-  // Mise à jour : Extraction des 99 sous-notes classées par catégories
   const availableNotesByCategory = useMemo(() => {
-  const categories = {
-    top: new Set<string>(),
-    heart: new Set<string>(),
-    base: new Set<string>()
-  };
+    const categories = {
+      top: new Set<string>(),
+      heart: new Set<string>(),
+      base: new Set<string>()
+    };
 
-  PERFUMES.forEach(p => {
-    p.topNotesDetailed?.forEach(n => { if(n.name) categories.top.add(n.name) });
-    p.heartNotesDetailed?.forEach(n => { if(n.name) categories.heart.add(n.name) });
-    p.baseNotesDetailed?.forEach(n => { if(n.name) categories.base.add(n.name) });
-  });
+    PERFUMES.forEach(p => {
+      p.topNotesDetailed?.forEach(n => { if(n.name) categories.top.add(n.name) });
+      p.heartNotesDetailed?.forEach(n => { if(n.name) categories.heart.add(n.name) });
+      p.baseNotesDetailed?.forEach(n => { if(n.name) categories.base.add(n.name) });
+    });
 
-  return {
-    top: Array.from(categories.top).sort((a, b) => a.localeCompare(b)),
-    heart: Array.from(categories.heart).sort((a, b) => a.localeCompare(b)),
-    base: Array.from(categories.base).sort((a, b) => a.localeCompare(b))
-  };
-}, []);
+    return {
+      top: Array.from(categories.top).sort((a, b) => a.localeCompare(b)),
+      heart: Array.from(categories.heart).sort((a, b) => a.localeCompare(b)),
+      base: Array.from(categories.base).sort((a, b) => a.localeCompare(b))
+    };
+  }, []);
 
-  // Gestion du scroll pour éviter les conflits visuels
   useEffect(() => {
     if (selectedPerfume || screen === "analyzing") {
       document.body.style.overflow = "hidden";
@@ -72,7 +71,6 @@ const Index = () => {
     }
   }, [screen]);
 
-  // ← navigation directe vers le landing (menu principal Homme/Femme)
   const handleGoToLanding = useCallback(() => {
     setHistory([]);
     setSelectedPerfume(null);
@@ -150,7 +148,8 @@ const Index = () => {
 
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
         <div className="flex flex-col gap-3 pointer-events-auto">
-          {(screen !== "landing" || selectedPerfume) && (
+          {/* Bouton retour masqué quand l'herbier est ouvert */}
+          {(screen !== "landing" || selectedPerfume) && !isHerbierOpen && (
             <button 
               onClick={handleBack}
               className="w-12 h-12 rounded-full border border-white/10 bg-black/80 backdrop-blur-xl flex items-center justify-center text-white hover:bg-amber-500/20 hover:border-amber-500/50 transition-all shadow-2xl"
@@ -217,6 +216,7 @@ const Index = () => {
                   onMenu={handleBack} 
                   availableNotes={availableNotesByCategory}
                   setInternalBackHandler={(fn) => { catalogueInternalBackRef.current = fn; }}
+                  onHerbierChange={setIsHerbierOpen}
                 />
               )}
             </motion.div>

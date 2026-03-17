@@ -261,7 +261,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   // ──────────────────────────────────────────────────────────────────
 
   return (
-    <div className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden selection:bg-amber-200 selection:text-black font-sans">
+    <div className="relative min-h-screen bg-[#F5F0E8] text-black overflow-x-hidden selection:bg-amber-200 selection:text-black font-sans">
       <canvas ref={canvasRef} className="gold-dust-canvas" />
       <Header />
 

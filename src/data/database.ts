@@ -28,31 +28,45 @@ export interface Perfume {
 // --- UTILITAIRE DE GÉNÉRATION ---
 
 /**
- * Fusionne les notes et extrait les accords uniques via la noteMap
+ * Précharge un mapping normalisé note -> accords pour éviter de recalculer
  */
-function getAccordsForPerfume(
-  top: NoteDetail[], 
-  heart: NoteDetail[], 
-  base: NoteDetail[]
-): string[] {
-  const accordsSet = new Set<string>();
-  const allNotes = [...top, ...heart, ...base];
+const NORMALIZED_NOTE_TO_ACCORD_MAP: Record<string, string[]> = Object.fromEntries(
+  Object.entries(NOTE_TO_ACCORD_MAP).map(([note, accords]) => [normalizeNote(note), accords])
+);
 
-  allNotes.forEach(({ name }) => {
-    const key = normalizeNote(name);
-    const mappedAccords = NOTE_TO_ACCORD_MAP[key];
+/**
+ * Calcule les accords uniques pour un ensemble de notes détaillées
+ */
+function computeAccords(notesDetailed: NoteDetail[]): string[] {
+  const accordsSet = new Set<string>();
+  notesDetailed.forEach(({ name }) => {
+    const mappedAccords = NORMALIZED_NOTE_TO_ACCORD_MAP[normalizeNote(name)];
     if (mappedAccords) {
-      mappedAccords.forEach((acc) => accordsSet.add(acc));
+      mappedAccords.forEach(acc => accordsSet.add(acc));
     }
   });
-
   return Array.from(accordsSet);
+}
+
+/**
+ * Crée un parfum avec accords pré-calculés
+ */
+function createPerfume(data: Omit<Perfume, "accords">): Perfume {
+  const allNotes = [
+    ...data.topNotesDetailed,
+    ...data.heartNotesDetailed,
+    ...data.baseNotesDetailed,
+  ];
+  return {
+    ...data,
+    accords: computeAccords(allNotes),
+  };
 }
 
 // --- BASE DE DONNÉES DES PARFUMS ---
 
 export const PERFUMES: Perfume[] = [
-  {
+  createPerfume({
     id: "j-adore-dior",
     name: "J'adore",
     brand: "Dior",
@@ -67,13 +81,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Poire" }, { name: "Melon" }, { name: "Bergamote" }],
     heartNotesDetailed: [{ name: "Jasmin" }, { name: "Tubéreuse" }, { name: "Rose de Damas" }],
     baseNotesDetailed: [{ name: "Musc" }, { name: "Vanille" }, { name: "Cèdre" }],
-    accords: getAccordsForPerfume(
-      [{ name: "Poire" }, { name: "Melon" }, { name: "Bergamote" }],
-      [{ name: "Jasmin" }, { name: "Tubéreuse" }, { name: "Rose de Damas" }],
-      [{ name: "Musc" }, { name: "Vanille" }, { name: "Cèdre" }]
-    )
-  },
-  {
+  }),
+  createPerfume({
     id: "la-vie-est-belle",
     name: "La Vie est Belle",
     brand: "Lancôme",
@@ -88,13 +97,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Poire" }, { name: "Cassis" }],
     heartNotesDetailed: [{ name: "Iris" }, { name: "Fleur d'oranger" }],
     baseNotesDetailed: [{ name: "Praline" }, { name: "Patchouli" }, { name: "Fève Tonka" }],
-    accords: getAccordsForPerfume(
-      [{ name: "Poire" }, { name: "Cassis" }],
-      [{ name: "Iris" }, { name: "Fleur d'oranger" }],
-      [{ name: "Praline" }, { name: "Patchouli" }, { name: "Fève Tonka" }]
-    )
-  },
-  {
+  }),
+  createPerfume({
     id: "black-opium",
     name: "Black Opium",
     brand: "YSL",
@@ -109,10 +113,5 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Poire" }, { name: "Poivre rose" }, { name: "Fleur d'oranger" }],
     heartNotesDetailed: [{ name: "Café" }, { name: "Jasmin" }, { name: "Amande amère" }, { name: "Réglisse" }],
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Patchouli" }, { name: "Cèdre" }, { name: "Bois de Cachemire" }],
-    accords: getAccordsForPerfume(
-      [{ name: "Poire" }, { name: "Poivre rose" }, { name: "Fleur d'oranger" }],
-      [{ name: "Café" }, { name: "Jasmin" }, { name: "Amande amère" }, { name: "Réglisse" }],
-      [{ name: "Vanille" }, { name: "Patchouli" }, { name: "Cèdre" }, { name: "Bois de Cachemire" }]
-    )
-  }
+  }),
 ];

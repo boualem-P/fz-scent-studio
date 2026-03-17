@@ -287,7 +287,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
 
             {/* Image */}
             <div className="flex-shrink-0 w-[240px] space-y-3">
-              <div className="perfume-img-container perfume-studio-lighting gold-frame !h-[300px] bg-zinc-950/20">
+              <div className="perfume-img-container perfume-studio-lighting gold-frame !h-[320px] bg-white/90 backdrop-blur-xl">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}

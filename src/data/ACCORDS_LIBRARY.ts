@@ -40,6 +40,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   foresty: { label: "Forestier", color: "#355E3B" },
   hay: { label: "Foin", color: "#C2B280" },
   terpenic: { label: "Terpénique", color: "#9ACD32" },
+  juniper: { label: "Genévrier", color: "#4F7942" }, // ajouté
+  oak: { label: "Chêne", color: "#A0522D" }, // ajouté
 
   // ======================
   // FAMILLE 3 : GOURMAND
@@ -63,6 +65,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   coffee: { label: "Café", color: "#4B3621" },
   lactonic: { label: "Lactonique", color: "#FFF8DC" },
   milky: { label: "Lacté", color: "#FAF0E6" },
+  toffee: { label: "Toffee", color: "#C68E17" }, // ajouté
+  maple: { label: "Érable", color: "#D2691E" }, // ajouté
 
   // ======================
   // FAMILLE 4 : CARACTÈRE
@@ -81,6 +85,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   wine: { label: "Vin", color: "#722F37" },
   champagne: { label: "Champagne", color: "#F7E7CE" },
   sake: { label: "Saké", color: "#F5F5F5" },
+  incense_sweet: { label: "Encens doux", color: "#DCD0FF" }, // ajouté
 
   // ======================
   // FAMILLE 5 : AQUATIQUE
@@ -95,6 +100,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   aldehydic: { label: "Aldéhydé", color: "#F0FFFF" },
   soapy: { label: "Savonneux", color: "#E0FFFF" },
   metallic: { label: "Métallique", color: "#C0C0C0" },
+  seaweed: { label: "Algue", color: "#2E8B57" }, // ajouté
+  salty_sweet: { label: "Salé-sucré", color: "#F5DEB3" }, // ajouté
 
   // ======================
   // FAMILLE 6 : NICHE
@@ -111,4 +118,6 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   sour: { label: "Acidulé", color: "#ADFF2F" },
   bitter: { label: "Amer", color: "#556B2F" },
   savory: { label: "Gustatif / Salé", color: "#8F9779" },
+  resin: { label: "Résine", color: "#B87333" }, // ajouté
+  metallic_sharp: { label: "Métallique tranchant", color: "#C0C0C0" } // ajouté
 };

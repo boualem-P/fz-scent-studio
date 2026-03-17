@@ -59,7 +59,7 @@
 
   /* --- CONFIGURATION DES IMAGES (CORRECTION TAILLE ET FLOU) --- */
   .perfume-img-container {
-    @apply relative overflow-hidden bg-black/40 flex items-center justify-center w-full;
+    @apply relative overflow-hidden bg-white flex items-center justify-center w-full;
     min-height: 350px;
     border-radius: var(--radius);
     transition: all 0.5s ease;

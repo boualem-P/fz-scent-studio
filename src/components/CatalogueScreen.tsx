@@ -38,33 +38,33 @@ const PerfumeImage = ({ perfume }: { perfume: Perfume }) => (
 );
 
 const BRAND_IMAGES: Record<string, string> = {
-  "Dior":                     "https://spnews.com/downloads/6765/download/Dior_logo.png?cb=35a7196f26214e14e4fdac4b6d73ab3c",
-  "Chanel":                   "https://www.shutterstock.com/image-vector/chanel-icon-logo-symbol-sign-600nw-2404629953.jpg",
-  "YSL":                      "https://fimgs.net/mdimg/dizajneri/o.99.jpg",
-  "Lancôme":                  "https://fimgs.net/mdimg/dizajneri/o.80.jpg",
-  "Armani":                   "https://upload.wikimedia.org/wikipedia/commons/4/42/Giorgio_Armani_logo.jpg",
-  "Hermès":                   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3ZcFq5Y-eh3L_kRtR4EL0gmaorA2NK8Krkg&s",
-  "Versace":                  "https://fimgs.net/mdimg/dizajneri/o.97.jpg",
-  "Creed":                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkNbn7GA8FGdCQ349e2nzzMSEe5hvgPzVZcg&s",
-  "Le Labo":                  "https://fimgs.net/mdimg/dizajneri/o.403.jpg",
-  "Tom Ford":                 "https://parisgallery.ae/cdn/shop/collections/TOM_FORD.jpg?v=1678697860",
-  "Kilian Paris":             "https://framero.eu/image/cache/catalog/image/catalog/logo/kilian-paris-logo-600x315w.jpg",
-  "Mancera":                  "https://fimgs.net/mdimg/dizajneri/o.1134.jpg",
-  "Azzaro":                   "https://www.fragrantica.fr/mdimg/dizajneri/o.8.jpg",
-  "Valentino":                "https://fimgs.net/mdimg/dizajneri/o.100.jpg",
-  "Dolce & Gabbana":          "https://fimgs.net/mdimg/dizajneri/o.56.jpg",
-  "Prada":                    "https://www.icon-icon.com/wp-content/uploads/2018/06/prada_1247_l.jpg",
-  "Jean Paul Gaultier":       "https://fimgs.net/mdimg/dizajneri/o.72.jpg",
-  "Viktor&Rolf":              "https://priveperfumes.com/cdn/shop/collections/viktor-rolf-prive-perfumes-banner.webp?v=1743664405&width=1024",
-  "Carolina Herrera":         "https://i.pinimg.com/564x/8b/7a/f9/8b7af96beeee9c6dcdc0f433a888d02c.jpg",
-  "Guerlain":                 "https://www.icon-icon.com/wp-content/uploads/2018/06/logo-guerlain_9ce88303527f34ce3cb6ab0b6323cc9b68b9219e_0.jpg",
-  "Parfums de Marly":         "https://media.licdn.com/dms/image/v2/D4E0BAQHf0rDex1LcXg/company-logo_200_200/B4EZmAbGTnKcAM-/0/1758796212353/parfums_de_marly_logo?e=2147483647&v=beta&t=MHpbviv2JD_4FJuxJQZXegtZe49fB71Ii1tl52g--x4",
-  "Maison Francis Kurkdjian": "https://parfumeriedaquitaine.com/cdn/shop/collections/maison-francis-kurkdjian-5468706.jpg?v=1769620821",
-  "Burberry":                 "https://perfumes.ec/cdn/shop/collections/Burberry.png?v=1713560150",
-  "Acqua di Parma":           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr7G1eC5Iy0FmM5gq63p9_SPXpOSe-Z62hzw&s",
-  "Chloé":                    "https://i.pinimg.com/1200x/73/42/9f/73429f55db81d87f3210d42192448295.jpg",
-  "Givenchy":                 "https://i.pinimg.com/736x/a6/13/00/a61300eeb04565d30b2c084e6d424fec.jpg",
-  "Paco Rabanne":             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHrdwJieDavm5qELxmGFwwRmsh2WpwWfNpQA&s",
+  "Dior":                      "https://spnews.com/downloads/6765/download/Dior_logo.png?cb=35a7196f26214e14e4fdac4b6d73ab3c",
+  "Chanel":                    "https://www.shutterstock.com/image-vector/chanel-icon-logo-symbol-sign-600nw-2404629953.jpg",
+  "YSL":                       "https://fimgs.net/mdimg/dizajneri/o.99.jpg",
+  "Lancôme":                   "https://fimgs.net/mdimg/dizajneri/o.80.jpg",
+  "Armani":                    "https://upload.wikimedia.org/wikipedia/commons/4/42/Giorgio_Armani_logo.jpg",
+  "Hermès":                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3ZcFq5Y-eh3L_kRtR4EL0gmaorA2NK8Krkg&s",
+  "Versace":                   "https://fimgs.net/mdimg/dizajneri/o.97.jpg",
+  "Creed":                     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkNbn7GA8FGdCQ349e2nzzMSEe5hvgPzVZcg&s",
+  "Le Labo":                   "https://fimgs.net/mdimg/dizajneri/o.403.jpg",
+  "Tom Ford":                  "https://parisgallery.ae/cdn/shop/collections/TOM_FORD.jpg?v=1678697860",
+  "Kilian Paris":              "https://framero.eu/image/cache/catalog/image/catalog/logo/kilian-paris-logo-600x315w.jpg",
+  "Mancera":                   "https://fimgs.net/mdimg/dizajneri/o.1134.jpg",
+  "Azzaro":                    "https://www.fragrantica.fr/mdimg/dizajneri/o.8.jpg",
+  "Valentino":                 "https://fimgs.net/mdimg/dizajneri/o.100.jpg",
+  "Dolce & Gabbana":           "https://fimgs.net/mdimg/dizajneri/o.56.jpg",
+  "Prada":                     "https://www.icon-icon.com/wp-content/uploads/2018/06/prada_1247_l.jpg",
+  "Jean Paul Gaultier":        "https://fimgs.net/mdimg/dizajneri/o.72.jpg",
+  "Viktor&Rolf":               "https://priveperfumes.com/cdn/shop/collections/viktor-rolf-prive-perfumes-banner.webp?v=1743664405&width=1024",
+  "Carolina Herrera":          "https://i.pinimg.com/564x/8b/7a/f9/8b7af96beeee9c6dcdc0f433a888d02c.jpg",
+  "Guerlain":                  "https://www.icon-icon.com/wp-content/uploads/2018/06/logo-guerlain_9ce88303527f34ce3cb6ab0b6323cc9b68b9219e_0.jpg",
+  "Parfums de Marly":          "https://media.licdn.com/dms/image/v2/D4E0BAQHf0rDex1LcXg/company-logo_200_200/B4EZmAbGTnKcAM-/0/1758796212353/parfums_de_marly_logo?e=2147483647&v=beta&t=MHpbviv2JD_4FJuxJQZXegtZe49fB71Ii1tl52g--x4",
+  "Maison Francis Kurkdjian":  "https://parfumeriedaquitaine.com/cdn/shop/collections/maison-francis-kurkdjian-5468706.jpg?v=1769620821",
+  "Burberry":                  "https://perfumes.ec/cdn/shop/collections/Burberry.png?v=1713560150",
+  "Acqua di Parma":            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr7G1eC5Iy0FmM5gq63p9_SPXpOSe-Z62hzw&s",
+  "Chloé":                     "https://i.pinimg.com/1200x/73/42/9f/73429f55db81d87f3210d42192448295.jpg",
+  "Givenchy":                  "https://i.pinimg.com/736x/a6/13/00/a61300eeb04565d30b2c084e6d424fec.jpg",
+  "Paco Rabanne":              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHrdwJieDavm5qELxmGFwwRmsh2WpwWfNpQA&s",
 };
 
 const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHerbierChange }: CatalogueScreenProps) => {
@@ -340,16 +340,47 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
             <motion.div variants={staggerContainer} initial="hidden" animate="show"
               className="flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 max-w-7xl mx-auto w-full">
               {filteredPerfumes.length > 0 ? (
-                filteredPerfumes.map((perfume) => (
-                  <motion.button key={perfume.id} variants={staggerItem} whileHover={springHover} whileTap={springTap}
-                    onClick={() => setSelected(perfume)}
-                    className="glass-card card-shimmer-effect p-5 flex flex-col items-center cursor-pointer group">
-                    <PerfumeImage perfume={perfume} />
-                    <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground mb-1">{perfume.brand}</p>
-                    <h3 className="font-display text-[13px] text-primary tracking-wide text-center leading-tight h-8 flex items-center">{perfume.name}</h3>
-                    <p className="text-[9px] text-muted-foreground/50 mt-2 uppercase tracking-tighter border-t border-white/5 pt-2 w-full text-center">{perfume.concentration}</p>
-                  </motion.button>
-                ))
+                filteredPerfumes.map((perfume) => {
+                  // ✅ NOUVEAU : calcul des accords
+                  const accords = getPerfumeAccords(perfume);
+
+                  // 🔍 DEBUG (optionnel mais recommandé)
+                  console.log(perfume.name, accords);
+
+                  return (
+                    <motion.button key={perfume.id} variants={staggerItem} whileHover={springHover} whileTap={springTap}
+                      onClick={() => setSelected(perfume)}
+                      className="glass-card card-shimmer-effect p-5 flex flex-col items-center cursor-pointer group">
+
+                      <PerfumeImage perfume={perfume} />
+
+                      <p className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground mb-1">
+                        {perfume.brand}
+                      </p>
+
+                      <h3 className="font-display text-[13px] text-primary tracking-wide text-center leading-tight h-8 flex items-center">
+                        {perfume.name}
+                      </h3>
+
+                      <p className="text-[9px] text-muted-foreground/50 mt-2 uppercase tracking-tighter border-t border-white/5 pt-2 w-full text-center">
+                        {perfume.concentration}
+                      </p>
+
+                      {/* ✅ NOUVEAU : affichage accords (propre luxe) */}
+                      <div className="mt-3 flex flex-wrap justify-center gap-1">
+                        {accords.slice(0, 3).map((acc) => (
+                          <span
+                            key={acc}
+                            className="text-[8px] px-2 py-1 border border-amber-500/20 text-amber-500/60 rounded-full uppercase tracking-widest"
+                          >
+                            {acc}
+                          </span>
+                        ))}
+                      </div>
+
+                    </motion.button>
+                  );
+                })
               ) : (
                 <div className="col-span-full text-center py-32 opacity-30 uppercase text-[11px] tracking-[0.4em]">Sillage introuvable</div>
               )}

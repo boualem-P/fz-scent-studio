@@ -3,7 +3,7 @@
 import { RAW_PERFUMES } from "./perfumes.raw";
 import { buildPerfume } from "./perfumeBuilder";
 
-// --- TYPES ---
+// --- INTERFACES (Définies ici pour éviter les boucles d'import) ---
 
 export interface NoteDetail {
   name: string;
@@ -27,6 +27,16 @@ export interface Perfume {
   accords: string[];
 }
 
-// --- DATABASE FINALE (pré-calculée une fois) ---
+// --- GÉNÉRATION DE LA DATABASE FINALE ---
 
-export const PERFUMES: Perfume[] = RAW_PERFUMES.map(buildPerfume);
+/**
+ * On transforme chaque parfum "RAW" en parfum complet avec accords calculés.
+ * Le .map(buildPerfume) exécute la logique de perfumeBuilder.ts
+ */
+export const PERFUMES: Perfume[] = RAW_PERFUMES.map((p) => buildPerfume(p));
+
+/**
+ * Note pour Lovable : 
+ * Si tu ajoutes un nouveau parfum, fais-le dans perfumes.raw.ts.
+ * La database se mettra à jour automatiquement ici.
+ */

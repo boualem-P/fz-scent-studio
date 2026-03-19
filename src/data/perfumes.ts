@@ -1,85 +1,5 @@
-import { PERFUMES as DB_PERFUMES } from "./database";
-import { ACCORDS_LIBRARY } from "./ACCORDS_LIBRARY";
-
-export const PERFUMES = DB_PERFUMES;
-
-export type NoteCategory = string;
-export type Gender = "homme" | "femme" | "unisexe" | "mixte";
-
-export interface NoteDetail {
-  name: string;
-}
-
-export type { Perfume } from "./database";
-
-export const NOTE_LABELS: Record<string, string> = {
-  hesperides: "Hespéridés",
-  aromatiques: "Aromatiques",
-  marines: "Marines",
-  "epices-fraiches": "Épices Fraîches",
-  "fruits-legers": "Fruits Légers",
-  florales: "Florales",
-  fruitees: "Fruités",
-  "epices-chaudes": "Épices Chaudes",
-  "notes-vertes": "Notes Vertes",
-  boisees: "Boisées",
-  ambrees: "Ambrées",
-  gourmandes: "Gourmandes",
-  musquees: "Musquées",
-  mousses: "Mousses",
-};
-
-//
-// ─────────────────────────────────────────────
-// 🧠 UTILS ACCORDS
-// ─────────────────────────────────────────────
-//
-
-function normalize(str: string) {
-  return str.toLowerCase();
-}
-
-function generateAccordsFromNotes(perfume: any): string[] {
-  const notes = [
-    ...(perfume.topNotesDetailed || []),
-    ...(perfume.heartNotesDetailed || []),
-    ...(perfume.baseNotesDetailed || []),
-  ].map((n: any) => normalize(n.name));
-
-  const matchedAccords = new Set<string>();
-
-  Object.entries(ACCORDS_LIBRARY).forEach(([key, accord]: any) => {
-    const label = normalize(accord.label);
-
-    notes.forEach((note) => {
-      if (
-        note.includes(label) ||
-        label.includes(note)
-      ) {
-        matchedAccords.add(key);
-      }
-    });
-  });
-
-  return Array.from(matchedAccords);
-}
-
-//
-// ─────────────────────────────────────────────
-// 🔥 ENRICHISSEMENT AUTO DES PARFUMS
-// ─────────────────────────────────────────────
-//
-
-export const ENRICHED_PERFUMES = PERFUMES.map((perfume: any) => ({
-  ...perfume,
-  accords: generateAccordsFromNotes(perfume),
-}));
-
-//
-// ─────────────────────────────────────────────
-// 🚀 MATCHING V4 HYBRIDE PRO
-// ─────────────────────────────────────────────
-//
+import { getPerfumeAccords } from "./accordEngine";
+import { normalizeNote } from "./noteMap";
 
 export function matchPerfumes(
   gender: string | null,
@@ -90,13 +10,26 @@ export function matchPerfumes(
   atmosphere?: string
 ): { perfume: any; matchPercent: number }[] {
 
+  const safeArray = (arr: any) => (Array.isArray(arr) ? arr : []);
+
+  const normalizeList = (arr: string[]) =>
+    safeArray(arr).map((n) => normalizeNote(n)).filter(Boolean);
+
   const selectedIngredients = [
-    ...selectedTop,
-    ...selectedHeart,
-    ...selectedBase,
-  ].map((i) => i.toLowerCase());
+    ...normalizeList(selectedTop),
+    ...normalizeList(selectedHeart),
+    ...normalizeList(selectedBase),
+  ];
 
   if (selectedIngredients.length === 0) return [];
+
+  const WEIGHTS = {
+    top: 0.2,
+    heart: 0.3,
+    base: 0.5,
+  };
+
+  const MIN_SCORE = 15;
 
   const ATMOSPHERE_BOOST: Record<string, string[]> = {
     soir: ["amber", "warm_spicy", "musky", "woody"],
@@ -113,7 +46,7 @@ export function matchPerfumes(
     if (!gender) return true;
 
     const g = gender.toLowerCase();
-    const pg = p.gender.toLowerCase();
+    const pg = p.gender?.toLowerCase?.() || "";
 
     if (g === "homme") return pg === "homme" || pg === "unisexe";
     if (g === "femme") return pg === "femme" || pg === "unisexe";
@@ -124,56 +57,70 @@ export function matchPerfumes(
   const results = candidates
     .map((perfume: any) => {
 
-      const top = (perfume.topNotesDetailed || []).map((n: any) =>
-        n.name.toLowerCase()
+      const top = normalizeList(
+        safeArray(perfume.topNotesDetailed).map((n: any) => n?.name || "")
       );
-      const heart = (perfume.heartNotesDetailed || []).map((n: any) =>
-        n.name.toLowerCase()
+
+      const heart = normalizeList(
+        safeArray(perfume.heartNotesDetailed).map((n: any) => n?.name || "")
       );
-      const base = (perfume.baseNotesDetailed || []).map((n: any) =>
-        n.name.toLowerCase()
+
+      const base = normalizeList(
+        safeArray(perfume.baseNotesDetailed).map((n: any) => n?.name || "")
       );
-      const accords = perfume.accords || [];
+
+      const accords = safeArray(getPerfumeAccords(perfume));
 
       let score = 0;
-      const maxScore = selectedIngredients.length;
 
       selectedIngredients.forEach((note) => {
         let noteScore = 0;
 
-        // 🎯 priorité pyramidale
-        if (base.includes(note)) noteScore = 1.0;
-        else if (heart.includes(note)) noteScore = 0.8;
-        else if (top.includes(note)) noteScore = 0.6;
+        // pondération pyramidale corrigée
+        if (base.includes(note)) noteScore = WEIGHTS.base;
+        else if (heart.includes(note)) noteScore = WEIGHTS.heart;
+        else if (top.includes(note)) noteScore = WEIGHTS.top;
 
-        // 🎚️ radar
+        // bonus base (important)
+        const baseBonus = base.includes(note) ? 0.1 : 0;
+
+        // radar
         const radarBoost = radarIntensities?.[note]
           ? 0.5 + radarIntensities[note]
           : 1;
 
-        score += noteScore * radarBoost;
+        score += (noteScore + baseBonus) * radarBoost;
+      });
 
-        // 💎 bonus accord
+      // bonus accords (via accordEngine)
+      selectedIngredients.forEach((note) => {
         if (accords.some((acc: string) => acc.includes(note))) {
-          score += 0.2;
+          score += 0.05;
         }
       });
 
-      // 🌙 bonus atmosphère
+      // bonus atmosphère
       boostedAccords.forEach((acc) => {
         if (accords.includes(acc)) {
           score += 0.3;
         }
       });
 
-      const percent = Math.round((score / maxScore) * 100);
+      // normalisation propre
+      const maxPerNote = WEIGHTS.base + 0.1;
+      const maxScore = selectedIngredients.length * maxPerNote;
+
+      const percent =
+        maxScore > 0
+          ? Math.min(100, Math.round((score / maxScore) * 100))
+          : 0;
 
       return {
         perfume,
         matchPercent: percent,
       };
     })
-    .filter((r) => r.matchPercent > 0) // 🔒 strict
+    .filter((r) => r.matchPercent >= MIN_SCORE) // filtre strict
     .sort((a, b) => b.matchPercent - a.matchPercent);
 
   return results;

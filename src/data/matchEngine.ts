@@ -23,7 +23,7 @@ function safeArray<T>(arr: T[] | null | undefined): T[] {
 function normalizeList(arr: string[]): string[] {
   return safeArray(arr)
     .map((n) => normalizeNote(n))
-    .filter(Boolean);
+    .filter((n) => typeof n === "string" && n.length > 0);
 }
 
 /**
@@ -31,15 +31,15 @@ function normalizeList(arr: string[]): string[] {
  */
 function extractPerfumeNotes(perfume: Perfume) {
   const top = normalizeList(
-    safeArray(perfume.topNotesDetailed).map((n) => n?.name || "")
+    safeArray(perfume.topNotesDetailed).map((n: { name: string }) => n?.name || "")
   );
 
   const heart = normalizeList(
-    safeArray(perfume.heartNotesDetailed).map((n) => n?.name || "")
+    safeArray(perfume.heartNotesDetailed).map((n: { name: string }) => n?.name || "")
   );
 
   const base = normalizeList(
-    safeArray(perfume.baseNotesDetailed).map((n) => n?.name || "")
+    safeArray(perfume.baseNotesDetailed).map((n: { name: string }) => n?.name || "")
   );
 
   return { top, heart, base };
@@ -85,7 +85,7 @@ function getAccordBonus(notes: string[], accords: string[]): number {
 }
 
 /**
- * SCORE GLOBAL (0 → 100)
+ * SCORE GLOBAL
  */
 export function computePerfumeScore(
   perfume: Perfume,
@@ -97,7 +97,6 @@ export function computePerfumeScore(
   if (userNotes.length === 0) return 0;
 
   const { top, heart, base } = extractPerfumeNotes(perfume);
-
   const accords = safeArray(getPerfumeAccords(perfume));
 
   let score = 0;
@@ -105,7 +104,6 @@ export function computePerfumeScore(
   userNotes.forEach((note) => {
     const noteScore = getWeightedNoteScore(note, top, heart, base);
     const baseBonus = getBaseBonus(note, base);
-
     score += noteScore + baseBonus;
   });
 
@@ -126,7 +124,7 @@ export function computePerfumeMatches(
   perfumes: Perfume[],
   userNotes: string[]
 ): { perfume: Perfume; score: number }[] {
-  if (!Array.isArray(perfumes) || perfumes.length === 0) return [];
+  if (!Array.isArray(perfumes)) return [];
 
   return perfumes
     .map((perfume) => ({
@@ -134,5 +132,71 @@ export function computePerfumeMatches(
       score: computePerfumeScore(perfume, userNotes),
     }))
     .filter((r) => r.score >= MIN_SCORE)
+    .sort((a, b) => b.score - a.score);
+}
+
+/**
+ * SIMILARITÉ PARFUM
+ */
+export function computePerfumeSimilarity(
+  perfumeA: Perfume,
+  perfumeB: Perfume
+): number {
+  if (!perfumeA || !perfumeB) return 0;
+
+  const A = extractPerfumeNotes(perfumeA);
+  const B = extractPerfumeNotes(perfumeB);
+
+  const matchScore = (a: string[], b: string[]) => {
+    if (!a.length || !b.length) return 0;
+
+    let matches = 0;
+
+    a.forEach((note) => {
+      if (b.includes(note)) matches++;
+    });
+
+    return matches / Math.max(a.length, b.length);
+  };
+
+  const topScore = matchScore(A.top, B.top) * 0.2;
+  const heartScore = matchScore(A.heart, B.heart) * 0.3;
+  const baseScore = matchScore(A.base, B.base) * 0.5;
+
+  const accordsA = safeArray(getPerfumeAccords(perfumeA));
+  const accordsB = safeArray(getPerfumeAccords(perfumeB));
+
+  let accordMatches = 0;
+
+  accordsA.forEach((acc) => {
+    if (accordsB.includes(acc)) accordMatches++;
+  });
+
+  const accordScore =
+    accordsA.length && accordsB.length
+      ? (accordMatches / Math.max(accordsA.length, accordsB.length)) * 0.2
+      : 0;
+
+  const total = topScore + heartScore + baseScore + accordScore;
+
+  return Math.min(100, Math.round(total * 100));
+}
+
+/**
+ * PARFUMS SIMILAIRES
+ */
+export function computeSimilarPerfumes(
+  sourcePerfume: Perfume,
+  perfumes: Perfume[]
+): { perfume: Perfume; score: number }[] {
+  if (!sourcePerfume || !Array.isArray(perfumes)) return [];
+
+  return perfumes
+    .filter((p) => p.id !== sourcePerfume.id)
+    .map((perfume) => ({
+      perfume,
+      score: computePerfumeSimilarity(sourcePerfume, perfume),
+    }))
+    .filter((r) => r.score >= 20)
     .sort((a, b) => b.score - a.score);
 }

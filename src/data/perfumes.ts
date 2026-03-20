@@ -33,7 +33,6 @@ export function matchPerfumes(
   atmosphere?: string
 ): { perfume: any; matchPercent: number }[] {
 
-  // 1. FILTRAGE DU GENRE
   const candidates = PERFUMES.filter((p) => {
     if (!gender) return true;
     const userGender = gender.toLowerCase();
@@ -43,11 +42,7 @@ export function matchPerfumes(
     return true;
   });
 
-  const userChoices = [
-    ...selectedTop,
-    ...selectedHeart,
-    ...selectedBase,
-  ].map(c => c.toLowerCase());
+  const userChoices = [...selectedTop, ...selectedHeart, ...selectedBase].map(c => c.toLowerCase());
 
   const rules = [
     { key: "hesperides", words: ["citron", "bergamote", "orange", "agrumes", "mandarine", "pamplemousse"] },
@@ -76,10 +71,8 @@ export function matchPerfumes(
       perfume.baseNotes.join(" ")
     ).toLowerCase();
 
-    // 2. SCORE PAR CHOIX UTILISATEUR
     userChoices.forEach(choice => {
       let basePoints = content.includes(choice) ? 30 : 0;
-
       const rule = rules.find(r => r.key === choice);
       let rulePoints = 0;
       if (rule) {
@@ -87,15 +80,10 @@ export function matchPerfumes(
           if (content.includes(word)) rulePoints += 15;
         });
       }
-
-      const radarMultiplier = radarIntensities?.[choice]
-        ? 0.5 + radarIntensities[choice]
-        : 1;
-
+      const radarMultiplier = radarIntensities?.[choice] ? 0.5 + radarIntensities[choice] : 1;
       score += (basePoints + rulePoints) * radarMultiplier;
     });
 
-    // 3. BONUS ATMOSPHÈRE
     boostedFamilies.forEach(family => {
       const rule = rules.find(r => r.key === family);
       if (rule) {
@@ -105,7 +93,6 @@ export function matchPerfumes(
       }
     });
 
-    // 4. GARANTIE DE RÉSULTAT
     let finalPercent = Math.min(Math.round(score), 98);
     if (finalPercent < 40) {
       finalPercent = 50 + Math.floor(Math.random() * 20);

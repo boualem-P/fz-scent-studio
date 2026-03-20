@@ -1,5 +1,6 @@
 import { getPerfumeAccords } from "./accordEngine";
 import { normalizeNote } from "./noteMap";
+import { PERFUMES } from "./database";
 
 export function matchPerfumes(
   gender: string | null,
@@ -42,7 +43,7 @@ export function matchPerfumes(
     ? ATMOSPHERE_BOOST[atmosphere] || []
     : [];
 
-  const candidates = ENRICHED_PERFUMES.filter((p: any) => {
+  const candidates = PERFUMES.filter((p: any) => {
     if (!gender) return true;
 
     const g = gender.toLowerCase();

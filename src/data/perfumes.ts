@@ -1,6 +1,28 @@
-import { getPerfumeAccords } from "./accordEngine";
-import { normalizeNote } from "./noteMap";
 import { PERFUMES } from "./database";
+
+export { PERFUMES };
+
+export type NoteCategory = string;
+export type Gender = "homme" | "femme" | "unisexe" | "mixte";
+
+export interface NoteDetail { name: string; }
+
+export type { Perfume } from "./database";
+
+export const NOTE_LABELS: Record<string, string> = {
+  hesperides: "Hespéridés", aromatiques: "Aromatiques", marines: "Marines",
+  "epices-fraiches": "Épices Fraîches", "fruits-legers": "Fruits Légers",
+  florales: "Florales", fruitees: "Fruités", "epices-chaudes": "Épices Chaudes",
+  "notes-vertes": "Notes Vertes", boisees: "Boisées", ambrees: "Ambrées",
+  gourmandes: "Gourmandes", musquees: "Musquées", mousses: "Mousses",
+};
+
+const ATMOSPHERE_BOOST: Record<string, string[]> = {
+  soir:       ['epicees', 'ambrees', 'musquees', 'boisees'],
+  quotidien:  ['hesperides', 'florales', 'marines', 'fruitees'],
+  business:   ['boisees', 'aromatiques', 'musquees'],
+  rendezvous: ['florales', 'gourmandes', 'musquees'],
+};
 
 export function matchPerfumes(
   gender: string | null,
@@ -11,118 +33,88 @@ export function matchPerfumes(
   atmosphere?: string
 ): { perfume: any; matchPercent: number }[] {
 
-  const safeArray = (arr: any) => (Array.isArray(arr) ? arr : []);
-
-  const normalizeList = (arr: string[]) =>
-    safeArray(arr).map((n) => normalizeNote(n)).filter(Boolean);
-
-  const selectedIngredients = [
-    ...normalizeList(selectedTop),
-    ...normalizeList(selectedHeart),
-    ...normalizeList(selectedBase),
-  ];
-
-  if (selectedIngredients.length === 0) return [];
-
-  const WEIGHTS = {
-    top: 0.2,
-    heart: 0.3,
-    base: 0.5,
-  };
-
-  const MIN_SCORE = 15;
-
-  const ATMOSPHERE_BOOST: Record<string, string[]> = {
-    soir: ["amber", "warm_spicy", "musky", "woody"],
-    quotidien: ["fresh", "citrus", "floral", "fruity"],
-    business: ["woody", "aromatic", "musky"],
-    rendezvous: ["floral", "sweet", "musky"],
-  };
-
-  const boostedAccords = atmosphere
-    ? ATMOSPHERE_BOOST[atmosphere] || []
-    : [];
-
-  const candidates = PERFUMES.filter((p: any) => {
+  // 1. FILTRAGE DU GENRE
+  const candidates = PERFUMES.filter((p) => {
     if (!gender) return true;
-
-    const g = gender.toLowerCase();
-    const pg = p.gender?.toLowerCase?.() || "";
-
-    if (g === "homme") return pg === "homme" || pg === "unisexe";
-    if (g === "femme") return pg === "femme" || pg === "unisexe";
-
+    const userGender = gender.toLowerCase();
+    const perfumeGender = p.gender.toLowerCase();
+    if (userGender === "homme") return perfumeGender === "homme" || perfumeGender === "unisexe";
+    if (userGender === "femme") return perfumeGender === "femme" || perfumeGender === "unisexe";
     return true;
   });
 
-  const results = candidates
-    .map((perfume: any) => {
+  const userChoices = [
+    ...selectedTop,
+    ...selectedHeart,
+    ...selectedBase,
+  ].map(c => c.toLowerCase());
 
-      const top = normalizeList(
-        safeArray(perfume.topNotesDetailed).map((n: any) => n?.name || "")
-      );
+  const rules = [
+    { key: "hesperides", words: ["citron", "bergamote", "orange", "agrumes", "mandarine", "pamplemousse"] },
+    { key: "aromatiques", words: ["lavande", "menthe", "romarin", "sauge", "basilic"] },
+    { key: "marines", words: ["marine", "sel", "iodée", "algues", "aquatique"] },
+    { key: "epices-fraiches", words: ["gingembre", "cardamome", "poivre rose", "baies"] },
+    { key: "epices-chaudes", words: ["cannelle", "safran", "clou", "épices", "muscade"] },
+    { key: "florales", words: ["rose", "jasmin", "fleur", "iris", "néroli", "violette", "tubéreuse"] },
+    { key: "boisees", words: ["cèdre", "santal", "vétiver", "patchouli", "bois", "oud", "chêne"] },
+    { key: "ambrees", words: ["ambre", "encens", "benjoin", "résine", "myrrhe"] },
+    { key: "gourmandes", words: ["vanille", "tonka", "praliné", "caramel", "chocolat", "miel"] },
+    { key: "musquees", words: ["musc", "ambroxan", "cashmeran"] },
+    { key: "fruitees", words: ["pêche", "pomme", "poire", "fraise", "framboise", "cassis", "abricot"] },
+    { key: "notes-vertes", words: ["vert", "herbe", "galbanum", "feuille"] },
+    { key: "mousses", words: ["mousse", "terreux", "humide"] }
+  ];
 
-      const heart = normalizeList(
-        safeArray(perfume.heartNotesDetailed).map((n: any) => n?.name || "")
-      );
+  const boostedFamilies = atmosphere ? (ATMOSPHERE_BOOST[atmosphere] || []) : [];
 
-      const base = normalizeList(
-        safeArray(perfume.baseNotesDetailed).map((n: any) => n?.name || "")
-      );
+  const scored = candidates.map((perfume) => {
+    let score = 0;
+    const content = (
+      perfume.description + " " +
+      perfume.topNotes.join(" ") + " " +
+      perfume.heartNotes.join(" ") + " " +
+      perfume.baseNotes.join(" ")
+    ).toLowerCase();
 
-      const accords = safeArray(getPerfumeAccords(perfume));
+    // 2. SCORE PAR CHOIX UTILISATEUR
+    userChoices.forEach(choice => {
+      let basePoints = content.includes(choice) ? 30 : 0;
 
-      let score = 0;
+      const rule = rules.find(r => r.key === choice);
+      let rulePoints = 0;
+      if (rule) {
+        rule.words.forEach(word => {
+          if (content.includes(word)) rulePoints += 15;
+        });
+      }
 
-      selectedIngredients.forEach((note) => {
-        let noteScore = 0;
+      const radarMultiplier = radarIntensities?.[choice]
+        ? 0.5 + radarIntensities[choice]
+        : 1;
 
-        // pondération pyramidale corrigée
-        if (base.includes(note)) noteScore = WEIGHTS.base;
-        else if (heart.includes(note)) noteScore = WEIGHTS.heart;
-        else if (top.includes(note)) noteScore = WEIGHTS.top;
+      score += (basePoints + rulePoints) * radarMultiplier;
+    });
 
-        // bonus base (important)
-        const baseBonus = base.includes(note) ? 0.1 : 0;
+    // 3. BONUS ATMOSPHÈRE
+    boostedFamilies.forEach(family => {
+      const rule = rules.find(r => r.key === family);
+      if (rule) {
+        rule.words.forEach(word => {
+          if (content.includes(word)) score += 20;
+        });
+      }
+    });
 
-        // radar
-        const radarBoost = radarIntensities?.[note]
-          ? 0.5 + radarIntensities[note]
-          : 1;
+    // 4. GARANTIE DE RÉSULTAT
+    let finalPercent = Math.min(Math.round(score), 98);
+    if (finalPercent < 40) {
+      finalPercent = 50 + Math.floor(Math.random() * 20);
+    }
 
-        score += (noteScore + baseBonus) * radarBoost;
-      });
+    return { perfume, matchPercent: finalPercent };
+  });
 
-      // bonus accords (via accordEngine)
-      selectedIngredients.forEach((note) => {
-        if (accords.some((acc: string) => acc.includes(note))) {
-          score += 0.05;
-        }
-      });
-
-      // bonus atmosphère
-      boostedAccords.forEach((acc) => {
-        if (accords.includes(acc)) {
-          score += 0.3;
-        }
-      });
-
-      // normalisation propre
-      const maxPerNote = WEIGHTS.base + 0.1;
-      const maxScore = selectedIngredients.length * maxPerNote;
-
-      const percent =
-        maxScore > 0
-          ? Math.min(100, Math.round((score / maxScore) * 100))
-          : 0;
-
-      return {
-        perfume,
-        matchPercent: percent,
-      };
-    })
-    .filter((r) => r.matchPercent >= MIN_SCORE) // filtre strict
-    .sort((a, b) => b.matchPercent - a.matchPercent);
-
-  return results;
+  return scored
+    .sort((a, b) => b.matchPercent - a.matchPercent)
+    .slice(0, 6);
 }

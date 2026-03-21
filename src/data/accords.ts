@@ -1,14 +1,15 @@
 /**
  * ACCORDS_LIBRARY — Bibliothèque des 90 accords olfactifs
- *
- * Chaque accord contient :
- * - id       : identifiant unique snake_case
- * - label    : nom affiché en français
- * - family   : famille olfactive parente
- * - weight   : poids dans le scoring (0.5 à 2.0)
- * - color    : couleur Fragrantica (hex) pour affichage visuel
- * - boost    : occasions qui boostent cet accord
- * - keywords : mots-clés qui permettent la détection automatique depuis les notes
+ * * Fusion Pro : Logique de scoring + Affichage UI (Emojis/Descriptions)
+ * - id        : identifiant unique snake_case
+ * - label     : nom affiché en français
+ * - emoji     : icône visuelle pour l'UI
+ * - description : texte explicatif pour l'utilisateur
+ * - family    : famille olfactive parente
+ * - weight    : poids dans le scoring (0.5 à 2.0)
+ * - color     : couleur Fragrantica (hex) pour affichage visuel
+ * - boost     : occasions qui boostent cet accord
+ * - keywords  : mots-clés qui permettent la détection automatique depuis les notes
  */
 
 export type AccordFamily =
@@ -25,6 +26,8 @@ export type AccordFamily =
 export interface Accord {
   id: string;
   label: string;
+  emoji: string;       // Ajout Remix
+  description: string; // Ajout Remix
   family: AccordFamily;
   weight: number;
   color: string;
@@ -41,6 +44,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   floral: {
     id: "floral",
     label: "Floral",
+    emoji: "🌸",
+    description: "Bouquet floral général et printanier",
     family: "floral",
     weight: 1.0,
     color: "#E8A0B4",
@@ -50,6 +55,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   white_floral: {
     id: "white_floral",
     label: "Fleurs Blanches",
+    emoji: "🤍",
+    description: "Fleurs solaires et lumineuses (Jasmin, Gardenia)",
     family: "floral",
     weight: 1.2,
     color: "#F5C6D8",
@@ -59,6 +66,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   yellow_floral: {
     id: "yellow_floral",
     label: "Fleurs Jaunes",
+    emoji: "💛",
+    description: "Notes solaires et exotiques (Ylang, Mimosa)",
     family: "floral",
     weight: 1.0,
     color: "#F0D080",
@@ -68,6 +77,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   sweet_floral: {
     id: "sweet_floral",
     label: "Floral Sucré",
+    emoji: "🍬",
+    description: "Fleurs douces et tendres (Pivoine, Héliotrope)",
     family: "floral",
     weight: 1.0,
     color: "#F0A8C8",
@@ -77,6 +88,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   rose: {
     id: "rose",
     label: "Rose",
+    emoji: "🌹",
+    description: "La reine des fleurs, de la rosée à l'absolue",
     family: "floral",
     weight: 1.3,
     color: "#E05878",
@@ -86,6 +99,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   tuberose: {
     id: "tuberose",
     label: "Tubéreuse",
+    emoji: "🌺",
+    description: "Fleur blanche charnelle et addictive",
     family: "floral",
     weight: 1.4,
     color: "#D4709A",
@@ -95,6 +110,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   iris_powdery: {
     id: "iris_powdery",
     label: "Iris & Poudré",
+    emoji: "💜",
+    description: "Effet cosmétique, chic et poudré",
     family: "floral",
     weight: 1.3,
     color: "#B8A0D0",
@@ -104,6 +121,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   violet: {
     id: "violet",
     label: "Violette",
+    emoji: "☂️",
+    description: "Note fleurie poudrée et nostalgique",
     family: "floral",
     weight: 1.0,
     color: "#9B7EC8",
@@ -113,6 +132,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   jasmine: {
     id: "jasmine",
     label: "Jasmin",
+    emoji: "🌼",
+    description: "Jasmin blanc, riche et profond",
     family: "floral",
     weight: 1.3,
     color: "#F0E0A0",
@@ -122,6 +143,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   orange_blossom: {
     id: "orange_blossom",
     label: "Fleur d'Oranger",
+    emoji: "🍊",
+    description: "Note propre, miellée et rassurante",
     family: "floral",
     weight: 1.2,
     color: "#F5D080",
@@ -131,6 +154,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   lily_of_valley: {
     id: "lily_of_valley",
     label: "Muguet",
+    emoji: "🍃",
+    description: "Fraîcheur printanière et verte",
     family: "floral",
     weight: 1.0,
     color: "#C8E8C0",
@@ -140,6 +165,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   immortelle: {
     id: "immortelle",
     label: "Immortelle",
+    emoji: "☀️",
+    description: "Note épicée, sèche et de maquis",
     family: "floral",
     weight: 1.5,
     color: "#D4A840",
@@ -149,6 +176,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   narcotic_floral: {
     id: "narcotic_floral",
     label: "Floral Narcotique",
+    emoji: "🕯️",
+    description: "Fleurs capiteuses et hypnotiques",
     family: "floral",
     weight: 1.6,
     color: "#8B4878",
@@ -158,6 +187,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   violet_leaf: {
     id: "violet_leaf",
     label: "Feuille de Violette",
+    emoji: "🌿",
+    description: "Note verte, ozonique et croquante",
     family: "floral",
     weight: 0.9,
     color: "#90A870",
@@ -172,6 +203,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   woody: {
     id: "woody",
     label: "Boisé",
+    emoji: "🌲",
+    description: "Structure de bois secs et racines",
     family: "woody",
     weight: 1.0,
     color: "#8B6040",
@@ -181,6 +214,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   warm_woody: {
     id: "warm_woody",
     label: "Boisé Chaud",
+    emoji: "🪵",
+    description: "Bois enveloppants (Cashmeran, Santal)",
     family: "woody",
     weight: 1.1,
     color: "#A06830",
@@ -190,6 +225,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   amber_woody: {
     id: "amber_woody",
     label: "Boisé Ambré",
+    emoji: "🍂",
+    description: "Mélange de bois précieux et de résines",
     family: "woody",
     weight: 1.2,
     color: "#C08040",
@@ -199,6 +236,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   sandalwood: {
     id: "sandalwood",
     label: "Santal",
+    emoji: "🥣",
+    description: "Bois lacté, onctueux et sacré",
     family: "woody",
     weight: 1.3,
     color: "#C8A060",
@@ -208,6 +247,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   cedar: {
     id: "cedar",
     label: "Cèdre",
+    emoji: "✏️",
+    description: "Bois sec évoquant le crayon à papier",
     family: "woody",
     weight: 1.1,
     color: "#A07850",
@@ -217,6 +258,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   oud: {
     id: "oud",
     label: "Oud",
+    emoji: "🕋",
+    description: "Bois d'agar mystique, sombre et luxueux",
     family: "woody",
     weight: 2.0,
     color: "#5C3020",
@@ -226,6 +269,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   vetiver: {
     id: "vetiver",
     label: "Vétiver",
+    emoji: "🌾",
+    description: "Racine terreuse, fumée et élégante",
     family: "woody",
     weight: 1.1,
     color: "#708050",
@@ -235,6 +280,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   patchouli: {
     id: "patchouli",
     label: "Patchouli",
+    emoji: "🍂",
+    description: "Note terreuse, sombre et boisée",
     family: "woody",
     weight: 1.2,
     color: "#6B5040",
@@ -244,6 +291,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   guaiac_wood: {
     id: "guaiac_wood",
     label: "Bois de Gaïac",
+    emoji: "💨",
+    description: "Bois fumé, poivré et dense",
     family: "woody",
     weight: 1.1,
     color: "#907058",
@@ -253,6 +302,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   akigalawood: {
     id: "akigalawood",
     label: "Akigalawood",
+    emoji: "🧪",
+    description: "Note boisée moderne, vibrante et poivrée",
     family: "woody",
     weight: 1.3,
     color: "#806050",
@@ -262,6 +313,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   papyrus: {
     id: "papyrus",
     label: "Papyrus",
+    emoji: "📜",
+    description: "Bois sec, parcheminé et aromatique",
     family: "woody",
     weight: 0.9,
     color: "#C8B880",
@@ -276,6 +329,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   amber: {
     id: "amber",
     label: "Ambre",
+    emoji: "☄️",
+    description: "Accord chaud de résines et de vanille",
     family: "oriental",
     weight: 1.3,
     color: "#D4901C",
@@ -285,6 +340,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   oriental: {
     id: "oriental",
     label: "Oriental",
+    emoji: "🕌",
+    description: "Notes opulentes, chaudes et épicées",
     family: "oriental",
     weight: 1.4,
     color: "#C06820",
@@ -294,6 +351,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   balsamic: {
     id: "balsamic",
     label: "Balsamique",
+    emoji: "🏺",
+    description: "Résines douces et baumes antiques",
     family: "oriental",
     weight: 1.1,
     color: "#B87840",
@@ -303,6 +362,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   vanilla: {
     id: "vanilla",
     label: "Vanille",
+    emoji: "🍦",
+    description: "Note gourmande, réconfortante et sensuelle",
     family: "oriental",
     weight: 1.2,
     color: "#E8C870",
@@ -312,6 +373,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   tonka_bean: {
     id: "tonka_bean",
     label: "Fève Tonka",
+    emoji: "🥜",
+    description: "Note d'amande, de tabac et de foin",
     family: "oriental",
     weight: 1.2,
     color: "#C8A050",
@@ -321,6 +384,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   incense: {
     id: "incense",
     label: "Encens",
+    emoji: "🕯️",
+    description: "Fumée sacrée, spirituelle et froide",
     family: "oriental",
     weight: 1.5,
     color: "#A07840",
@@ -330,6 +395,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   myrrh: {
     id: "myrrh",
     label: "Myrrhe",
+    emoji: "🌑",
+    description: "Résine antique, amère et réglissée",
     family: "oriental",
     weight: 1.4,
     color: "#906030",
@@ -339,6 +406,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   benzoin: {
     id: "benzoin",
     label: "Benjoin",
+    emoji: "🍯",
+    description: "Résine vanillée et baumée douce",
     family: "oriental",
     weight: 1.2,
     color: "#B89060",
@@ -348,6 +417,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   styrax: {
     id: "styrax",
     label: "Styrax",
+    emoji: "🔥",
+    description: "Note cuirée, fumée et résineuse",
     family: "oriental",
     weight: 1.3,
     color: "#A06848",
@@ -357,6 +428,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   elemi: {
     id: "elemi",
     label: "Élémi",
+    emoji: "🍋",
+    description: "Résine fraîche, citronnée et poivrée",
     family: "oriental",
     weight: 1.0,
     color: "#C0A868",
@@ -371,6 +444,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   spicy: {
     id: "spicy",
     label: "Épicé",
+    emoji: "🌶️",
+    description: "Caractère et chaleur des épices",
     family: "spicy",
     weight: 1.1,
     color: "#C04028",
@@ -380,6 +455,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   fresh_spicy: {
     id: "fresh_spicy",
     label: "Épicé Frais",
+    emoji: "🌿",
+    description: "Épices froides (Cardamome, Gingembre)",
     family: "spicy",
     weight: 1.0,
     color: "#70B870",
@@ -389,6 +466,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   warm_spicy: {
     id: "warm_spicy",
     label: "Épicé Chaud",
+    emoji: "♨️",
+    description: "Épices de feu (Cannelle, Girofle)",
     family: "spicy",
     weight: 1.2,
     color: "#D05020",
@@ -398,6 +477,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   saffron: {
     id: "saffron",
     label: "Safran",
+    emoji: "🧶",
+    description: "L'or rouge : cuiré et précieux",
     family: "spicy",
     weight: 1.8,
     color: "#E08820",
@@ -407,6 +488,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   pink_pepper: {
     id: "pink_pepper",
     label: "Poivre Rose",
+    emoji: "🔴",
+    description: "Note pétillante, fruitée et poivrée",
     family: "spicy",
     weight: 1.0,
     color: "#D08080",
@@ -416,6 +499,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   cinnamon: {
     id: "cinnamon",
     label: "Cannelle",
+    emoji: "🍪",
+    description: "Chaleur boisée et sucrée de l'écorce",
     family: "spicy",
     weight: 1.1,
     color: "#C06030",
@@ -430,6 +515,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   citrus: {
     id: "citrus",
     label: "Citrus",
+    emoji: "🍋",
+    description: "Écorces d'agrumes vives et tonifiantes",
     family: "fresh",
     weight: 1.0,
     color: "#E8D040",
@@ -439,6 +526,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   citrus_aromatic: {
     id: "citrus_aromatic",
     label: "Citrus Aromatique",
+    emoji: "🍹",
+    description: "Fraîcheur d'agrume herbeuse",
     family: "fresh",
     weight: 1.0,
     color: "#D0C840",
@@ -448,6 +537,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   aromatic: {
     id: "aromatic",
     label: "Aromatique",
+    emoji: "🌿",
+    description: "Herbes fraîches du jardin (Sauge, Thym)",
     family: "fresh",
     weight: 1.0,
     color: "#78B870",
@@ -457,6 +548,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   fresh: {
     id: "fresh",
     label: "Frais",
+    emoji: "❄️",
+    description: "Sensation de propre et de légèreté",
     family: "fresh",
     weight: 1.0,
     color: "#80D0D8",
@@ -466,6 +559,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   fresh_aromatic: {
     id: "fresh_aromatic",
     label: "Frais Aromatique",
+    emoji: "🌬️",
+    description: "Air vif et herbes toniques",
     family: "fresh",
     weight: 1.0,
     color: "#90C8A0",
@@ -475,6 +570,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   aromatic_fougere: {
     id: "aromatic_fougere",
     label: "Fougère Aromatique",
+    emoji: "💈",
+    description: "L'élégance masculine classique (Barbiers)",
     family: "fresh",
     weight: 1.1,
     color: "#68A878",
@@ -484,6 +581,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   lavender: {
     id: "lavender",
     label: "Lavande",
+    emoji: "💜",
+    description: "Note florale bleue, propre et apaisante",
     family: "fresh",
     weight: 1.0,
     color: "#9090D0",
@@ -493,6 +592,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   herbal: {
     id: "herbal",
     label: "Herbal",
+    emoji: "🌱",
+    description: "Notes de plantes vertes médicinales",
     family: "fresh",
     weight: 0.9,
     color: "#60A860",
@@ -502,6 +603,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   green: {
     id: "green",
     label: "Vert",
+    emoji: "🎋",
+    description: "Herbe coupée et sève de plantes",
     family: "fresh",
     weight: 0.9,
     color: "#58A050",
@@ -511,6 +614,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   conifer: {
     id: "conifer",
     label: "Conifère",
+    emoji: "🌲",
+    description: "Aiguilles de pin et résine de sapin",
     family: "fresh",
     weight: 0.9,
     color: "#487840",
@@ -520,6 +625,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   tea: {
     id: "tea",
     label: "Thé",
+    emoji: "🍵",
+    description: "Infusion zen, du thé vert au thé noir",
     family: "fresh",
     weight: 1.1,
     color: "#A8C890",
@@ -534,6 +641,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   gourmand: {
     id: "gourmand",
     label: "Gourmand",
+    emoji: "🍰",
+    description: "Notes comestibles et délicieuses",
     family: "gourmand",
     weight: 1.1,
     color: "#C87840",
@@ -543,6 +652,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   sweet: {
     id: "sweet",
     label: "Sucré",
+    emoji: "🍭",
+    description: "Douceur de sucre et de bonbons",
     family: "gourmand",
     weight: 1.0,
     color: "#E0A060",
@@ -552,6 +663,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   fruity_gourmand: {
     id: "fruity_gourmand",
     label: "Fruité Gourmand",
+    emoji: "🍓",
+    description: "Fruits sucrés et desserts fruités",
     family: "gourmand",
     weight: 1.1,
     color: "#D08060",
@@ -561,6 +674,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   chocolate: {
     id: "chocolate",
     label: "Chocolat",
+    emoji: "🍫",
+    description: "Cacao noir ou gourmandise chocolatée",
     family: "gourmand",
     weight: 1.2,
     color: "#6B3820",
@@ -570,6 +685,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   caramel: {
     id: "caramel",
     label: "Caramel",
+    emoji: "🍮",
+    description: "Sucre cuit et beurre salé",
     family: "gourmand",
     weight: 1.1,
     color: "#D09040",
@@ -579,6 +696,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   honey: {
     id: "honey",
     label: "Miel & Cire",
+    emoji: "🍯",
+    description: "Nectar d'abeille chaud et animal",
     family: "gourmand",
     weight: 1.1,
     color: "#E0B030",
@@ -588,6 +707,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   almond: {
     id: "almond",
     label: "Amande",
+    emoji: "🥯",
+    description: "Note de pâte d'amande et de dragée",
     family: "gourmand",
     weight: 1.0,
     color: "#D0B890",
@@ -597,6 +718,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   coffee: {
     id: "coffee",
     label: "Café",
+    emoji: "☕",
+    description: "Grains torréfiés ou café noir intense",
     family: "gourmand",
     weight: 1.2,
     color: "#6B4028",
@@ -606,6 +729,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   coconut: {
     id: "coconut",
     label: "Coco",
+    emoji: "🥥",
+    description: "Lait de coco et ambiance tropicale",
     family: "gourmand",
     weight: 1.0,
     color: "#E8D8A0",
@@ -615,6 +740,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   cherry: {
     id: "cherry",
     label: "Cerise",
+    emoji: "🍒",
+    description: "Fruit rouge charnu et acidulé",
     family: "gourmand",
     weight: 1.0,
     color: "#C03050",
@@ -624,6 +751,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   lactonic: {
     id: "lactonic",
     label: "Lactonique",
+    emoji: "🥛",
+    description: "Notes de lait, crème et velouté",
     family: "gourmand",
     weight: 1.2,
     color: "#F0E0C0",
@@ -638,6 +767,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   fruity: {
     id: "fruity",
     label: "Fruité",
+    emoji: "🍎",
+    description: "Éclats de fruits juteux et frais",
     family: "fruity",
     weight: 1.0,
     color: "#D05060",
@@ -647,6 +778,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   floral_fruity: {
     id: "floral_fruity",
     label: "Floral Fruité",
+    emoji: "🍑",
+    description: "Alliance de pétales et de fruits",
     family: "fruity",
     weight: 1.0,
     color: "#E07888",
@@ -656,6 +789,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   tropical: {
     id: "tropical",
     label: "Tropical",
+    emoji: "🏝️",
+    description: "Fruits du soleil (Mangue, Ananas)",
     family: "fruity",
     weight: 1.0,
     color: "#E09040",
@@ -665,6 +800,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   rhubarb: {
     id: "rhubarb",
     label: "Rhubarbe",
+    emoji: "🎋",
+    description: "Note fruitée, verte et acidulée",
     family: "fruity",
     weight: 1.1,
     color: "#C05870",
@@ -674,6 +811,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   fig: {
     id: "fig",
     label: "Figue",
+    emoji: "🌳",
+    description: "Le fruit et la feuille du figuier",
     family: "fruity",
     weight: 1.1,
     color: "#906080",
@@ -688,6 +827,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   animalic: {
     id: "animalic",
     label: "Animalique",
+    emoji: "🐾",
+    description: "Notes de peau, de chaleur et de sensualité",
     family: "animalic",
     weight: 1.4,
     color: "#786050",
@@ -697,6 +838,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   leather: {
     id: "leather",
     label: "Cuir",
+    emoji: "👜",
+    description: "Note de cuir tanné, de veste ou de sellerie",
     family: "animalic",
     weight: 1.3,
     color: "#8B4A28",
@@ -706,6 +849,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   suede: {
     id: "suede",
     label: "Suède",
+    emoji: "🧤",
+    description: "Cuir velouté, doux et souple",
     family: "animalic",
     weight: 1.2,
     color: "#B08060",
@@ -715,15 +860,19 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   musky: {
     id: "musky",
     label: "Musqué",
+    emoji: "🧴",
+    description: "Sensation de seconde peau propre",
     family: "animalic",
     weight: 1.1,
     color: "#C0A898",
     boost: ["rendezvous", "soir"],
     keywords: ["musqué", "musky"],
   },
-  musk: {
+  mask: {
     id: "musk",
     label: "Musc",
+    emoji: "☁️",
+    description: "Muscs blancs vaporeux et cristallins",
     family: "animalic",
     weight: 1.1,
     color: "#D0C0B0",
@@ -733,6 +882,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   ambergris: {
     id: "ambergris",
     label: "Ambre Gris",
+    emoji: "🐋",
+    description: "Note marine saline et ambrée précieuse",
     family: "animalic",
     weight: 1.6,
     color: "#C8A870",
@@ -742,6 +893,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   civet: {
     id: "civet",
     label: "Civette",
+    emoji: "🐱",
+    description: "Note animalière musquée et vintage",
     family: "animalic",
     weight: 1.3,
     color: "#907068",
@@ -751,6 +904,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   castoreum: {
     id: "castoreum",
     label: "Castoreum",
+    emoji: "🦫",
+    description: "Note cuirée, chaude et animale",
     family: "animalic",
     weight: 1.4,
     color: "#806058",
@@ -765,6 +920,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   aquatic: {
     id: "aquatic",
     label: "Aquatique & Marin",
+    emoji: "🌊",
+    description: "Brise marine, sel et grand large",
     family: "atmospheric",
     weight: 1.0,
     color: "#4090C0",
@@ -774,6 +931,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   ozonic: {
     id: "ozonic",
     label: "Ozonique",
+    emoji: "⚡",
+    description: "Air après l'orage et vent frais",
     family: "atmospheric",
     weight: 0.9,
     color: "#80C8E0",
@@ -783,6 +942,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   mineral: {
     id: "mineral",
     label: "Minéral",
+    emoji: "🪨",
+    description: "Note de pierre froide et de silex",
     family: "atmospheric",
     weight: 1.0,
     color: "#909898",
@@ -792,6 +953,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   metallic: {
     id: "metallic",
     label: "Métallique",
+    emoji: "⚙️",
+    description: "Note de fer froid et de modernité",
     family: "atmospheric",
     weight: 1.0,
     color: "#A0A8B0",
@@ -801,6 +964,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   earthy: {
     id: "earthy",
     label: "Terreux",
+    emoji: "🌑",
+    description: "Humus, terre humide et mousse",
     family: "atmospheric",
     weight: 1.0,
     color: "#806848",
@@ -810,6 +975,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   smoky: {
     id: "smoky",
     label: "Fumé",
+    emoji: "💨",
+    description: "Fumée de bois et feux de camp",
     family: "atmospheric",
     weight: 1.2,
     color: "#686870",
@@ -819,6 +986,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   tobacco: {
     id: "tobacco",
     label: "Tabac",
+    emoji: "🍂",
+    description: "Feuille de tabac, séchée et miellée",
     family: "atmospheric",
     weight: 1.3,
     color: "#806040",
@@ -828,6 +997,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   aldehydic: {
     id: "aldehydic",
     label: "Aldéhydique",
+    emoji: "🧼",
+    description: "Note pétillante, savonneuse et aérienne",
     family: "atmospheric",
     weight: 1.2,
     color: "#C8D0D8",
@@ -837,6 +1008,8 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   alcoholic: {
     id: "alcoholic",
     label: "Alcoolisé",
+    emoji: "🥃",
+    description: "Notes de liqueurs, spiritueux et vin",
     family: "atmospheric",
     weight: 1.1,
     color: "#A08858",

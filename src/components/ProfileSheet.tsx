@@ -5,7 +5,7 @@ import { PERFUMES } from "@/data/perfumes";
 import type { Perfume } from "@/data/perfumes";
 import PerfumePage from "@/components/PerfumePage";
 
-const PIN_CODE = "1994";
+const PIN_CODE = "0000";
 const STORAGE_KEY = "fz_stock_status";
 
 type StockMap = Record<string, boolean>;

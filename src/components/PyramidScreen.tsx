@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
-
 
 interface PyramidScreenProps {
   onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string, radarIntensities?: Record<string, number>) => void;
@@ -24,78 +23,24 @@ const RADAR_TO_FAMILY: Record<string, string[]> = {
 };
 
 const FAMILY_ICONS: Record<string, string | null> = {
-  'AGRUMES': null,
-  'ANIMAL':  null,
-  'BOISÉ':   null,
-  'ÉPICÉ':   null,
-  'FLORAL':  null,
-  'FRUITÉ':  null,
-  'SUCRÉ':   null,
-  'MARINE':  null,
+  'AGRUMES': null, 'ANIMAL': null, 'BOISÉ': null, 'ÉPICÉ': null,
+  'FLORAL': null, 'FRUITÉ': null, 'SUCRÉ': null, 'MARINE': null,
 };
 
 const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, tags: string[] }[]> = {
   top: [
-    { 
-      id: "hesperides", 
-      label: "Lumière du Matin", 
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", 
-      sub: "Éclat Hespéridé",
-      tags: ["Bergamote", "Citron", "Mandarine"]
-    },
-    { 
-      id: "marines", 
-      label: "Souffle Marin", 
-      img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", 
-      sub: "Fraîcheur Aquatique & Pure",
-      tags: ["Sel marin", "Algues", "Air iodé"]
-    },
-    { 
-      id: "fruitees", 
-      label: "Douceur Fruitée", 
-      img: "https://static.vecteezy.com/system/resources/thumbnails/053/277/426/small/spring-fruit-scene-designed-to-integrate-seamlessly-with-your-text-or-graphics-photo.jpeg", 
-      sub: "Léger & Pétillant",
-      tags: ["Pêche", "Framboise", "Cassis"]
-    }
+    { id: "hesperides", label: "Lumière du Matin", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", sub: "Éclat Hespéridé", tags: ["Bergamote", "Citron", "Mandarine"] },
+    { id: "marines", label: "Souffle Marin", img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", sub: "Fraîcheur Aquatique & Pure", tags: ["Sel marin", "Algues", "Air iodé"] },
+    { id: "fruitees", label: "Douceur Fruitée", img: "https://static.vecteezy.com/system/resources/thumbnails/053/277/426/small/spring-fruit-scene-designed-to-integrate-seamlessly-with-your-text-or-graphics-photo.jpeg", sub: "Léger & Pétillant", tags: ["Pêche", "Framboise", "Cassis"] }
   ],
   heart: [
-    { 
-      id: "florales", 
-      label: "Jardin Secret", 
-      img: "https://img.freepik.com/photos-premium/jardin-banc-fleurs-dans-herbe_1022944-31664.jpg", 
-      sub: "Floral & Délicat",
-      tags: ["Rose", "Jasmin", "Néroli"]
-    },
-    { 
-      id: "epicees", 
-      label: "Nuit Précieuse", 
-      img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", 
-      sub: "Mystère Oriental Épicé",
-      tags: ["Safran", "Cannelle", "Poivre noir"]
-    },
-    { 
-      id: "musquees", 
-      label: "Chaleur Dorée", 
-      img: "https://i.ibb.co/Wp7ygw9k/fzp.png", 
-      sub: "Sillage Ambré",
-      tags: ["Musc", "Ambre", "Patchouli"]
-    }
+    { id: "florales", label: "Jardin Secret", img: "https://img.freepik.com/photos-premium/jardin-banc-fleurs-dans-herbe_1022944-31664.jpg", sub: "Floral & Délicat", tags: ["Rose", "Jasmin", "Néroli"] },
+    { id: "epicees", label: "Nuit Précieuse", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", sub: "Mystère Oriental Épicé", tags: ["Safran", "Cannelle", "Poivre noir"] },
+    { id: "musquees", label: "Chaleur Dorée", img: "https://i.ibb.co/Wp7ygw9k/fzp.png", sub: "Sillage Ambré", tags: ["Musc", "Ambre", "Patchouli"] }
   ],
   base: [
-    { 
-      id: "boisees", 
-      label: "Bois Sacré", 
-      img: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=400", 
-      sub: "Profondeur Boisée",
-      tags: ["Santal", "Cèdre", "Vétiver"]
-    },
-    { 
-      id: "gourmandes", 
-      label: "Secret Sucré", 
-      img: "https://i.ibb.co/8StFqcr/88535382628.png", 
-      sub: "Tentation Gourmande",
-      tags: ["Vanille", "Tonka", "Caramel"]
-    }
+    { id: "boisees", label: "Bois Sacré", img: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=400", sub: "Profondeur Boisée", tags: ["Santal", "Cèdre", "Vétiver"] },
+    { id: "gourmandes", label: "Secret Sucré", img: "https://i.ibb.co/8StFqcr/88535382628.png", sub: "Tentation Gourmande", tags: ["Vanille", "Tonka", "Caramel"] }
   ]
 };
 
@@ -106,17 +51,61 @@ const ATMOSPHERES = [
   { id: 'rendezvous', label: 'Rendez-vous', icon: <Heart size={24}/>, desc: "Sensuel & Captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400" },
 ];
 
+// ── Types pour le canvas ────────────────────────────────────────
+const GOLD_COLORS = ["#D4AF37", "#F59E0B", "#FFF0A0"];
+
+interface Leaf {
+  x: number; y: number; w: number; h: number;
+  speed: number; rotation: number; rotSpeed: number;
+  swayAmp: number; swayFreq: number; swayOffset: number;
+  opacity: number; opacityDir: number; color: string;
+}
+
+interface Particle {
+  x: number; y: number; vy: number; vx: number; alpha: number;
+}
+
+function createLeaf(canvasW: number, canvasH: number, startTop = false): Leaf {
+  const size = 4 + Math.random() * 6;
+  return {
+    x: Math.random() * canvasW,
+    y: startTop ? -size - Math.random() * canvasH * 0.3 : Math.random() * canvasH,
+    w: size, h: size * (0.5 + Math.random() * 0.5),
+    speed: 0.5 + Math.random() * 1.5,
+    rotation: Math.random() * Math.PI * 2,
+    rotSpeed: 0.02 * (0.5 + Math.random() * 1.5),
+    swayAmp: 15 + Math.random() * 25,
+    swayFreq: 0.008 + Math.random() * 0.012,
+    swayOffset: Math.random() * Math.PI * 2,
+    opacity: 0.3 + Math.random() * 0.5,
+    opacityDir: 1,
+    color: GOLD_COLORS[Math.floor(Math.random() * GOLD_COLORS.length)],
+  };
+}
+
+function createParticle(canvasW: number, canvasH: number): Particle {
+  return {
+    x: Math.random() * canvasW,
+    y: Math.random() * canvasH,
+    vy: 0.2 + Math.random() * 0.3,
+    vx: (Math.random() - 0.5) * 0.3,
+    alpha: 0.05 + Math.random() * 0.1,
+  };
+}
+
 const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidScreenProps) => {
   const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere'>('swipe');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisText, setAnalysisText] = useState("");
-  
   const [currentStep, setCurrentStep] = useState(0);
   const [noteIndex, setNoteIndex] = useState(0);
   const [intensities, setIntensities] = useState<number[]>(FAMILIES.map(() => 0.5));
   const [selections, setSelections] = useState<{ top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[] }>({
     top: [], heart: [], base: []
   });
+
+  // ── Canvas ref ──────────────────────────────────────────────
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const steps = ["top", "heart", "base"];
   const notesAvailable = NOTES_DATA[steps[currentStep]];
@@ -127,6 +116,79 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
   const springConfig = { stiffness: 150, damping: 18, mass: 0.8 };
+
+  // ── Animation canvas feuilles dorées ────────────────────────
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    let frame = 0;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const leaves: Leaf[] = Array.from({ length: 18 }, () => createLeaf(canvas.width, canvas.height));
+    const particles: Particle[] = Array.from({ length: 40 }, () => createParticle(canvas.width, canvas.height));
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      frame++;
+
+      // Particles
+      for (const p of particles) {
+        p.y += p.vy;
+        p.x += p.vx;
+        if (p.y > canvas.height) { p.y = -2; p.x = Math.random() * canvas.width; }
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(212,175,55,${p.alpha})`;
+        ctx.fill();
+      }
+
+      // Leaves
+      for (const l of leaves) {
+        l.y += l.speed;
+        l.rotation += l.rotSpeed * l.speed;
+        l.opacity += 0.003 * l.opacityDir;
+        if (l.opacity >= 0.8) l.opacityDir = -1;
+        if (l.opacity <= 0.3) l.opacityDir = 1;
+        const swayX = l.swayAmp * Math.sin(frame * l.swayFreq + l.swayOffset);
+        if (l.y > canvas.height + l.h) {
+          Object.assign(l, createLeaf(canvas.width, canvas.height, true));
+        }
+        ctx.save();
+        ctx.translate(l.x + swayX, l.y);
+        ctx.rotate(l.rotation);
+        ctx.globalAlpha = l.opacity;
+        ctx.fillStyle = l.color;
+        ctx.beginPath();
+        ctx.moveTo(0, -l.h / 2);
+        ctx.lineTo(l.w / 2, 0);
+        ctx.lineTo(0, l.h / 2);
+        ctx.lineTo(-l.w / 2, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      animId = requestAnimationFrame(draw);
+    };
+
+    animId = requestAnimationFrame(draw);
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
 
   useEffect(() => {
     setInternalBackHandler(() => {
@@ -140,16 +202,12 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
     setAnalysisText(text);
     setIsAnalyzing(true);
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setScreen(nextScreen);
-    }, 4000);
+    setTimeout(() => { setIsAnalyzing(false); setScreen(nextScreen); }, 4000);
   };
 
   const handleSwipe = (liked: boolean) => {
     const key = steps[currentStep] as keyof typeof selections;
     if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
-
     if (noteIndex < notesAvailable.length - 1) {
       setNoteIndex(prev => prev + 1);
     } else if (currentStep < 2) {
@@ -158,7 +216,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     } else {
       triggerTransition('map', "Harmonisation des essences sélectionnées...");
     }
-    x.set(0); 
+    x.set(0);
   };
 
   const buildRadarIntensities = (): Record<string, number> => {
@@ -172,7 +230,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
   const size = 340;
   const center = size / 2;
-  const radius = size * 0.32; // réduit pour laisser de la place aux labels SVG
+  const radius = size * 0.32;
 
   const getPointPos = (index: number, intensity: number) => {
     const angle = (Math.PI * 2 * index) / FAMILIES.length - Math.PI / 2;
@@ -194,7 +252,11 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
+    <div className="relative min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
+
+      {/* ── Canvas animation feuilles dorées ── */}
+      <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
+
       <AnimatePresence mode="wait">
 
         {isAnalyzing ? (
@@ -231,14 +293,13 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-full max-w-sm flex flex-col items-center relative"
+            className="relative z-10 w-full max-w-sm flex flex-col items-center"
           >
             <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">
               Affinez vos désirs
             </h2>
 
             <div className="relative w-full mb-12" style={{ height: '520px' }}>
-
               <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
                 <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg">
                   <Frown size={48} strokeWidth={1.5} />
@@ -266,39 +327,20 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                   className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10 flex flex-col"
                 >
                   <div className="absolute inset-0 z-50 touch-none" />
-
                   <div className="w-full flex-shrink-0 pointer-events-none" style={{ height: '52%' }}>
-                    <img
-                      src={currentNote.img}
-                      draggable="false"
-                      className="w-full h-full object-cover"
-                      alt={currentNote.label}
-                    />
+                    <img src={currentNote.img} draggable="false" className="w-full h-full object-cover" alt={currentNote.label} />
                   </div>
-
                   <div className="w-full flex-1 px-5 py-3 text-center bg-white flex flex-col items-center justify-center gap-2 pointer-events-none">
-                    <h3 className="text-lg font-semibold text-black uppercase tracking-tight leading-tight">
-                      {currentNote.label}
-                    </h3>
-
-                    <p className="text-amber-500 text-[11px] font-bold uppercase tracking-widest">
-                      {currentNote.sub}
-                    </p>
-
+                    <h3 className="text-lg font-semibold text-black uppercase tracking-tight leading-tight">{currentNote.label}</h3>
+                    <p className="text-amber-500 text-[11px] font-bold uppercase tracking-widest">{currentNote.sub}</p>
                     <div className="flex items-center justify-center gap-2">
                       <div className="h-[1px] w-10 bg-amber-400/50" />
                       <div className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
                       <div className="h-[1px] w-10 bg-amber-400/50" />
                     </div>
-
                     <div className="flex flex-wrap justify-center gap-1.5 mt-1">
                       {currentNote.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[9px] font-bold uppercase tracking-wider"
-                        >
-                          {tag}
-                        </span>
+                        <span key={tag} className="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[9px] font-bold uppercase tracking-wider">{tag}</span>
                       ))}
                     </div>
                   </div>
@@ -318,7 +360,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="w-full max-w-md flex flex-col items-center justify-center"
+            className="relative z-10 w-full max-w-md flex flex-col items-center justify-center"
           >
             <div className="flex flex-col items-center mb-10 text-center">
               <h2 className="text-2xl font-bold uppercase tracking-[0.3em] text-white">Architecture Olfactive</h2>
@@ -330,28 +372,21 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
             <div className="relative flex items-center justify-center">
               <svg id="radar-svg" width={size} height={size} className="overflow-visible">
-                {/* Cercles de grille */}
                 {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => (
                   <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" strokeWidth="0.5" />
                 ))}
-
-                {/* Axes */}
                 {FAMILIES.map((_, i) => {
                   const p = getPointPos(i, 1);
                   return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#333" strokeDasharray="2 2" />;
                 })}
-
-                {/* Polygone */}
-                <motion.polygon 
-                  points={polygonPath} 
-                  fill="rgba(245, 158, 11, 0.15)" 
-                  stroke="#f59e0b" 
-                  strokeWidth="2.5" 
+                <motion.polygon
+                  points={polygonPath}
+                  fill="rgba(245, 158, 11, 0.15)"
+                  stroke="#f59e0b"
+                  strokeWidth="2.5"
                   animate={{ points: polygonPath }}
                   transition={{ type: "spring", ...springConfig }}
                 />
-
-                {/* Points draggables */}
                 {points.map((p, i) => (
                   <motion.g key={i} animate={{ x: p.x, y: p.y }} transition={{ type: "spring", ...springConfig }}>
                     <motion.circle
@@ -363,30 +398,24 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                       onDrag={(_, info) => updateIntensity(i, info)}
                       whileTap={{ scale: 1.2 }}
                     />
-                    <motion.circle 
-                      cx={0} cy={0} 
-                      r={4 + (intensities[i] * 6)} 
-                      fill="#f59e0b" 
+                    <motion.circle
+                      cx={0} cy={0}
+                      r={4 + (intensities[i] * 6)}
+                      fill="#f59e0b"
                       className="pointer-events-none"
                       style={{ filter: `blur(${intensities[i] * 5}px)`, opacity: 0.5 }}
                     />
                     <circle cx={0} cy={0} r="5" fill="#fff" className="pointer-events-none" />
                   </motion.g>
                 ))}
-
-                {/* ── LABELS EN SVG — zéro décalage ── */}
                 {FAMILIES.map((f, i) => {
                   const p = getPointPos(i, 1.55);
                   const isActive = intensities[i] > 0.7;
                   return (
                     <text
-                      key={i}
-                      x={p.x}
-                      y={p.y}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fontSize="14"
-                      fontWeight="800"
+                      key={i} x={p.x} y={p.y}
+                      textAnchor="middle" dominantBaseline="middle"
+                      fontSize="14" fontWeight="800"
                       fill={isActive ? '#f59e0b' : '#71717a'}
                       style={{ textTransform: 'uppercase', letterSpacing: '0.08em', pointerEvents: 'none' }}
                     >
@@ -411,7 +440,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             key="atm"
             initial={{ opacity: 0, scale: 1.1 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg flex flex-col items-center justify-center"
+            className="relative z-10 w-full max-w-lg flex flex-col items-center justify-center"
           >
             <div className="flex flex-col items-center mb-10 text-center">
               <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Univers Olfactif</h2>

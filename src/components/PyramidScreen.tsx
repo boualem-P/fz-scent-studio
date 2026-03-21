@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { Moon, Sun, Briefcase, Heart, ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
+import { ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
 
 interface PyramidScreenProps {
@@ -22,11 +22,6 @@ const RADAR_TO_FAMILY: Record<string, string[]> = {
   'MARINE':  ['marines'],
 };
 
-const FAMILY_ICONS: Record<string, string | null> = {
-  'AGRUMES': null, 'ANIMAL': null, 'BOISÉ': null, 'ÉPICÉ': null,
-  'FLORAL': null, 'FRUITÉ': null, 'SUCRÉ': null, 'MARINE': null,
-};
-
 const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, tags: string[] }[]> = {
   top: [
     { id: "hesperides", label: "Lumière du Matin", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", sub: "Éclat Hespéridé", tags: ["Bergamote", "Citron", "Mandarine"] },
@@ -44,11 +39,83 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
   ]
 };
 
+// ── 8 ATMOSPHÈRES ADAPTÉES AU MARCHÉ ALGÉRIEN ──────────────────
 const ATMOSPHERES = [
-  { id: 'soir', label: 'Soirée de Gala', icon: <Moon size={24}/>, desc: "Intense & Magnétique", img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=400" },
-  { id: 'quotidien', label: 'Signature Quotidienne', icon: <Sun size={24}/>, desc: "Léger & Lumineux", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400" },
-  { id: 'business', label: 'Business & Influence', icon: <Briefcase size={24}/>, desc: "Assuré & Subtil", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400" },
-  { id: 'rendezvous', label: 'Rendez-vous', icon: <Heart size={24}/>, desc: "Sensuel & Captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400" },
+  // Groupe 1 — Le quotidien (2 boutons larges)
+  {
+    id: 'quotidien',
+    label: 'Mon quotidien',
+    emoji: '🌅',
+    desc: "Frais, discret & efficace",
+    img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400",
+    group: 'quotidien',
+    size: 'half'
+  },
+  {
+    id: 'business',
+    label: 'Au bureau',
+    emoji: '💼',
+    desc: "Assuré & professionnel",
+    img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400",
+    group: 'quotidien',
+    size: 'half'
+  },
+  // Groupe 2 — Les occasions (3 boutons moyens)
+  {
+    id: 'aid',
+    label: 'Aïd & Fêtes',
+    emoji: '🎊',
+    desc: "Oriental, festif & généreux",
+    img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80",
+    group: 'occasions',
+    size: 'third'
+  },
+  {
+    id: 'mariage',
+    label: 'Mariage & Fiançailles',
+    emoji: '💍',
+    desc: "Somptueux & inoubliable",
+    img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=400",
+    group: 'occasions',
+    size: 'third'
+  },
+  {
+    id: 'soir',
+    label: 'Soirée & Sorties',
+    emoji: '🌙',
+    desc: "Intense & magnétique",
+    img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400",
+    group: 'occasions',
+    size: 'third'
+  },
+  // Groupe 3 — L'intime (1 grand + 2 petits)
+  {
+    id: 'rendezvous',
+    label: 'Rendez-vous',
+    emoji: '❤️',
+    desc: "Sensuel & captivant",
+    img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400",
+    group: 'intime',
+    size: 'full'
+  },
+  {
+    id: 'famille',
+    label: 'En famille',
+    emoji: '🏠',
+    desc: "Chaleureux & bienveillant",
+    img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400",
+    group: 'intime',
+    size: 'half'
+  },
+  {
+    id: 'ramadan',
+    label: 'Ramadan',
+    emoji: '🕌',
+    desc: "Doux, oud & spirituel",
+    img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80",
+    group: 'intime',
+    size: 'half'
+  },
 ];
 
 // ── Types pour le canvas ────────────────────────────────────────
@@ -104,7 +171,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     top: [], heart: [], base: []
   });
 
-  // ── Canvas ref ──────────────────────────────────────────────
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const steps = ["top", "heart", "base"];
@@ -141,10 +207,8 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       frame++;
 
-      // Particles
       for (const p of particles) {
-        p.y += p.vy;
-        p.x += p.vx;
+        p.y += p.vy; p.x += p.vx;
         if (p.y > canvas.height) { p.y = -2; p.x = Math.random() * canvas.width; }
         if (p.x < 0) p.x = canvas.width;
         if (p.x > canvas.width) p.x = 0;
@@ -154,7 +218,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
         ctx.fill();
       }
 
-      // Leaves
       for (const l of leaves) {
         l.y += l.speed;
         l.rotation += l.rotSpeed * l.speed;
@@ -162,9 +225,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
         if (l.opacity >= 0.8) l.opacityDir = -1;
         if (l.opacity <= 0.3) l.opacityDir = 1;
         const swayX = l.swayAmp * Math.sin(frame * l.swayFreq + l.swayOffset);
-        if (l.y > canvas.height + l.h) {
-          Object.assign(l, createLeaf(canvas.width, canvas.height, true));
-        }
+        if (l.y > canvas.height + l.h) Object.assign(l, createLeaf(canvas.width, canvas.height, true));
         ctx.save();
         ctx.translate(l.x + swayX, l.y);
         ctx.rotate(l.rotation);
@@ -184,10 +245,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     };
 
     animId = requestAnimationFrame(draw);
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
   }, []);
 
   useEffect(() => {
@@ -251,10 +309,33 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const points = intensities.map((inst, i) => getPointPos(i, inst));
   const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
 
+  // ── Groupes d'atmosphères ───────────────────────────────────
+  const groupQuotidien = ATMOSPHERES.filter(a => a.group === 'quotidien');
+  const groupOccasions = ATMOSPHERES.filter(a => a.group === 'occasions');
+  const groupIntime    = ATMOSPHERES.filter(a => a.group === 'intime');
+
+  const AtmButton = ({ atm, className }: { atm: typeof ATMOSPHERES[0], className: string }) => (
+    <motion.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
+      onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities())}
+      className={`group relative rounded-2xl border border-white/10 bg-zinc-900/60 overflow-hidden flex flex-col justify-end p-4 hover:border-amber-500/50 transition-all text-left ${className}`}
+    >
+      <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-35 transition-opacity duration-500" alt={atm.label} />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      <div className="relative z-10">
+        <span className="text-2xl mb-1 block">{atm.emoji}</span>
+        <h4 className="text-white font-bold text-sm leading-tight">{atm.label}</h4>
+        <p className="text-amber-400/70 text-[9px] uppercase tracking-widest mt-0.5">{atm.desc}</p>
+      </div>
+      <ArrowRight size={14} className="absolute top-4 right-4 text-zinc-600 group-hover:text-amber-500 transition-colors" />
+    </motion.button>
+  );
+
   return (
     <div className="relative min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
 
-      {/* ── Canvas animation feuilles dorées ── */}
+      {/* Canvas animation feuilles dorées */}
       <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
 
       <AnimatePresence mode="wait">
@@ -436,38 +517,49 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
         ) : (
 
+          /* ═══════════ UNIVERS OLFACTIF — NOUVELLE DISPOSITION ═══════════ */
           <motion.div
             key="atm"
-            initial={{ opacity: 0, scale: 1.1 }}
+            initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative z-10 w-full max-w-lg flex flex-col items-center justify-center"
+            className="relative z-10 w-full max-w-lg flex flex-col items-center pb-10"
           >
-            <div className="flex flex-col items-center mb-10 text-center">
-              <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Univers Olfactif</h2>
+            {/* Titre */}
+            <div className="flex flex-col items-center mb-8 text-center">
+              <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
               <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
               <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">
-                Définissez le sillage de votre destinée
+                Pour quelle occasion vous parfumez-vous ?
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 w-full px-4">
-              {ATMOSPHERES.map((atm) => (
-                <button
-                  key={atm.id}
-                  onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities())}
-                  className="group relative h-28 rounded-2xl border border-white/5 bg-zinc-900/40 overflow-hidden flex items-center p-6 hover:border-amber-500/50 transition-all text-left"
-                >
-                  <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" alt={atm.label} />
-                  <div className="relative z-10 flex items-center gap-6 w-full">
-                    <div className="p-4 bg-black/60 rounded-xl text-amber-500">{atm.icon}</div>
-                    <div>
-                      <h4 className="text-xl font-light">{atm.label}</h4>
-                      <p className="text-[9px] uppercase tracking-widest text-zinc-500">{atm.desc}</p>
-                    </div>
-                    <ArrowRight className="ml-auto text-zinc-700 group-hover:text-amber-500 transition-colors" />
-                  </div>
-                </button>
-              ))}
+            <div className="w-full px-2 flex flex-col gap-3">
+
+              {/* ── Groupe 1 : Le quotidien — 2 boutons côte à côte ── */}
+              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mb-1">Le quotidien</p>
+              <div className="grid grid-cols-2 gap-3">
+                {groupQuotidien.map(atm => (
+                  <AtmButton key={atm.id} atm={atm} className="h-28" />
+                ))}
+              </div>
+
+              {/* ── Groupe 2 : Les occasions — 3 boutons ── */}
+              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mt-2 mb-1">Les grandes occasions</p>
+              <div className="grid grid-cols-3 gap-3">
+                {groupOccasions.map(atm => (
+                  <AtmButton key={atm.id} atm={atm} className="h-36" />
+                ))}
+              </div>
+
+              {/* ── Groupe 3 : L'intime — 1 grand + 2 petits ── */}
+              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mt-2 mb-1">L'intime</p>
+              <AtmButton atm={groupIntime[0]} className="h-32 w-full" />
+              <div className="grid grid-cols-2 gap-3">
+                {groupIntime.slice(1).map(atm => (
+                  <AtmButton key={atm.id} atm={atm} className="h-28" />
+                ))}
+              </div>
+
             </div>
           </motion.div>
         )}

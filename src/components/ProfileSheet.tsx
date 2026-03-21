@@ -5,7 +5,8 @@ import { PERFUMES } from "@/data/perfumes";
 import type { Perfume } from "@/data/perfumes";
 import PerfumePage from "@/components/PerfumePage";
 
-const PIN_CODE = "0000";
+// ── PIN depuis variable d'environnement — jamais visible dans le bundle ──
+const PIN_CODE = import.meta.env.VITE_ADMIN_PIN ?? "0000";
 const STORAGE_KEY = "fz_stock_status";
 
 type StockMap = Record<string, boolean>;
@@ -278,13 +279,9 @@ const ProfileSheet = () => {
                                     !inStock ? "blur-[4px] opacity-[0.15]" : ""
                                   }`}
                                 />
-
-                                {/* Hover external link icon */}
                                 <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/60 rounded-full p-1 z-10">
                                   <ExternalLink size={12} className="text-amber-400" />
                                 </div>
-
-                                {/* Out of stock overlay & watermark */}
                                 <AnimatePresence>
                                   {!inStock && (
                                     <motion.div
@@ -321,12 +318,8 @@ const ProfileSheet = () => {
 
                               {/* Info */}
                               <div className="p-3 space-y-2">
-                                <p className="text-[9px] uppercase tracking-widest text-white/30">
-                                  {p.brand}
-                                </p>
-                                <p className="text-[11px] font-medium text-white line-clamp-1">
-                                  {p.name}
-                                </p>
+                                <p className="text-[9px] uppercase tracking-widest text-white/30">{p.brand}</p>
+                                <p className="text-[11px] font-medium text-white line-clamp-1">{p.name}</p>
                                 <div className="flex gap-1.5">
                                   <button
                                     onClick={() => toggleStock(p.id, true)}

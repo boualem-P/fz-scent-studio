@@ -5,7 +5,6 @@ import { X, Search, Sparkles, Heart, Anchor, ArrowLeft } from "lucide-react";
 import PerfumePage from "./PerfumePage";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 import { getNoteImage } from "@/data/notesData";
-import { getPerfumeAccords } from "@/data/accordEngine";
 
 interface CatalogueScreenProps {
   onMenu: () => void;

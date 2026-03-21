@@ -253,7 +253,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
             <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-1">
               <span className="text-amber-500/60">{s.icon}</span> {s.label}
             </span>
-            <span className="text-amber-500 text-[10px]">{s.val}%</span>
+            <span className="text-zinc-600 text-[10px]">{s.val}%</span>
           </div>
           <div className="h-1 bg-zinc-200 w-full rounded-full overflow-hidden">
             <motion.div
@@ -353,7 +353,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       </AnimatePresence>
       <header className="relative z-20 h-14 w-full flex items-center justify-between px-5 pointer-events-auto">
         <div className="flex flex-col">
-          <span className={`text-[8px] uppercase tracking-[0.5em] font-black italic transition-colors ${isScrolled ? "text-amber-600" : "text-amber-500/30"}`}>
+          <span className={`text-[8px] uppercase tracking-[0.5em] font-black italic transition-colors ${isScrolled ? "text-zinc-800" : "text-zinc-400/50"}`}>
             Signature Collection
           </span>
           {isScrolled && (
@@ -464,7 +464,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="mb-6">
             <h1 className="text-4xl lg:text-5xl font-extralight italic tracking-tight uppercase leading-none">{perfume.name}</h1>
             <div className="flex items-center gap-3 mt-2">
-              <p className="text-amber-600 tracking-[0.4em] uppercase text-[10px] font-black">{perfume.brand}</p>
+              <p className="text-zinc-700 tracking-[0.4em] uppercase text-[10px] font-black">{perfume.brand}</p>
               <div className="h-px flex-1 bg-black/10" />
               <span className="text-[9px] uppercase tracking-widest text-zinc-400">{perfume.concentration}</span>
             </div>
@@ -518,7 +518,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           {/* Titre */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-4 text-center">
             <h1 className="text-3xl font-extralight italic tracking-tight uppercase leading-none">{perfume.name}</h1>
-            <p className="text-amber-600 tracking-[0.4em] uppercase text-[10px] font-black mt-1">{perfume.brand}</p>
+            <p className="text-zinc-700 tracking-[0.4em] uppercase text-[10px] font-black mt-1">{perfume.brand}</p>
             <p className="text-[9px] uppercase tracking-widest text-zinc-400 mt-0.5">{perfume.concentration}</p>
           </motion.div>
 

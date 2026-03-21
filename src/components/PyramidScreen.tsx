@@ -350,7 +350,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   );
 
   return (
-    <div className="relative min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 select-none overflow-x-hidden overflow-y-auto">
+    <div className="relative h-screen bg-black text-white flex flex-col items-center pt-16 px-4 select-none overflow-hidden">
 
 
       <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
@@ -538,9 +538,9 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             key="atm"
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative z-10 w-full max-w-lg flex flex-col items-center pb-10"
+            className="relative z-10 w-full max-w-lg flex flex-col items-center pb-2"
           >
-            <div className="flex flex-col items-center mb-8 text-center">
+            <div className="flex flex-col items-center mb-3 text-center">
               <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
               <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
               <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">
@@ -548,25 +548,25 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
               </p>
             </div>
 
-            <div className="w-full px-2 flex flex-col gap-3">
+            <div className="w-full px-2 flex flex-col gap-2">
 
-              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mb-1">Le quotidien</p>
-              <div className="grid grid-cols-2 gap-3">
+              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mb-0.5">Le quotidien</p>
+              <div className="grid grid-cols-2 gap-2">
                 {groupQuotidien.map(atm => (
-                  <AtmButton key={atm.id} atm={atm} className="h-28" />
+                  <AtmButton key={atm.id} atm={atm} className="h-20" />
                 ))}
               </div>
 
-              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mt-2 mb-1">Les grandes occasions</p>
-              <div className="grid grid-cols-3 gap-3">
+              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mt-1 mb-0.5">Les grandes occasions</p>
+              <div className="grid grid-cols-3 gap-2">
                 {groupOccasions.map(atm => (
-                  <AtmButton key={atm.id} atm={atm} className="h-36" />
+                  <AtmButton key={atm.id} atm={atm} className="h-24" />
                 ))}
               </div>
 
-              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mt-2 mb-1">L'intime</p>
-              <AtmButton atm={groupIntime[0]} className="h-32 w-full" />
-              <div className="grid grid-cols-2 gap-3">
+              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mt-1 mb-0.5">L'intime</p>
+              <AtmButton atm={groupIntime[0]} className="h-20 w-full" />
+              <div className="grid grid-cols-2 gap-2">
                 {groupIntime.slice(1).map(atm => (
                   <AtmButton key={atm.id} atm={atm} className="h-28" />
                 ))}

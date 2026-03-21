@@ -468,7 +468,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
               </p>
             </div>
 
-            <div className="relative flex items-center justify-center">
+            <div className="relative flex items-center justify-center touch-none">
               <svg id="radar-svg" width={size} height={size} className="overflow-visible">
                 {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => (
                   <circle key={i} cx={center} cy={center} r={radius * r} fill="none" stroke="#222" strokeWidth="0.5" />

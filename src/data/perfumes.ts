@@ -18,10 +18,14 @@ export const NOTE_LABELS: Record<string, string> = {
 };
 
 const ATMOSPHERE_BOOST: Record<string, string[]> = {
-  soir:       ['epicees', 'ambrees', 'musquees', 'boisees'],
-  quotidien:  ['hesperides', 'florales', 'marines', 'fruitees'],
-  business:   ['boisees', 'aromatiques', 'musquees'],
-  rendezvous: ['florales', 'gourmandes', 'musquees'],
+  soir:      ['epicees', 'ambrees', 'musquees', 'boisees'],
+  quotidien: ['hesperides', 'florales', 'marines', 'fruitees'],
+  business:  ['boisees', 'aromatiques', 'musquees'],
+  rendezvous:['florales', 'gourmandes', 'musquees'],
+  aid:       ['epicees', 'ambrees', 'boisees', 'musquees'],
+  mariage:   ['florales', 'musquees', 'ambrees', 'gourmandes'],
+  famille:   ['hesperides', 'florales', 'fruitees'],
+  ramadan:   ['boisees', 'ambrees', 'epicees', 'musquees'],
 };
 
 export function matchPerfumes(

@@ -39,82 +39,101 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
   ]
 };
 
+// ── ICÔNES SVG PERSONNALISÉES ───────────────────────────────────
+const IconParfum = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 3h6l1 3H8L9 3z"/>
+    <path d="M8 6c0 0-2 1-2 6s2 9 6 9 6-4 6-9-2-6-2-6"/>
+    <path d="M10 3c0-1 .5-2 2-2s2 1 2 2"/>
+    <circle cx="12" cy="13" r="2" fill="currentColor" opacity="0.4"/>
+  </svg>
+);
+
+const IconSoiree = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    {/* Costard homme */}
+    <path d="M5 22V10l3-4 2 3-2 3h8l-2-3 2-3 3 4v12"/>
+    <path d="M10 6l2 3 2-3"/>
+    {/* Robe femme */}
+    <path d="M16 6c1 0 2 .5 2 2l1 14H15l1-14c0-1.5.5-2 0-2z" opacity="0.6"/>
+  </svg>
+);
+
+const IconCroissant = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" opacity="0.3"/>
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    <circle cx="17" cy="6" r="1" fill="currentColor"/>
+    <circle cx="19" cy="9" r="0.7" fill="currentColor"/>
+    <circle cx="15" cy="4" r="0.7" fill="currentColor"/>
+  </svg>
+);
+
 // ── 8 ATMOSPHÈRES ADAPTÉES AU MARCHÉ ALGÉRIEN ──────────────────
 const ATMOSPHERES = [
-  // Groupe 1 — Le quotidien (2 boutons larges)
   {
     id: 'quotidien',
     label: 'Mon quotidien',
-    emoji: '🌅',
+    icon: <IconParfum />,
     desc: "Frais, discret & efficace",
     img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400",
     group: 'quotidien',
-    size: 'half'
   },
   {
     id: 'business',
     label: 'Au bureau',
-    emoji: '💼',
+    icon: <span className="text-2xl">💼</span>,
     desc: "Assuré & professionnel",
     img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400",
     group: 'quotidien',
-    size: 'half'
   },
-  // Groupe 2 — Les occasions (3 boutons moyens)
   {
     id: 'aid',
     label: 'Aïd & Fêtes',
-    emoji: '🎊',
+    icon: <IconCroissant />,
     desc: "Oriental, festif & généreux",
     img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80",
     group: 'occasions',
-    size: 'third'
   },
   {
     id: 'mariage',
     label: 'Mariage & Fiançailles',
-    emoji: '💍',
+    icon: <span className="text-2xl">💍</span>,
     desc: "Somptueux & inoubliable",
     img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=400",
     group: 'occasions',
-    size: 'third'
   },
   {
     id: 'soir',
     label: 'Soirée & Sorties',
-    emoji: '🌙',
+    icon: <IconSoiree />,
     desc: "Intense & magnétique",
     img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400",
     group: 'occasions',
-    size: 'third'
   },
-  // Groupe 3 — L'intime (1 grand + 2 petits)
   {
     id: 'rendezvous',
     label: 'Rendez-vous',
-    emoji: '❤️',
+    icon: <span className="text-2xl">❤️</span>,
     desc: "Sensuel & captivant",
     img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400",
     group: 'intime',
-    size: 'full'
   },
   {
     id: 'famille',
     label: 'En famille',
-    emoji: '🏠',
+    icon: <span className="text-2xl">🏠</span>,
     desc: "Chaleureux & bienveillant",
     img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400",
     group: 'intime',
-    size: 'half'
   },
   {
     id: 'ramadan',
     label: 'Ramadan',
-    emoji: '🕌',
+    icon: <span className="text-2xl">🕌</span>,
     desc: "Doux, oud & spirituel",
     img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80",
     group: 'intime',
-    size: 'half'
   },
 ];
 
@@ -183,7 +202,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
   const springConfig = { stiffness: 150, damping: 18, mass: 0.8 };
 
-  // ── Animation canvas feuilles dorées ────────────────────────
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -309,33 +327,32 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const points = intensities.map((inst, i) => getPointPos(i, inst));
   const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
 
-  // ── Groupes d'atmosphères ───────────────────────────────────
   const groupQuotidien = ATMOSPHERES.filter(a => a.group === 'quotidien');
   const groupOccasions = ATMOSPHERES.filter(a => a.group === 'occasions');
   const groupIntime    = ATMOSPHERES.filter(a => a.group === 'intime');
 
+  // ── Bouton atmosphère — alignement centré ───────────────────
   const AtmButton = ({ atm, className }: { atm: typeof ATMOSPHERES[0], className: string }) => (
     <motion.button
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.97 }}
       onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities())}
-      className={`group relative rounded-2xl border border-white/10 bg-zinc-900/60 overflow-hidden flex flex-col justify-end p-4 hover:border-amber-500/50 transition-all text-left ${className}`}
+      className={`group relative rounded-2xl border border-white/10 bg-zinc-900/60 overflow-hidden flex flex-col items-center justify-center p-4 hover:border-amber-500/50 transition-all text-center ${className}`}
     >
       <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-35 transition-opacity duration-500" alt={atm.label} />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      <div className="relative z-10">
-        <span className="text-2xl mb-1 block">{atm.emoji}</span>
-        <h4 className="text-white font-bold text-sm leading-tight">{atm.label}</h4>
-        <p className="text-amber-400/70 text-[9px] uppercase tracking-widest mt-0.5">{atm.desc}</p>
+      <div className="relative z-10 flex flex-col items-center justify-center gap-1">
+        <div className="text-amber-400 mb-1">{atm.icon}</div>
+        <h4 className="text-white font-bold text-sm leading-tight text-center">{atm.label}</h4>
+        <p className="text-amber-400/70 text-[9px] uppercase tracking-widest text-center">{atm.desc}</p>
       </div>
-      <ArrowRight size={14} className="absolute top-4 right-4 text-zinc-600 group-hover:text-amber-500 transition-colors" />
     </motion.button>
   );
 
   return (
-    <div className="relative min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-hidden">
+    <div className="relative min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-x-hidden overflow-y-auto">
 
-      {/* Canvas animation feuilles dorées */}
+
       <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
 
       <AnimatePresence mode="wait">
@@ -517,14 +534,12 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
         ) : (
 
-          /* ═══════════ UNIVERS OLFACTIF — NOUVELLE DISPOSITION ═══════════ */
           <motion.div
             key="atm"
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             className="relative z-10 w-full max-w-lg flex flex-col items-center pb-10"
           >
-            {/* Titre */}
             <div className="flex flex-col items-center mb-8 text-center">
               <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
               <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
@@ -535,7 +550,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
             <div className="w-full px-2 flex flex-col gap-3">
 
-              {/* ── Groupe 1 : Le quotidien — 2 boutons côte à côte ── */}
               <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mb-1">Le quotidien</p>
               <div className="grid grid-cols-2 gap-3">
                 {groupQuotidien.map(atm => (
@@ -543,7 +557,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                 ))}
               </div>
 
-              {/* ── Groupe 2 : Les occasions — 3 boutons ── */}
               <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mt-2 mb-1">Les grandes occasions</p>
               <div className="grid grid-cols-3 gap-3">
                 {groupOccasions.map(atm => (
@@ -551,7 +564,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                 ))}
               </div>
 
-              {/* ── Groupe 3 : L'intime — 1 grand + 2 petits ── */}
               <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mt-2 mb-1">L'intime</p>
               <AtmButton atm={groupIntime[0]} className="h-32 w-full" />
               <div className="grid grid-cols-2 gap-3">

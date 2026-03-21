@@ -6,6 +6,7 @@
  * - label    : nom affiché en français
  * - family   : famille olfactive parente
  * - weight   : poids dans le scoring (0.5 à 2.0)
+ * - color    : couleur Fragrantica (hex) pour affichage visuel
  * - boost    : occasions qui boostent cet accord
  * - keywords : mots-clés qui permettent la détection automatique depuis les notes
  */
@@ -26,6 +27,7 @@ export interface Accord {
   label: string;
   family: AccordFamily;
   weight: number;
+  color: string;
   boost: string[];
   keywords: string[];
 }
@@ -33,7 +35,7 @@ export interface Accord {
 export const ACCORDS_LIBRARY: Record<string, Accord> = {
 
   // ══════════════════════════════════════════════════════════════
-  // I. FLORAUX
+  // I. FLORAUX — roses, mauves, lilas
   // ══════════════════════════════════════════════════════════════
 
   floral: {
@@ -41,6 +43,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Floral",
     family: "floral",
     weight: 1.0,
+    color: "#E8A0B4",
     boost: ["mariage", "rendezvous", "famille"],
     keywords: ["floral", "fleur", "flower", "bouquet"],
   },
@@ -49,6 +52,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Fleurs Blanches",
     family: "floral",
     weight: 1.2,
+    color: "#F5C6D8",
     boost: ["mariage", "rendezvous"],
     keywords: ["jasmin", "tubéreuse", "tuberose", "muguet", "gardénia", "frangipanier", "fleur blanche"],
   },
@@ -57,6 +61,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Fleurs Jaunes",
     family: "floral",
     weight: 1.0,
+    color: "#F0D080",
     boost: ["aid", "mariage"],
     keywords: ["ylang", "ylang-ylang", "frangipanier", "mimosa"],
   },
@@ -65,6 +70,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Floral Sucré",
     family: "floral",
     weight: 1.0,
+    color: "#F0A8C8",
     boost: ["rendezvous", "famille"],
     keywords: ["pivoine", "freesia", "héliotrope"],
   },
@@ -73,6 +79,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Rose",
     family: "floral",
     weight: 1.3,
+    color: "#E05878",
     boost: ["mariage", "rendezvous", "aid"],
     keywords: ["rose", "rose de damas", "rose de bulgarie", "rose centifolia"],
   },
@@ -81,6 +88,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Tubéreuse",
     family: "floral",
     weight: 1.4,
+    color: "#D4709A",
     boost: ["soir", "rendezvous", "mariage"],
     keywords: ["tubéreuse", "tuberose"],
   },
@@ -89,6 +97,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Iris & Poudré",
     family: "floral",
     weight: 1.3,
+    color: "#B8A0D0",
     boost: ["business", "mariage"],
     keywords: ["iris", "poudré", "orris", "powdery"],
   },
@@ -97,6 +106,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Violette",
     family: "floral",
     weight: 1.0,
+    color: "#9B7EC8",
     boost: ["rendezvous", "quotidien"],
     keywords: ["violette", "violet", "feuille de violette"],
   },
@@ -105,6 +115,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Jasmin",
     family: "floral",
     weight: 1.3,
+    color: "#F0E0A0",
     boost: ["mariage", "aid", "rendezvous"],
     keywords: ["jasmin", "jasmine", "jasmin sambac", "jasmin du maroc"],
   },
@@ -113,6 +124,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Fleur d'Oranger",
     family: "floral",
     weight: 1.2,
+    color: "#F5D080",
     boost: ["aid", "mariage", "rendezvous"],
     keywords: ["fleur d'oranger", "néroli", "neroli", "orange blossom", "fleur d'orange"],
   },
@@ -121,6 +133,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Muguet",
     family: "floral",
     weight: 1.0,
+    color: "#C8E8C0",
     boost: ["mariage", "quotidien"],
     keywords: ["muguet", "lily of the valley"],
   },
@@ -129,6 +142,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Immortelle",
     family: "floral",
     weight: 1.5,
+    color: "#D4A840",
     boost: ["soir", "aid"],
     keywords: ["immortelle", "hélichryse"],
   },
@@ -137,6 +151,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Floral Narcotique",
     family: "floral",
     weight: 1.6,
+    color: "#8B4878",
     boost: ["soir", "rendezvous"],
     keywords: ["narcotique", "capiteux", "orchidée noire", "narcisse"],
   },
@@ -145,12 +160,13 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Feuille de Violette",
     family: "floral",
     weight: 0.9,
+    color: "#90A870",
     boost: ["quotidien", "business"],
     keywords: ["feuille de violette", "violet leaf"],
   },
 
   // ══════════════════════════════════════════════════════════════
-  // II. BOISÉS & RACINES
+  // II. BOISÉS & RACINES — bruns, ocres, kaki
   // ══════════════════════════════════════════════════════════════
 
   woody: {
@@ -158,6 +174,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Boisé",
     family: "woody",
     weight: 1.0,
+    color: "#8B6040",
     boost: ["business", "soir", "rendezvous"],
     keywords: ["bois", "woody", "boisé", "notes boisées"],
   },
@@ -166,6 +183,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Boisé Chaud",
     family: "woody",
     weight: 1.1,
+    color: "#A06830",
     boost: ["soir", "rendezvous", "aid"],
     keywords: ["bois chaud", "bois de cachemire", "cachemire", "cashmeran"],
   },
@@ -174,6 +192,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Boisé Ambré",
     family: "woody",
     weight: 1.2,
+    color: "#C08040",
     boost: ["soir", "rendezvous", "mariage"],
     keywords: ["amberwood", "boisé ambré", "amber woody"],
   },
@@ -182,6 +201,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Santal",
     family: "woody",
     weight: 1.3,
+    color: "#C8A060",
     boost: ["rendezvous", "mariage", "ramadan"],
     keywords: ["santal", "sandalwood", "santal mysore"],
   },
@@ -190,6 +210,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Cèdre",
     family: "woody",
     weight: 1.1,
+    color: "#A07850",
     boost: ["business", "quotidien"],
     keywords: ["cèdre", "cedar", "cèdre de virginie", "cèdre de l'atlas", "cèdre rouge"],
   },
@@ -198,6 +219,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Oud",
     family: "woody",
     weight: 2.0,
+    color: "#5C3020",
     boost: ["aid", "mariage", "soir", "ramadan"],
     keywords: ["oud", "aoud", "bois d'agar", "bois de oud"],
   },
@@ -206,6 +228,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Vétiver",
     family: "woody",
     weight: 1.1,
+    color: "#708050",
     boost: ["business", "quotidien"],
     keywords: ["vétiver", "vetiver", "vétiver fumé"],
   },
@@ -214,6 +237,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Patchouli",
     family: "woody",
     weight: 1.2,
+    color: "#6B5040",
     boost: ["soir", "rendezvous"],
     keywords: ["patchouli", "feuille de patchouli", "patchouli indien"],
   },
@@ -222,6 +246,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Bois de Gaïac",
     family: "woody",
     weight: 1.1,
+    color: "#907058",
     boost: ["soir", "business"],
     keywords: ["gaïac", "guaiac", "gaiac wood"],
   },
@@ -230,6 +255,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Akigalawood",
     family: "woody",
     weight: 1.3,
+    color: "#806050",
     boost: ["soir", "rendezvous"],
     keywords: ["akigalawood", "ambroxan"],
   },
@@ -238,12 +264,13 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Papyrus",
     family: "woody",
     weight: 0.9,
+    color: "#C8B880",
     boost: ["business", "quotidien"],
     keywords: ["papyrus", "cyprès"],
   },
 
   // ══════════════════════════════════════════════════════════════
-  // III. ORIENTAUX, AMBRÉS & RÉSINES
+  // III. ORIENTAUX, AMBRÉS & RÉSINES — dorés, orangés, miel
   // ══════════════════════════════════════════════════════════════
 
   amber: {
@@ -251,6 +278,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Ambre",
     family: "oriental",
     weight: 1.3,
+    color: "#D4901C",
     boost: ["soir", "rendezvous", "aid", "mariage"],
     keywords: ["ambre", "amber", "ambre gris", "ambergris"],
   },
@@ -259,6 +287,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Oriental",
     family: "oriental",
     weight: 1.4,
+    color: "#C06820",
     boost: ["soir", "aid", "mariage", "ramadan"],
     keywords: ["oriental", "épicé oriental", "opulent"],
   },
@@ -267,6 +296,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Balsamique",
     family: "oriental",
     weight: 1.1,
+    color: "#B87840",
     boost: ["soir", "ramadan"],
     keywords: ["balsamique", "balsamic", "benjoin", "baume"],
   },
@@ -275,6 +305,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Vanille",
     family: "oriental",
     weight: 1.2,
+    color: "#E8C870",
     boost: ["rendezvous", "famille", "soir"],
     keywords: ["vanille", "vanilla", "vanille de madagascar", "vanille noire"],
   },
@@ -283,6 +314,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Fève Tonka",
     family: "oriental",
     weight: 1.2,
+    color: "#C8A050",
     boost: ["soir", "rendezvous"],
     keywords: ["tonka", "fève tonka", "coumarine"],
   },
@@ -291,6 +323,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Encens",
     family: "oriental",
     weight: 1.5,
+    color: "#A07840",
     boost: ["ramadan", "aid", "soir"],
     keywords: ["encens", "frankincense", "oliban", "résine d'encens"],
   },
@@ -299,6 +332,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Myrrhe",
     family: "oriental",
     weight: 1.4,
+    color: "#906030",
     boost: ["ramadan", "aid"],
     keywords: ["myrrhe", "myrrh", "opoponax"],
   },
@@ -307,6 +341,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Benjoin",
     family: "oriental",
     weight: 1.2,
+    color: "#B89060",
     boost: ["soir", "ramadan"],
     keywords: ["benjoin", "benzoin", "baume de tolu"],
   },
@@ -315,6 +350,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Styrax",
     family: "oriental",
     weight: 1.3,
+    color: "#A06848",
     boost: ["soir", "aid"],
     keywords: ["styrax", "labdanum", "ciste", "ciste-labdanum"],
   },
@@ -323,12 +359,13 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Élémi",
     family: "oriental",
     weight: 1.0,
+    color: "#C0A868",
     boost: ["soir"],
     keywords: ["élémi", "elemi", "résine d'élémi"],
   },
 
   // ══════════════════════════════════════════════════════════════
-  // IV. ÉPICÉS
+  // IV. ÉPICÉS — rouges, oranges vifs
   // ══════════════════════════════════════════════════════════════
 
   spicy: {
@@ -336,6 +373,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Épicé",
     family: "spicy",
     weight: 1.1,
+    color: "#C04028",
     boost: ["soir", "aid", "rendezvous"],
     keywords: ["épicé", "spicy", "épices", "notes épicées"],
   },
@@ -344,6 +382,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Épicé Frais",
     family: "spicy",
     weight: 1.0,
+    color: "#70B870",
     boost: ["quotidien", "business"],
     keywords: ["cardamome", "gingembre", "poivre rose", "baies de genièvre"],
   },
@@ -352,6 +391,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Épicé Chaud",
     family: "spicy",
     weight: 1.2,
+    color: "#D05020",
     boost: ["soir", "aid", "mariage"],
     keywords: ["cannelle", "clou de girofle", "muscade", "noix de muscade", "cumin"],
   },
@@ -360,6 +400,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Safran",
     family: "spicy",
     weight: 1.8,
+    color: "#E08820",
     boost: ["soir", "aid", "mariage", "rendezvous"],
     keywords: ["safran", "saffron"],
   },
@@ -368,6 +409,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Poivre Rose",
     family: "spicy",
     weight: 1.0,
+    color: "#D08080",
     boost: ["quotidien", "business", "soir"],
     keywords: ["poivre rose", "pink pepper", "poivre"],
   },
@@ -376,12 +418,13 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Cannelle",
     family: "spicy",
     weight: 1.1,
+    color: "#C06030",
     boost: ["soir", "aid", "rendezvous"],
     keywords: ["cannelle", "cinnamon"],
   },
 
   // ══════════════════════════════════════════════════════════════
-  // V. FRAIS, HESPÉRIDÉS & AROMATIQUES
+  // V. FRAIS, HESPÉRIDÉS & AROMATIQUES — verts, bleus clairs, jaunes
   // ══════════════════════════════════════════════════════════════
 
   citrus: {
@@ -389,6 +432,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Citrus",
     family: "fresh",
     weight: 1.0,
+    color: "#E8D040",
     boost: ["quotidien", "business"],
     keywords: ["citron", "bergamote", "mandarine", "pamplemousse", "orange", "lime", "yuzu", "agrumes"],
   },
@@ -397,6 +441,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Citrus Aromatique",
     family: "fresh",
     weight: 1.0,
+    color: "#D0C840",
     boost: ["quotidien", "business"],
     keywords: ["bergamote", "citrus aromatic", "néroli", "petit-grain"],
   },
@@ -405,6 +450,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Aromatique",
     family: "fresh",
     weight: 1.0,
+    color: "#78B870",
     boost: ["business", "quotidien"],
     keywords: ["aromatique", "aromatic", "herbal", "fines herbes"],
   },
@@ -413,6 +459,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Frais",
     family: "fresh",
     weight: 1.0,
+    color: "#80D0D8",
     boost: ["quotidien"],
     keywords: ["frais", "fresh", "légèreté"],
   },
@@ -421,6 +468,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Frais Aromatique",
     family: "fresh",
     weight: 1.0,
+    color: "#90C8A0",
     boost: ["quotidien", "business"],
     keywords: ["frais aromatique", "herbal fresh"],
   },
@@ -429,6 +477,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Fougère Aromatique",
     family: "fresh",
     weight: 1.1,
+    color: "#68A878",
     boost: ["business", "quotidien"],
     keywords: ["fougère", "fougere", "coumarine", "mousse de chêne"],
   },
@@ -437,6 +486,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Lavande",
     family: "fresh",
     weight: 1.0,
+    color: "#9090D0",
     boost: ["quotidien", "business"],
     keywords: ["lavande", "lavender"],
   },
@@ -445,6 +495,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Herbal",
     family: "fresh",
     weight: 0.9,
+    color: "#60A860",
     boost: ["quotidien"],
     keywords: ["sauge", "thym", "romarin", "basilic", "armoise", "herbe"],
   },
@@ -453,6 +504,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Vert",
     family: "fresh",
     weight: 0.9,
+    color: "#58A050",
     boost: ["quotidien"],
     keywords: ["vert", "green", "herbe coupée", "galbanum", "foin", "feuille"],
   },
@@ -461,6 +513,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Conifère",
     family: "fresh",
     weight: 0.9,
+    color: "#487840",
     boost: ["quotidien"],
     keywords: ["pin", "sapin", "conifère", "résine de sapin"],
   },
@@ -469,12 +522,13 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Thé",
     family: "fresh",
     weight: 1.1,
+    color: "#A8C890",
     boost: ["quotidien", "business"],
     keywords: ["thé", "tea", "thé noir", "thé vert", "matcha"],
   },
 
   // ══════════════════════════════════════════════════════════════
-  // VI. GOURMANDS
+  // VI. GOURMANDS — caramels, chocolats, crèmes
   // ══════════════════════════════════════════════════════════════
 
   gourmand: {
@@ -482,6 +536,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Gourmand",
     family: "gourmand",
     weight: 1.1,
+    color: "#C87840",
     boost: ["famille", "rendezvous"],
     keywords: ["gourmand", "sucré", "comestible"],
   },
@@ -490,6 +545,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Sucré",
     family: "gourmand",
     weight: 1.0,
+    color: "#E0A060",
     boost: ["famille", "rendezvous"],
     keywords: ["sucré", "sweet", "douceur"],
   },
@@ -498,6 +554,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Fruité Gourmand",
     family: "gourmand",
     weight: 1.1,
+    color: "#D08060",
     boost: ["famille", "rendezvous"],
     keywords: ["fruité sucré", "praline", "praliné", "fruit confit"],
   },
@@ -506,6 +563,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Chocolat",
     family: "gourmand",
     weight: 1.2,
+    color: "#6B3820",
     boost: ["rendezvous", "soir"],
     keywords: ["chocolat", "cacao", "chocolat mexicain"],
   },
@@ -514,6 +572,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Caramel",
     family: "gourmand",
     weight: 1.1,
+    color: "#D09040",
     boost: ["famille", "rendezvous"],
     keywords: ["caramel"],
   },
@@ -522,6 +581,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Miel & Cire",
     family: "gourmand",
     weight: 1.1,
+    color: "#E0B030",
     boost: ["ramadan", "famille"],
     keywords: ["miel", "honey", "cire d'abeille", "beeswax"],
   },
@@ -530,6 +590,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Amande",
     family: "gourmand",
     weight: 1.0,
+    color: "#D0B890",
     boost: ["famille", "rendezvous"],
     keywords: ["amande", "almond", "amande amère"],
   },
@@ -538,6 +599,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Café",
     family: "gourmand",
     weight: 1.2,
+    color: "#6B4028",
     boost: ["quotidien", "soir"],
     keywords: ["café", "coffee"],
   },
@@ -546,6 +608,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Coco",
     family: "gourmand",
     weight: 1.0,
+    color: "#E8D8A0",
     boost: ["famille"],
     keywords: ["coco", "noix de coco", "coconut"],
   },
@@ -554,6 +617,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Cerise",
     family: "gourmand",
     weight: 1.0,
+    color: "#C03050",
     boost: ["famille", "rendezvous"],
     keywords: ["cerise", "cherry", "griotte"],
   },
@@ -562,12 +626,13 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Lactonique",
     family: "gourmand",
     weight: 1.2,
+    color: "#F0E0C0",
     boost: ["rendezvous"],
     keywords: ["lactonique", "lactonic", "crème", "lait", "laiteux"],
   },
 
   // ══════════════════════════════════════════════════════════════
-  // VII. FRUITÉS
+  // VII. FRUITÉS — rouges, roses vifs, oranges
   // ══════════════════════════════════════════════════════════════
 
   fruity: {
@@ -575,6 +640,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Fruité",
     family: "fruity",
     weight: 1.0,
+    color: "#D05060",
     boost: ["quotidien", "famille"],
     keywords: ["fruité", "fruity", "fruit", "notes fruitées"],
   },
@@ -583,6 +649,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Floral Fruité",
     family: "fruity",
     weight: 1.0,
+    color: "#E07888",
     boost: ["mariage", "famille"],
     keywords: ["floral fruité", "pêche", "abricot", "mirabelle"],
   },
@@ -591,6 +658,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Tropical",
     family: "fruity",
     weight: 1.0,
+    color: "#E09040",
     boost: ["famille"],
     keywords: ["tropical", "mangue", "ananas", "fruit tropical"],
   },
@@ -599,6 +667,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Rhubarbe",
     family: "fruity",
     weight: 1.1,
+    color: "#C05870",
     boost: ["quotidien"],
     keywords: ["rhubarbe", "rhubarb", "acidulé"],
   },
@@ -607,12 +676,13 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Figue",
     family: "fruity",
     weight: 1.1,
+    color: "#906080",
     boost: ["quotidien", "rendezvous"],
     keywords: ["figue", "fig", "feuille de figuier"],
   },
 
   // ══════════════════════════════════════════════════════════════
-  // VIII. ANIMALIQUES & CUIRS
+  // VIII. ANIMALIQUES & CUIRS — bruns foncés, gris chauds
   // ══════════════════════════════════════════════════════════════
 
   animalic: {
@@ -620,6 +690,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Animalique",
     family: "animalic",
     weight: 1.4,
+    color: "#786050",
     boost: ["soir", "rendezvous"],
     keywords: ["animalique", "animal", "animalic"],
   },
@@ -628,6 +699,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Cuir",
     family: "animalic",
     weight: 1.3,
+    color: "#8B4A28",
     boost: ["soir", "business", "rendezvous"],
     keywords: ["cuir", "leather", "birkholz"],
   },
@@ -636,6 +708,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Suède",
     family: "animalic",
     weight: 1.2,
+    color: "#B08060",
     boost: ["rendezvous", "business"],
     keywords: ["suède", "suede", "cuir velouté"],
   },
@@ -644,6 +717,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Musqué",
     family: "animalic",
     weight: 1.1,
+    color: "#C0A898",
     boost: ["rendezvous", "soir"],
     keywords: ["musqué", "musky"],
   },
@@ -652,6 +726,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Musc",
     family: "animalic",
     weight: 1.1,
+    color: "#D0C0B0",
     boost: ["quotidien", "rendezvous"],
     keywords: ["musc", "musk", "musc blanc"],
   },
@@ -660,6 +735,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Ambre Gris",
     family: "animalic",
     weight: 1.6,
+    color: "#C8A870",
     boost: ["soir", "rendezvous", "mariage"],
     keywords: ["ambre gris", "ambergris", "ambroxan"],
   },
@@ -668,6 +744,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Civette",
     family: "animalic",
     weight: 1.3,
+    color: "#907068",
     boost: ["soir"],
     keywords: ["civette", "civet"],
   },
@@ -676,12 +753,13 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Castoreum",
     family: "animalic",
     weight: 1.4,
+    color: "#806058",
     boost: ["soir"],
     keywords: ["castoreum", "castor"],
   },
 
   // ══════════════════════════════════════════════════════════════
-  // IX. ATMOSPHÉRIQUES & EXPÉRIMENTAUX
+  // IX. ATMOSPHÉRIQUES & EXPÉRIMENTAUX — bleus, gris, noirs
   // ══════════════════════════════════════════════════════════════
 
   aquatic: {
@@ -689,6 +767,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Aquatique & Marin",
     family: "atmospheric",
     weight: 1.0,
+    color: "#4090C0",
     boost: ["quotidien"],
     keywords: ["marin", "aquatique", "marine", "mer", "calone", "algues", "iode", "notes marines"],
   },
@@ -697,6 +776,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Ozonique",
     family: "atmospheric",
     weight: 0.9,
+    color: "#80C8E0",
     boost: ["quotidien"],
     keywords: ["ozonique", "ozonic", "air frais", "vent"],
   },
@@ -705,6 +785,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Minéral",
     family: "atmospheric",
     weight: 1.0,
+    color: "#909898",
     boost: ["business"],
     keywords: ["minéral", "mineral", "silex", "sel", "pierre", "notes minérales"],
   },
@@ -713,6 +794,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Métallique",
     family: "atmospheric",
     weight: 1.0,
+    color: "#A0A8B0",
     boost: ["business", "soir"],
     keywords: ["métallique", "metallic", "aldéhydes"],
   },
@@ -721,6 +803,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Terreux",
     family: "atmospheric",
     weight: 1.0,
+    color: "#806848",
     boost: ["quotidien"],
     keywords: ["terreux", "earthy", "terre", "mousse de chêne", "géosmine"],
   },
@@ -729,6 +812,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Fumé",
     family: "atmospheric",
     weight: 1.2,
+    color: "#686870",
     boost: ["soir", "rendezvous"],
     keywords: ["fumé", "smoky", "smoke", "fumée", "vétiver fumé"],
   },
@@ -737,6 +821,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Tabac",
     family: "atmospheric",
     weight: 1.3,
+    color: "#806040",
     boost: ["soir", "rendezvous"],
     keywords: ["tabac", "tobacco", "fleur de tabac"],
   },
@@ -745,6 +830,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Aldéhydique",
     family: "atmospheric",
     weight: 1.2,
+    color: "#C8D0D8",
     boost: ["mariage", "soir"],
     keywords: ["aldéhydique", "aldehydic", "aldéhydes", "savonneux"],
   },
@@ -753,6 +839,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     label: "Alcoolisé",
     family: "atmospheric",
     weight: 1.1,
+    color: "#A08858",
     boost: ["soir"],
     keywords: ["cognac", "bourbon", "rhum", "whiskey", "champagne", "alcool"],
   },

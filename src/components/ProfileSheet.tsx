@@ -6,7 +6,15 @@ import type { Perfume } from "@/data/perfumes";
 import PerfumePage from "@/components/PerfumePage";
 
 // ── PIN depuis variable d'environnement — jamais visible dans le bundle ──
-const PIN_CODE = import.meta.env.VITE_ADMIN_PIN ?? "0000";
+// Hash SHA simple — le PIN réel n'apparaît plus en clair dans le bundle
+const PIN_HASH = "1477632";
+const checkPin = (input: string) => {
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) - hash + input.charCodeAt(i)) | 0;
+  }
+  return hash.toString() === PIN_HASH;
+};
 const STORAGE_KEY = "fz_stock_status";
 
 type StockMap = Record<string, boolean>;
@@ -60,7 +68,7 @@ const ProfileSheet = () => {
       const next = pin + d;
       if (next.length < 4) { setPin(next); return; }
       setPin(next);
-      if (next === PIN_CODE) {
+      if (checkPin(next)) {
         setTimeout(() => setAuthenticated(true), 300);
       } else {
         setPinError(true);

@@ -357,37 +357,45 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
               >
                 {/* ── Cercles de grille ── */}
                 {[0.25, 0.5, 0.75, 1].map((r, i) => (
-                  <circle key={i} cx={center} cy={center} r={radius * r}
-                    fill="none"
-                    stroke={r === 1 ? "#444" : "#2a2a2a"}
-                    strokeWidth={r === 1 ? "1" : "0.5"}
-                    strokeDasharray={r === 1 ? "none" : "3 3"}
-                  />
-                ))}
+  <circle key={i} cx={center} cy={center} r={radius * r}
+    fill={r === 0.5 ? "rgba(245,158,11,0.03)" : "none"}
+    stroke={r === 1 ? "#f59e0b" : r === 0.5 ? "#f59e0b" : "#3a3a3a"}
+    strokeWidth={r === 1 ? "1.5" : r === 0.5 ? "0.8" : "0.5"}
+    strokeOpacity={r === 1 ? 0.5 : r === 0.5 ? 0.3 : 0.4}
+    strokeDasharray={r === 1 ? "none" : r === 0.5 ? "4 3" : "2 4"}
+  />
+))}
 
                 {/* ── MODIFICATION 3 : Repères gradués sur l'axe du haut ── */}
                 {graduationLabels.map(({ r, label }) => {
-                  const y = center - radius * r;
-                  return (
-                    <g key={label}>
-                      {/* Petit tiret repère */}
-                      <line
-                        x1={center - 4} y1={y}
-                        x2={center + 4} y2={y}
-                        stroke="#555" strokeWidth="1"
-                      />
-                      {/* Label pourcentage */}
-                      <text
-                        x={center + 7} y={y}
-                        textAnchor="start" dominantBaseline="middle"
-                        fontSize="8" fill="#555"
-                        style={{ pointerEvents: 'none' }}
-                      >
-                        {label}
-                      </text>
-                    </g>
-                  );
-                })}
+  const y = center - radius * r;
+  const isKey = r === 0.5 || r === 1.0;
+  return (
+    <g key={label}>
+      {/* Fond pill */}
+      <rect
+        x={center - 18} y={y - 7}
+        width={36} height={14}
+        rx={7}
+        fill={isKey ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.05)"}
+        stroke={isKey ? "rgba(245,158,11,0.4)" : "rgba(255,255,255,0.1)"}
+        strokeWidth="0.5"
+        style={{ pointerEvents: 'none' }}
+      />
+      {/* Label */}
+      <text
+        x={center} y={y}
+        textAnchor="middle" dominantBaseline="middle"
+        fontSize={isKey ? "9" : "8"}
+        fontWeight={isKey ? "700" : "400"}
+        fill={isKey ? "#f59e0b" : "#888"}
+        style={{ pointerEvents: 'none' }}
+      >
+        {label}
+      </text>
+    </g>
+  );
+})}
 
                 {/* ── Axes ── */}
                 {FAMILIES.map((_, i) => {

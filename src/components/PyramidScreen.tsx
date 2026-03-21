@@ -350,7 +350,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   );
 
   return (
-    <div className="relative min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 touch-none select-none overflow-x-hidden overflow-y-auto">
+    <div className="relative min-h-screen bg-black text-white flex flex-col items-center pt-20 px-6 select-none overflow-x-hidden overflow-y-auto">
 
 
       <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
@@ -391,7 +391,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="relative z-10 w-full max-w-sm flex flex-col items-center"
+            className="relative z-10 w-full max-w-sm flex flex-col items-center touch-none"
           >
             <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">
               Affinez vos désirs

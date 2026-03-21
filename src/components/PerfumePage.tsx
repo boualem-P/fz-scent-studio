@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Calendar, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
-import { Perfume, getRelatedPerfumes } from "@/data/database";
+import { X, Wind, Droplets, Zap, ChevronRight, Plus } from "lucide-react";
+import { Perfume, PERFUMES } from "@/data/database";
 import { useRef, useEffect, useState, useMemo } from "react";
 import { getNoteImage } from "@/data/notesData";
 import NoteZoomModal from "@/components/NoteZoomModal";
@@ -20,18 +20,59 @@ const getDevice = (): DeviceType => {
   return "desktop";
 };
 
+// ── Remplace getRelatedPerfumes supprimé de database.ts ──────────
+function getRelatedPerfumes(perfume: Perfume, minCount: number = 5): Perfume[] {
+  const validGenders = (() => {
+    switch (perfume.gender) {
+      case "femme":   return ["femme", "unisexe"];
+      case "homme":   return ["homme", "unisexe"];
+      case "unisexe": return ["unisexe", "femme", "homme"];
+      default:        return ["femme", "homme", "unisexe"];
+    }
+  })();
+
+  const allNotes = [...perfume.topNotes, ...perfume.heartNotes, ...perfume.baseNotes];
+
+  const genderMatches = PERFUMES.filter(
+    (p) => p.id !== perfume.id && validGenders.includes(p.gender)
+  );
+
+  const scored = genderMatches.map((p) => {
+    const pNotes = [...p.topNotes, ...p.heartNotes, ...p.baseNotes];
+    const commonNotes = allNotes.filter((n) =>
+      pNotes.some((pn) => pn.toLowerCase() === n.toLowerCase())
+    ).length;
+    const sameBrand = p.brand === perfume.brand ? 2 : 0;
+    return { perfume: p, score: commonNotes + sameBrand };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  const noteMatches = scored.filter((s) => s.score > 0).map((s) => s.perfume);
+
+  if (noteMatches.length >= minCount) return noteMatches.slice(0, 8);
+
+  const remaining = genderMatches.filter(
+    (p) => !noteMatches.some((m) => m.id === p.id)
+  );
+
+  return [...noteMatches, ...remaining].slice(0, Math.max(minCount, 8));
+}
+
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [device, setDevice] = useState<DeviceType>("desktop");
   const [zoomedNote, setZoomedNote] = useState<{ name: string; image: string } | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Array<{x:number;y:number;vx:number;vy:number;size:number;color:string;alpha:number;glowSize:number;phase:number;pulsePhase:number}>>([]);
+  const particlesRef = useRef<Array<{
+    x: number; y: number; vx: number; vy: number;
+    size: number; color: string; alpha: number;
+    glowSize: number; phase: number; pulsePhase: number;
+  }>>([]);
   const animFrameRef = useRef<number>(0);
   const mouseSpeedRef = useRef(0);
   const timeRef = useRef(0);
 
-  // Détection device au montage + resize
   useEffect(() => {
     const update = () => setDevice(getDevice());
     update();
@@ -89,7 +130,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
         p.x += (p.vx + sway * 0.3) * boost;
         p.y += p.vy * boost;
         const dx = p.x - bottleCx, dy = p.y - bottleCy;
-        const distToBottle = Math.sqrt(dx*dx + dy*dy);
+        const distToBottle = Math.sqrt(dx * dx + dy * dy);
         if (distToBottle < pushRadius && intensity > 0.1) {
           const pushStrength = (1 - distToBottle / pushRadius) * intensity * 3;
           const angle = Math.atan2(dy, dx);
@@ -98,9 +139,9 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
         }
         if (p.x > w) p.x = 0; if (p.x < 0) p.x = w;
         if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
-        const cx = w/2, cy = h/2;
-        const distFromCenter = Math.sqrt((p.x-cx)**2 + (p.y-cy)**2);
-        const edgeFade = Math.max(0, 1 - (distFromCenter / (Math.max(w,h)*0.5)) * 0.3);
+        const cx = w / 2, cy = h / 2;
+        const distFromCenter = Math.sqrt((p.x - cx) ** 2 + (p.y - cy) ** 2);
+        const edgeFade = Math.max(0, 1 - (distFromCenter / (Math.max(w, h) * 0.5)) * 0.3);
         const pulse = 0.7 + 0.3 * Math.sin(time * 2.5 + p.pulsePhase);
         const dynamicAlpha = p.alpha * pulse * (0.6 + intensity * 0.4) * edgeFade;
         if (dynamicAlpha < 0.01) return;
@@ -117,19 +158,21 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       animFrameRef.current = requestAnimationFrame(draw);
     };
     animFrameRef.current = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(animFrameRef.current); window.removeEventListener("resize", resize); };
+    return () => {
+      cancelAnimationFrame(animFrameRef.current);
+      window.removeEventListener("resize", resize);
+    };
   }, []);
 
   const recommendations = useMemo(() => getRelatedPerfumes(perfume, 5), [perfume]);
 
   const stats = [
-    { label: "Tête", val: 85, icon: <Wind size={14}/>, notes: perfume.topNotesDetailed },
-    { label: "Cœur", val: 65, icon: <Droplets size={14}/>, notes: perfume.heartNotesDetailed },
-    { label: "Fond", val: 92, icon: <Zap size={14}/>, notes: perfume.baseNotesDetailed },
+    { label: "Tête",  val: 85, icon: <Wind size={14} />,     notes: perfume.topNotesDetailed },
+    { label: "Cœur",  val: 65, icon: <Droplets size={14} />, notes: perfume.heartNotesDetailed },
+    { label: "Fond",  val: 92, icon: <Zap size={14} />,      notes: perfume.baseNotesDetailed },
   ];
 
-  // ─── Blocs réutilisables ───────────────────────────────────────────
-
+  // ─── StatsList ────────────────────────────────────────────────────
   const StatsList = ({ compact = false }: { compact?: boolean }) => (
     <div className={compact ? "space-y-3" : "space-y-5"}>
       <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-600 font-bold border-b border-white/5 pb-2">
@@ -153,7 +196,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
               style={{ background: 'linear-gradient(90deg, #92400e 0%, #fbbf24 60%, #fffbeb 100%)' }}
             />
           </div>
-          {/* Notes : chips sur tablette, bulles sur mobile/PC */}
           {compact ? (
             <div className="flex flex-wrap gap-1.5 pt-0.5">
               {s.notes.map((note, idx) => (
@@ -191,6 +233,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
+  // ─── CarouselBlock ────────────────────────────────────────────────
   const CarouselBlock = ({ cardW, cardH, dragLeft }: { cardW: number; cardH: number; dragLeft: number }) => (
     <div className="mt-8 pt-5 border-t border-white/[0.05]">
       <div className="flex items-center justify-between mb-3">
@@ -201,8 +244,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
         </div>
       </div>
       <div ref={carouselRef} className="cursor-grab active:cursor-grabbing overflow-hidden">
-        <motion.div drag="x" dragConstraints={{ right: 0, left: dragLeft }}
-          className="flex gap-3 w-max pb-3">
+        <motion.div drag="x" dragConstraints={{ right: 0, left: dragLeft }} className="flex gap-3 w-max pb-3">
           {recommendations.map((rec) => (
             <motion.button key={rec.id} onClick={() => onSelectPerfume(rec)}
               className="group text-left space-y-1.5" style={{ width: cardW }} whileHover={{ y: -3 }}>
@@ -226,7 +268,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── Header commun ─────────────────────────────────────────────────
+  // ─── Header ───────────────────────────────────────────────────────
   const Header = () => (
     <div className="sticky top-0 z-[999] w-full pointer-events-none">
       <AnimatePresence>
@@ -257,9 +299,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   );
 
   // ──────────────────────────────────────────────────────────────────
-  //  RENDU SELON DEVICE
-  // ──────────────────────────────────────────────────────────────────
-
   return (
     <div className="relative min-h-screen bg-[#F5F0E8] text-black overflow-x-hidden selection:bg-amber-200 selection:text-black font-sans">
       <canvas ref={canvasRef} className="gold-dust-canvas" />
@@ -268,31 +307,22 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       {/* ── TABLETTE ── */}
       {device === "tablet" && (
         <div className="px-6 pt-4 pb-10 relative z-10">
-
-          {/* Titre */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="mb-5">
             <h1 className="text-4xl font-extralight italic tracking-tight uppercase leading-none">{perfume.name}</h1>
             <div className="flex items-center gap-3 mt-1">
               <p className="text-amber-500 tracking-[0.4em] uppercase text-[10px] font-black">{perfume.brand}</p>
               <div className="h-px flex-1 bg-white/10" />
-              <div className="flex items-center gap-1.5">
-                <Calendar size={10} className="text-amber-200/50" />
-                <span className="text-[9px] uppercase tracking-widest text-zinc-500">{perfume.year}</span>
-              </div>
+              <span className="text-[9px] uppercase tracking-widest text-zinc-500">{perfume.concentration}</span>
             </div>
           </motion.div>
 
-          {/* Image gauche + infos droite */}
           <div className="flex gap-6 items-start">
-
-            {/* Image */}
             <div className="flex-shrink-0 w-[240px] space-y-3">
               <div className="perfume-img-container perfume-studio-lighting gold-frame !h-[320px] bg-white/90 backdrop-blur-xl">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-                  style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
-                >
+                  style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <img src={perfume.image} className="perfume-img" alt={perfume.name} />
                   <div className="perfume-shine-overlay" />
                 </motion.div>
@@ -301,8 +331,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                 <p className="text-zinc-500 text-[11px] leading-relaxed font-extralight italic">{perfume.description}</p>
               </div>
             </div>
-
-            {/* Jauges + Notes style chips */}
             <div className="flex-1">
               <StatsList compact={true} />
             </div>
@@ -312,10 +340,9 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
         </div>
       )}
 
-      {/* ── MOBILE & PC (layout existant) ── */}
+      {/* ── MOBILE & PC ── */}
       {device !== "tablet" && (
         <div className="max-w-5xl mx-auto px-4 pt-4 pb-16 relative z-10">
-
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-6">
             <h1 className="text-3xl lg:text-5xl font-extralight italic tracking-tight uppercase leading-none mb-2">{perfume.name}</h1>
             <div className="flex items-center justify-center gap-6">
@@ -323,24 +350,19 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
               <p className="text-amber-500 tracking-[0.5em] uppercase text-[10px] font-black">{perfume.brand}</p>
               <div className="h-px w-12 bg-white/20" />
             </div>
+            <p className="text-[9px] uppercase tracking-widest text-zinc-500 mt-1">{perfume.concentration}</p>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-
             <div className="space-y-4">
-              <div className="perfume-img-container perfume-studio-lighting gold-frame !h-[280px] lg:!h-[320px] bg-zinc-950/20">
+              <div className="perfume-img-container perfume-studio-lighting gold-frame !h-[280px] lg:!h-[320px] bg-white">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                  style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
-                >
+                  style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <img src={perfume.image} className="perfume-img" alt={perfume.name} />
                   <div className="perfume-shine-overlay" />
                 </motion.div>
-                <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-xl px-3 py-1.5 rounded-full border border-white/10">
-                  <Calendar size={11} className="text-amber-200/70" />
-                  <span className="text-[8px] uppercase tracking-[0.3em] text-zinc-300">{perfume.year}</span>
-                </div>
               </div>
               <div className="relative px-4 py-3 border-l border-amber-500/20 bg-white/[0.02] rounded-r-xl">
                 <p className="text-zinc-400 text-sm leading-relaxed font-extralight italic">{perfume.description}</p>

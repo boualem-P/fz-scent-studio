@@ -173,7 +173,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
 
   const recommendations = useMemo(() => getRelatedPerfumes(perfume, 5), [perfume]);
 
-  // ── Accords principaux du parfum triés par poids ──────────────
+  // ── Accords principaux — ordre respecté depuis parfumAccords.ts ──
   const perfumeAccords = useMemo(() => {
     const ids = getAccordIdsForPerfume(perfume.id);
     return ids
@@ -201,7 +201,9 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     ...perfume.baseNotesDetailed.map(n => ({ ...n, layer: "Fond" })),
   ], [perfume]);
 
-  // ─── AccordsBlock — rectangles colorés style Fragrantica ──────
+  // ─── AccordsBlock ─────────────────────────────────────────────
+  // Ordre respecté depuis parfumAccords.ts (1er = accord le plus dominant)
+  // Largeur dégressive : 1er accord = 100%, chaque suivant perd 8%
   const AccordsBlock = () => (
     <div className="space-y-2">
       <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold pb-1">
@@ -209,15 +211,15 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       </h3>
       <div className="space-y-1.5">
         {perfumeAccords.map((accord, i) => {
-          const widthPct = Math.round(100 - (i * 8));
+          const widthPct = Math.max(60, 100 - i * 8);
           return (
             <motion.div
               key={accord.id}
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: "100%", opacity: 1 }}
-              transition={{ delay: i * 0.08, duration: 0.5, ease: "easeOut" }}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.08, duration: 0.4, ease: "easeOut" }}
               className="relative h-8 rounded-md overflow-hidden"
-              style={{ backgroundColor: `${accord.color}22` }}
+              style={{ backgroundColor: `${accord.color}18` }}
             >
               <motion.div
                 initial={{ width: 0 }}
@@ -228,7 +230,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
               />
               <span
                 className="absolute inset-0 flex items-center px-3 text-[11px] font-bold uppercase tracking-wider"
-                style={{ color: "#fff", textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}
+                style={{ color: "#fff", textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}
               >
                 {accord.label}
               </span>
@@ -258,7 +260,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
               initial={{ width: 0 }} animate={{ width: `${s.val}%` }}
               transition={{ duration: 1.5, delay: i * 0.15, ease: "circOut" }}
               className="h-full rounded-full"
-              style={{ background: 'linear-gradient(90deg, #92400e 0%, #fbbf24 60%, #fffbeb 100%)' }}
+              style={{ background: "linear-gradient(90deg, #92400e 0%, #fbbf24 60%, #fffbeb 100%)" }}
             />
           </div>
         </div>
@@ -345,7 +347,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
         {isScrolled && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="absolute inset-0"
-            style={{ backgroundColor: 'rgba(245,240,232,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(0,0,0,0.08)' }}
+            style={{ backgroundColor: "rgba(245,240,232,0.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,0,0,0.08)" }}
           />
         )}
       </AnimatePresence>
@@ -373,19 +375,16 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     <AnimatePresence>
       {notePanelNote && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setNotePanelNote(null)}
             className="fixed inset-0 z-[600] bg-black/30 backdrop-blur-sm"
           />
-          {/* Panneau */}
           <motion.div
             initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
             className="fixed inset-y-0 right-0 z-[601] w-full max-w-sm bg-[#F5F0E8] border-l border-black/10 flex flex-col overflow-hidden shadow-2xl"
           >
-            {/* Header panneau */}
             <div className="flex items-center gap-3 p-5 border-b border-black/10">
               <button
                 onClick={() => setNotePanelNote(null)}
@@ -408,8 +407,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                 </div>
               </div>
             </div>
-
-            {/* Liste des parfums */}
             <div className="flex-1 overflow-y-auto p-4">
               <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 mb-4">
                 {notePanelResults.length} parfum{notePanelResults.length > 1 ? "s" : ""} avec cette note
@@ -458,7 +455,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       {device !== "mobile" && (
         <div className="max-w-5xl mx-auto px-6 pt-4 pb-16 relative z-10">
 
-          {/* Titre */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="mb-6">
             <h1 className="text-4xl lg:text-5xl font-extralight italic tracking-tight uppercase leading-none">{perfume.name}</h1>
             <div className="flex items-center gap-3 mt-2">
@@ -468,10 +464,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
             </div>
           </motion.div>
 
-          {/* ── ZONE PRINCIPALE : Image + Accords ── */}
           <div className="flex gap-6 items-start">
-
-            {/* Colonne gauche : Image + Architecture sous l'image */}
             <div className="flex-shrink-0 w-[220px] lg:w-[260px]">
               <div className="perfume-img-container perfume-studio-lighting gold-frame !h-[300px] lg:!h-[340px] bg-white">
                 <motion.div
@@ -482,25 +475,20 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                   <div className="perfume-shine-overlay" />
                 </motion.div>
               </div>
-              {/* Architecture juste sous l'image */}
               <MiniStats />
             </div>
 
-            {/* Colonne droite : Accords principaux */}
             <div className="flex-1">
               <AccordsBlock />
             </div>
           </div>
 
-          {/* Description */}
           <div className="mt-6 px-4 py-3 border-l-2 border-amber-400/40 bg-white/60 rounded-r-xl">
             <p className="text-zinc-500 text-sm leading-relaxed font-extralight italic">{perfume.description}</p>
           </div>
 
-          {/* Toutes les sous-notes */}
           <AllNotesBlock />
 
-          {/* Sillages analogues */}
           <CarouselBlock
             cardW={device === "tablet" ? 140 : 160}
             cardH={device === "tablet" ? 170 : 200}
@@ -513,14 +501,12 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       {device === "mobile" && (
         <div className="px-4 pt-4 pb-16 relative z-10">
 
-          {/* Titre */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-4 text-center">
             <h1 className="text-3xl font-extralight italic tracking-tight uppercase leading-none">{perfume.name}</h1>
             <p className="text-zinc-700 tracking-[0.4em] uppercase text-[10px] font-black mt-1">{perfume.brand}</p>
             <p className="text-[9px] uppercase tracking-widest text-zinc-400 mt-0.5">{perfume.concentration}</p>
           </motion.div>
 
-          {/* Image */}
           <div className="perfume-img-container perfume-studio-lighting gold-frame !h-[260px] bg-white mb-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
@@ -531,23 +517,18 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
             </motion.div>
           </div>
 
-          {/* Architecture sous l'image */}
           <MiniStats />
 
-          {/* Accords */}
           <div className="mt-5">
             <AccordsBlock />
           </div>
 
-          {/* Description */}
           <div className="mt-5 px-3 py-3 border-l-2 border-amber-400/40 bg-white/60 rounded-r-xl">
             <p className="text-zinc-500 text-sm leading-relaxed font-extralight italic">{perfume.description}</p>
           </div>
 
-          {/* Sous-notes */}
           <AllNotesBlock />
 
-          {/* Carousel */}
           <CarouselBlock cardW={130} cardH={160} dragLeft={-(recommendations.length * 145 - 400)} />
         </div>
       )}

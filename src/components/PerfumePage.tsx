@@ -179,7 +179,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     return ids
       .map(id => ACCORDS_LIBRARY[id])
       .filter(Boolean)
-      .sort((a, b) => b.weight - a.weight)
       .slice(0, 6);
   }, [perfume.id]);
 
@@ -210,8 +209,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       </h3>
       <div className="space-y-1.5">
         {perfumeAccords.map((accord, i) => {
-          const maxWeight = perfumeAccords[0]?.weight ?? 1;
-          const widthPct = Math.round((accord.weight / maxWeight) * 100);
+          const widthPct = Math.round(100 - (i * 8));
           return (
             <motion.div
               key={accord.id}

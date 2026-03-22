@@ -868,7 +868,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     boost: ["rendezvous", "soir"],
     keywords: ["musqué", "musky"],
   },
-  mask: {
+  musk: {
     id: "musk",
     label: "Musc",
     emoji: "☁️",

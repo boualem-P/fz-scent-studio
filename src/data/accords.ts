@@ -538,7 +538,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
 
   citrus: {
     id: "citrus",
-    label: "Citrus",
+    label: "Agrumes",
     emoji: "🍋",
     description: "Écorces d'agrumes vives et tonifiantes",
     family: "fresh",

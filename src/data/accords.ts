@@ -1,5 +1,5 @@
 /**
- * ACCORDS_LIBRARY — Bibliothèque des 90 accords olfactifs
+ * ACCORDS_LIBRARY — Bibliothèque des 99 accords olfactifs
  * * Fusion Pro : Logique de scoring + Affichage UI (Emojis/Descriptions)
  * - id        : identifiant unique snake_case
  * - label     : nom affiché en français
@@ -26,8 +26,8 @@ export type AccordFamily =
 export interface Accord {
   id: string;
   label: string;
-  emoji: string;       // Ajout Remix
-  description: string; // Ajout Remix
+  emoji: string;
+  description: string;
   family: AccordFamily;
   weight: number;
   color: string;
@@ -117,6 +117,30 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     color: "#B8A0D0",
     boost: ["business", "mariage"],
     keywords: ["iris", "poudré", "orris", "powdery"],
+  },
+  // ── NOUVEAU : iris pur séparé de iris_powdery ─────────────────
+  iris: {
+    id: "iris",
+    label: "Iris",
+    emoji: "🪻",
+    description: "Racine d'iris froide, poudrée et végétale",
+    family: "floral",
+    weight: 1.2,
+    color: "#C8A8D8",
+    boost: ["business", "mariage", "rendezvous"],
+    keywords: ["iris", "orris", "racine d'iris"],
+  },
+  // ── NOUVEAU : poudré distinct de iris_powdery ─────────────────
+  powdery: {
+    id: "powdery",
+    label: "Poudré",
+    emoji: "🧁",
+    description: "Effet talc cosmétique, doux et rétro",
+    family: "floral",
+    weight: 1.1,
+    color: "#E8D0E8",
+    boost: ["mariage", "rendezvous", "business"],
+    keywords: ["poudré", "powdery", "talc", "cosmétique"],
   },
   violet: {
     id: "violet",
@@ -600,6 +624,30 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     boost: ["quotidien"],
     keywords: ["sauge", "thym", "romarin", "basilic", "armoise", "herbe"],
   },
+  // ── NOUVEAU : sage distinct de herbal ────────────────────────
+  sage: {
+    id: "sage",
+    label: "Sauge",
+    emoji: "🌿",
+    description: "Sauge aromatique, camphrée et médicinale",
+    family: "fresh",
+    weight: 1.0,
+    color: "#88A878",
+    boost: ["business", "quotidien"],
+    keywords: ["sauge", "sage", "clary sage"],
+  },
+  // ── NOUVEAU : mint distinct de fresh ─────────────────────────
+  mint: {
+    id: "mint",
+    label: "Menthe",
+    emoji: "🫧",
+    description: "Fraîcheur polaire de la menthe poivrée",
+    family: "fresh",
+    weight: 1.0,
+    color: "#70D8A0",
+    boost: ["quotidien"],
+    keywords: ["menthe", "mint", "menthe poivrée", "menthe verte"],
+  },
   green: {
     id: "green",
     label: "Vert",
@@ -682,6 +730,18 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     boost: ["rendezvous", "soir"],
     keywords: ["chocolat", "cacao", "chocolat mexicain"],
   },
+  // ── NOUVEAU : cacao distinct de chocolate ─────────────────────
+  cacao: {
+    id: "cacao",
+    label: "Cacao",
+    emoji: "🫘",
+    description: "Fève de cacao brute, amère et intense",
+    family: "gourmand",
+    weight: 1.1,
+    color: "#7B4A2A",
+    boost: ["soir", "rendezvous"],
+    keywords: ["cacao", "fève de cacao", "poudre de cacao"],
+  },
   caramel: {
     id: "caramel",
     label: "Caramel",
@@ -714,6 +774,18 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     color: "#D0B890",
     boost: ["famille", "rendezvous"],
     keywords: ["amande", "almond", "amande amère"],
+  },
+  // ── NOUVEAU : nutty distinct de almond ────────────────────────
+  nutty: {
+    id: "nutty",
+    label: "Noisette",
+    emoji: "🌰",
+    description: "Noisette, noix et amandes torréfiées",
+    family: "gourmand",
+    weight: 1.0,
+    color: "#C8A870",
+    boost: ["famille", "rendezvous"],
+    keywords: ["noisette", "noix", "nutty", "praline", "torréfié"],
   },
   coffee: {
     id: "coffee",
@@ -928,6 +1000,18 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     boost: ["quotidien"],
     keywords: ["marin", "aquatique", "marine", "mer", "calone", "algues", "iode", "notes marines"],
   },
+  // ── NOUVEAU : marine distinct de aquatic ─────────────────────
+  marine: {
+    id: "marine",
+    label: "Marin",
+    emoji: "⚓",
+    description: "Embruns marins, air salin et océan",
+    family: "atmospheric",
+    weight: 1.0,
+    color: "#5BA8D4",
+    boost: ["quotidien"],
+    keywords: ["marin", "marine", "embruns", "océan", "bord de mer"],
+  },
   ozonic: {
     id: "ozonic",
     label: "Ozonique",
@@ -950,6 +1034,30 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     boost: ["business"],
     keywords: ["minéral", "mineral", "silex", "sel", "pierre", "notes minérales"],
   },
+  // ── NOUVEAU : salty distinct de mineral ──────────────────────
+  salty: {
+    id: "salty",
+    label: "Salé",
+    emoji: "🧂",
+    description: "Cristaux de sel marin, note salée et sèche",
+    family: "atmospheric",
+    weight: 0.9,
+    color: "#A8C0C8",
+    boost: ["quotidien"],
+    keywords: ["salé", "salty", "sel", "cristaux de sel"],
+  },
+  // ── NOUVEAU : mossy distinct de earthy ───────────────────────
+  mossy: {
+    id: "mossy",
+    label: "Mousse",
+    emoji: "🌿",
+    description: "Mousse de chêne, sous-bois humide et vert",
+    family: "atmospheric",
+    weight: 1.1,
+    color: "#6B8B50",
+    boost: ["quotidien", "rendezvous"],
+    keywords: ["mousse", "mossy", "mousse de chêne", "sous-bois", "oakmoss"],
+  },
   metallic: {
     id: "metallic",
     label: "Métallique",
@@ -970,7 +1078,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
     weight: 1.0,
     color: "#806848",
     boost: ["quotidien"],
-    keywords: ["terreux", "earthy", "terre", "mousse de chêne", "géosmine"],
+    keywords: ["terreux", "earthy", "terre", "géosmine"],
   },
   smoky: {
     id: "smoky",

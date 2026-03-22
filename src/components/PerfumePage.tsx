@@ -58,19 +58,19 @@ function getPerfumesWithNote(noteName: string): Perfume[] {
   });
 }
 
-// ── Config sillage & longévité ────────────────────────────────────
+// ── Config sillage & longévité ─────────────────────────────────
 const SILLAGE_CONFIG = {
-  "discret":   { label: "Discret",   bars: 1 },
-  "modéré":    { label: "Modéré",    bars: 2 },
-  "fort":      { label: "Fort",      bars: 3 },
-  "très fort": { label: "Très Fort", bars: 4 },
+  "discret":   { label: "Discret",   bars: 1, emoji: "🌬️" },
+  "modéré":    { label: "Modéré",    bars: 2, emoji: "💨"  },
+  "fort":      { label: "Fort",      bars: 3, emoji: "💨"  },
+  "très fort": { label: "Très Fort", bars: 4, emoji: "🌊"  },
 } as const;
 
 const LONGEVITE_CONFIG = {
-  "2-4h": { label: "2 - 4 h", bars: 1 },
-  "4-6h": { label: "4 - 6 h", bars: 2 },
-  "6-8h": { label: "6 - 8 h", bars: 3 },
-  "8h+":  { label: "8 h +",   bars: 4 },
+  "2-4h": { label: "2 - 4 h", bars: 1, emoji: "⏳" },
+  "4-6h": { label: "4 - 6 h", bars: 2, emoji: "⏳" },
+  "6-8h": { label: "6 - 8 h", bars: 3, emoji: "⌛" },
+  "8h+":  { label: "8 h +",   bars: 4, emoji: "⌛" },
 } as const;
 
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
@@ -304,62 +304,28 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── ProfilOlfactif — style Fragrantica ────────────────────────
-  // 4 barres segmentées : 1 = discret, 2 = modéré, 3 = fort, 4 = très fort
+  // ─── ProfilOlfactif — style Fragrantica avec emojis ────────────
   const ProfilOlfactif = () => {
-   const ProfilOlfactif = () => {
-  if (!perfume.sillage && !perfume.longevite) return null;
+    if (!perfume.sillage && !perfume.longevite) return null;
 
-  const sillage = perfume.sillage ? SILLAGE_CONFIG[perfume.sillage] : null;
-  const longevite = perfume.longevite ? LONGEVITE_CONFIG[perfume.longevite] : null;
+    const sillage = perfume.sillage ? SILLAGE_CONFIG[perfume.sillage] : null;
+    const longevite = perfume.longevite ? LONGEVITE_CONFIG[perfume.longevite] : null;
 
-  const longeviteEmoji: Record<string, string> = {
-    "2-4h": "⏳", "4-6h": "⏳", "6-8h": "⌛", "8h+": "⌛",
-  };
-  const sillageEmoji: Record<string, string> = {
-    "discret": "〰️", "modéré": "≈", "fort": "≈", "très fort": "≈",
-  };
-
-  return (
-    <div className="mt-6 pt-5 border-t border-black/10">
-      <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-4">
-        Profil Olfactif
-      </h3>
-      <div className="grid grid-cols-2 gap-3">
-        {longevite && (
-          <div className="bg-white rounded-xl border border-black/8 px-4 py-3 flex items-center gap-3">
-            <span className="text-2xl leading-none flex-shrink-0">
-              {longeviteEmoji[perfume.longevite!]}
-            </span>
-            <div>
-              <p className="text-base font-bold text-zinc-800 leading-tight">
-                {longevite.label}
-              </p>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 mt-0.5">
-                Longévité
-              </p>
-            </div>
-          </div>
-        )}
-        {sillage && (
-          <div className="bg-white rounded-xl border border-black/8 px-4 py-3 flex items-center gap-3">
-            <span className="text-2xl leading-none flex-shrink-0">
-              {sillageEmoji[perfume.sillage!]}
-            </span>
-            <div>
-              <p className="text-base font-bold text-zinc-800 leading-tight">
-                {sillage.label}
-              </p>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 mt-0.5">
-                Sillage
-              </p>
-            </div>
-          </div>
-        )}
+    const SegmentBar = ({ activeBars }: { activeBars: number }) => (
+      <div className="flex gap-1 mt-2 mb-1">
+        {[1, 2, 3, 4].map((bar) => (
+          <motion.div
+            key={bar}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ delay: bar * 0.08, duration: 0.4, ease: "easeOut" }}
+            className="flex-1 h-1.5 rounded-full origin-left"
+            style={{ backgroundColor: bar <= activeBars ? "#1a1a1a" : "#e4e4e7" }}
+          />
+        ))}
       </div>
-    </div>
-  );
-};
+    );
+
     return (
       <div className="mt-6 pt-5 border-t border-black/10">
         <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-4">
@@ -368,8 +334,8 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
         <div className="grid grid-cols-2 gap-4">
           {longevite && (
             <div className="bg-white rounded-xl border border-black/8 px-4 pt-3 pb-4">
-              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400">
-                Longévité
+              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 flex items-center gap-1.5">
+                <span>{longevite.emoji}</span> Longévité
               </p>
               <SegmentBar activeBars={longevite.bars} />
               <p className="text-sm font-semibold text-zinc-800 mt-1">{longevite.label}</p>
@@ -377,8 +343,8 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           )}
           {sillage && (
             <div className="bg-white rounded-xl border border-black/8 px-4 pt-3 pb-4">
-              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400">
-                Sillage
+              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 flex items-center gap-1.5">
+                <span>{sillage.emoji}</span> Sillage
               </p>
               <SegmentBar activeBars={sillage.bars} />
               <p className="text-sm font-semibold text-zinc-800 mt-1">{sillage.label}</p>

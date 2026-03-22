@@ -60,18 +60,24 @@ function getPerfumesWithNote(noteName: string): Perfume[] {
 
 // ── Config sillage & longévité ─────────────────────────────────
 const SILLAGE_CONFIG = {
-  "discret":   { label: "Discret",   sublabel: "Proche de la peau", arcs: 1 },
-  "modéré":    { label: "Modéré",    sublabel: "Perceptible",        arcs: 2 },
-  "fort":      { label: "Fort",      sublabel: "Très perceptible",   arcs: 3 },
-  "très fort": { label: "Très Fort", sublabel: "Enveloppant",        arcs: 4 },
+  "discret":   { label: "Discret",   bars: 1 },
+  "modéré":    { label: "Modéré",    bars: 2 },
+  "fort":      { label: "Fort",      bars: 3 },
+  "très fort": { label: "Très Fort", bars: 4 },
 } as const;
 
 const LONGEVITE_CONFIG = {
-  "2-4h": { label: "2 - 4 h", sublabel: "Légère",    dashOffset: 75 },
-  "4-6h": { label: "4 - 6 h", sublabel: "Modérée",   dashOffset: 50 },
-  "6-8h": { label: "6 - 8 h", sublabel: "Intense",   dashOffset: 25 },
-  "8h+":  { label: "8 h +",   sublabel: "Extrême",   dashOffset: 0  },
+  "2-4h": { label: "2 - 4 h", bars: 1 },
+  "4-6h": { label: "4 - 6 h", bars: 2 },
+  "6-8h": { label: "6 - 8 h", bars: 3 },
+  "8h+":  { label: "8 h +",   bars: 4 },
 } as const;
+
+// ── Couleurs Jour / Nuit ───────────────────────────────────────
+const JOUR_COLOR  = "#E8C97A"; // doré chaud
+const JOUR_TEXT   = "#7a5a00"; // texte sur fond doré
+const NUIT_COLOR  = "#2C2C4A"; // bleu nuit profond
+const NUIT_TEXT   = "#ffffff"; // texte sur fond nuit
 
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -267,43 +273,35 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── AllNotesBlock — grille de carrés ─────────────────────────
-  // compact=true  → utilisé dans la colonne droite desktop (sous les accords)
-  // compact=false → utilisé en mobile (pleine largeur)
-  const AllNotesBlock = ({ compact = false }: { compact?: boolean }) => (
-    <div className={compact ? "mt-5" : "mt-6 pt-5 border-t border-black/10"}>
+  // ─── AllNotesBlock ─────────────────────────────────────────────
+  const AllNotesBlock = () => (
+    <div className="mt-6 pt-5 border-t border-black/10">
       <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-3">
         Notes Olfactives
       </h3>
-      <div
-        className="grid gap-2"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))" }}
-      >
+      <div className="flex flex-wrap gap-2">
         {allNotes.map((note, idx) => (
           <motion.button
             key={idx}
-            initial={{ opacity: 0, scale: 0.88 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: idx * 0.025, duration: 0.3 }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.03 }}
             onClick={() => setNotePanelNote(note.name)}
-            className="group flex flex-col items-center gap-1 p-2 rounded-xl bg-white border border-black/8 hover:border-amber-400 hover:bg-amber-50 transition-all shadow-sm"
+            className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-black/10 hover:border-amber-400 hover:bg-amber-50 transition-all shadow-sm"
           >
-            {/* Image carrée */}
-            <div className="w-full aspect-square rounded-lg overflow-hidden border border-black/6 bg-zinc-50">
+            <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 border border-black/10">
               <img
                 src={getNoteImage(note.name)}
                 loading="lazy"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-cover"
                 alt={note.name}
-                onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=80&h=80&fit=crop&q=80"; }}
+                onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=40&h=40&fit=crop&q=80"; }}
               />
             </div>
-            {/* Nom */}
-            <span className="text-[9px] uppercase tracking-wide text-zinc-600 group-hover:text-amber-700 transition-colors text-center leading-tight font-medium w-full line-clamp-2">
+            <span className="text-[10px] uppercase tracking-wide text-zinc-600 group-hover:text-amber-700 transition-colors whitespace-nowrap font-medium">
               {note.name}
             </span>
-            {/* Layer */}
-            <span className="text-[7px] uppercase tracking-widest text-zinc-300 group-hover:text-amber-300 transition-colors">
+            <span className="text-[8px] text-zinc-300 group-hover:text-amber-300">
               {note.layer}
             </span>
           </motion.button>
@@ -313,57 +311,120 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   );
 
   // ─── ProfilOlfactif ────────────────────────────────────────────
+  // 3 cartes : Longévité (barres) + Sillage (barres) + Journée (jauge Jour/Nuit)
   const ProfilOlfactif = () => {
-    if (!perfume.sillage && !perfume.longevite) return null;
+    if (!perfume.sillage && !perfume.longevite && perfume.jourPct === undefined) return null;
 
-    const sillage = perfume.sillage ? SILLAGE_CONFIG[perfume.sillage] : null;
+    const sillage  = perfume.sillage   ? SILLAGE_CONFIG[perfume.sillage]   : null;
     const longevite = perfume.longevite ? LONGEVITE_CONFIG[perfume.longevite] : null;
+    const jourPct  = perfume.jourPct   ?? 50;
+    const nuitPct  = 100 - jourPct;
 
-    const FlaconsVapeur = ({ arcs }: { arcs: number }) => (
-      <svg viewBox="0 0 72 72" style={{ width: "64px", display: "block", margin: "0 auto" }}>
-        <rect x="10" y="32" width="22" height="30" rx="4" fill="#f8f8f8" stroke="#1a1a1a" strokeWidth="1.4"/>
-        <rect x="15" y="25" width="12" height="9" rx="2" fill="#f8f8f8" stroke="#1a1a1a" strokeWidth="1.2"/>
-        <line x1="10" y1="39" x2="32" y2="39" stroke="#1a1a1a" strokeWidth="0.5" opacity={0.18}/>
-        <rect x="13" y="62" width="16" height="3" rx="1.5" fill="#1a1a1a" opacity={0.1}/>
-        <rect x="20" y="17" width="2" height="9" rx="1" fill="#1a1a1a"/>
-        <rect x="14" y="14" width="14" height="4" rx="2" fill="#1a1a1a"/>
-        {arcs >= 1 && <path d="M 34 26 A 10 10 0 0 1 34 46" fill="none" stroke="#1a1a1a" strokeWidth="2.2" strokeLinecap="round" opacity={0.78}/>}
-        {arcs >= 2 && <path d="M 34 19 A 17 17 0 0 1 34 53" fill="none" stroke="#1a1a1a" strokeWidth="1.6" strokeLinecap="round" opacity={0.42}/>}
-        {arcs >= 3 && <path d="M 34 12 A 24 24 0 0 1 34 60" fill="none" stroke="#1a1a1a" strokeWidth="1.1" strokeLinecap="round" opacity={0.18}/>}
-        {arcs >= 4 && <path d="M 34 5 A 31 31 0 0 1 34 67" fill="none" stroke="#1a1a1a" strokeWidth="0.7" strokeLinecap="round" opacity={0.08}/>}
+    const SegmentBar = ({ activeBars }: { activeBars: number }) => (
+      <div className="flex gap-1 mt-2 mb-1">
+        {[1, 2, 3, 4].map((bar) => (
+          <motion.div
+            key={bar}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ delay: bar * 0.08, duration: 0.4, ease: "easeOut" }}
+            className="flex-1 h-1.5 rounded-full origin-left"
+            style={{ backgroundColor: bar <= activeBars ? "#1a1a1a" : "#e4e4e7" }}
+          />
+        ))}
+      </div>
+    );
+
+    // Icône soleil SVG
+    const SunIcon = ({ color }: { color: string }) => (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    );
+
+    // Icône lune SVG
+    const MoonIcon = ({ color }: { color: string }) => (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
       </svg>
     );
 
     return (
-      <div className="mt-5 pt-5 border-t border-black/10">
+      <div className="mt-6 pt-5 border-t border-black/10">
         <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-4">
           Profil Olfactif
         </h3>
-        <div className="grid grid-cols-2 gap-3">
+
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          {/* Longévité */}
           {longevite && (
-            <div className="bg-white rounded-xl border border-black/[0.06] px-3 pt-3 pb-3 flex flex-col items-center">
-              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 mb-2 self-start">Longévité</p>
-              <svg viewBox="0 0 80 48" style={{ width: "72px" }}>
-                <path d="M 8 44 A 32 32 0 0 1 72 44" fill="none" stroke="#f0ede8" strokeWidth="5" strokeLinecap="round"/>
-                <path d="M 8 44 A 32 32 0 0 1 72 44" fill="none" stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
-                  strokeDasharray="100" strokeDashoffset={longevite.dashOffset}/>
-                <text x="40" y="36" textAnchor="middle" fontSize="12" fontWeight="700" fill="#1a1a1a" fontFamily="Georgia, serif">
-                  {longevite.label}
-                </text>
-              </svg>
-              <p className="text-[8px] uppercase tracking-[0.15em] text-zinc-400 mt-1.5">{longevite.sublabel}</p>
+            <div className="bg-white rounded-xl border border-black/8 px-4 pt-3 pb-4">
+              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400">Longévité</p>
+              <SegmentBar activeBars={longevite.bars} />
+              <p className="text-sm font-semibold text-zinc-800 mt-1">{longevite.label}</p>
             </div>
           )}
+
+          {/* Sillage */}
           {sillage && (
-            <div className="bg-white rounded-xl border border-black/[0.06] px-3 pt-3 pb-3 flex flex-col items-center">
-              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 mb-2 self-start">Sillage</p>
-              <FlaconsVapeur arcs={sillage.arcs} />
-              <p className="text-[11px] font-semibold text-zinc-800 mt-1" style={{ fontFamily: "Georgia, serif", letterSpacing: "0.04em" }}>
-                {sillage.label}
-              </p>
-              <p className="text-[8px] uppercase tracking-[0.15em] text-zinc-400 mt-0.5">{sillage.sublabel}</p>
+            <div className="bg-white rounded-xl border border-black/8 px-4 pt-3 pb-4">
+              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400">Sillage</p>
+              <SegmentBar activeBars={sillage.bars} />
+              <p className="text-sm font-semibold text-zinc-800 mt-1">{sillage.label}</p>
             </div>
           )}
+        </div>
+
+        {/* Journée — jauge proportionnelle Jour / Nuit */}
+        <div className="bg-white rounded-xl border border-black/8 px-4 pt-3 pb-4">
+          <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 mb-3">Journée</p>
+          <div className="rounded-lg overflow-hidden flex" style={{ height: "34px" }}>
+
+            {/* Segment Jour */}
+            {jourPct > 0 && (
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${jourPct}%` }}
+                transition={{ duration: 0.8, ease: "circOut" }}
+                className="flex items-center justify-center gap-1.5 overflow-hidden"
+                style={{ backgroundColor: JOUR_COLOR, minWidth: jourPct > 0 ? "28px" : 0 }}
+              >
+                <SunIcon color={JOUR_TEXT} />
+                {jourPct >= 20 && (
+                  <span style={{ fontSize: "10px", fontWeight: 700, color: JOUR_TEXT, whiteSpace: "nowrap" }}>
+                    {jourPct >= 40 ? `Jour · ${jourPct}%` : `${jourPct}%`}
+                  </span>
+                )}
+              </motion.div>
+            )}
+
+            {/* Segment Nuit */}
+            {nuitPct > 0 && (
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${nuitPct}%` }}
+                transition={{ duration: 0.8, ease: "circOut" }}
+                className="flex items-center justify-center gap-1.5 overflow-hidden"
+                style={{ backgroundColor: NUIT_COLOR, minWidth: nuitPct > 0 ? "28px" : 0 }}
+              >
+                <MoonIcon color={NUIT_TEXT} />
+                {nuitPct >= 20 && (
+                  <span style={{ fontSize: "10px", fontWeight: 700, color: NUIT_TEXT, whiteSpace: "nowrap" }}>
+                    {nuitPct >= 40 ? `Nuit · ${nuitPct}%` : `${nuitPct}%`}
+                  </span>
+                )}
+              </motion.div>
+            )}
+
+          </div>
         </div>
       </div>
     );
@@ -519,7 +580,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
       {device !== "mobile" && (
         <div className="max-w-5xl mx-auto px-6 pt-4 pb-16 relative z-10">
 
-          {/* Titre */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="mb-6">
             <h1 className="text-4xl lg:text-5xl font-extralight italic tracking-tight uppercase leading-none">{perfume.name}</h1>
             <div className="flex items-center gap-3 mt-2">
@@ -529,10 +589,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
             </div>
           </motion.div>
 
-          {/* ── 2 colonnes principales ── */}
           <div className="flex gap-6 items-start">
-
-            {/* Gauche : Image + MiniStats + ProfilOlfactif */}
             <div className="flex-shrink-0 w-[220px] lg:w-[260px]">
               <div className="perfume-img-container perfume-studio-lighting gold-frame !h-[300px] lg:!h-[340px] bg-white">
                 <motion.div
@@ -544,21 +601,18 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                 </motion.div>
               </div>
               <MiniStats />
-              <ProfilOlfactif />
             </div>
-
-            {/* Droite : Accords + Notes olfactives en carrés */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1">
               <AccordsBlock />
-              <AllNotesBlock compact />
             </div>
-
           </div>
 
-          {/* Description pleine largeur */}
           <div className="mt-6 px-4 py-3 border-l-2 border-amber-400/40 bg-white/60 rounded-r-xl">
             <p className="text-zinc-500 text-sm leading-relaxed font-extralight italic">{perfume.description}</p>
           </div>
+
+          <AllNotesBlock />
+          <ProfilOlfactif />
 
           <CarouselBlock
             cardW={device === "tablet" ? 140 : 160}
@@ -594,12 +648,11 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
             <AccordsBlock />
           </div>
 
-          <AllNotesBlock />
-
           <div className="mt-5 px-3 py-3 border-l-2 border-amber-400/40 bg-white/60 rounded-r-xl">
             <p className="text-zinc-500 text-sm leading-relaxed font-extralight italic">{perfume.description}</p>
           </div>
 
+          <AllNotesBlock />
           <ProfilOlfactif />
 
           <CarouselBlock cardW={130} cardH={160} dragLeft={-(recommendations.length * 145 - 400)} />

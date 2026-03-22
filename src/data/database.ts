@@ -19,6 +19,9 @@ export interface Perfume {
   accordIds?: string[];
   sillage?: "discret" | "modéré" | "fort" | "très fort";
   longevite?: "2-4h" | "4-6h" | "6-8h" | "8h+";
+  // jourPct : pourcentage jour (0-100), nuit = 100 - jourPct
+  // 100 = 100% jour, 0 = 100% nuit, 50 = équilibré
+  jourPct?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100;
 }
 
 export const PERFUMES: Perfume[] = [
@@ -38,6 +41,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Musc" }, { name: "Vanille" }],
     sillage: "fort",
     longevite: "6-8h",
+    jourPct: 60,
   },
   {
     id: "la-vie-est-belle",
@@ -55,6 +59,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Praline" }, { name: "Patchouli" }, { name: "Fève Tonka" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 50,
   },
   {
     id: "black-opium",
@@ -72,6 +77,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Bois de Cachemire" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 20,
   },
   {
     id: "the-noir-29",
@@ -89,6 +95,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Tabac" }, { name: "Foin" }],
     sillage: "modéré",
     longevite: "6-8h",
+    jourPct: 50,
   },
   {
     id: "santal-33",
@@ -106,6 +113,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Cèdre" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 50,
   },
   {
     id: "fahrenheit-dior",
@@ -123,6 +131,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Vétiver" }],
     sillage: "fort",
     longevite: "6-8h",
+    jourPct: 40,
   },
   {
     id: "spicebomb",
@@ -140,6 +149,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Tabac" }, { name: "Cuir" }],
     sillage: "fort",
     longevite: "6-8h",
+    jourPct: 30,
   },
   {
     id: "l-interdit",
@@ -157,6 +167,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Patchouli" }, { name: "Vétiver" }, { name: "Ambroxan" }],
     sillage: "fort",
     longevite: "6-8h",
+    jourPct: 30,
   },
   {
     id: "her-burberry",
@@ -174,6 +185,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Ambre" }, { name: "Musc" }],
     sillage: "modéré",
     longevite: "4-6h",
+    jourPct: 60,
   },
   {
     id: "libre-ysl",
@@ -191,6 +203,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Ambre gris" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 50,
   },
   {
     id: "good-girl",
@@ -208,6 +221,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Fève Tonka" }, { name: "Cacao" }, { name: "Praline" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 30,
   },
   {
     id: "gentleman-givenchy",
@@ -225,6 +239,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vanille noire" }, { name: "Baume de Tolu" }, { name: "Patchouli" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 40,
   },
   {
     id: "nomade-chloe",
@@ -242,6 +257,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Mousse de chêne" }, { name: "Patchouli" }],
     sillage: "modéré",
     longevite: "6-8h",
+    jourPct: 60,
   },
   {
     id: "le-lion-chanel",
@@ -259,6 +275,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Patchouli" }, { name: "Vanille" }],
     sillage: "très fort",
     longevite: "8h+",
+    jourPct: 20,
   },
   {
     id: "sauvage-dior",
@@ -276,6 +293,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Ambroxan" }, { name: "Vanille" }],
     sillage: "très fort",
     longevite: "8h+",
+    jourPct: 60,
   },
   {
     id: "bleu-de-chanel",
@@ -293,6 +311,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Encens" }, { name: "Cèdre" }, { name: "Santal" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 70,
   },
   {
     id: "aventus-creed",
@@ -310,6 +329,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Musc" }, { name: "Ambre gris" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 70,
   },
   {
     id: "la-nuit-de-l-homme",
@@ -327,6 +347,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vétiver" }, { name: "Coumarine" }],
     sillage: "fort",
     longevite: "6-8h",
+    jourPct: 10,
   },
   {
     id: "acqua-di-gio",
@@ -344,6 +365,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Musc blanc" }, { name: "Cèdre" }],
     sillage: "modéré",
     longevite: "4-6h",
+    jourPct: 90,
   },
   {
     id: "terre-d-hermes",
@@ -361,6 +383,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vétiver" }, { name: "Cèdre" }, { name: "Benjoin" }],
     sillage: "fort",
     longevite: "6-8h",
+    jourPct: 80,
   },
   {
     id: "le-male-jpg",
@@ -378,6 +401,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Fève Tonka" }],
     sillage: "fort",
     longevite: "6-8h",
+    jourPct: 40,
   },
   {
     id: "eros-versace",
@@ -395,6 +419,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Cèdre" }],
     sillage: "très fort",
     longevite: "8h+",
+    jourPct: 60,
   },
   {
     id: "baccarat-rouge-540",
@@ -412,6 +437,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Résine de sapin" }, { name: "Cèdre" }],
     sillage: "très fort",
     longevite: "8h+",
+    jourPct: 50,
   },
   {
     id: "layton-pdm",
@@ -429,6 +455,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Poivre noir" }, { name: "Gaïac" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 50,
   },
   {
     id: "homme-intense-dior",
@@ -446,6 +473,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Cèdre de Virginie" }, { name: "Vétiver" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 30,
   },
   {
     id: "y-edp-ysl",
@@ -463,6 +491,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Ambre gris" }, { name: "Fève Tonka" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 60,
   },
   {
     id: "angels-share",
@@ -480,6 +509,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Praliné" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 20,
   },
   {
     id: "cedrat-boise",
@@ -497,6 +527,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Cèdre" }, { name: "Santal" }],
     sillage: "très fort",
     longevite: "8h+",
+    jourPct: 70,
   },
   {
     id: "wanted-by-night",
@@ -514,6 +545,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Tabac" }, { name: "Cuir" }, { name: "Vanille" }],
     sillage: "fort",
     longevite: "8h+",
+    jourPct: 10,
   },
   {
     id: "born-in-roma",
@@ -531,6 +563,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vétiver fumé" }],
     sillage: "modéré",
     longevite: "4-6h",
+    jourPct: 70,
   },
   {
     id: "the-one-dg",
@@ -548,6 +581,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Tabac" }, { name: "Ambre" }],
     sillage: "fort",
     longevite: "6-8h",
+    jourPct: 40,
   },
   {
     id: "prada-l-homme",
@@ -565,6 +599,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Patchouli" }, { name: "Cèdre" }],
     sillage: "modéré",
     longevite: "4-6h",
+    jourPct: 70,
   },
   {
     id: "allure-sport-chanel",
@@ -582,6 +617,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Fève Tonka" }, { name: "Musc blanc" }],
     sillage: "modéré",
     longevite: "4-6h",
+    jourPct: 90,
   },
   {
     id: "homme-ideal-guerlain",
@@ -599,6 +635,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Vétiver" }],
     sillage: "modéré",
     longevite: "4-6h",
+    jourPct: 60,
   },
   {
     id: "black-orchid-tf",
@@ -616,6 +653,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Chocolat mexicain" }, { name: "Patchouli" }, { name: "Encens" }],
     sillage: "très fort",
     longevite: "8h+",
+    jourPct: 20,
   },
   {
     id: "one-million-pr",
@@ -633,6 +671,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Ambre" }],
     sillage: "très fort",
     longevite: "8h+",
+    jourPct: 50,
   },
   {
     id: "spicebomb-extreme",
@@ -650,6 +689,7 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Vanille de Madagascar" }, { name: "Ciste-Labdanum" }],
     sillage: "très fort",
     longevite: "8h+",
+    jourPct: 20,
   },
   {
     id: "acqua-di-parma-colonia",
@@ -667,5 +707,6 @@ export const PERFUMES: Perfume[] = [
     baseNotesDetailed: [{ name: "Santal" }, { name: "Vétiver" }],
     sillage: "discret",
     longevite: "2-4h",
+    jourPct: 100,
   },
 ];

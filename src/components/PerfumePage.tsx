@@ -60,17 +60,17 @@ function getPerfumesWithNote(noteName: string): Perfume[] {
 
 // ── Config sillage & longévité ─────────────────────────────────
 const SILLAGE_CONFIG = {
-  "discret":   { label: "Discret",   bars: 1, emoji: "🌬️" },
-  "modéré":    { label: "Modéré",    bars: 2, emoji: "💨"  },
-  "fort":      { label: "Fort",      bars: 3, emoji: "💨"  },
-  "très fort": { label: "Très Fort", bars: 4, emoji: "🌊"  },
+  "discret":   { label: "Discret",   sublabel: "Proche de la peau", arcs: 1 },
+  "modéré":    { label: "Modéré",    sublabel: "Perceptible",        arcs: 2 },
+  "fort":      { label: "Fort",      sublabel: "Très perceptible",   arcs: 3 },
+  "très fort": { label: "Très Fort", sublabel: "Enveloppant",        arcs: 4 },
 } as const;
 
 const LONGEVITE_CONFIG = {
-  "2-4h": { label: "2 - 4 h", bars: 1, emoji: "⏳" },
-  "4-6h": { label: "4 - 6 h", bars: 2, emoji: "⏳" },
-  "6-8h": { label: "6 - 8 h", bars: 3, emoji: "⌛" },
-  "8h+":  { label: "8 h +",   bars: 4, emoji: "⌛" },
+  "2-4h": { label: "2 - 4 h", sublabel: "Légère",    dashOffset: 75 },
+  "4-6h": { label: "4 - 6 h", sublabel: "Modérée",   dashOffset: 50 },
+  "6-8h": { label: "6 - 8 h", sublabel: "Intense",   dashOffset: 25 },
+  "8h+":  { label: "8 h +",   sublabel: "Extrême",   dashOffset: 0  },
 } as const;
 
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
@@ -304,26 +304,36 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── ProfilOlfactif — style Fragrantica avec emojis ────────────
+  // ─── ProfilOlfactif ────────────────────────────────────────────
+  // Longévité : arc de cercle style jauge
+  // Sillage   : flacon vaporisateur + demi-cercles concentriques
   const ProfilOlfactif = () => {
     if (!perfume.sillage && !perfume.longevite) return null;
 
     const sillage = perfume.sillage ? SILLAGE_CONFIG[perfume.sillage] : null;
     const longevite = perfume.longevite ? LONGEVITE_CONFIG[perfume.longevite] : null;
 
-    const SegmentBar = ({ activeBars }: { activeBars: number }) => (
-      <div className="flex gap-1 mt-2 mb-1">
-        {[1, 2, 3, 4].map((bar) => (
-          <motion.div
-            key={bar}
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: bar * 0.08, duration: 0.4, ease: "easeOut" }}
-            className="flex-1 h-1.5 rounded-full origin-left"
-            style={{ backgroundColor: bar <= activeBars ? "#1a1a1a" : "#e4e4e7" }}
-          />
-        ))}
-      </div>
+    // SVG flacon + demi-cercles selon nombre d'arcs
+    const FlaconsVapeur = ({ arcs }: { arcs: number }) => (
+      <svg viewBox="0 0 72 72" style={{ width: "64px", display: "block", margin: "0 auto" }}>
+        {/* Corps flacon */}
+        <rect x="10" y="32" width="22" height="30" rx="4" fill="#f8f8f8" stroke="#1a1a1a" strokeWidth="1.4"/>
+        {/* Goulot */}
+        <rect x="15" y="25" width="12" height="9" rx="2" fill="#f8f8f8" stroke="#1a1a1a" strokeWidth="1.2"/>
+        {/* Ligne déco */}
+        <line x1="10" y1="39" x2="32" y2="39" stroke="#1a1a1a" strokeWidth="0.5" opacity={0.18}/>
+        {/* Base ombre */}
+        <rect x="13" y="62" width="16" height="3" rx="1.5" fill="#1a1a1a" opacity={0.1}/>
+        {/* Tige pompe */}
+        <rect x="20" y="17" width="2" height="9" rx="1" fill="#1a1a1a"/>
+        {/* Tête pompe */}
+        <rect x="14" y="14" width="14" height="4" rx="2" fill="#1a1a1a"/>
+        {/* Demi-cercles de vaporisation */}
+        {arcs >= 1 && <path d="M 34 26 A 10 10 0 0 1 34 46" fill="none" stroke="#1a1a1a" strokeWidth="2.2" strokeLinecap="round" opacity={0.78}/>}
+        {arcs >= 2 && <path d="M 34 19 A 17 17 0 0 1 34 53" fill="none" stroke="#1a1a1a" strokeWidth="1.6" strokeLinecap="round" opacity={0.42}/>}
+        {arcs >= 3 && <path d="M 34 12 A 24 24 0 0 1 34 60" fill="none" stroke="#1a1a1a" strokeWidth="1.1" strokeLinecap="round" opacity={0.18}/>}
+        {arcs >= 4 && <path d="M 34 5 A 31 31 0 0 1 34 67" fill="none" stroke="#1a1a1a" strokeWidth="0.7" strokeLinecap="round" opacity={0.08}/>}
+      </svg>
     );
 
     return (
@@ -332,24 +342,46 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           Profil Olfactif
         </h3>
         <div className="grid grid-cols-2 gap-4">
+
+          {/* ── Longévité — arc jauge ── */}
           {longevite && (
-            <div className="bg-white rounded-xl border border-black/8 px-4 pt-3 pb-4">
-              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 flex items-center gap-1.5">
-                <span>{longevite.emoji}</span> Longévité
+            <div className="bg-white rounded-xl border border-black/[0.06] px-4 pt-4 pb-4 flex flex-col items-center">
+              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 mb-3 self-start">
+                Longévité
               </p>
-              <SegmentBar activeBars={longevite.bars} />
-              <p className="text-sm font-semibold text-zinc-800 mt-1">{longevite.label}</p>
+              <svg viewBox="0 0 80 48" style={{ width: "80px" }}>
+                {/* Arc fond */}
+                <path d="M 8 44 A 32 32 0 0 1 72 44" fill="none" stroke="#f0ede8" strokeWidth="5" strokeLinecap="round"/>
+                {/* Arc actif */}
+                <path
+                  d="M 8 44 A 32 32 0 0 1 72 44"
+                  fill="none" stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
+                  strokeDasharray="100"
+                  strokeDashoffset={longevite.dashOffset}
+                />
+                {/* Valeur centre */}
+                <text x="40" y="36" textAnchor="middle" fontSize="13" fontWeight="700" fill="#1a1a1a" fontFamily="Georgia, serif">
+                  {longevite.label}
+                </text>
+              </svg>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-zinc-400 mt-2">{longevite.sublabel}</p>
             </div>
           )}
+
+          {/* ── Sillage — flacon vaporisateur ── */}
           {sillage && (
-            <div className="bg-white rounded-xl border border-black/8 px-4 pt-3 pb-4">
-              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 flex items-center gap-1.5">
-                <span>{sillage.emoji}</span> Sillage
+            <div className="bg-white rounded-xl border border-black/[0.06] px-4 pt-4 pb-4 flex flex-col items-center">
+              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 mb-3 self-start">
+                Sillage
               </p>
-              <SegmentBar activeBars={sillage.bars} />
-              <p className="text-sm font-semibold text-zinc-800 mt-1">{sillage.label}</p>
+              <FlaconsVapeur arcs={sillage.arcs} />
+              <p className="text-sm font-semibold text-zinc-800 mt-2" style={{ fontFamily: "Georgia, serif", letterSpacing: "0.04em" }}>
+                {sillage.label}
+              </p>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-zinc-400 mt-0.5">{sillage.sublabel}</p>
             </div>
           )}
+
         </div>
       </div>
     );

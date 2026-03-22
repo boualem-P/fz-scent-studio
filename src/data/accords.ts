@@ -615,7 +615,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
   },
   herbal: {
     id: "herbal",
-    label: "Herbal",
+    label: "Herbacé",
     emoji: "🌱",
     description: "Notes de plantes vertes médicinales",
     family: "fresh",
@@ -991,7 +991,7 @@ export const ACCORDS_LIBRARY: Record<string, Accord> = {
 
   aquatic: {
     id: "aquatic",
-    label: "Aquatique & Marin",
+    label: "Aquatique",
     emoji: "🌊",
     description: "Brise marine, sel et grand large",
     family: "atmospheric",

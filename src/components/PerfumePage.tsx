@@ -307,28 +307,59 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   // ─── ProfilOlfactif — style Fragrantica ────────────────────────
   // 4 barres segmentées : 1 = discret, 2 = modéré, 3 = fort, 4 = très fort
   const ProfilOlfactif = () => {
-    if (!perfume.sillage && !perfume.longevite) return null;
+   const ProfilOlfactif = () => {
+  if (!perfume.sillage && !perfume.longevite) return null;
 
-    const sillage = perfume.sillage ? SILLAGE_CONFIG[perfume.sillage] : null;
-    const longevite = perfume.longevite ? LONGEVITE_CONFIG[perfume.longevite] : null;
+  const sillage = perfume.sillage ? SILLAGE_CONFIG[perfume.sillage] : null;
+  const longevite = perfume.longevite ? LONGEVITE_CONFIG[perfume.longevite] : null;
 
-    const SegmentBar = ({ activeBars }: { activeBars: number }) => (
-      <div className="flex gap-1 mt-2 mb-1">
-        {[1, 2, 3, 4].map((bar) => (
-          <motion.div
-            key={bar}
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: bar * 0.08, duration: 0.4, ease: "easeOut" }}
-            className="flex-1 h-1.5 rounded-full origin-left"
-            style={{
-              backgroundColor: bar <= activeBars ? "#1a1a1a" : "#e4e4e7",
-            }}
-          />
-        ))}
+  const longeviteEmoji: Record<string, string> = {
+    "2-4h": "⏳", "4-6h": "⏳", "6-8h": "⌛", "8h+": "⌛",
+  };
+  const sillageEmoji: Record<string, string> = {
+    "discret": "〰️", "modéré": "≈", "fort": "≈", "très fort": "≈",
+  };
+
+  return (
+    <div className="mt-6 pt-5 border-t border-black/10">
+      <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-4">
+        Profil Olfactif
+      </h3>
+      <div className="grid grid-cols-2 gap-3">
+        {longevite && (
+          <div className="bg-white rounded-xl border border-black/8 px-4 py-3 flex items-center gap-3">
+            <span className="text-2xl leading-none flex-shrink-0">
+              {longeviteEmoji[perfume.longevite!]}
+            </span>
+            <div>
+              <p className="text-base font-bold text-zinc-800 leading-tight">
+                {longevite.label}
+              </p>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 mt-0.5">
+                Longévité
+              </p>
+            </div>
+          </div>
+        )}
+        {sillage && (
+          <div className="bg-white rounded-xl border border-black/8 px-4 py-3 flex items-center gap-3">
+            <span className="text-2xl leading-none flex-shrink-0">
+              {sillageEmoji[perfume.sillage!]}
+            </span>
+            <div>
+              <p className="text-base font-bold text-zinc-800 leading-tight">
+                {sillage.label}
+              </p>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 mt-0.5">
+                Sillage
+              </p>
+            </div>
+          </div>
+        )}
       </div>
-    );
-
+    </div>
+  );
+};
     return (
       <div className="mt-6 pt-5 border-t border-black/10">
         <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-4">

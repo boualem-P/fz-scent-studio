@@ -17,6 +17,8 @@ export interface Perfume {
   heartNotesDetailed: NoteDetail[];
   baseNotesDetailed: NoteDetail[];
   accordIds?: string[];
+  sillage?: "discret" | "modéré" | "fort" | "très fort";
+  longevite?: "2-4h" | "4-6h" | "6-8h" | "8h+";
 }
 
 export const PERFUMES: Perfume[] = [
@@ -34,6 +36,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Poire" }, { name: "Melon" }, { name: "Bergamote" }],
     heartNotesDetailed: [{ name: "Jasmin" }, { name: "Tubéreuse" }, { name: "Rose de Damas" }],
     baseNotesDetailed: [{ name: "Musc" }, { name: "Vanille" }],
+    sillage: "fort",
+    longevite: "6-8h",
   },
   {
     id: "la-vie-est-belle",
@@ -49,6 +53,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Poire" }, { name: "Cassis" }],
     heartNotesDetailed: [{ name: "Iris" }, { name: "Fleur d'oranger" }],
     baseNotesDetailed: [{ name: "Praline" }, { name: "Patchouli" }, { name: "Fève Tonka" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "black-opium",
@@ -64,6 +70,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Café" }, { name: "Poire" }],
     heartNotesDetailed: [{ name: "Jasmin" }, { name: "Amande amère" }],
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Bois de Cachemire" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "the-noir-29",
@@ -79,6 +87,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Figue" }, { name: "Laurier" }],
     heartNotesDetailed: [{ name: "Cèdre" }, { name: "Vétiver" }],
     baseNotesDetailed: [{ name: "Tabac" }, { name: "Foin" }],
+    sillage: "modéré",
+    longevite: "6-8h",
   },
   {
     id: "santal-33",
@@ -94,6 +104,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Cardamome" }, { name: "Iris" }],
     heartNotesDetailed: [{ name: "Santal" }, { name: "Papyrus" }],
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Cèdre" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "fahrenheit-dior",
@@ -109,6 +121,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Mandarine" }, { name: "Fleur de Muscadier" }],
     heartNotesDetailed: [{ name: "Feuille de violette" }, { name: "Noix de muscade" }],
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Vétiver" }],
+    sillage: "fort",
+    longevite: "6-8h",
   },
   {
     id: "spicebomb",
@@ -124,6 +138,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Poivre rose" }, { name: "Élémi" }],
     heartNotesDetailed: [{ name: "Cannelle" }, { name: "Safran" }],
     baseNotesDetailed: [{ name: "Tabac" }, { name: "Cuir" }],
+    sillage: "fort",
+    longevite: "6-8h",
   },
   {
     id: "l-interdit",
@@ -139,6 +155,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Poire" }],
     heartNotesDetailed: [{ name: "Tubéreuse" }, { name: "Fleur d'oranger" }],
     baseNotesDetailed: [{ name: "Patchouli" }, { name: "Vétiver" }, { name: "Ambroxan" }],
+    sillage: "fort",
+    longevite: "6-8h",
   },
   {
     id: "her-burberry",
@@ -154,6 +172,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Fraise" }, { name: "Framboise" }, { name: "Mûre" }],
     heartNotesDetailed: [{ name: "Violette" }, { name: "Jasmin" }],
     baseNotesDetailed: [{ name: "Ambre" }, { name: "Musc" }],
+    sillage: "modéré",
+    longevite: "4-6h",
   },
   {
     id: "libre-ysl",
@@ -169,6 +189,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Mandarine" }, { name: "Lavande" }],
     heartNotesDetailed: [{ name: "Fleur d'oranger" }],
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Ambre gris" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "good-girl",
@@ -184,6 +206,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Amande" }, { name: "Café" }],
     heartNotesDetailed: [{ name: "Jasmin Sambac" }, { name: "Tubéreuse" }],
     baseNotesDetailed: [{ name: "Fève Tonka" }, { name: "Cacao" }, { name: "Praline" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "gentleman-givenchy",
@@ -199,6 +223,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Poivre noir" }, { name: "Lavande" }],
     heartNotesDetailed: [{ name: "Iris" }, { name: "Cannelle" }],
     baseNotesDetailed: [{ name: "Vanille noire" }, { name: "Baume de Tolu" }, { name: "Patchouli" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "nomade-chloe",
@@ -214,6 +240,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Mirabelle" }, { name: "Bergamote" }],
     heartNotesDetailed: [{ name: "Freesia" }, { name: "Pêche" }],
     baseNotesDetailed: [{ name: "Mousse de chêne" }, { name: "Patchouli" }],
+    sillage: "modéré",
+    longevite: "6-8h",
   },
   {
     id: "le-lion-chanel",
@@ -229,6 +257,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Citron" }, { name: "Bergamote" }],
     heartNotesDetailed: [{ name: "Ambre" }, { name: "Ciste" }],
     baseNotesDetailed: [{ name: "Patchouli" }, { name: "Vanille" }],
+    sillage: "très fort",
+    longevite: "8h+",
   },
   {
     id: "sauvage-dior",
@@ -244,6 +274,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Bergamote de Calabre" }],
     heartNotesDetailed: [{ name: "Poivre du Sichuan" }, { name: "Lavande" }, { name: "Noix de muscade" }],
     baseNotesDetailed: [{ name: "Ambroxan" }, { name: "Vanille" }],
+    sillage: "très fort",
+    longevite: "8h+",
   },
   {
     id: "bleu-de-chanel",
@@ -259,6 +291,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Pamplemousse" }, { name: "Menthe" }, { name: "Poivre rose" }],
     heartNotesDetailed: [{ name: "Gingembre" }, { name: "Noix de muscade" }],
     baseNotesDetailed: [{ name: "Encens" }, { name: "Cèdre" }, { name: "Santal" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "aventus-creed",
@@ -274,6 +308,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Ananas" }, { name: "Bergamote" }, { name: "Cassis" }],
     heartNotesDetailed: [{ name: "Bouleau" }, { name: "Patchouli" }],
     baseNotesDetailed: [{ name: "Musc" }, { name: "Ambre gris" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "la-nuit-de-l-homme",
@@ -289,6 +325,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Cardamome" }],
     heartNotesDetailed: [{ name: "Lavande" }, { name: "Cèdre" }],
     baseNotesDetailed: [{ name: "Vétiver" }, { name: "Coumarine" }],
+    sillage: "fort",
+    longevite: "6-8h",
   },
   {
     id: "acqua-di-gio",
@@ -304,6 +342,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Lime" }, { name: "Citron" }, { name: "Bergamote" }],
     heartNotesDetailed: [{ name: "Notes marines" }, { name: "Romarin" }, { name: "Pêche" }],
     baseNotesDetailed: [{ name: "Musc blanc" }, { name: "Cèdre" }],
+    sillage: "modéré",
+    longevite: "4-6h",
   },
   {
     id: "terre-d-hermes",
@@ -319,6 +359,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Orange" }, { name: "Pamplemousse" }],
     heartNotesDetailed: [{ name: "Poivre" }, { name: "Silex" }],
     baseNotesDetailed: [{ name: "Vétiver" }, { name: "Cèdre" }, { name: "Benjoin" }],
+    sillage: "fort",
+    longevite: "6-8h",
   },
   {
     id: "le-male-jpg",
@@ -334,6 +376,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Lavande" }, { name: "Menthe" }, { name: "Cardamome" }],
     heartNotesDetailed: [{ name: "Cannelle" }, { name: "Fleur d'oranger" }],
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Fève Tonka" }],
+    sillage: "fort",
+    longevite: "6-8h",
   },
   {
     id: "eros-versace",
@@ -349,6 +393,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Menthe" }, { name: "Pomme verte" }],
     heartNotesDetailed: [{ name: "Fève Tonka" }, { name: "Ambroxan" }],
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Cèdre" }],
+    sillage: "très fort",
+    longevite: "8h+",
   },
   {
     id: "baccarat-rouge-540",
@@ -364,6 +410,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Safran" }, { name: "Jasmin" }],
     heartNotesDetailed: [{ name: "Amberwood" }, { name: "Ambre gris" }],
     baseNotesDetailed: [{ name: "Résine de sapin" }, { name: "Cèdre" }],
+    sillage: "très fort",
+    longevite: "8h+",
   },
   {
     id: "layton-pdm",
@@ -379,6 +427,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Pomme" }, { name: "Lavande" }],
     heartNotesDetailed: [{ name: "Géranium" }, { name: "Violette" }],
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Poivre noir" }, { name: "Gaïac" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "homme-intense-dior",
@@ -394,6 +444,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Lavande" }],
     heartNotesDetailed: [{ name: "Iris" }, { name: "Ambrette" }],
     baseNotesDetailed: [{ name: "Cèdre de Virginie" }, { name: "Vétiver" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "y-edp-ysl",
@@ -409,6 +461,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Pomme" }, { name: "Gingembre" }],
     heartNotesDetailed: [{ name: "Sauge" }, { name: "Baies de genièvre" }],
     baseNotesDetailed: [{ name: "Ambre gris" }, { name: "Fève Tonka" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "angels-share",
@@ -424,6 +478,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Cognac" }],
     heartNotesDetailed: [{ name: "Cannelle" }, { name: "Fève Tonka" }],
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Praliné" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "cedrat-boise",
@@ -439,6 +495,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Citron de Sicile" }, { name: "Cassis" }],
     heartNotesDetailed: [{ name: "Notes fruitées" }, { name: "Patchouli" }],
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Cèdre" }, { name: "Santal" }],
+    sillage: "très fort",
+    longevite: "8h+",
   },
   {
     id: "wanted-by-night",
@@ -454,6 +512,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Cannelle" }, { name: "Mandarine" }],
     heartNotesDetailed: [{ name: "Encens" }, { name: "Notes fruitées" }],
     baseNotesDetailed: [{ name: "Tabac" }, { name: "Cuir" }, { name: "Vanille" }],
+    sillage: "fort",
+    longevite: "8h+",
   },
   {
     id: "born-in-roma",
@@ -469,6 +529,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Notes minérales" }, { name: "Feuille de violette" }],
     heartNotesDetailed: [{ name: "Sauge" }, { name: "Gingembre" }],
     baseNotesDetailed: [{ name: "Vétiver fumé" }],
+    sillage: "modéré",
+    longevite: "4-6h",
   },
   {
     id: "the-one-dg",
@@ -484,6 +546,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Basilic" }, { name: "Pamplemousse" }],
     heartNotesDetailed: [{ name: "Gingembre" }, { name: "Cardamome" }],
     baseNotesDetailed: [{ name: "Tabac" }, { name: "Ambre" }],
+    sillage: "fort",
+    longevite: "6-8h",
   },
   {
     id: "prada-l-homme",
@@ -499,6 +563,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Néroli" }, { name: "Poivre noir" }],
     heartNotesDetailed: [{ name: "Iris" }, { name: "Violette" }],
     baseNotesDetailed: [{ name: "Patchouli" }, { name: "Cèdre" }],
+    sillage: "modéré",
+    longevite: "4-6h",
   },
   {
     id: "allure-sport-chanel",
@@ -514,6 +580,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Orange" }, { name: "Notes marines" }, { name: "Aldéhydes" }],
     heartNotesDetailed: [{ name: "Poivre" }, { name: "Néroli" }],
     baseNotesDetailed: [{ name: "Fève Tonka" }, { name: "Musc blanc" }],
+    sillage: "modéré",
+    longevite: "4-6h",
   },
   {
     id: "homme-ideal-guerlain",
@@ -529,6 +597,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Agrumes" }, { name: "Romarin" }],
     heartNotesDetailed: [{ name: "Amande" }, { name: "Fève Tonka" }],
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Vétiver" }],
+    sillage: "modéré",
+    longevite: "4-6h",
   },
   {
     id: "black-orchid-tf",
@@ -544,6 +614,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Truffe noire" }, { name: "Ylang-ylang" }, { name: "Cassis" }],
     heartNotesDetailed: [{ name: "Orchidée noire" }, { name: "Épices" }],
     baseNotesDetailed: [{ name: "Chocolat mexicain" }, { name: "Patchouli" }, { name: "Encens" }],
+    sillage: "très fort",
+    longevite: "8h+",
   },
   {
     id: "one-million-pr",
@@ -559,6 +631,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Mandarine sanguine" }, { name: "Menthe poivrée" }],
     heartNotesDetailed: [{ name: "Cannelle" }, { name: "Rose" }],
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Ambre" }],
+    sillage: "très fort",
+    longevite: "8h+",
   },
   {
     id: "spicebomb-extreme",
@@ -574,6 +648,8 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Poivre noir" }, { name: "Pamplemousse" }],
     heartNotesDetailed: [{ name: "Tabac" }, { name: "Cannelle" }, { name: "Safran" }],
     baseNotesDetailed: [{ name: "Vanille de Madagascar" }, { name: "Ciste-Labdanum" }],
+    sillage: "très fort",
+    longevite: "8h+",
   },
   {
     id: "acqua-di-parma-colonia",
@@ -589,5 +665,7 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Citron de Sicile" }, { name: "Orange douce" }],
     heartNotesDetailed: [{ name: "Lavande" }, { name: "Rose de Bulgarie" }, { name: "Romarin" }],
     baseNotesDetailed: [{ name: "Santal" }, { name: "Vétiver" }],
+    sillage: "discret",
+    longevite: "2-4h",
   },
 ];

@@ -21,7 +21,6 @@ const getDevice = (): DeviceType => {
   return "desktop";
 };
 
-// ── Remplace getRelatedPerfumes supprimé de database.ts ──────────
 function getRelatedPerfumes(perfume: Perfume, minCount: number = 5): Perfume[] {
   const validGenders = (() => {
     switch (perfume.gender) {
@@ -31,19 +30,14 @@ function getRelatedPerfumes(perfume: Perfume, minCount: number = 5): Perfume[] {
       default:        return ["femme", "homme", "unisexe"];
     }
   })();
-
   const allNotes = [...perfume.topNotes, ...perfume.heartNotes, ...perfume.baseNotes];
   const genderMatches = PERFUMES.filter(p => p.id !== perfume.id && validGenders.includes(p.gender));
-
   const scored = genderMatches.map((p) => {
     const pNotes = [...p.topNotes, ...p.heartNotes, ...p.baseNotes];
-    const commonNotes = allNotes.filter(n =>
-      pNotes.some(pn => pn.toLowerCase() === n.toLowerCase())
-    ).length;
+    const commonNotes = allNotes.filter(n => pNotes.some(pn => pn.toLowerCase() === n.toLowerCase())).length;
     const sameBrand = p.brand === perfume.brand ? 2 : 0;
     return { perfume: p, score: commonNotes + sameBrand };
   });
-
   scored.sort((a, b) => b.score - a.score);
   const noteMatches = scored.filter(s => s.score > 0).map(s => s.perfume);
   if (noteMatches.length >= minCount) return noteMatches.slice(0, 8);
@@ -51,7 +45,6 @@ function getRelatedPerfumes(perfume: Perfume, minCount: number = 5): Perfume[] {
   return [...noteMatches, ...remaining].slice(0, Math.max(minCount, 8));
 }
 
-// ── Trouve les parfums qui contiennent une note donnée ───────────
 function getPerfumesWithNote(noteName: string): Perfume[] {
   const q = noteName.toLowerCase();
   return PERFUMES.filter(p => {
@@ -64,6 +57,21 @@ function getPerfumesWithNote(noteName: string): Perfume[] {
     return allNotes.some(n => n.toLowerCase().includes(q));
   });
 }
+
+// ── Config sillage & longévité ────────────────────────────────────
+const SILLAGE_CONFIG = {
+  "discret":   { label: "Discret",   bars: 1 },
+  "modéré":    { label: "Modéré",    bars: 2 },
+  "fort":      { label: "Fort",      bars: 3 },
+  "très fort": { label: "Très Fort", bars: 4 },
+} as const;
+
+const LONGEVITE_CONFIG = {
+  "2-4h": { label: "2 - 4 h", bars: 1 },
+  "4-6h": { label: "4 - 6 h", bars: 2 },
+  "6-8h": { label: "6 - 8 h", bars: 3 },
+  "8h+":  { label: "8 h +",   bars: 4 },
+} as const;
 
 const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -93,7 +101,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Gold Dust Canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -173,16 +180,11 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
 
   const recommendations = useMemo(() => getRelatedPerfumes(perfume, 5), [perfume]);
 
-  // ── Accords principaux — ordre respecté depuis parfumAccords.ts ──
   const perfumeAccords = useMemo(() => {
     const ids = getAccordIdsForPerfume(perfume.id);
-    return ids
-      .map(id => ACCORDS_LIBRARY[id])
-      .filter(Boolean)
-      .slice(0, 6);
+    return ids.map(id => ACCORDS_LIBRARY[id]).filter(Boolean).slice(0, 6);
   }, [perfume.id]);
 
-  // ── Parfums contenant la note cliquée ─────────────────────────
   const notePanelResults = useMemo(() => {
     if (!notePanelNote) return [];
     return getPerfumesWithNote(notePanelNote).filter(p => p.id !== perfume.id).slice(0, 10);
@@ -194,16 +196,13 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     { label: "Fond",  val: 92, icon: <Zap size={12} />,      notes: perfume.baseNotesDetailed },
   ];
 
-  // ── Toutes les sous-notes ──────────────────────────────────────
   const allNotes = useMemo(() => [
     ...perfume.topNotesDetailed.map(n => ({ ...n, layer: "Tête" })),
     ...perfume.heartNotesDetailed.map(n => ({ ...n, layer: "Cœur" })),
     ...perfume.baseNotesDetailed.map(n => ({ ...n, layer: "Fond" })),
   ], [perfume]);
 
-  // ─── AccordsBlock ─────────────────────────────────────────────
-  // Ordre respecté depuis parfumAccords.ts (1er = accord le plus dominant)
-  // Largeur dégressive : 1er accord = 100%, chaque suivant perd 8%
+  // ─── AccordsBlock ──────────────────────────────────────────────
   const AccordsBlock = () => (
     <div className="space-y-2">
       <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold pb-1">
@@ -241,7 +240,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── MiniStats — architecture sous l'image ────────────────────
+  // ─── MiniStats ─────────────────────────────────────────────────
   const MiniStats = () => (
     <div className="space-y-2 mt-3">
       <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold">
@@ -268,7 +267,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── AllNotesBlock — toutes les sous-notes en bas ─────────────
+  // ─── AllNotesBlock ─────────────────────────────────────────────
   const AllNotesBlock = () => (
     <div className="mt-6 pt-5 border-t border-black/10">
       <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-3">
@@ -305,7 +304,61 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── CarouselBlock ────────────────────────────────────────────
+  // ─── ProfilOlfactif — style Fragrantica ────────────────────────
+  // 4 barres segmentées : 1 = discret, 2 = modéré, 3 = fort, 4 = très fort
+  const ProfilOlfactif = () => {
+    if (!perfume.sillage && !perfume.longevite) return null;
+
+    const sillage = perfume.sillage ? SILLAGE_CONFIG[perfume.sillage] : null;
+    const longevite = perfume.longevite ? LONGEVITE_CONFIG[perfume.longevite] : null;
+
+    const SegmentBar = ({ activeBars }: { activeBars: number }) => (
+      <div className="flex gap-1 mt-2 mb-1">
+        {[1, 2, 3, 4].map((bar) => (
+          <motion.div
+            key={bar}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ delay: bar * 0.08, duration: 0.4, ease: "easeOut" }}
+            className="flex-1 h-1.5 rounded-full origin-left"
+            style={{
+              backgroundColor: bar <= activeBars ? "#1a1a1a" : "#e4e4e7",
+            }}
+          />
+        ))}
+      </div>
+    );
+
+    return (
+      <div className="mt-6 pt-5 border-t border-black/10">
+        <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-4">
+          Profil Olfactif
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          {longevite && (
+            <div className="bg-white rounded-xl border border-black/8 px-4 pt-3 pb-4">
+              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400">
+                Longévité
+              </p>
+              <SegmentBar activeBars={longevite.bars} />
+              <p className="text-sm font-semibold text-zinc-800 mt-1">{longevite.label}</p>
+            </div>
+          )}
+          {sillage && (
+            <div className="bg-white rounded-xl border border-black/8 px-4 pt-3 pb-4">
+              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400">
+                Sillage
+              </p>
+              <SegmentBar activeBars={sillage.bars} />
+              <p className="text-sm font-semibold text-zinc-800 mt-1">{sillage.label}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // ─── CarouselBlock ─────────────────────────────────────────────
   const CarouselBlock = ({ cardW, cardH, dragLeft }: { cardW: number; cardH: number; dragLeft: number }) => (
     <div className="mt-8 pt-5 border-t border-black/10">
       <div className="flex items-center justify-between mb-3">
@@ -340,7 +393,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── Header ───────────────────────────────────────────────────
+  // ─── Header ────────────────────────────────────────────────────
   const Header = () => (
     <div className="sticky top-0 z-[999] w-full pointer-events-none">
       <AnimatePresence>
@@ -370,7 +423,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── Panneau latéral — parfums avec cette note ────────────────
+  // ─── NotePanel ─────────────────────────────────────────────────
   const NotePanel = () => (
     <AnimatePresence>
       {notePanelNote && (
@@ -477,7 +530,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
               </div>
               <MiniStats />
             </div>
-
             <div className="flex-1">
               <AccordsBlock />
             </div>
@@ -488,6 +540,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           </div>
 
           <AllNotesBlock />
+          <ProfilOlfactif />
 
           <CarouselBlock
             cardW={device === "tablet" ? 140 : 160}
@@ -528,6 +581,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           </div>
 
           <AllNotesBlock />
+          <ProfilOlfactif />
 
           <CarouselBlock cardW={130} cardH={160} dragLeft={-(recommendations.length * 145 - 400)} />
         </div>

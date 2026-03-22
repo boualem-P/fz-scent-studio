@@ -274,8 +274,6 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   );
 
   // ─── AllNotesBlock — grille carrés ────────────────────────────
-  // compact=true  → colonne droite desktop (sans bordure top)
-  // compact=false → mobile (avec bordure top)
   const AllNotesBlock = ({ compact = false }: { compact?: boolean }) => (
     <div className={compact ? "mt-5" : "mt-6 pt-5 border-t border-black/10"}>
       <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-3">
@@ -312,30 +310,12 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── ProfilOlfactif ────────────────────────────────────────────
-  // Longévité + Sillage (barres segmentées) + Journée (jauge Jour/Nuit dorée)
-  const ProfilOlfactif = () => {
-    if (!perfume.sillage && !perfume.longevite && perfume.jourPct === undefined) return null;
-
-    const sillage   = perfume.sillage   ? SILLAGE_CONFIG[perfume.sillage]    : null;
-    const longevite = perfume.longevite ? LONGEVITE_CONFIG[perfume.longevite] : null;
-    const jourPct   = perfume.jourPct   ?? 50;
-    const nuitPct   = 100 - jourPct;
-
-    const SegmentBar = ({ activeBars }: { activeBars: number }) => (
-      <div className="flex gap-1 mt-2 mb-1">
-        {[1, 2, 3, 4].map((bar) => (
-          <motion.div
-            key={bar}
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: bar * 0.08, duration: 0.4, ease: "easeOut" }}
-            className="flex-1 h-1.5 rounded-full origin-left"
-            style={{ backgroundColor: bar <= activeBars ? "#1a1a1a" : "#e4e4e7" }}
-          />
-        ))}
-      </div>
-    );
+  // ─── JourNuitBlock — jauge proportionnelle ─────────────────────
+  // Utilisé dans colonne droite (desktop) ou après notes (mobile)
+  const JourNuitBlock = ({ compact = false }: { compact?: boolean }) => {
+    if (perfume.jourPct === undefined) return null;
+    const jourPct = perfume.jourPct ?? 50;
+    const nuitPct = 100 - jourPct;
 
     const SunIcon = ({ color }: { color: string }) => (
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round">
@@ -358,39 +338,18 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     );
 
     return (
-      <div className="mt-5 pt-5 border-t border-black/10">
-        <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-4">
-          Profil Olfactif
+      <div className={compact ? "mt-4" : "mt-6 pt-5 border-t border-black/10"}>
+        <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-3">
+          Journée
         </h3>
-
-        {/* Longévité + Sillage */}
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          {longevite && (
-            <div className="bg-white rounded-xl border border-black/8 px-3 pt-3 pb-3">
-              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400">Longévité</p>
-              <SegmentBar activeBars={longevite.bars} />
-              <p className="text-sm font-semibold text-zinc-800 mt-1">{longevite.label}</p>
-            </div>
-          )}
-          {sillage && (
-            <div className="bg-white rounded-xl border border-black/8 px-3 pt-3 pb-3">
-              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400">Sillage</p>
-              <SegmentBar activeBars={sillage.bars} />
-              <p className="text-sm font-semibold text-zinc-800 mt-1">{sillage.label}</p>
-            </div>
-          )}
-        </div>
-
-        {/* Journée — jauge Jour / Nuit */}
         <div className="bg-white rounded-xl border border-black/8 px-3 pt-3 pb-3">
-          <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400 mb-2">Journée</p>
           <div className="rounded-lg overflow-hidden flex" style={{ height: "32px" }}>
             {jourPct > 0 && (
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${jourPct}%` }}
                 transition={{ duration: 0.8, ease: "circOut" }}
-                className="flex items-center justify-center gap-1.5 overflow-hidden flex-shrink-0"
+                className="flex items-center justify-center gap-1.5 overflow-hidden"
                 style={{ backgroundColor: JOUR_COLOR, width: `${jourPct}%` }}
               >
                 <SunIcon color={JOUR_TEXT} />
@@ -406,7 +365,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
                 initial={{ width: 0 }}
                 animate={{ width: `${nuitPct}%` }}
                 transition={{ duration: 0.8, ease: "circOut" }}
-                className="flex items-center justify-center gap-1.5 overflow-hidden flex-shrink-0"
+                className="flex items-center justify-center gap-1.5 overflow-hidden"
                 style={{ backgroundColor: NUIT_COLOR, width: `${nuitPct}%` }}
               >
                 <MoonIcon color={NUIT_TEXT} />
@@ -418,6 +377,53 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
               </motion.div>
             )}
           </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ─── ProfilOlfactif — Longévité + Sillage uniquement ──────────
+  const ProfilOlfactif = () => {
+    if (!perfume.sillage && !perfume.longevite) return null;
+
+    const sillage   = perfume.sillage   ? SILLAGE_CONFIG[perfume.sillage]    : null;
+    const longevite = perfume.longevite ? LONGEVITE_CONFIG[perfume.longevite] : null;
+
+    const SegmentBar = ({ activeBars }: { activeBars: number }) => (
+      <div className="flex gap-1 mt-2 mb-1">
+        {[1, 2, 3, 4].map((bar) => (
+          <motion.div
+            key={bar}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ delay: bar * 0.08, duration: 0.4, ease: "easeOut" }}
+            className="flex-1 h-1.5 rounded-full origin-left"
+            style={{ backgroundColor: bar <= activeBars ? "#1a1a1a" : "#e4e4e7" }}
+          />
+        ))}
+      </div>
+    );
+
+    return (
+      <div className="mt-5 pt-5 border-t border-black/10">
+        <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-4">
+          Profil Olfactif
+        </h3>
+        <div className="grid grid-cols-2 gap-3">
+          {longevite && (
+            <div className="bg-white rounded-xl border border-black/8 px-3 pt-3 pb-3">
+              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400">Longévité</p>
+              <SegmentBar activeBars={longevite.bars} />
+              <p className="text-sm font-semibold text-zinc-800 mt-1">{longevite.label}</p>
+            </div>
+          )}
+          {sillage && (
+            <div className="bg-white rounded-xl border border-black/8 px-3 pt-3 pb-3">
+              <p className="text-[8px] uppercase tracking-[0.4em] text-zinc-400">Sillage</p>
+              <SegmentBar activeBars={sillage.bars} />
+              <p className="text-sm font-semibold text-zinc-800 mt-1">{sillage.label}</p>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -583,10 +589,13 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
             </div>
           </motion.div>
 
-          {/* ── 2 colonnes ── */}
+          {/* ── 2 colonnes ──
+              Gauche : Image + MiniStats + ProfilOlfactif (Longévité + Sillage)
+              Droite : Accords + Notes carrés + Jauge Jour/Nuit
+          */}
           <div className="flex gap-6 items-start">
 
-            {/* Gauche : Image + MiniStats + ProfilOlfactif */}
+            {/* Gauche */}
             <div className="flex-shrink-0 w-[220px] lg:w-[260px]">
               <div className="perfume-img-container perfume-studio-lighting gold-frame !h-[300px] lg:!h-[340px] bg-white">
                 <motion.div
@@ -601,10 +610,11 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
               <ProfilOlfactif />
             </div>
 
-            {/* Droite : Accords + Notes en carrés */}
+            {/* Droite : Accords + Notes carrés + Jauge Jour/Nuit */}
             <div className="flex-1 min-w-0">
               <AccordsBlock />
               <AllNotesBlock compact />
+              <JourNuitBlock compact />
             </div>
 
           </div>
@@ -649,6 +659,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
           </div>
 
           <AllNotesBlock />
+          <JourNuitBlock />
 
           <div className="mt-5 px-3 py-3 border-l-2 border-amber-400/40 bg-white/60 rounded-r-xl">
             <p className="text-zinc-500 text-sm leading-relaxed font-extralight italic">{perfume.description}</p>

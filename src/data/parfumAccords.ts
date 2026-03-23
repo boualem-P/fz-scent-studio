@@ -164,10 +164,10 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
 
   // ── CAROLINA HERRERA ──────────────────────────────────────────
 
-  "good-girl": [
-    "white_floral", "sweet", "gourmand", "warm_spicy", "vanilla", 
-    "cacao", "tuberose", "coffee", "tonka_bean", "amber", "woody"
-  ],
+"good-girl": [
+  "sweet", "white_floral", "warm_spicy", "vanilla", "amber",
+  "gourmand", "cacao", "tuberose", "coffee", "tonka_bean", "woody"
+],
 
   // ── CHLOÉ ─────────────────────────────────────────────────────
 

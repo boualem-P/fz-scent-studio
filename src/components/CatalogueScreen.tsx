@@ -68,7 +68,7 @@ const BRAND_IMAGES: Record<string, string> = {
   "Carolina Herrera":          "https://i.pinimg.com/564x/8b/7a/f9/8b7af96beeee9c6dcdc0f433a888d02c.jpg",
   "Guerlain":                  "https://www.icon-icon.com/wp-content/uploads/2018/06/logo-guerlain_9ce88303527f34ce3cb6ab0b6323cc9b68b9219e_0.jpg",
   "Parfums de Marly":          "https://media.licdn.com/dms/image/v2/D4E0BAQHf0rDex1LcXg/company-logo_200_200/B4EZmAbGTnKcAM-/0/1758796212353/parfums_de_marly_logo?e=2147483647&v=beta&t=MHpbviv2JD_4FJuxJQZXegtZe49fB71Ii1tl52g--x4",
-  "Maison-Francis-Kurkdjian":  "https://cdn.salla.sa/YgEeo/9p7BXjv5NUHVvaxeQ7hOSbocgZhIVDTqTw49FpgJ.jpg",
+  "Maison Francis Kurkdjian":  "https://cdn.salla.sa/YgEeo/9p7BXjv5NUHVvaxeQ7hOSbocgZhIVDTqTw49FpgJ.jpg",
   "Burberry":                  "https://perfumes.ec/cdn/shop/collections/Burberry.png?v=1713560150",
   "Acqua di Parma":            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr7G1eC5Iy0FmM5gq63p9_SPXpOSe-Z62hzw&s",
   "Chloé":                     "https://i.pinimg.com/1200x/73/42/9f/73429f55db81d87f3210d42192448295.jpg",

@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Wind, Droplets, Zap, ChevronRight, Plus, ChevronLeft } from "lucide-react";
+import { X, Wind, Droplets, Zap, ChevronRight, Plus, ChevronLeft, Snowflake, Flower, Sun, Leaf } from "lucide-react";
 import { Perfume, PERFUMES } from "@/data/database";
 import { useRef, useEffect, useState, useMemo } from "react";
 import { getNoteImage } from "@/data/notesData";
@@ -30,18 +30,23 @@ function getRelatedPerfumes(perfume: Perfume, minCount: number = 5): Perfume[] {
       default:        return ["femme", "homme", "unisexe"];
     }
   })();
+
   const allNotes = [...perfume.topNotes, ...perfume.heartNotes, ...perfume.baseNotes];
   const genderMatches = PERFUMES.filter(p => p.id !== perfume.id && validGenders.includes(p.gender));
+
   const scored = genderMatches.map((p) => {
     const pNotes = [...p.topNotes, ...p.heartNotes, ...p.baseNotes];
     const commonNotes = allNotes.filter(n => pNotes.some(pn => pn.toLowerCase() === n.toLowerCase())).length;
     const sameBrand = p.brand === perfume.brand ? 2 : 0;
     return { perfume: p, score: commonNotes + sameBrand };
   });
+
   scored.sort((a, b) => b.score - a.score);
   const noteMatches = scored.filter(s => s.score > 0).map(s => s.perfume);
+
   if (noteMatches.length >= minCount) return noteMatches.slice(0, 8);
   const remaining = genderMatches.filter(p => !noteMatches.some(m => m.id === p.id));
+
   return [...noteMatches, ...remaining].slice(0, Math.max(minCount, 8));
 }
 
@@ -85,9 +90,11 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   const [notePanelNote, setNotePanelNote] = useState<string | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const particlesRef = useRef<Array<{
     x: number; y: number; vx: number; vy: number;
-    size: number; color: string; alpha: number;
+    size: number; color: string;
+    alpha: number;
     glowSize: number; phase: number; pulsePhase: number;
   }>>([]);
   const animFrameRef = useRef<number>(0);
@@ -313,6 +320,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   // --- JourNuitBlock — jauge proportionnelle (colonne droite) ---
   const JourNuitBlock = ({ compact = false }: { compact?: boolean }) => {
     if (perfume.jourPct === undefined) return null;
+
     const jourPct = perfume.jourPct ?? 50;
     const nuitPct = 100 - jourPct;
 
@@ -381,95 +389,49 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     );
   };
 
-  // --- SaisonsBlock — grille 2×2 saisons ---------------------------
+  // --- SaisonsBlock — jauge horizontale type Fragrantica ----------
   const SaisonsBlock = ({ compact = false }: { compact?: boolean }) => {
-    if (!perfume.seasons || perfume.seasons.length === 0) return null;
+    if (!perfume.seasonData) return null;
 
-    const SAISONS_CONFIG = [
-      {
-        key: "printemps" as const,
-        label: "Printemps",
-        activeColor: "#7CB87C",
-        activeBg: "rgba(124,184,124,0.12)",
-        icon: (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M12 22V12" /><path d="M12 12C12 7 8 3 3 3c0 5 4 9 9 9z" /><path d="M12 12C12 7 16 3 21 3c0 5-4 9-9 9z" />
-          </svg>
-        ),
-      },
-      {
-        key: "été" as const,
-        label: "Été",
-        activeColor: "#E8C97A",
-        activeBg: "rgba(232,201,122,0.12)",
-        icon: (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <circle cx="12" cy="12" r="4" /><line x1="12" y1="2" x2="12" y2="4" /><line x1="12" y1="20" x2="12" y2="22" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="2" y1="12" x2="4" y2="12" /><line x1="20" y1="12" x2="22" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-          </svg>
-        ),
-      },
-      {
-        key: "automne" as const,
-        label: "Automne",
-        activeColor: "#C8733A",
-        activeBg: "rgba(200,115,58,0.12)",
-        icon: (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
-            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-          </svg>
-        ),
-      },
-      {
-        key: "hiver" as const,
-        label: "Hiver",
-        activeColor: "#7AAAC8",
-        activeBg: "rgba(122,170,200,0.12)",
-        icon: (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <line x1="12" y1="2" x2="12" y2="22" /><line x1="2" y1="12" x2="22" y2="12" />
-            <path d="m20 16-4-4 4-4" /><path d="m4 8 4 4-4 4" />
-            <path d="m16 4-4 4-4-4" /><path d="m8 20 4-4 4 4" />
-          </svg>
-        ),
-      },
-    ] as const;
-
-    const activeSaisons = perfume.seasons ?? [];
+    const seasons = [
+      { id: 'winter', label: 'Hiver', score: perfume.seasonData.winter, color: '#7AAAC8', bg: 'rgba(122,170,200,0.15)', icon: <Snowflake size={14} color="#7AAAC8" /> },
+      { id: 'spring', label: 'Printemps', score: perfume.seasonData.spring, color: '#7CB87C', bg: 'rgba(124,184,124,0.15)', icon: <Flower size={14} color="#7CB87C" /> },
+      { id: 'summer', label: 'Été', score: perfume.seasonData.summer, color: '#E8C97A', bg: 'rgba(232,201,122,0.15)', icon: <Sun size={14} color="#E8C97A" /> },
+      { id: 'autumn', label: 'Automne', score: perfume.seasonData.autumn, color: '#C8733A', bg: 'rgba(200,115,58,0.15)', icon: <Leaf size={14} color="#C8733A" /> },
+    ];
 
     return (
-      <div className={compact ? "" : "border-t border-zinc-100 pt-4 mt-4"}>
-        {!compact && (
-          <p className="text-[9px] uppercase tracking-[0.35em] text-zinc-400 font-semibold mb-3">Saisons</p>
-        )}
-        {compact && (
-          <p className="text-[9px] uppercase tracking-[0.35em] text-zinc-400 font-semibold mb-3">Saisons</p>
-        )}
-        <div className="grid grid-cols-2 gap-2">
-          {SAISONS_CONFIG.map(({ key, label, activeColor, activeBg, icon }) => {
-            const isActive = activeSaisons.includes(key);
-            return (
-              <div
-                key={key}
-                style={isActive ? {
-                  backgroundColor: activeBg,
-                  borderColor: activeColor + "55",
-                  color: activeColor,
-                } : {
-                  backgroundColor: "rgba(0,0,0,0.02)",
-                  borderColor: "rgba(0,0,0,0.06)",
-                  color: "rgba(0,0,0,0.18)",
-                }}
-                className="flex items-center gap-2 px-3 py-2.5 rounded-xl border transition-all"
-              >
-                <span style={{ opacity: isActive ? 1 : 0.4 }}>{icon}</span>
-                <span className="text-[11px] font-semibold tracking-wide">{label}</span>
+      <div className={compact ? "mt-4" : "border-t border-zinc-100 pt-4 mt-4"}>
+        <p className="text-[9px] uppercase tracking-[0.35em] text-zinc-400 font-semibold mb-3">Saisons</p>
+        <div className="bg-white rounded-xl border border-black/8 p-3 space-y-3">
+          {seasons.map((s) => (
+            <div key={s.id} className="flex items-center gap-3">
+              <div className="w-20 flex-shrink-0 flex items-center gap-1.5">
+                {s.icon}
+                <span className="text-[10px] font-semibold text-zinc-600">{s.label}</span>
               </div>
-            );
-          })}
+              <div className="flex-1 h-5 rounded-md overflow-hidden relative" style={{ backgroundColor: s.bg }}>
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${s.score}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="h-full rounded-md"
+                  style={{ backgroundColor: s.color }}
+                />
+                {s.score > 0 && (
+                  <span 
+                    className="absolute inset-y-0 left-2 flex items-center text-[9px] font-bold" 
+                    style={{ 
+                      color: s.score > 15 ? '#fff' : s.color, 
+                      textShadow: s.score > 15 ? "0 1px 2px rgba(0,0,0,0.2)" : "none" 
+                    }}
+                  >
+                    {s.score}%
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );

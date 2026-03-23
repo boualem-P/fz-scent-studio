@@ -402,70 +402,60 @@ const SaisonsBlock = ({ compact = false }: { compact?: boolean }) => {
   ];
 
   const SeasonCrystal = ({ season }: { season: any }) => (
-    <div className="group relative">
-      {/* Fond cristal radial */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white via-white/70 to-transparent shadow-2xl"
-           style={{ 
-             background: `radial-gradient(circle at 30% 20%, ${season.color}20 0%, transparent 70%)`,
-             boxShadow: `0 8px 32px ${season.color}20, inset 0 1px 0 rgba(255,255,255,0.6)`
-           }} />
+  <div className="group relative">
+    {/* Fond cristal */}
+    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white via-white/80 to-transparent shadow-2xl"
+         style={{ 
+           background: `radial-gradient(circle at 30% 20%, ${season.color}15 0%, transparent 70%)`
+         }} />
+    
+    {/* Conteneur EXACTEMENT comme Journée */}
+    <div className="relative bg-white rounded-xl border border-black/8 px-3 pt-3 pb-3 h-[72px] flex flex-col justify-between"
+         style={{ 
+           backgroundImage: `radial-gradient(circle at 20% 80%, ${season.color}08 0%, transparent 50%)`
+         }}>
       
-      {/* Barre magnétique flottante */}
-      <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl border border-white/50 shadow-xl p-3 h-20 flex flex-col justify-between justify-between overflow-hidden group-hover:shadow-2xl transition-all duration-500"
-           style={{ 
-             backgroundImage: `radial-gradient(circle at 20% 80%, ${season.color}10 0%, transparent 50%)`,
-             boxShadow: '0 12px 40px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)'
-           }}>
-        
-        {/* Header icône + nom */}
-        <div className="flex items-center gap-2.5 mb-1">
-          <div className="w-8 h-8 bg-gradient-to-br from-white to-white/80 rounded-xl flex items-center justify-center shadow-lg border border-white/60 backdrop-blur-sm group-hover:scale-110 transition-all duration-300">
-            <span className="text-lg group-hover:text-[season.color] transition-colors" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
-              {season.icon}
+      {/* Header icône + nom - COMPACT */}
+      <div className="flex items-center gap-2 mb-1 h-6">
+        <div className="w-6 h-6 bg-white/90 rounded-lg flex items-center justify-center shadow-md border border-white/60 group-hover:scale-105 transition-transform">
+          <span className="text-base leading-none" style={{ color: season.color, textShadow: '0 0.5px 1px rgba(0,0,0,0.1)' }}>
+            {season.icon}
+          </span>
+        </div>
+        <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-700 font-bold leading-tight flex-1">
+          {season.label}
+        </p>
+      </div>
+
+      {/* JAUGE IDENTIQUE À JOURNÉE - h-1.5 + rounded-lg */}
+      <div className="rounded-lg overflow-hidden flex" style={{ height: "24px" }}>
+        <motion.div 
+          initial={{ width: 0 }}
+          animate={{ width: `${season.score}%` }}
+          transition={{ duration: 0.8, ease: "circOut" }}
+          className="flex items-center justify-center overflow-hidden"
+          style={{ backgroundColor: season.color }}
+        >
+          {season.score >= 20 && (
+            <span className="text-[9px] font-bold uppercase tracking-wider whitespace-nowrap"
+                 style={{ color: '#fff', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
+              {season.score}%
             </span>
-          </div>
-          <div>
-            <p className="text-[10px] font-serif tracking-[0.3em] uppercase text-zinc-700 font-medium leading-tight">{season.label}</p>
-          </div>
-        </div>
-
-        {/* Barre de score aimantée */}
-        <div className="relative h-1.5 bg-gradient-to-r from-zinc-100 to-zinc-200 rounded-full overflow-hidden shadow-inner">
-          <motion.div 
-            initial={{ width: 0, scaleX: 0.95 }}
-            animate={{ width: `${season.score}%`, scaleX: 1 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="h-full absolute left-0 rounded-full shadow-lg"
-            style={{ 
-              background: `linear-gradient(90deg, ${season.color}, ${season.color}cc 70%, ${season.color}ff)`,
-              boxShadow: `0 0 12px ${season.color}40, inset 0 1px 0 rgba(255,255,255,0.4)`
-            }}
-          />
-          <div className="absolute -right-3 top-0 w-1.5 h-2 bg-gradient-to-b from-white/80 to-transparent rounded-sm shadow-sm" />
-        </div>
-
-        {/* Pourcentage flottant */}
-        {season.score > 0 && (
-          <motion.span 
-            initial={{ opacity: 0, x: 5 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-white/95 text-[9px] font-bold tracking-wider rounded-full shadow-lg border border-white/60 backdrop-blur-sm"
-            style={{ 
-              background: `linear-gradient(135deg, white, ${season.color}10)`,
-              color: season.score > 25 ? '#1f2937' : season.color
-            }}
-          >
-            {season.score}%
-          </motion.span>
+          )}
+        </motion.div>
+        {season.score < 100 && (
+          <div className="flex-1 bg-gradient-to-r from-white/80 to-zinc-100/80" />
         )}
       </div>
     </div>
-  );
+  </div>
+);
+
 
   return (
     <div className={compact ? "mt-4" : "border-t border-zinc-100 pt-4 mt-4"}>
       <p className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-3">Équilibre Saisonnier</p>
-      <div className="grid grid-cols-2 gap-3.5 bg-gradient-to-r from-amber-50/50 via-white/70 to-amber-50/50 p-3.5 rounded-2xl border border-amber-100/50 shadow-inner">
+      <div className="grid grid-cols-2 gap-3 bg-white/50 p-3 rounded-2xl border border-amber-100/30 shadow-sm">
         <SeasonCrystal season={seasons[0]} />
         <SeasonCrystal season={seasons[1]} />
         <SeasonCrystal season={seasons[2]} />

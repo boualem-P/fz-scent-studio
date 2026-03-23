@@ -511,7 +511,7 @@ export const PERFUMES: Perfume[] = [
     id: "good-girl",
     name: "Good Girl",
     brand: "Carolina Herrera",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfq3mxdK6EgO3s04rntb8R4ipDYV_c8EO4Fw&s",
+    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.39681.avif",
     description: "Un parfum puissant et sensuel, capturant la dualité de la femme moderne.",
     gender: "femme",
     concentration: "Eau de Parfum",

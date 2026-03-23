@@ -434,19 +434,6 @@ const SaisonsBlock = ({ compact = false }: { compact?: boolean }) => {
   );
 };
 
-  return (
-    <div className={compact ? "mt-4" : "border-t border-zinc-100 pt-4 mt-4"}>
-      <p className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-3">Équilibre Saisonnier</p>
-      <div className="grid grid-cols-2 gap-3 bg-white/50 p-3 rounded-2xl border border-amber-100/30 shadow-sm">
-        <SeasonCrystal season={seasons[0]} />
-        <SeasonCrystal season={seasons[1]} />
-        <SeasonCrystal season={seasons[2]} />
-        <SeasonCrystal season={seasons[3]} />
-      </div>
-    </div>
-  );
-};
-
   // --- ProfilOlfactif — arc jauge + flacon SVG (validé session 3) --
   const ProfilOlfactif = () => {
     if (!perfume.sillage && !perfume.longevite) return null;

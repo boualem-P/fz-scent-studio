@@ -195,7 +195,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
 
   const perfumeAccords = useMemo(() => {
     const ids = getAccordIdsForPerfume(perfume.id);
-    return ids.map(id => ACCORDS_LIBRARY[id]).filter(Boolean);
+    return ids.map(id => ACCORDS_LIBRARY[id]).filter(Boolean).slice(0, 5);
   }, [perfume.id]);
 
   const notePanelResults = useMemo(() => {
@@ -395,62 +395,44 @@ const SaisonsBlock = ({ compact = false }: { compact?: boolean }) => {
   if (!perfume.seasonData) return null;
 
   const seasons = [
-    { id: 'winter', label: 'Hiver', score: perfume.seasonData.winter, color: '#6B93D6', deg: '180deg', icon: '❄️' },
-    { id: 'spring', label: 'Printemps', score: perfume.seasonData.spring, color: '#7CB87C', deg: '225deg', icon: '🌸' },
-    { id: 'summer', label: 'Été', score: perfume.seasonData.summer, color: '#F4A261', deg: '315deg', icon: '☀️' },
-    { id: 'autumn', label: 'Automne', score: perfume.seasonData.autumn, color: '#D97706', deg: '45deg', icon: '🍂' },
+    { id: 'winter', label: 'Hiver',      score: perfume.seasonData.winter, color: '#6B93D6', icon: <Snowflake size={13} /> },
+    { id: 'spring', label: 'Printemps',  score: perfume.seasonData.spring, color: '#7CB87C', icon: <Flower size={13} /> },
+    { id: 'summer', label: 'Été',        score: perfume.seasonData.summer, color: '#F4A261', icon: <Sun size={13} /> },
+    { id: 'autumn', label: 'Automne',    score: perfume.seasonData.autumn, color: '#D97706', icon: <Leaf size={13} /> },
   ];
 
-  const SeasonCrystal = ({ season }: { season: any }) => (
-  <div className="group relative">
-    {/* Fond cristal */}
-    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white via-white/80 to-transparent shadow-2xl"
-         style={{ 
-           background: `radial-gradient(circle at 30% 20%, ${season.color}15 0%, transparent 70%)`
-         }} />
-    
-    {/* Conteneur EXACTEMENT comme Journée */}
-    <div className="relative bg-white rounded-xl border border-black/8 px-3 pt-3 pb-3 h-[72px] flex flex-col justify-between"
-         style={{ 
-           backgroundImage: `radial-gradient(circle at 20% 80%, ${season.color}08 0%, transparent 50%)`
-         }}>
-      
-      {/* Header icône + nom - COMPACT */}
-      <div className="flex items-center gap-2 mb-1 h-6">
-        <div className="w-6 h-6 bg-white/90 rounded-lg flex items-center justify-center shadow-md border border-white/60 group-hover:scale-105 transition-transform">
-          <span className="text-base leading-none" style={{ color: season.color, textShadow: '0 0.5px 1px rgba(0,0,0,0.1)' }}>
-            {season.icon}
-          </span>
-        </div>
-        <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-700 font-bold leading-tight flex-1">
-          {season.label}
-        </p>
-      </div>
-
-      {/* JAUGE IDENTIQUE À JOURNÉE - h-1.5 + rounded-lg */}
-      <div className="rounded-lg overflow-hidden flex" style={{ height: "24px" }}>
-        <motion.div 
-          initial={{ width: 0 }}
-          animate={{ width: `${season.score}%` }}
-          transition={{ duration: 0.8, ease: "circOut" }}
-          className="flex items-center justify-center overflow-hidden"
-          style={{ backgroundColor: season.color }}
-        >
-          {season.score >= 20 && (
-            <span className="text-[9px] font-bold uppercase tracking-wider whitespace-nowrap"
-                 style={{ color: '#fff', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
-              {season.score}%
-            </span>
-          )}
-        </motion.div>
-        {season.score < 100 && (
-          <div className="flex-1 bg-gradient-to-r from-white/80 to-zinc-100/80" />
-        )}
+  return (
+    <div className={compact ? "mt-4" : "border-t border-zinc-100 pt-4 mt-4"}>
+      <p className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-3">
+        Équilibre Saisonnier
+      </p>
+      <div className="bg-white rounded-xl border border-black/8 px-4 py-3 space-y-2.5">
+        {seasons.map((season) => (
+          <div key={season.id} className="space-y-1">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span style={{ color: season.color }}>{season.icon}</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-medium">
+                  {season.label}
+                </span>
+              </div>
+              <span className="text-[9px] text-zinc-400">{season.score}%</span>
+            </div>
+            <div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${season.score}%` }}
+                transition={{ duration: 0.8, ease: "circOut" }}
+                className="h-full rounded-full"
+                style={{ backgroundColor: season.color }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
-  </div>
-);
-
+  );
+};
 
   return (
     <div className={compact ? "mt-4" : "border-t border-zinc-100 pt-4 mt-4"}>

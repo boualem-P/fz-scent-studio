@@ -390,52 +390,90 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
   };
 
   // --- SaisonsBlock — jauge horizontale type Fragrantica ----------
-  const SaisonsBlock = ({ compact = false }: { compact?: boolean }) => {
-    if (!perfume.seasonData) return null;
+ // --- SaisonsBlock LUXE — 2x2 blocs cristal (NOUVEAU) ---
+const SaisonsBlock = ({ compact = false }: { compact?: boolean }) => {
+  if (!perfume.seasonData) return null;
 
-    const seasons = [
-      { id: 'winter', label: 'Hiver', score: perfume.seasonData.winter, color: '#7AAAC8', bg: 'rgba(122,170,200,0.15)', icon: <Snowflake size={14} color="#7AAAC8" /> },
-      { id: 'spring', label: 'Printemps', score: perfume.seasonData.spring, color: '#7CB87C', bg: 'rgba(124,184,124,0.15)', icon: <Flower size={14} color="#7CB87C" /> },
-      { id: 'summer', label: 'Été', score: perfume.seasonData.summer, color: '#E8C97A', bg: 'rgba(232,201,122,0.15)', icon: <Sun size={14} color="#E8C97A" /> },
-      { id: 'autumn', label: 'Automne', score: perfume.seasonData.autumn, color: '#C8733A', bg: 'rgba(200,115,58,0.15)', icon: <Leaf size={14} color="#C8733A" /> },
-    ];
+  const seasons = [
+    { id: 'winter', label: 'Hiver', score: perfume.seasonData.winter, color: '#6B93D6', deg: '180deg', icon: '❄️' },
+    { id: 'spring', label: 'Printemps', score: perfume.seasonData.spring, color: '#7CB87C', deg: '225deg', icon: '🌸' },
+    { id: 'summer', label: 'Été', score: perfume.seasonData.summer, color: '#F4A261', deg: '315deg', icon: '☀️' },
+    { id: 'autumn', label: 'Automne', score: perfume.seasonData.autumn, color: '#D97706', deg: '45deg', icon: '🍂' },
+  ];
 
-    return (
-      <div className={compact ? "mt-4" : "border-t border-zinc-100 pt-4 mt-4"}>
-        <p className="text-[9px] uppercase tracking-[0.35em] text-zinc-400 font-semibold mb-3">Saisons</p>
-        <div className="bg-white rounded-xl border border-black/8 p-3 space-y-3">
-          {seasons.map((s) => (
-            <div key={s.id} className="flex items-center gap-3">
-              <div className="w-20 flex-shrink-0 flex items-center gap-1.5">
-                {s.icon}
-                <span className="text-[10px] font-semibold text-zinc-600">{s.label}</span>
-              </div>
-              <div className="flex-1 h-5 rounded-md overflow-hidden relative" style={{ backgroundColor: s.bg }}>
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${s.score}%` }}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                  className="h-full rounded-md"
-                  style={{ backgroundColor: s.color }}
-                />
-                {s.score > 0 && (
-                  <span 
-                    className="absolute inset-y-0 left-2 flex items-center text-[9px] font-bold" 
-                    style={{ 
-                      color: s.score > 15 ? '#fff' : s.color, 
-                      textShadow: s.score > 15 ? "0 1px 2px rgba(0,0,0,0.2)" : "none" 
-                    }}
-                  >
-                    {s.score}%
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
+  const SeasonCrystal = ({ season }: { season: any }) => (
+    <div className="group relative">
+      {/* Fond cristal radial */}
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white via-white/70 to-transparent shadow-2xl"
+           style={{ 
+             background: `radial-gradient(circle at 30% 20%, ${season.color}20 0%, transparent 70%)`,
+             boxShadow: `0 8px 32px ${season.color}20, inset 0 1px 0 rgba(255,255,255,0.6)`
+           }} />
+      
+      {/* Barre magnétique flottante */}
+      <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl border border-white/50 shadow-xl p-4 h-24 flex flex-col justify-between overflow-hidden group-hover:shadow-2xl transition-all duration-500"
+           style={{ 
+             backgroundImage: `radial-gradient(circle at 20% 80%, ${season.color}10 0%, transparent 50%)`,
+             boxShadow: '0 12px 40px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)'
+           }}>
+        
+        {/* Header icône + nom */}
+        <div className="flex items-center gap-2.5 mb-1">
+          <div className="w-8 h-8 bg-gradient-to-br from-white to-white/80 rounded-xl flex items-center justify-center shadow-lg border border-white/60 backdrop-blur-sm group-hover:scale-110 transition-all duration-300">
+            <span className="text-lg group-hover:text-[season.color] transition-colors" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+              {season.icon}
+            </span>
+          </div>
+          <div>
+            <p className="text-[10px] font-serif tracking-[0.3em] uppercase text-zinc-700 font-medium leading-tight">{season.label}</p>
+          </div>
         </div>
+
+        {/* Barre de score aimantée */}
+        <div className="relative h-2 bg-gradient-to-r from-zinc-100 to-zinc-200 rounded-full overflow-hidden shadow-inner">
+          <motion.div 
+            initial={{ width: 0, scaleX: 0.95 }}
+            animate={{ width: `${season.score}%`, scaleX: 1 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="h-full absolute left-0 rounded-full shadow-lg"
+            style={{ 
+              background: `linear-gradient(90deg, ${season.color}, ${season.color}cc 70%, ${season.color}ff)`,
+              boxShadow: `0 0 12px ${season.color}40, inset 0 1px 0 rgba(255,255,255,0.4)`
+            }}
+          />
+          <div className="absolute -right-3 top-0 w-1.5 h-2 bg-gradient-to-b from-white/80 to-transparent rounded-sm shadow-sm" />
+        </div>
+
+        {/* Pourcentage flottant */}
+        {season.score > 0 && (
+          <motion.span 
+            initial={{ opacity: 0, x: 5 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="absolute -top-2 -right-2 px-1.5 py-0.5 bg-white/95 text-[9px] font-bold tracking-wider rounded-full shadow-lg border border-white/60 backdrop-blur-sm"
+            style={{ 
+              background: `linear-gradient(135deg, white, ${season.color}10)`,
+              color: season.score > 25 ? '#1f2937' : season.color
+            }}
+          >
+            {season.score}%
+          </motion.span>
+        )}
       </div>
-    );
-  };
+    </div>
+  );
+
+  return (
+    <div className={compact ? "mt-4" : "border-t border-zinc-100 pt-4 mt-4"}>
+      <p className="text-[9px] uppercase tracking-[0.45em] text-zinc-500 font-serif font-semibold mb-4 italic">Équilibre Saisonnier</p>
+      <div className="grid grid-cols-2 gap-3.5 bg-gradient-to-r from-amber-50/50 via-white/70 to-amber-50/50 p-3.5 rounded-2xl border border-amber-100/50 shadow-inner">
+        <SeasonCrystal season={seasons[0]} />
+        <SeasonCrystal season={seasons[1]} />
+        <SeasonCrystal season={seasons[2]} />
+        <SeasonCrystal season={seasons[3]} />
+      </div>
+    </div>
+  );
+};
 
   // --- ProfilOlfactif — arc jauge + flacon SVG (validé session 3) --
   const ProfilOlfactif = () => {

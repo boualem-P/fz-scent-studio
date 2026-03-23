@@ -58,7 +58,7 @@ function getPerfumesWithNote(noteName: string): Perfume[] {
   });
 }
 
-// ── Config sillage (arc+flacon validé session 3) ───────────────
+// -- Config sillage (arc+flacon validé session 3) ---------------
 const SILLAGE_CONFIG = {
   "discret":   { label: "Discret",   sublabel: "Proche de la peau", arcs: 1 },
   "modéré":    { label: "Modéré",    sublabel: "Perceptible",        arcs: 2 },
@@ -73,7 +73,7 @@ const LONGEVITE_CONFIG = {
   "8h+":  { label: "8 h +",   sublabel: "Extrême", dashOffset: 0  },
 } as const;
 
-// ── Couleurs Jour / Nuit ───────────────────────────────────────
+// -- Couleurs Jour / Nuit ---------------------------------------
 const JOUR_COLOR = "#E8C97A";
 const JOUR_TEXT  = "#7a5a00";
 const NUIT_COLOR = "#2C2C4A";
@@ -208,7 +208,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     ...perfume.baseNotesDetailed.map(n => ({ ...n, layer: "Fond" })),
   ], [perfume]);
 
-  // ─── AccordsBlock ──────────────────────────────────────────────
+  // --- AccordsBlock ----------------------------------------------
   const AccordsBlock = () => (
     <div className="space-y-2">
       <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold pb-1">
@@ -246,7 +246,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── MiniStats ─────────────────────────────────────────────────
+  // --- MiniStats -------------------------------------------------
   const MiniStats = () => (
     <div className="space-y-2 mt-3">
       <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold">
@@ -273,7 +273,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── AllNotesBlock — grille carrés ────────────────────────────
+  // --- AllNotesBlock — grille carrés ----------------------------
   const AllNotesBlock = ({ compact = false }: { compact?: boolean }) => (
     <div className={compact ? "mt-5" : "mt-6 pt-5 border-t border-black/10"}>
       <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-3">
@@ -310,7 +310,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── JourNuitBlock — jauge proportionnelle (colonne droite) ───
+  // --- JourNuitBlock — jauge proportionnelle (colonne droite) ---
   const JourNuitBlock = ({ compact = false }: { compact?: boolean }) => {
     if (perfume.jourPct === undefined) return null;
     const jourPct = perfume.jourPct ?? 50;
@@ -381,7 +381,101 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     );
   };
 
-  // ─── ProfilOlfactif — arc jauge + flacon SVG (validé session 3) ──
+  // --- SaisonsBlock — grille 2×2 saisons ---------------------------
+  const SaisonsBlock = ({ compact = false }: { compact?: boolean }) => {
+    if (!perfume.seasons || perfume.seasons.length === 0) return null;
+
+    const SAISONS_CONFIG = [
+      {
+        key: "printemps" as const,
+        label: "Printemps",
+        activeColor: "#7CB87C",
+        activeBg: "rgba(124,184,124,0.12)",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M12 22V12" /><path d="M12 12C12 7 8 3 3 3c0 5 4 9 9 9z" /><path d="M12 12C12 7 16 3 21 3c0 5-4 9-9 9z" />
+          </svg>
+        ),
+      },
+      {
+        key: "été" as const,
+        label: "Été",
+        activeColor: "#E8C97A",
+        activeBg: "rgba(232,201,122,0.12)",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <circle cx="12" cy="12" r="4" /><line x1="12" y1="2" x2="12" y2="4" /><line x1="12" y1="20" x2="12" y2="22" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="2" y1="12" x2="4" y2="12" /><line x1="20" y1="12" x2="22" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        ),
+      },
+      {
+        key: "automne" as const,
+        label: "Automne",
+        activeColor: "#C8733A",
+        activeBg: "rgba(200,115,58,0.12)",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+          </svg>
+        ),
+      },
+      {
+        key: "hiver" as const,
+        label: "Hiver",
+        activeColor: "#7AAAC8",
+        activeBg: "rgba(122,170,200,0.12)",
+        icon: (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="12" y1="2" x2="12" y2="22" /><line x1="2" y1="12" x2="22" y2="12" />
+            <path d="m20 16-4-4 4-4" /><path d="m4 8 4 4-4 4" />
+            <path d="m16 4-4 4-4-4" /><path d="m8 20 4-4 4 4" />
+          </svg>
+        ),
+      },
+    ] as const;
+
+    const activeSaisons = perfume.seasons ?? [];
+
+    return (
+      <div className={compact ? "" : "border-t border-zinc-100 pt-4 mt-4"}>
+        {!compact && (
+          <p className="text-[9px] uppercase tracking-[0.35em] text-zinc-400 font-semibold mb-3">Saisons</p>
+        )}
+        {compact && (
+          <p className="text-[9px] uppercase tracking-[0.35em] text-zinc-400 font-semibold mb-3">Saisons</p>
+        )}
+        <div className="grid grid-cols-2 gap-2">
+          {SAISONS_CONFIG.map(({ key, label, activeColor, activeBg, icon }) => {
+            const isActive = activeSaisons.includes(key);
+            return (
+              <div
+                key={key}
+                style={isActive ? {
+                  backgroundColor: activeBg,
+                  borderColor: activeColor + "55",
+                  color: activeColor,
+                } : {
+                  backgroundColor: "rgba(0,0,0,0.02)",
+                  borderColor: "rgba(0,0,0,0.06)",
+                  color: "rgba(0,0,0,0.18)",
+                }}
+                className="flex items-center gap-2 px-3 py-2.5 rounded-xl border transition-all"
+              >
+                <span style={{ opacity: isActive ? 1 : 0.4 }}>{icon}</span>
+                <span className="text-[11px] font-semibold tracking-wide">{label}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // --- ProfilOlfactif — arc jauge + flacon SVG (validé session 3) --
   const ProfilOlfactif = () => {
     if (!perfume.sillage && !perfume.longevite) return null;
 
@@ -446,7 +540,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     );
   };
 
-  // ─── CarouselBlock ─────────────────────────────────────────────
+  // --- CarouselBlock ---------------------------------------------
   const CarouselBlock = ({ cardW, cardH, dragLeft }: { cardW: number; cardH: number; dragLeft: number }) => (
     <div className="mt-8 pt-5 border-t border-black/10">
       <div className="flex items-center justify-between mb-3">
@@ -481,7 +575,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── Header ────────────────────────────────────────────────────
+  // --- Header ----------------------------------------------------
   const Header = () => (
     <div className="sticky top-0 z-[999] w-full pointer-events-none">
       <AnimatePresence>
@@ -511,7 +605,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </div>
   );
 
-  // ─── NotePanel ─────────────────────────────────────────────────
+  // --- NotePanel -------------------------------------------------
   const NotePanel = () => (
     <AnimatePresence>
       {notePanelNote && (
@@ -585,14 +679,14 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     </AnimatePresence>
   );
 
-  // ──────────────────────────────────────────────────────────────
+  // --------------------------------------------------------------
   return (
     <div className="relative min-h-screen bg-[#F5F0E8] text-black overflow-x-hidden selection:bg-amber-200 selection:text-black font-sans">
       <canvas ref={canvasRef} className="gold-dust-canvas" />
       <Header />
       <NotePanel />
 
-      {/* ── LAYOUT PRINCIPAL (tablette + desktop) ──
+      {/* -- LAYOUT PRINCIPAL (tablette + desktop) --
           Gauche : Image + MiniStats + ProfilOlfactif (arc+flacon)
           Droite : Accords + Notes carrés + Jauge Jour/Nuit
       */}
@@ -630,6 +724,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
               <AccordsBlock />
               <AllNotesBlock compact />
               <JourNuitBlock compact />
+              <SaisonsBlock compact />
             </div>
 
           </div>
@@ -647,7 +742,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
         </div>
       )}
 
-      {/* ── LAYOUT MOBILE ── */}
+      {/* -- LAYOUT MOBILE -- */}
       {device === "mobile" && (
         <div className="px-4 pt-4 pb-16 relative z-10">
 
@@ -675,6 +770,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
 
           <AllNotesBlock />
           <JourNuitBlock />
+          <SaisonsBlock />
 
           <div className="mt-5 px-3 py-3 border-l-2 border-amber-400/40 bg-white/60 rounded-r-xl">
             <p className="text-zinc-500 text-sm leading-relaxed font-extralight italic">{perfume.description}</p>

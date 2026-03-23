@@ -195,7 +195,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
 
   const perfumeAccords = useMemo(() => {
     const ids = getAccordIdsForPerfume(perfume.id);
-    return ids.map(id => ACCORDS_LIBRARY[id]).filter(Boolean).slice(0, 6);
+    return ids.map(id => ACCORDS_LIBRARY[id]).filter(Boolean);
   }, [perfume.id]);
 
   const notePanelResults = useMemo(() => {

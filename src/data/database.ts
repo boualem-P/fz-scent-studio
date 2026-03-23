@@ -377,7 +377,7 @@ export const PERFUMES: Perfume[] = [
   {
     id: "baccarat-rouge-540",
     name: "Baccarat Rouge 540",
-    brand: "MFK",
+    brand: "Maison-Francis-Kurkdjian",
     image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.33519.avif",
     description: "Une signature olfactive ambrée florale et boisée, hautement condensée.",
     gender: "unisexe",

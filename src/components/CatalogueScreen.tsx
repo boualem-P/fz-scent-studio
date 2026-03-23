@@ -5,6 +5,8 @@ import { X, Search, Sparkles, Heart, Anchor, ArrowLeft } from "lucide-react";
 import PerfumePage from "./PerfumePage";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 import { getNoteImage } from "@/data/notesData";
+import { ACCORDS_LIBRARY } from "@/data/accords";
+import { getAccordIdsForPerfume } from "@/data/parfumAccords";
 
 interface CatalogueScreenProps {
   onMenu: () => void;
@@ -17,12 +19,20 @@ interface CatalogueScreenProps {
   onHerbierChange?: (open: boolean) => void;
 }
 
+// ── Fonction helper pour obtenir les labels des accords d'un parfum ──
+function getPerfumeAccords(perfume: Perfume): string[] {
+  const ids = getAccordIdsForPerfume(perfume.id);
+  return ids
+    .map(id => ACCORDS_LIBRARY[id]?.label)
+    .filter(Boolean) as string[];
+}
+
 const PerfumeImage = ({ perfume }: { perfume: Perfume }) => (
   <div className="h-32 lg:h-36 flex items-center justify-center mb-3 relative group">
     <div className="w-20 h-28 rounded-sm bg-gradient-to-b from-primary/10 to-transparent border border-primary/20 flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:border-primary/50 shadow-lg shadow-black/50">
       {perfume.image ? (
         <img 
-          src={perfume.image} 
+          src={perfume.image}
           alt={perfume.name}
           className="w-full h-full object-contain p-1 mix-blend-lighten transition-transform duration-700 group-hover:scale-110"
         />
@@ -75,7 +85,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
   const [fromHerbier, setFromHerbier] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
 
-  // Helper pour ouvrir/fermer l'herbier et notifier le parent
   const openHerbier = () => {
     setIsNotesMenuOpen(true);
     onHerbierChange?.(true);
@@ -85,7 +94,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
     onHerbierChange?.(false);
   };
 
-  const brands = useMemo(() => 
+  const brands = useMemo(() =>
     [...new Set(PERFUMES.map(p => p.brand))].sort((a, b) => a.localeCompare(b)),
   []);
 
@@ -340,12 +349,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
               className="flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 max-w-7xl mx-auto w-full">
               {filteredPerfumes.length > 0 ? (
                 filteredPerfumes.map((perfume) => {
-                  // ✅ NOUVEAU : calcul des accords
                   const accords = getPerfumeAccords(perfume);
-
-                  // 🔍 DEBUG (optionnel mais recommandé)
-                  console.log(perfume.name, accords);
-
                   return (
                     <motion.button key={perfume.id} variants={staggerItem} whileHover={springHover} whileTap={springTap}
                       onClick={() => setSelected(perfume)}
@@ -365,7 +369,6 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
                         {perfume.concentration}
                       </p>
 
-                      {/* ✅ NOUVEAU : affichage accords (propre luxe) */}
                       <div className="mt-3 flex flex-wrap justify-center gap-1">
                         {accords.slice(0, 3).map((acc) => (
                           <span

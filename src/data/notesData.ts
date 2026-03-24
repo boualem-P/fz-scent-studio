@@ -47,6 +47,9 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Figue": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7tfbApizQc4oaqIqiAmlP0mJGDDcj6L3fjw&s",
   "Ciste": "https://media.ooreka.fr/public/image/plant/172/varietyImage/43iqyknkad2csco8wgcccsk8c-source-11402391.jpg",
   "Maté": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtwsymAQpRX8h3dvP-YVBx2qrZMGAVDbseYg&s",
+  "Magnolia": "https://images.unsplash.com/photo-1617708407463-8460ff1fb4e2?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "Chèvrefeuille": "https://images.unsplash.com/photo-1721746424332-02f340cc72bc?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "Œillet": "https://plus.unsplash.com/premium_photo-1664298572491-fbb6a3212a45?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 
   // --- SPICES ------------------------------------------
   "Poivre": "https://epecia.com/wp-content/uploads/2022/11/Poivre-noir-en-Grains-2-scaled.jpg",
@@ -126,7 +129,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Coumarine": "https://t4.ftcdn.net/jpg/17/54/89/81/360_F_1754898160_roXxgZqwXTnerzjHd50qqjwizlkHFVvx.jpg",
   "Amande": "https://www.saveursetvie.fr/wp-content/uploads/2024/06/44bb2c3b-0776-4bd4-8e51-38e3b7862eeb-bienfaitsamandesseniors97f7dadf97.webp",
   "Amande amère": "https://www.laboetgato.fr/48520-large_default/amande-amere-500-g.jpg",
-  "Réglisse": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlj2mRYrtQpL1hAiiIHEVKSoXJEFJGUWb1-g&s",
+  "Réglisse": "https://images.unsplash.com/photo-1564424541861-6c68eb0a4309?q=80&w=867&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 
   // --- FRUITS ------------------------------------------
   "Pomme": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGlhJ9z_OYQIPCAKKd--_EpLf7EbkD4-vdyg&s",

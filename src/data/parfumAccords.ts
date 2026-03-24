@@ -19,10 +19,10 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
     "lavender", "spicy", "musky", "herbal", "pink_pepper"
   ],
 
-  "fahrenheit-dior": [
-    "leather", "violet", "woody", "ozonic", "fresh_spicy", 
-    "aromatic", "animalic", "floral", "earthy", "vetiver"
-  ],
+"fahrenheit-dior": [
+  "leather", "woody", "ozonic", "fresh_spicy", "aromatic",
+  "violet", "earthy", "animalic", "floral", "vetiver"
+],
 
   "homme-intense-dior": [
     "iris", "powdery", "lavender", "woody", "violet", 

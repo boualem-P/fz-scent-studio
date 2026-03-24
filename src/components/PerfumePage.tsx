@@ -396,8 +396,8 @@ const SaisonsBlock = ({ compact = false }: { compact?: boolean }) => {
 
   const seasons = [
     { id: 'winter', label: 'Hiver',     score: perfume.seasonData.winter, color: '#6B93D6', icon: <Snowflake size={13} /> },
-    { id: 'spring', label: 'Printemps', score: perfume.seasonData.spring, color: '#7CB87C', icon: <Flower size={13} /> },
-    { id: 'summer', label: 'Été',       score: perfume.seasonData.summer, color: '#F4A261', icon: <Sun size={13} /> },
+    { id: 'spring', label: 'Printemps', score: perfume.seasonData.spring, color: '#00FF03', icon: <Flower size={13} /> },
+    { id: 'summer', label: 'Été',       score: perfume.seasonData.summer, color: '#FFF500', icon: <Sun size={13} /> },
     { id: 'autumn', label: 'Automne',   score: perfume.seasonData.autumn, color: '#D97706', icon: <Leaf size={13} /> },
   ];
 

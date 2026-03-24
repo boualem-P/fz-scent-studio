@@ -7,6 +7,7 @@ import LandingScreen from "@/components/LandingScreen";
 import PyramidScreen from "@/components/PyramidScreen";
 import ResultsScreen from "@/components/ResultsScreen";
 import CatalogueScreen from "@/components/CatalogueScreen";
+import { NOTES_IMAGES } from "@/data/notesData";
 import AnalyzingLoader from "@/components/AnalyzingLoader";
 import GoldenRain from "@/components/GoldenRain";
 import PerfumePage from "@/components/PerfumePage"; 
@@ -29,24 +30,14 @@ const Index = () => {
   const catalogueInternalBackRef = useRef<(() => boolean) | null>(null);
 
   const availableNotesByCategory = useMemo(() => {
-    const categories = {
-      top: new Set<string>(),
-      heart: new Set<string>(),
-      base: new Set<string>()
-    };
-
-    PERFUMES.forEach(p => {
-      p.topNotesDetailed?.forEach(n => { if(n.name) categories.top.add(n.name) });
-      p.heartNotesDetailed?.forEach(n => { if(n.name) categories.heart.add(n.name) });
-      p.baseNotesDetailed?.forEach(n => { if(n.name) categories.base.add(n.name) });
-    });
-
-    return {
-      top: Array.from(categories.top).sort((a, b) => a.localeCompare(b)),
-      heart: Array.from(categories.heart).sort((a, b) => a.localeCompare(b)),
-      base: Array.from(categories.base).sort((a, b) => a.localeCompare(b))
-    };
-  }, []);
+  const allNotes = Object.keys(NOTES_IMAGES).sort((a, b) => a.localeCompare(b));
+  const third = Math.ceil(allNotes.length / 3);
+  return {
+    top:   allNotes.slice(0, third),
+    heart: allNotes.slice(third, third * 2),
+    base:  allNotes.slice(third * 2),
+  };
+}, []);
 
   useEffect(() => {
     if (selectedPerfume || screen === "analyzing") {

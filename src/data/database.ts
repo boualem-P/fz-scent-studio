@@ -49,7 +49,7 @@ export const PERFUMES: Perfume[] = [
     sillage: "modéré",
     longevite: "6-8h",
     jourPct: 80,
-    seasonData: { winter: 25, spring: 95, summer: 70, autumn: 40 }
+    seasonData: { winter: 40, spring: 25, summer: 15, autumn: 30 }
   },
   {
     id: "sauvage-dior",

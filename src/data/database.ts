@@ -119,13 +119,13 @@ export const PERFUMES: Perfume[] = [
     topNotes: ["Pamplemousse", "Citron", "Menthe", "Poivre rose"],
     heartNotes: ["Gingembre", "Noix de muscade", "Jasmin", "Iso E Super"],
     baseNotes: ["Encens", "Vétiver", "Cèdre", "Santal", "Patchouli", "Ladanum", "Musc blanc"],
-    topNotesDetailed: [{ name: "Pamplemousse" }, { name: "Citron" }],
-    heartNotesDetailed: [{ name: "Gingembre" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Encens" }, { name: "Cèdre" }],
+    topNotesDetailed: [{ name: "Zeste de citron" }, { name: "Bergamote" }],
+    heartNotesDetailed: [{ name: "Lavande" }, { name: "Amberwood" }],
+    baseNotesDetailed: [{ name: "Santal" }, { name: "Cèdre" }],
     sillage: "modéré",
     longevite: "6-8h",
-    jourPct: 60,
-    seasonData: { winter: 60, spring: 90, summer: 85, autumn: 80 }
+    jourPct: 55,
+    seasonData: { winter: 30, spring: 25, summer: 10, autumn: 25 }
   },
   {
     id: "le-lion-chanel",

@@ -40,7 +40,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Héliotrope": "https://media.istockphoto.com/id/1743304873/fr/photo/fleurs-dh%C3%A9liotrope.jpg?s=612x612&w=0&k=20&c=65p2ASsuECr7-2yNei-ZB0lx5E_CCK-iO71vmPhDqyI=",
   "Freesia": "https://www.bonparfumeur.com/cdn/shop/articles/freesia-simple-rose-2_62433c3d-d7af-4da1-829e-04e656410f0b.jpg?v=1748246429",
   "Orchidée noire": "https://www.industries-cosmetiques.fr/wp-content/uploads/2016/11/capture98.jpg",
-  "Muguet": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzGhIvJb3X2LRj0A5ZvJx9e5FKmV5zPJJVeA&s",
+  "Muguet": "https://images.unsplash.com/photo-1589563281598-a2017b732b53?q=80&w=435&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "Rose de Damas": "https://www.jardindupicvert.com/media/catalog/product/r/o/rosier-ancien-de-damas-rose-de-rescht-18783.jpg",
   "Rose de Bulgarie": "https://blog.visiondumonde.org/wp-content/uploads/2017/05/bulgarie-roses-couverture-2-864x520.jpg",
   "Laurier": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrKZMvXOtke4wY3KTYB9fsxHuESvXHJ7xshA&s",
@@ -184,7 +184,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Patchouli indien": "https://i5.walmartimages.com/asr/55dc9976-926d-4cf5-aa5c-c50f908d481a.b4e1a25fb3ff4efc901f44be675dfea0.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF",
   "Feuille de patchouli": "https://www.docteurvalnet.com/wp-content/uploads/2023/04/patchouli_AdobeStock_238205357-1024x680.jpeg",
   "Jasmin d'eau": "https://media.istockphoto.com/id/862596276/fr/photo/fleurs-blanches-de-jasmin-sur-fond-isol%C3%A9-blanc.jpg?s=612x612&w=0&k=20&c=1WG34C782a96vaIdndA0I5-oqXxbzcr6SviOKesI5uw=",
-  "Orchidée": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6yAYZ2T7P2K0dPRuIMfDHEIqpHKXxpRJqBg&s",
+  "Orchidée": "https://images.unsplash.com/photo-1605996370592-b6f7a81e382e?q=80&w=435&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 };
 
 /**

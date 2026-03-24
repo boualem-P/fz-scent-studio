@@ -10,8 +10,8 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
   // ── DIOR ──────────────────────────────────────────────────────
 
   "j-adore-dior": [
-    "white_floral", "floral", "fruity", "jasmine", "tuberose", 
-    "rose", "sweet", "fresh", "aquatic", "musky", "vanilla"
+    "white_floral", "floral", "fruity", "sweet", "fresh",
+    "jasmine", "tuberose", "rose", "musky", "vanilla"
   ],
 
   "sauvage-dior": [
@@ -42,8 +42,8 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
   ],
 
   "allure-sport-chanel": [
-    "citrus", "aromatic", "marine", "aquatic", "fresh", 
-    "vanilla", "tonka_bean", "musky", "amber", "cedar"
+    "citrus", "aromatic", "vanilla", "aldehydic", "marine",
+    "tonka_bean", "musky", "amber", "cedar", "fresh"
   ],
 
   // ── YSL ───────────────────────────────────────────────────────

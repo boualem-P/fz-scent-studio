@@ -32,7 +32,7 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
   // ── CHANEL ────────────────────────────────────────────────────
 
   "bleu-de-chanel": [
-    "citrus", "woody", "amber", "aromatic", "fresh_spicy", 
+    "woody", "citrus", "aromatic", "amber", "fresh_spicy",
     "smoky", "incense", "cedar", "sandalwood", "warm_woody"
   ],
 

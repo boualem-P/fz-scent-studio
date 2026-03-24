@@ -81,13 +81,13 @@ export const PERFUMES: Perfume[] = [
     topNotes: ["Fleur de muscadier", "Lavande", "Cèdre", "Mandarine", "Camomille", "Aubépine", "Bergamote", "Citron"],
     heartNotes: ["Feuille de violette", "Noix de muscade", "Cèdre", "Santal", "Chèvrefeuille", "Œillet", "Jasmin", "Muguet"],
     baseNotes: ["Cuir", "Vétiver", "Musc", "Ambre", "Patchouli", "Fève de tonka"],
-    topNotesDetailed: [{ name: "Fleur de muscadier" }, { name: "Lavande" }],
-    heartNotesDetailed: [{ name: "Feuille de violette" }, { name: "Noix de muscade" }],
+    topNotesDetailed: [{ name: "Feuille de Violette" }, { name: "Noix de muscade" }],
+    heartNotesDetailed: [{ name: "Lavande" }, { name: "Cèdre" }],
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Vétiver" }],
     sillage: "fort",
     longevite: "8h+",
     jourPct: 40,
-    seasonData: { winter: 80, spring: 45, summer: 20, autumn: 95 }
+    seasonData: { winter: 35, spring: 20, summer: 10, autumn: 30 }
   },
   {
     id: "homme-intense-dior",

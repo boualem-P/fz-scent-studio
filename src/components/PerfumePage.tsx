@@ -395,45 +395,57 @@ const SaisonsBlock = ({ compact = false }: { compact?: boolean }) => {
   if (!perfume.seasonData) return null;
 
   const seasons = [
-    { id: 'winter', label: 'Hiver',      score: perfume.seasonData.winter, color: '#6B93D6', icon: <Snowflake size={13} /> },
-    { id: 'spring', label: 'Printemps',  score: perfume.seasonData.spring, color: '#7CB87C', icon: <Flower size={13} /> },
-    { id: 'summer', label: 'Été',        score: perfume.seasonData.summer, color: '#F4A261', icon: <Sun size={13} /> },
-    { id: 'autumn', label: 'Automne',    score: perfume.seasonData.autumn, color: '#D97706', icon: <Leaf size={13} /> },
+    { id: 'winter', label: 'Hiver',     score: perfume.seasonData.winter, color: '#6B93D6', icon: <Snowflake size={13} /> },
+    { id: 'spring', label: 'Printemps', score: perfume.seasonData.spring, color: '#7CB87C', icon: <Flower size={13} /> },
+    { id: 'summer', label: 'Été',       score: perfume.seasonData.summer, color: '#F4A261', icon: <Sun size={13} /> },
+    { id: 'autumn', label: 'Automne',   score: perfume.seasonData.autumn, color: '#D97706', icon: <Leaf size={13} /> },
   ];
+
+  const SeasonBloc = ({ season }: { season: typeof seasons[0] }) => (
+    <div className="bg-white rounded-xl border border-black/8 px-3 pt-3 pb-3 flex flex-col justify-between" style={{ minHeight: "72px" }}>
+      <div className="flex items-center gap-1.5 mb-2">
+        <span style={{ color: season.color }}>{season.icon}</span>
+        <span className="text-[9px] uppercase tracking-[0.3em] text-zinc-700 font-bold">
+          {season.label}
+        </span>
+      </div>
+      <div className="rounded-lg overflow-hidden flex" style={{ height: "24px" }}>
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${season.score}%` }}
+          transition={{ duration: 0.8, ease: "circOut" }}
+          className="flex items-center justify-center overflow-hidden"
+          style={{ backgroundColor: season.color }}
+        >
+          {season.score >= 25 && (
+            <span
+              className="text-[9px] font-bold uppercase tracking-wider whitespace-nowrap"
+              style={{ color: "#fff", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}
+            >
+              {season.score}%
+            </span>
+          )}
+        </motion.div>
+        {season.score < 100 && (
+          <div className="flex-1 bg-zinc-100 rounded-r-lg" />
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className={compact ? "mt-4" : "border-t border-zinc-100 pt-4 mt-4"}>
       <p className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-bold mb-3">
         Équilibre Saisonnier
       </p>
-      <div className="bg-white rounded-xl border border-black/8 px-4 py-3 space-y-2.5">
+      <div className="grid grid-cols-2 gap-3">
         {seasons.map((season) => (
-          <div key={season.id} className="space-y-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span style={{ color: season.color }}>{season.icon}</span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-medium">
-                  {season.label}
-                </span>
-              </div>
-              <span className="text-[9px] text-zinc-400">{season.score}%</span>
-            </div>
-            <div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${season.score}%` }}
-                transition={{ duration: 0.8, ease: "circOut" }}
-                className="h-full rounded-full"
-                style={{ backgroundColor: season.color }}
-              />
-            </div>
-          </div>
+          <SeasonBloc key={season.id} season={season} />
         ))}
       </div>
     </div>
   );
 };
-
   // --- ProfilOlfactif — arc jauge + flacon SVG (validé session 3) --
   const ProfilOlfactif = () => {
     if (!perfume.sillage && !perfume.longevite) return null;

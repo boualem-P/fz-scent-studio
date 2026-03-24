@@ -414,17 +414,9 @@ const SaisonsBlock = ({ compact = false }: { compact?: boolean }) => {
           initial={{ width: 0 }}
           animate={{ width: `${season.score}%` }}
           transition={{ duration: 0.8, ease: "circOut" }}
-          className="flex items-center justify-center overflow-hidden"
+className="flex items-center justify-center overflow-hidden"
           style={{ backgroundColor: season.color }}
         >
-          {season.score >= 25 && (
-            <span
-              className="text-[9px] font-bold uppercase tracking-wider whitespace-nowrap"
-              style={{ color: "#fff", textShadow: "0 1px 2px rgba(0,0,0,0.3)" }}
-            >
-              {season.score}%
-            </span>
-          )}
         </motion.div>
         {season.score < 100 && (
           <div className="flex-1 bg-zinc-100 rounded-r-lg" />

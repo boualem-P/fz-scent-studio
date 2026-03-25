@@ -210,6 +210,7 @@ const Index = () => {
                   availableNotes={availableNotesByCategory}
                   setInternalBackHandler={(fn) => { catalogueInternalBackRef.current = fn; }}
                   onHerbierChange={setIsHerbierOpen}
+                  userGender={gender}
                 />
               )}
             </motion.div>

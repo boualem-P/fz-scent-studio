@@ -52,7 +52,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Œillet": "https://plus.unsplash.com/premium_photo-1664298572491-fbb6a3212a45?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 
   // --- SPICES ------------------------------------------
-  "Poivre": "https://epecia.com/wp-content/uploads/2022/11/Poivre-noir-en-Grains-2-scaled.jpg",
+  "Poivre": "https://plus.unsplash.com/premium_photo-1668447605666-716a18e15a1d?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "Poivre Rose": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy68QcnTdnE0gdP-PDGwPZNKArSN386GfYMA&s",
   "Poivre noir": "https://thumbs.dreamstime.com/b/tas-frais%C3%A9-ou-moulu-de-poivre-noir-d-isolement-sur-le-fond-blanc-front-view-143209481.jpg",
   "Poivre du Sichuan": "https://pommedambre.com/app/uploads/2021/05/poivre-de-sichuan-400.jpg",
@@ -93,7 +93,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Bois de Cachemire": "https://media.istockphoto.com/id/874320972/fr/photo/texture-bois-motif-grunge.jpg?s=612x612&w=0&k=20&c=HHhWpzkI37AJbEiSXwgUQiVp8pTBm3C98Njl-ff-C4M=",
   "Papyrus": "https://png.pngtree.com/png-vector/20241114/ourmid/pngtree-old-paper-scroll-ancient-papyrus-isolated-on-transparent-background-png-image_14317742.png",
   "Foin": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqk7EGBIgXdIDfl9O_6rMqJLkdGgveq0dkHw&s",
-  "Silex": "https://www.olfastory.com/sites/default/files/styles/400x400/public/silex.jpg?itok=zagkecof",
+  "Silex": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Silex-Zaragoza.jpg/330px-Silex-Zaragoza.jpg",
   "Pélargonium": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjnUIW1tDUtcNKki5mgZZ50uO-nGBgVG0B3Q&s",
 
   // --- AMBER & RESINS ----------------------------------
@@ -119,7 +119,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Fève Tonka": "https://www.evasionsgourmandes.com/wp-content/uploads/2023/07/tonka.jpg",
   "Caramel": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9WLP16T6JjklrvODAvgaa95R74oevMgMJMg&s",
   "Chocolat": "https://media.istockphoto.com/id/1400452697/fr/photo/barre-de-chocolat-noir-avec-f%C3%A8ves-de-cacao.jpg?s=612x612&w=0&k=20&c=MeDSWrVPCuJQeQtOkiLNIxhNAtp7mVjKNvVD95JcxgM=",
-  "Chocolat mexicain": "https://mexique-voyages.com/wp-content/uploads/captura-de-pantalla-2023-11-18-a-las-111344-1280x800.png",
+  "Chocolat mexicain": "https://images.unsplash.com/photo-1736154577985-13f3158d5bdf?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "Cacao": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk0QVfri3iGG2V-O5qXFqY_l-skFjfYdm6CQ&s",
   "Miel": "https://media.istockphoto.com/id/1445503284/fr/photo/miel-isol%C3%A9-sur-le-fond-blanc.jpg?s=612x612&w=0&k=20&c=KLj2iYJ7w60Pln3XAs_yDyTZhc-nBIHxnGncnSp29Y4=",
   "Café": "https://thumbs.dreamstime.com/b/granos-de-caf%C3%A9-tostados-en-fondo-r%C3%BAstico-texturado-fotograf%C3%ADa-alta-resoluci%C3%B3n-cierre-asados-esparcidos-una-superficie-c%C3%A1lida-393023802.jpg",

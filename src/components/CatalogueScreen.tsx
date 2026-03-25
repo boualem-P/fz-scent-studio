@@ -95,8 +95,21 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
   };
 
   const brands = useMemo(() =>
-    [...new Set(PERFUMES.map(p => p.brand))].sort((a, b) => a.localeCompare(b)),
-  []);
+  [...new Set(PERFUMES.map(p => p.brand))].sort((a, b) => a.localeCompare(b)),
+[]);
+
+const filteredBrands = useMemo(() => {
+  if (!brandSearchQuery) return brands;
+  const q = brandSearchQuery.toLowerCase();
+  // Marques qui matchent directement
+  const directBrands = brands.filter(b => b.toLowerCase().includes(q));
+  // Marques qui contiennent un parfum dont le nom matche
+  const indirectBrands = brands.filter(b =>
+    !directBrands.includes(b) &&
+    PERFUMES.some(p => p.brand === b && p.name.toLowerCase().includes(q))
+  );
+  return [...directBrands, ...indirectBrands];
+}, [brands, brandSearchQuery]);
 
   const filteredPerfumes = useMemo(() => {
     if (!selectedBrand) return [];
@@ -200,11 +213,16 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
 
             <motion.div variants={staggerContainer} initial="hidden" animate="show" className="text-center mb-10">
               <motion.h2 variants={staggerItem} className="font-display text-4xl lg:text-5xl text-gold-gradient tracking-widest flex items-center justify-center gap-4 italic">
-                Nos Maisons
-                <span className="text-xs font-body text-primary/30 border border-primary/20 px-3 py-1 rounded-full not-italic">
-                  {brands.length}
-                </span>
-              </motion.h2>
+  Nos Maisons
+</motion.h2>
+<motion.div variants={staggerItem} className="flex items-center justify-center gap-4 mt-2">
+  <span className="text-xs font-body text-primary/40 border border-primary/20 px-3 py-1 rounded-full">
+    {brands.length} maisons
+  </span>
+  <span className="text-xs font-body text-primary/40 border border-primary/20 px-3 py-1 rounded-full">
+    {PERFUMES.length} parfums
+  </span>
+</motion.div>
               <motion.div variants={staggerItem} className="gold-divider w-40 mx-auto mt-4" />
             </motion.div>
 
@@ -227,10 +245,9 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
 
             <motion.div variants={staggerContainer} initial="hidden" animate="show"
               className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto w-full">
-              {brands
-                .filter(b => b.toLowerCase().includes(brandSearchQuery.toLowerCase()))
-                .map((brand) => {
-                  const count = PERFUMES.filter(p => p.brand === brand).length;
+              {filteredBrands.map((brand) => {
+                
+                const count = PERFUMES.filter(p => p.brand === brand).length;
                   const brandImg = BRAND_IMAGES[brand];
                   return (
                     <motion.button
@@ -260,7 +277,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
                     </motion.button>
                   );
                 })}
-              {brands.filter(b => b.toLowerCase().includes(brandSearchQuery.toLowerCase())).length === 0 && (
+              {filteredBrands.length === 0 && (
                 <div className="col-span-full text-center py-20 opacity-30 uppercase text-[11px] tracking-[0.4em]">
                   Maison introuvable
                 </div>

@@ -151,14 +151,16 @@ const Index = () => {
           {screen === "landing" && !selectedPerfume && <ProfileSheet />}
         </div>
 
-        <div className="flex gap-3 pointer-events-auto">
-          <button 
-            onClick={() => { navigateTo("catalogue"); setSelectedPerfume(null); }} 
-            className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
-          >
-            <Library size={20} />
-          </button>
-        </div>
+        {screen === "landing" && !selectedPerfume && (
+  <div className="flex gap-3 pointer-events-auto">
+    <button 
+      onClick={() => { navigateTo("catalogue"); setSelectedPerfume(null); }} 
+      className="w-12 h-12 rounded-full border border-white/10 bg-black/80 text-white backdrop-blur-xl flex items-center justify-center hover:scale-110 transition-all shadow-2xl"
+    >
+      <Library size={20} />
+    </button>
+  </div>
+)}
       </nav>
 
       <main className="relative z-10 h-full w-full">

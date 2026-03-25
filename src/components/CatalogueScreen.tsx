@@ -17,6 +17,7 @@ interface CatalogueScreenProps {
   };
   setInternalBackHandler?: (fn: (() => boolean) | null) => void;
   onHerbierChange?: (open: boolean) => void;
+  userGender?: "homme" | "femme" | "unisexe";
 }
 
 // ── Fonction helper pour obtenir les labels des accords d'un parfum ──
@@ -76,7 +77,7 @@ const BRAND_IMAGES: Record<string, string> = {
   "Paco Rabanne":              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHrdwJieDavm5qELxmGFwwRmsh2WpwWfNpQA&s",
 };
 
-const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHerbierChange }: CatalogueScreenProps) => {
+const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHerbierChange, userGender }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [brandSearchQuery, setBrandSearchQuery] = useState("");
@@ -461,7 +462,7 @@ const filteredBrands = useMemo(() => {
           <motion.div key={`perfume-${selected.id}`} initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             className="fixed inset-0 z-[500] bg-[#1D1E1F] overflow-y-auto">
-            <PerfumePage perfume={selected} onClose={() => setSelected(null)} onSelectPerfume={setSelected} />
+            <PerfumePage perfume={selected} onClose={() => setSelected(null)} onSelectPerfume={setSelected} userGender={userGender} />
           </motion.div>
         )}
       </AnimatePresence>

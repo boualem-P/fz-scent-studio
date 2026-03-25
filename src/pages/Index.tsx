@@ -230,7 +230,8 @@ const Index = () => {
             <PerfumePage 
               perfume={selectedPerfume} 
               onClose={handleBack} 
-              onSelectPerfume={setSelectedPerfume} 
+              onSelectPerfume={setSelectedPerfume}
+              userGender={gender}
             />
           </motion.div>
         )}

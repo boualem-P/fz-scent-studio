@@ -10,6 +10,7 @@ interface PerfumePageProps {
   perfume: Perfume;
   onClose: () => void;
   onSelectPerfume: (perfume: Perfume) => void;
+  userGender?: "homme" | "femme" | "unisexe";
 }
 
 type DeviceType = "mobile" | "tablet" | "desktop";
@@ -21,9 +22,10 @@ const getDevice = (): DeviceType => {
   return "desktop";
 };
 
-function getRelatedPerfumes(perfume: Perfume, minCount: number = 5): Perfume[] {
+function getRelatedPerfumes(perfume: Perfume, minCount: number = 5, userGender?: "homme" | "femme" | "unisexe"): Perfume[] {
   const validGenders = (() => {
-    switch (perfume.gender) {
+    const g = userGender ?? perfume.gender;
+    switch (g) {
       case "femme":   return ["femme", "unisexe"];
       case "homme":   return ["homme", "unisexe"];
       case "unisexe": return ["unisexe", "femme", "homme"];
@@ -84,7 +86,7 @@ const JOUR_TEXT  = "#7a5a00";
 const NUIT_COLOR = "#2C2C4A";
 const NUIT_TEXT  = "#ffffff";
 
-const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) => {
+const PerfumePage = ({ perfume, onClose, onSelectPerfume, userGender }: PerfumePageProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [device, setDevice] = useState<DeviceType>("desktop");
   const [notePanelNote, setNotePanelNote] = useState<string | null>(null);
@@ -191,7 +193,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume }: PerfumePageProps) =>
     };
   }, []);
 
-  const recommendations = useMemo(() => getRelatedPerfumes(perfume, 5), [perfume]);
+  const recommendations = useMemo(() => getRelatedPerfumes(perfume, 5, userGender), [perfume, userGender]);;
 
   const perfumeAccords = useMemo(() => {
     const ids = getAccordIdsForPerfume(perfume.id);

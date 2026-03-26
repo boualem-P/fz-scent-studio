@@ -163,17 +163,17 @@ const Index = () => {
 )}
       </nav>
 
-      <main className="relative z-10 h-full w-full">
-        <AnimatePresence mode="wait">
-          {!selectedPerfume && (
-            <motion.div 
-              key={screen} 
-              initial={{ opacity: 0, y: 10 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              exit={{ opacity: 0, y: -10 }} 
-              transition={{ duration: 0.3 }}
-              className="h-full w-full"
-            >
+<main className="relative z-10 h-full w-full">
+  <AnimatePresence mode="wait">
+    {!selectedPerfume && (
+      <motion.div 
+        key={screen} 
+        initial={{ opacity: 0, y: 10 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        exit={{ opacity: 0 }} 
+        transition={{ duration: 0.15 }}
+        className="h-full w-full"
+      >
               {screen === "landing" && (
                 <LandingScreen 
                   onSelectGender={handleGender} 
@@ -218,16 +218,16 @@ const Index = () => {
         </AnimatePresence>
       </main>
 
-      <AnimatePresence>
-        {selectedPerfume && (
-          <motion.div 
-            key={`perfume-${selectedPerfume.id}`} 
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed inset-0 z-[150] bg-[#1D1E1F] overflow-y-auto"
-          >
+<AnimatePresence>
+  {selectedPerfume && (
+    <motion.div 
+      key={`perfume-${selectedPerfume.id}`} 
+      initial={{ y: "100%" }}
+      animate={{ y: 0 }}
+      exit={{ y: "100%" }}
+      transition={{ type: "spring", damping: 30, stiffness: 300 }}
+      className="fixed inset-0 z-[500] bg-[#F5F0E8] overflow-y-auto"
+    >
             <PerfumePage 
               perfume={selectedPerfume} 
               onClose={handleBack} 

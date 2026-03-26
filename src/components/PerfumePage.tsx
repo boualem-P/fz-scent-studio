@@ -5,6 +5,8 @@ import { useRef, useEffect, useState, useMemo } from "react";
 import { getNoteImage } from "@/data/notesData";
 import { ACCORDS_LIBRARY } from "@/data/accords";
 import { getAccordIdsForPerfume } from "@/data/parfumAccords";
+import { useStock } from "@/data/useStock";
+import { EpuiseOverlay } from "@/components/EpuiseOverlay";
 
 interface PerfumePageProps {
   perfume: Perfume;
@@ -520,8 +522,13 @@ className="flex items-center justify-center overflow-hidden"
           {recommendations.map((rec) => (
             <motion.button key={rec.id} onClick={() => onSelectPerfume(rec)}
               className="group text-left space-y-1.5" style={{ width: cardW }} whileHover={{ y: -3 }}>
-              <div className="perfume-img-container gold-frame bg-zinc-900/30" style={{ height: cardH }}>
-                <img src={rec.image} className="perfume-img opacity-70 group-hover:opacity-100 transition-opacity" alt={rec.name} />
+              const { isAvailable } = useStock();
+// ...
+<div className="perfume-img-container gold-frame bg-zinc-900/30 relative" style={{ height: cardH }}>
+  <img src={rec.image} className={`perfume-img transition-opacity ${!isAvailable(rec.id) ? "blur-[3px] opacity-20" : "opacity-70 group-hover:opacity-100"}`} alt={rec.name} />
+  <AnimatePresence>
+    {!isAvailable(rec.id) && <EpuiseOverlay />}
+  </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-2.5">
                   <div className="flex items-center gap-1">
                     <Plus size={9} className="text-amber-500" />

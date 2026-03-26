@@ -19,14 +19,11 @@ const PerfumeInitial = ({ name }: { name: string }) => (
 );
 
 const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
-  const [stockStatus, setStockStatus] = useState<Record<string, boolean>>({});
+import { useStock } from "@/data/useStock";
+import { EpuiseOverlay } from "@/components/EpuiseOverlay";
+// (ajoute ces 2 imports en haut du fichier)
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("fz_stock_status");
-      if (saved) setStockStatus(JSON.parse(saved));
-    } catch {}
-  }, []);
+const { isAvailable } = useStock();
 
   if (results.length === 0) {
     return (
@@ -94,7 +91,7 @@ const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfum
                 <img
                   src={topResult.perfume.image}
                   alt={topResult.perfume.name}
-                  className={`w-full h-full object-cover transition-all duration-700 ${stockStatus[topResult.perfume.id] === false ? "blur-[4px] opacity-[0.15]" : "opacity-80 group-hover:opacity-100 group-hover:scale-105"}`}
+                  className={`w-full h-full object-cover transition-all duration-700 ${!isAvailable(topResult.perfume.id) ? "blur-[4px] opacity-[0.15]" : "opacity-80 group-hover:opacity-100 group-hover:scale-105"}`}
                 />
               ) : (
                 <PerfumeInitial name={topResult.perfume.name} />
@@ -196,7 +193,7 @@ const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfum
                       <img
                         src={perfume.image}
                         alt={perfume.name}
-                        className={`w-full h-full object-cover transition-all duration-700 ${stockStatus[perfume.id] === false ? "blur-[4px] opacity-[0.15]" : "opacity-70 group-hover:opacity-100 group-hover:scale-105"}`}
+                        className={`w-full h-full object-cover transition-all duration-700 ${!isAvailable(perfume.id) ? "blur-[4px] opacity-[0.15]" : "opacity-70 group-hover:opacity-100 group-hover:scale-105"}`}
                       />
                     ) : (
                       <div className="w-full h-full min-h-[160px] flex items-center justify-center">

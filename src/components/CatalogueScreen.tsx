@@ -7,6 +7,8 @@ import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/ani
 import { getNoteImage } from "@/data/notesData";
 import { ACCORDS_LIBRARY } from "@/data/accords";
 import { getAccordIdsForPerfume } from "@/data/parfumAccords";
+import { useStock } from "@/data/useStock";
+import { EpuiseOverlay } from "@/components/EpuiseOverlay";
 
 interface CatalogueScreenProps {
   onMenu: () => void;
@@ -28,24 +30,31 @@ function getPerfumeAccords(perfume: Perfume): string[] {
     .filter(Boolean) as string[];
 }
 
-const PerfumeImage = ({ perfume }: { perfume: Perfume }) => (
-  <div className="h-32 lg:h-36 flex items-center justify-center mb-3 relative group">
-    <div className="w-20 h-28 rounded-sm bg-gradient-to-b from-primary/10 to-transparent border border-primary/20 flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:border-primary/50 shadow-lg shadow-black/50">
-      {perfume.image ? (
-        <img 
-          src={perfume.image}
-          alt={perfume.name}
-          className="w-full h-full object-contain p-1 mix-blend-lighten transition-transform duration-700 group-hover:scale-110"
-        />
-      ) : (
-        <span className="font-display text-xl text-primary/40 tracking-widest uppercase">
-          {perfume.name.substring(0, 2)}
-        </span>
-      )}
+const PerfumeImage = ({ perfume }: { perfume: Perfume }) => {
+  const { isAvailable } = useStock();
+  const available = isAvailable(perfume.id);
+  return (
+    <div className="h-32 lg:h-36 flex items-center justify-center mb-3 relative group">
+      <div className="w-20 h-28 rounded-sm bg-gradient-to-b from-primary/10 to-transparent border border-primary/20 flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:border-primary/50 shadow-lg shadow-black/50 relative">
+        {perfume.image ? (
+          <img
+            src={perfume.image}
+            alt={perfume.name}
+            className={`w-full h-full object-contain p-1 mix-blend-lighten transition-transform duration-700 group-hover:scale-110 ${!available ? "blur-[3px] opacity-20" : ""}`}
+          />
+        ) : (
+          <span className="font-display text-xl text-primary/40 tracking-widest uppercase">
+            {perfume.name.substring(0, 2)}
+          </span>
+        )}
+        <AnimatePresence>
+          {!available && <EpuiseOverlay />}
+        </AnimatePresence>
+      </div>
+      <div className="absolute bottom-1 w-12 h-1 bg-primary/20 blur-md rounded-full group-hover:bg-primary/40 transition-all" />
     </div>
-    <div className="absolute bottom-1 w-12 h-1 bg-primary/20 blur-md rounded-full group-hover:bg-primary/40 transition-all" />
-  </div>
-);
+  );
+};
 
 const BRAND_IMAGES: Record<string, string> = {
   "Dior":                      "https://spnews.com/downloads/6765/download/Dior_logo.png?cb=35a7196f26214e14e4fdac4b6d73ab3c",

@@ -509,7 +509,8 @@ className="flex items-center justify-center overflow-hidden"
   };
 
   // --- CarouselBlock ---------------------------------------------
-  const CarouselBlock = ({ cardW, cardH, dragLeft }: { cardW: number; cardH: number; dragLeft: number }) => (
+  const CarouselBlock = ({ cardW, cardH, dragLeft }: { cardW: number; cardH: number; dragLeft: number }) => {
+  return (
     <div className="mt-8 pt-5 border-t border-black/10">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-[9px] uppercase tracking-[0.5em] text-zinc-500 font-black italic">Sillages Analogues</h3>
@@ -552,6 +553,7 @@ className="flex items-center justify-center overflow-hidden"
       </div>
     </div>
   );
+};
 
   // --- Header ----------------------------------------------------
   const Header = () => (

@@ -5,16 +5,13 @@ export const EpuiseOverlay = () => (
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}
-    className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
+    className="absolute inset-0 flex items-center justify-center z-10"
     style={{
+      pointerEvents: "none",
       background: "rgba(0,0,0,0.35)",
     }}
   >
-    <motion.span
-      initial={{ opacity: 0, scale: 0.7 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.7 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+    <span
       style={{
         fontSize: "0.75rem",
         fontWeight: 900,
@@ -27,10 +24,10 @@ export const EpuiseOverlay = () => (
         textShadow: "0 0 12px rgba(239,68,68,0.6)",
         textTransform: "uppercase",
         whiteSpace: "nowrap",
-        backdropFilter: "blur(2px)",
+        pointerEvents: "none",
       }}
     >
       Épuisé
-    </motion.span>
+    </span>
   </motion.div>
 );

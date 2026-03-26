@@ -90,7 +90,7 @@ const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfum
                   alt={topResult.perfume.name}
                   className={`w-full h-full object-cover transition-all duration-700 ${
                     !isAvailable(topResult.perfume.id)
-                      ? "blur-[4px] opacity-[0.15]"
+                      ? "opacity-40"
                       : "opacity-80 group-hover:opacity-100 group-hover:scale-105"
                   }`}
                 />
@@ -167,7 +167,7 @@ const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfum
                         alt={perfume.name}
                         className={`w-full h-full object-cover transition-all duration-700 ${
                           !isAvailable(perfume.id)
-                            ? "blur-[4px] opacity-[0.15]"
+                            ? "opacity-40"
                             : "opacity-70 group-hover:opacity-100 group-hover:scale-105"
                         }`}
                       />

@@ -40,7 +40,7 @@ const PerfumeImage = ({ perfume }: { perfume: Perfume }) => {
           <img
             src={perfume.image}
             alt={perfume.name}
-            className={`w-full h-full object-contain p-1 mix-blend-lighten transition-transform duration-700 group-hover:scale-110 ${!available ? "blur-[3px] opacity-20" : ""}`}
+            className={`w-full h-full object-contain p-1 mix-blend-lighten transition-transform duration-700 group-hover:scale-110 ${!available ? "opacity-30" : ""}`}
           />
         ) : (
           <span className="font-display text-xl text-primary/40 tracking-widest uppercase">

@@ -13,7 +13,6 @@ export function useStock() {
       } catch {}
     };
     load();
-    // Écoute les changements depuis ProfileSheet
     window.addEventListener("storage", load);
     return () => window.removeEventListener("storage", load);
   }, []);

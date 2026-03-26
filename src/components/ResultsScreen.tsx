@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";
 import { Perfume } from "@/data/perfumes";
-import { Trophy, RotateCcw, Home, Sparkles, Crown } from "lucide-react";
+import { RotateCcw, Home, Sparkles, Crown } from "lucide-react";
+import { useStock } from "@/data/useStock";
+import { EpuiseOverlay } from "@/components/EpuiseOverlay";
 
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
   onMenu: () => void;
-  onLanding: () => void; // ← navigation directe vers menu principal
+  onLanding: () => void;
   onCatalogue: () => void;
   onSelectPerfume: (perfume: Perfume) => void;
 }
@@ -19,11 +20,7 @@ const PerfumeInitial = ({ name }: { name: string }) => (
 );
 
 const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
-import { useStock } from "@/data/useStock";
-import { EpuiseOverlay } from "@/components/EpuiseOverlay";
-// (ajoute ces 2 imports en haut du fichier)
-
-const { isAvailable } = useStock();
+  const { isAvailable } = useStock();
 
   if (results.length === 0) {
     return (
@@ -85,46 +82,26 @@ const { isAvailable } = useStock();
           <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
           <div className="flex flex-col md:flex-row">
-            {/* Image / Initial */}
+            {/* Image */}
             <div className="relative w-full md:w-72 h-64 md:h-auto bg-background/40 flex-shrink-0 overflow-hidden">
               {topResult.perfume.image ? (
                 <img
                   src={topResult.perfume.image}
                   alt={topResult.perfume.name}
-                  className={`w-full h-full object-cover transition-all duration-700 ${!isAvailable(topResult.perfume.id) ? "blur-[4px] opacity-[0.15]" : "opacity-80 group-hover:opacity-100 group-hover:scale-105"}`}
+                  className={`w-full h-full object-cover transition-all duration-700 ${
+                    !isAvailable(topResult.perfume.id)
+                      ? "blur-[4px] opacity-[0.15]"
+                      : "opacity-80 group-hover:opacity-100 group-hover:scale-105"
+                  }`}
                 />
               ) : (
                 <PerfumeInitial name={topResult.perfume.name} />
               )}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/60 pointer-events-none" />
               <AnimatePresence>
-                {stockStatus[topResult.perfume.id] === false && (
-                  <>
-                    <div className="absolute inset-0 bg-black/75 pointer-events-none" />
-                    <motion.span
-                      initial={{ opacity: 0, scale: 0.7 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.7 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                      style={{
-                        fontSize: "1rem",
-                        fontWeight: 900,
-                        letterSpacing: "0.4em",
-                        color: "rgba(255,255,255,0.90)",
-                        border: "2px solid rgba(255,255,255,0.5)",
-                        padding: "6px 14px",
-                        borderRadius: "4px",
-                        transform: "translate(-50%, -50%) rotate(-20deg)",
-                        textShadow: "0 0 20px rgba(239,68,68,0.8)",
-                      }}
-                    >
-                      ÉPUISÉ
-                    </motion.span>
-                  </>
-                )}
+                {!isAvailable(topResult.perfume.id) && <EpuiseOverlay />}
               </AnimatePresence>
-              <span className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1 bg-primary text-primary-foreground text-[10px] font-display tracking-[0.25em] uppercase rounded-sm gold-glow">
+              <span className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1 bg-primary text-primary-foreground text-[10px] font-display tracking-[0.25em] uppercase rounded-sm gold-glow z-20">
                 <Sparkles size={12} />
                 Meilleur accord
               </span>
@@ -140,11 +117,9 @@ const { isAvailable } = useStock();
                   {topResult.perfume.brand}
                 </p>
               </div>
-
               <p className="text-muted-foreground/70 text-sm leading-relaxed line-clamp-2 max-w-lg">
                 {topResult.perfume.description}
               </p>
-
               <div className="space-y-2">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground tracking-widest uppercase">Compatibilité</span>
@@ -156,13 +131,10 @@ const { isAvailable } = useStock();
                     animate={{ width: `${topResult.matchPercent}%` }}
                     transition={{ delay: 0.8, duration: 1.2, ease: "easeOut" }}
                     className="h-full rounded-full"
-                    style={{
-                      background: "linear-gradient(90deg, hsl(43 60% 38%), hsl(43 72% 52%), hsl(43 80% 65%))",
-                    }}
+                    style={{ background: "linear-gradient(90deg, hsl(43 60% 38%), hsl(43 72% 52%), hsl(43 80% 65%))" }}
                   />
                 </div>
               </div>
-
               <div className="flex items-center gap-3 text-muted-foreground/50 text-xs tracking-wider">
                 <span>{topResult.perfume.concentration}</span>
                 <span className="w-1 h-1 rounded-full bg-primary/30" />
@@ -187,13 +159,17 @@ const { isAvailable } = useStock();
                 className="group relative glass-card card-shimmer-effect p-0 overflow-hidden text-left transition-all duration-500 rounded-sm gold-border-glow"
               >
                 <div className="flex">
-                  {/* Image / Initial */}
+                  {/* Image */}
                   <div className="relative w-28 md:w-36 flex-shrink-0 bg-background/40 overflow-hidden">
                     {perfume.image ? (
                       <img
                         src={perfume.image}
                         alt={perfume.name}
-                        className={`w-full h-full object-cover transition-all duration-700 ${!isAvailable(perfume.id) ? "blur-[4px] opacity-[0.15]" : "opacity-70 group-hover:opacity-100 group-hover:scale-105"}`}
+                        className={`w-full h-full object-cover transition-all duration-700 ${
+                          !isAvailable(perfume.id)
+                            ? "blur-[4px] opacity-[0.15]"
+                            : "opacity-70 group-hover:opacity-100 group-hover:scale-105"
+                        }`}
                       />
                     ) : (
                       <div className="w-full h-full min-h-[160px] flex items-center justify-center">
@@ -202,31 +178,7 @@ const { isAvailable } = useStock();
                     )}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/50 pointer-events-none" />
                     <AnimatePresence>
-                      {stockStatus[perfume.id] === false && (
-                        <>
-                          <div className="absolute inset-0 bg-black/75 pointer-events-none" />
-                          <motion.span
-                            initial={{ opacity: 0, scale: 0.7 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.7 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                            style={{
-                              fontSize: "1rem",
-                              fontWeight: 900,
-                              letterSpacing: "0.4em",
-                              color: "rgba(255,255,255,0.90)",
-                              border: "2px solid rgba(255,255,255,0.5)",
-                              padding: "6px 14px",
-                              borderRadius: "4px",
-                              transform: "translate(-50%, -50%) rotate(-20deg)",
-                              textShadow: "0 0 20px rgba(239,68,68,0.8)",
-                            }}
-                          >
-                            ÉPUISÉ
-                          </motion.span>
-                        </>
-                      )}
+                      {!isAvailable(perfume.id) && <EpuiseOverlay />}
                     </AnimatePresence>
                   </div>
 
@@ -240,7 +192,6 @@ const { isAvailable } = useStock();
                         {perfume.brand}
                       </p>
                     </div>
-
                     <div className="space-y-1.5">
                       <div className="flex justify-between text-xs">
                         <span className="text-muted-foreground tracking-wider">Compatibilité</span>
@@ -252,13 +203,10 @@ const { isAvailable } = useStock();
                           animate={{ width: `${matchPercent}%` }}
                           transition={{ delay: 1 + index * 0.3, duration: 1, ease: "easeOut" }}
                           className="h-full rounded-full"
-                          style={{
-                            background: "linear-gradient(90deg, hsl(43 60% 38%), hsl(43 72% 52%))",
-                          }}
+                          style={{ background: "linear-gradient(90deg, hsl(43 60% 38%), hsl(43 72% 52%))" }}
                         />
                       </div>
                     </div>
-
                     <div className="flex items-center gap-2 text-muted-foreground/40 text-[10px] tracking-wider">
                       <span>{perfume.concentration}</span>
                       <span className="w-0.5 h-0.5 rounded-full bg-primary/20" />

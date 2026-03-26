@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PERFUMES, Perfume } from "@/data/perfumes";
+import { PERFUMES, Perfume } from "@/data/database";
 import { X, Search, Sparkles, Heart, Anchor, ArrowLeft } from "lucide-react";
 import PerfumePage from "./PerfumePage";
 import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/animations";

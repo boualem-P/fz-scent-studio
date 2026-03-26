@@ -546,7 +546,8 @@ className="flex items-center justify-center overflow-hidden"
                 <p className="text-[10px] font-light uppercase tracking-wide text-zinc-600 group-hover:text-amber-700 transition-colors truncate">{rec.name}</p>
               </div>
             </motion.button>
-          ))}
+  );
+})}
         </motion.div>
       </div>
     </div>

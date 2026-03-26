@@ -92,6 +92,7 @@ const PerfumePage = ({ perfume, onClose, onSelectPerfume, userGender }: PerfumeP
   const [isScrolled, setIsScrolled] = useState(false);
   const [device, setDevice] = useState<DeviceType>("desktop");
   const [notePanelNote, setNotePanelNote] = useState<string | null>(null);
+  const { isAvailable } = useStock();
   const carouselRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -519,16 +520,20 @@ className="flex items-center justify-center overflow-hidden"
       </div>
       <div ref={carouselRef} className="cursor-grab active:cursor-grabbing overflow-hidden">
         <motion.div drag="x" dragConstraints={{ right: 0, left: dragLeft }} className="flex gap-3 w-max pb-3">
-          {recommendations.map((rec) => (
-            <motion.button key={rec.id} onClick={() => onSelectPerfume(rec)}
-              className="group text-left space-y-1.5" style={{ width: cardW }} whileHover={{ y: -3 }}>
-              const { isAvailable } = useStock();
-// ...
-<div className="perfume-img-container gold-frame bg-zinc-900/30 relative" style={{ height: cardH }}>
-  <img src={rec.image} className={`perfume-img transition-opacity ${!isAvailable(rec.id) ? "blur-[3px] opacity-20" : "opacity-70 group-hover:opacity-100"}`} alt={rec.name} />
-  <AnimatePresence>
-    {!isAvailable(rec.id) && <EpuiseOverlay />}
-  </AnimatePresence>
+          {recommendations.map((rec) => {
+  const available = isAvailable(rec.id);
+  return (
+    <motion.button key={rec.id} onClick={() => onSelectPerfume(rec)}
+      className="group text-left space-y-1.5" style={{ width: cardW }} whileHover={{ y: -3 }}>
+      <div className="perfume-img-container gold-frame bg-zinc-900/30 relative" style={{ height: cardH }}>
+        <img
+          src={rec.image}
+          className={`perfume-img transition-opacity ${!available ? "opacity-30" : "opacity-70 group-hover:opacity-100"}`}
+          alt={rec.name}
+        />
+        <AnimatePresence>
+          {!available && <EpuiseOverlay />}
+        </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-2.5">
                   <div className="flex items-center gap-1">
                     <Plus size={9} className="text-amber-500" />

@@ -754,7 +754,7 @@ export const PERFUMES: Perfume[] = [
     longevite: "2-4h",
     jourPct: 95,
     seasonData: { winter: 20, spring: 90, summer: 100, autumn: 40 }
-  }
+  },
   {
     id: "no5-chanel",
     name: "N°5",

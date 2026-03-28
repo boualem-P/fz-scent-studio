@@ -208,12 +208,12 @@ const filteredBrands = useMemo(() => {
   animate={{ opacity: 1, x: 0 }}
   exit={{ opacity: 0, x: -100 }}
   transition={{ duration: 0.35 }}
-  className="flex-1 flex flex-col relative z-20"
+className="flex-1 flex flex-col relative z-20 w-full"
 >
   {/* Fond animé vagues dorées */}
   <div
     style={{
-      position: "absolute",
+      position: "fixed",
       inset: 0,
       zIndex: 0,
       pointerEvents: "none",

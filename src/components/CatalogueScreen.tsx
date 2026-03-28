@@ -205,7 +205,6 @@ const filteredBrands = useMemo(() => {
         {/* ═══════════ NIVEAU 1 — MAISONS ═══════════ */}
         {!selectedBrand && (
           <motion.div
-<motion.div
   key="brands"
   initial={{ opacity: 0, x: -100 }}
   animate={{ opacity: 1, x: 0 }}

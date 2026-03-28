@@ -249,12 +249,31 @@ const filteredBrands = useMemo(() => {
   };
 
   return (
- <div className="min-h-screen w-screen flex flex-col bg-background relative p-6 lg:p-10 pb-40 overflow-x-hidden">
-  <canvas
-    ref={canvasRef}
-    className="absolute inset-0 w-full h-full pointer-events-none z-0"
-  />
-  <div className="absolute inset-0 pointer-events-none z-0" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
+<div className="min-h-screen w-screen flex flex-col bg-background relative p-6 lg:p-10 pb-40 overflow-x-hidden">
+  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
+    <div className="absolute w-[600px] h-[600px] rounded-full pointer-events-none"
+      style={{
+        background: "radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)",
+        top: "10%", left: "20%",
+        animation: "pulseGold 5s ease-in-out infinite",
+      }}
+    />
+    <div className="absolute w-[500px] h-[500px] rounded-full pointer-events-none"
+      style={{
+        background: "radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 70%)",
+        top: "50%", right: "10%",
+        animation: "pulseGold 7s ease-in-out infinite reverse",
+      }}
+    />
+    <div className="absolute w-[400px] h-[400px] rounded-full pointer-events-none"
+      style={{
+        background: "radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%)",
+        bottom: "10%", left: "40%",
+        animation: "pulseGold 6s ease-in-out infinite 2s",
+      }}
+    />
+  </div>
       <AnimatePresence mode="wait">
         {/* ═══════════ NIVEAU 1 — MAISONS ═══════════ */}
         {!selectedBrand && (

@@ -255,6 +255,13 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
     "citrus", "aromatic", "fresh", "fresh_spicy", "floral", 
     "lavender", "herbal", "musky", "rose", "woody"
   ],
+
+  // ── xerjoff ──────────────────────────────────────────────────────
+
+  "torino21-xerjoff": [
+  "aromatic", "fresh_spicy", "green", "citrus", "musky",
+  "lavender", "herbal", "fresh", "mint", "aquatic"
+],
 };
 
 /**

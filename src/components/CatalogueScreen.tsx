@@ -197,7 +197,7 @@ const filteredBrands = useMemo(() => {
   };
 
   return (
-   <div className="min-h-screen w-screen flex flex-col relative p-6 lg:p-10 pb-40 overflow-x-hidden">
+   <div className="min-h-screen w-screen flex flex-col relative p-6 lg:p-10 pb-40 overflow-x-hidden" style={{ backgroundColor: "hsl(0 0% 2%)" }}>
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
       <AnimatePresence mode="wait">
         {/* ═══════════ NIVEAU 1 — MAISONS ═══════════ */}

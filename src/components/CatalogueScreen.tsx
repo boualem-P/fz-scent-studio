@@ -86,6 +86,38 @@ const BRAND_IMAGES: Record<string, string> = {
   "Xerjoff":                   "https://xaroma.eu/wp-content/uploads/2024/09/Xerjoff-logo.png",
   "Paco Rabanne":              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHrdwJieDavm5qELxmGFwwRmsh2WpwWfNpQA&s",
 };
+const GOLD_COLORS = ["#D4AF37", "#F59E0B", "#FFF0A0"];
+
+interface Leaf {
+  x: number; y: number; w: number; h: number;
+  speed: number; rotation: number; rotSpeed: number;
+  swayAmp: number; swayFreq: number; swayOffset: number;
+  opacity: number; opacityDir: number; color: string;
+}
+interface Particle { x: number; y: number; vy: number; vx: number; alpha: number; }
+
+function createLeaf(canvasW: number, canvasH: number, startTop = false): Leaf {
+  const size = 4 + Math.random() * 6;
+  return {
+    x: Math.random() * canvasW,
+    y: startTop ? -size - Math.random() * canvasH * 0.3 : Math.random() * canvasH,
+    w: size, h: size * (0.5 + Math.random() * 0.5),
+    speed: 0.5 + Math.random() * 1.5, rotation: Math.random() * Math.PI * 2,
+    rotSpeed: 0.02 * (0.5 + Math.random() * 1.5), swayAmp: 15 + Math.random() * 25,
+    swayFreq: 0.008 + Math.random() * 0.012, swayOffset: Math.random() * Math.PI * 2,
+    opacity: 0.3 + Math.random() * 0.5, opacityDir: 1,
+    color: GOLD_COLORS[Math.floor(Math.random() * GOLD_COLORS.length)],
+  };
+}
+function createParticle(canvasW: number, canvasH: number): Particle {
+  return {
+    x: Math.random() * canvasW,
+    y: Math.random() * canvasH,
+    vy: 0.2 + Math.random() * 0.3,
+    vx: (Math.random() - 0.5) * 0.3,
+    alpha: 0.05 + Math.random() * 0.1
+  };
+}
 
 const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHerbierChange, userGender }: CatalogueScreenProps) => {
   const [selected, setSelected] = useState<Perfume | null>(null);
@@ -95,6 +127,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
   const [fromHerbier, setFromHerbier] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const openHerbier = () => {
     setIsNotesMenuOpen(true);
@@ -153,6 +186,54 @@ const filteredBrands = useMemo(() => {
         return true;
       }
       return false;
+
+  useEffect(() => {
+  const canvas = canvasRef.current;
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  let animId: number;
+  let frame = 0;
+  const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+  resize();
+  window.addEventListener("resize", resize);
+  const leaves: Leaf[] = Array.from({ length: 18 }, () => createLeaf(canvas.width, canvas.height));
+  const particles: Particle[] = Array.from({ length: 40 }, () => createParticle(canvas.width, canvas.height));
+  const draw = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    frame++;
+    for (const p of particles) {
+      p.y += p.vy; p.x += p.vx;
+      if (p.y > canvas.height) { p.y = -2; p.x = Math.random() * canvas.width; }
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(212,175,55,${p.alpha})`; ctx.fill();
+    }
+    for (const l of leaves) {
+      l.y += l.speed; l.rotation += l.rotSpeed * l.speed;
+      l.opacity += 0.003 * l.opacityDir;
+      if (l.opacity >= 0.8) l.opacityDir = -1;
+      if (l.opacity <= 0.3) l.opacityDir = 1;
+      const swayX = l.swayAmp * Math.sin(frame * l.swayFreq + l.swayOffset);
+      if (l.y > canvas.height + l.h) Object.assign(l, createLeaf(canvas.width, canvas.height, true));
+      ctx.save(); ctx.translate(l.x + swayX, l.y); ctx.rotate(l.rotation);
+      ctx.globalAlpha = l.opacity; ctx.fillStyle = l.color;
+      ctx.beginPath(); ctx.moveTo(0, -l.h / 2); ctx.lineTo(l.w / 2, 0);
+      ctx.lineTo(0, l.h / 2); ctx.lineTo(-l.w / 2, 0); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+    animId = requestAnimationFrame(draw);
+  };
+  animId = requestAnimationFrame(draw);
+  return () => {
+    cancelAnimationFrame(animId);
+    window.removeEventListener("resize", resize);
+  };
+}, []);
     });
     return () => setInternalBackHandler(null);
   }, [setInternalBackHandler, selectedBrand, selected, isNotesMenuOpen]);
@@ -198,6 +279,7 @@ const filteredBrands = useMemo(() => {
 
   return (
 <div className="min-h-screen w-screen flex flex-col relative p-6 lg:p-10 pb-40 overflow-x-hidden" style={{ backgroundColor: "#F5F0E8" }}>
+  <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
   <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
     <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
     <div className="absolute w-[600px] h-[600px] rounded-full pointer-events-none"

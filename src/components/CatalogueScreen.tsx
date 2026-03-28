@@ -1,4 +1,3 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PERFUMES, Perfume } from "@/data/database";
 import { X, Search, Sparkles, Heart, Anchor, ArrowLeft } from "lucide-react";
@@ -8,6 +7,7 @@ import { getNoteImage } from "@/data/notesData";
 import { ACCORDS_LIBRARY } from "@/data/accords";
 import { getAccordIdsForPerfume } from "@/data/parfumAccords";
 import { useStock } from "@/data/useStock";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { EpuiseOverlay } from "@/components/EpuiseOverlay";
 
 interface CatalogueScreenProps {
@@ -156,6 +156,57 @@ const filteredBrands = useMemo(() => {
     });
     return () => setInternalBackHandler(null);
   }, [setInternalBackHandler, selectedBrand, selected, isNotesMenuOpen]);
+  
+  useEffect(() => {
+  const canvas = canvasRef.current;
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  let animFrame: number;
+  let time = 0;
+
+  const resize = () => {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  };
+  resize();
+  window.addEventListener("resize", resize);
+
+  const draw = () => {
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    time += 0.008;
+
+    for (let i = 0; i < 5; i++) {
+      const y = h * (0.2 + i * 0.18);
+      const amp = 18 + i * 6;
+      const freq = 0.004 + i * 0.001;
+      const speed = time * (0.4 + i * 0.15);
+      const alpha = 0.04 + i * 0.015;
+
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      for (let x = 0; x <= w; x += 4) {
+        const yWave = y + Math.sin(x * freq + speed) * amp
+                        + Math.sin(x * freq * 1.7 + speed * 0.8) * (amp * 0.4);
+        ctx.lineTo(x, yWave);
+      }
+      ctx.strokeStyle = `rgba(212, 175, 55, ${alpha})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    animFrame = requestAnimationFrame(draw);
+  };
+
+  animFrame = requestAnimationFrame(draw);
+  return () => {
+    cancelAnimationFrame(animFrame);
+    window.removeEventListener("resize", resize);
+  };
+}, []);
 
   const handleBackToHerbier = () => {
     setSearchQuery("");
@@ -197,8 +248,12 @@ const filteredBrands = useMemo(() => {
   };
 
   return (
-   <div className="min-h-screen w-screen flex flex-col relative p-6 lg:p-10 pb-40 overflow-x-hidden" style={{ backgroundColor: "hsl(0 0% 2%)" }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
+ <div className="min-h-screen w-screen flex flex-col bg-background relative p-6 lg:p-10 pb-40 overflow-x-hidden">
+  <canvas
+    ref={canvasRef}
+    className="absolute inset-0 w-full h-full pointer-events-none z-0"
+  />
+  <div className="absolute inset-0 pointer-events-none z-0" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
       <AnimatePresence mode="wait">
         {/* ═══════════ NIVEAU 1 — MAISONS ═══════════ */}
         {!selectedBrand && (

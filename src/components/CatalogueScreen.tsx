@@ -209,10 +209,8 @@ const filteredBrands = useMemo(() => {
   exit={{ opacity: 0, x: -100 }}
   transition={{ duration: 0.35 }}
 >
-<div className="min-h-screen w-screen flex flex-col bg-background relative p-6 lg:p-10 pb-40 overflow-x-hidden">
->  
-  
-            <div className="flex justify-end mb-4">
+<div className="min-h-screen w-screen flex flex-col bg-background relative p-6 lg:p-10 pb-40 overflow-x-hidden"> 
+           <div className="flex justify-end mb-4">
               <button onClick={openHerbier}
                 className="group relative px-6 py-3 rounded-full bg-gradient-to-b from-amber-400/10 to-transparent border border-amber-500/30 text-amber-500 font-display text-[11px] tracking-[0.3em] uppercase hover:border-amber-500 transition-all overflow-hidden">
                 <span className="relative z-10 flex items-center gap-3">

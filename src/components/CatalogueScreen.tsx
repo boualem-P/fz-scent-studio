@@ -207,7 +207,6 @@ const filteredBrands = useMemo(() => {
         animation: "pulseGold 5s ease-in-out infinite",
       }}
     />
-    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
   <div className="absolute w-[700px] h-[700px] rounded-full"
     style={{
       background: "radial-gradient(circle, rgba(212,175,55,0.25) 0%, transparent 70%)",

@@ -186,6 +186,7 @@ const filteredBrands = useMemo(() => {
         return true;
       }
       return false;
+});
 
   useEffect(() => {
   const canvas = canvasRef.current;

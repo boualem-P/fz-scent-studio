@@ -197,7 +197,7 @@ const filteredBrands = useMemo(() => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex flex-col bg-background relative p-6 lg:p-10 pb-40 overflow-x-hidden">
+    <div className="min-h-screen w-screen flex flex-col relative p-6 lg:p-10 pb-40 overflow-x-hidden">
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
 
       <AnimatePresence mode="wait">

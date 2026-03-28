@@ -208,36 +208,9 @@ const filteredBrands = useMemo(() => {
   animate={{ opacity: 1, x: 0 }}
   exit={{ opacity: 0, x: -100 }}
   transition={{ duration: 0.35 }}
-className="flex-1 flex flex-col relative z-20 w-full"
+<div className="min-h-screen w-screen flex flex-col bg-background relative p-6 lg:p-10 pb-40 overflow-x-hidden">
 >
   
-{/* Fond animé vagues dorées */}
-<div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-  <div
-    style={{
-      position: "absolute",
-      inset: 0,
-      background: "radial-gradient(ellipse at 50% 50%, hsl(43 72% 52% / 0.10) 0%, transparent 70%)",
-      animation: "pulseGold 4s ease-in-out infinite",
-    }}
-  />
-  <div
-    style={{
-      position: "absolute",
-      inset: 0,
-      background: "radial-gradient(ellipse at 20% 80%, hsl(43 72% 52% / 0.07) 0%, transparent 60%)",
-      animation: "pulseGold 6s ease-in-out infinite reverse",
-    }}
-  />
-  <div
-    style={{
-      position: "absolute",
-      inset: 0,
-      background: "radial-gradient(ellipse at 80% 20%, hsl(43 72% 52% / 0.07) 0%, transparent 60%)",
-      animation: "pulseGold 5s ease-in-out infinite 1s",
-    }}
-  />
-</div>
             <div className="flex justify-end mb-4">
               <button onClick={openHerbier}
                 className="group relative px-6 py-3 rounded-full bg-gradient-to-b from-amber-400/10 to-transparent border border-amber-500/30 text-amber-500 font-display text-[11px] tracking-[0.3em] uppercase hover:border-amber-500 transition-all overflow-hidden">

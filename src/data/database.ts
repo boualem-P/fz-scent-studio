@@ -755,4 +755,23 @@ export const PERFUMES: Perfume[] = [
     jourPct: 95,
     seasonData: { winter: 20, spring: 90, summer: 100, autumn: 40 }
   }
+  {
+  id: "no5-chanel",
+  name: "N°5",
+  brand: "Chanel",
+  image: "https://fimgs.net/mdimg/perfume/o.176.jpg",
+  description: "Le premier parfum abstrait, une révolution olfactive née en 1921, alliance de fleurs et d'aldéhydes.",
+  gender: "femme",
+  concentration: "Eau de Parfum",
+  topNotes: ["Aldéhydes", "Néroli", "Citron", "Bergamote"],
+  heartNotes: ["Iris", "Jasmin", "Rose de Mai", "Ylang-Ylang", "Muguet"],
+  baseNotes: ["Santal", "Civet", "Vétiver", "Ambre", "Musc", "Vanille"],
+  topNotesDetailed: [{ name: "Aldéhydes" }, { name: "Néroli" }],
+  heartNotesDetailed: [{ name: "Iris" }, { name: "Jasmin" }, { name: "Rose de Mai" }],
+  baseNotesDetailed: [{ name: "Santal" }, { name: "Musc" }],
+  sillage: "fort",
+  longevite: "8h+",
+  jourPct: 40,
+  seasonData: { winter: 35, spring: 30, summer: 10, autumn: 40 }
+},
 ];

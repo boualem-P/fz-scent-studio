@@ -75,7 +75,7 @@ const BRAND_IMAGES: Record<string, string> = {
   "Prada":                     "https://www.icon-icon.com/wp-content/uploads/2018/06/prada_1247_l.jpg",
   "Jean Paul Gaultier":        "https://fimgs.net/mdimg/dizajneri/o.72.jpg",
   "Viktor&Rolf":               "https://priveperfumes.com/cdn/shop/collections/viktor-rolf-prive-perfumes-banner.webp?v=1743664405&width=1024",
-  "Carolina Herrera":          "https://feerie.tn/media/amasty/shopby/option_images/CAROLINA_HERRERA.png",
+  "Carolina Herrera":          "https://i.pinimg.com/564x/8b/7a/f9/8b7af96beeee9c6dcdc0f433a888d02c.jpg",
   "Guerlain":                  "https://www.icon-icon.com/wp-content/uploads/2018/06/logo-guerlain_9ce88303527f34ce3cb6ab0b6323cc9b68b9219e_0.jpg",
   "Parfums de Marly":          "https://media.licdn.com/dms/image/v2/D4E0BAQHf0rDex1LcXg/company-logo_200_200/B4EZmAbGTnKcAM-/0/1758796212353/parfums_de_marly_logo?e=2147483647&v=beta&t=MHpbviv2JD_4FJuxJQZXegtZe49fB71Ii1tl52g--x4",
   "Maison Francis Kurkdjian":  "https://cdn.salla.sa/YgEeo/9p7BXjv5NUHVvaxeQ7hOSbocgZhIVDTqTw49FpgJ.jpg",

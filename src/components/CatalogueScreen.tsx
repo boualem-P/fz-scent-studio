@@ -6,7 +6,7 @@ import { staggerContainer, staggerItem, springHover, springTap } from "@/lib/ani
 import { getNoteImage } from "@/data/notesData";
 import { ACCORDS_LIBRARY } from "@/data/accords";
 import { getAccordIdsForPerfume } from "@/data/parfumAccords";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useStock } from "@/data/useStock";
 import { EpuiseOverlay } from "@/components/EpuiseOverlay";
 

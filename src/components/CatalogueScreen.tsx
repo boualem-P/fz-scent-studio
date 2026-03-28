@@ -262,30 +262,31 @@ const filteredBrands = useMemo(() => {
                   const brandImg = BRAND_IMAGES[brand];
                   return (
                     <motion.button
-                      key={brand}
-                      variants={staggerItem}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={springTap}
-                      onClick={() => { setSelectedBrand(brand); setSearchQuery(""); setFromHerbier(false); }}
-                      className="group h-40 w-full rounded-2xl overflow-hidden border border-white/5 hover:border-amber-500/30 flex flex-col items-end justify-end cursor-pointer transition-all duration-300 relative bg-zinc-900/60"
-                    >
-                      {brandImg && brandImg !== "URL_ICI" && (
-                        <img
-                          src={brandImg}
-                          alt={brand}
-                          className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-300"
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-300" />
-                      <div className="relative z-10 w-full px-4 py-3 bg-gradient-to-t from-black/80 to-transparent">
-                        <span className="block font-display text-amber-400 text-sm uppercase tracking-widest leading-relaxed">
-                          {brand}
-                        </span>
-                        <span className="block text-[9px] text-primary/30 uppercase tracking-widest font-body">
-                          {count} parfum{count > 1 ? "s" : ""}
-                        </span>
-                      </div>
-                    </motion.button>
+<motion.button
+  key={brand}
+  variants={staggerItem}
+  whileHover={{ scale: 1.02 }}
+  whileTap={springTap}
+  onClick={() => { setSelectedBrand(brand); setSearchQuery(""); setFromHerbier(false); }}
+  className="group h-56 w-full rounded-2xl overflow-hidden border border-white/5 hover:border-amber-500/30 flex flex-col items-end justify-end cursor-pointer transition-all duration-300 relative bg-zinc-900/60"
+>
+  {brandImg && brandImg !== "URL_ICI" && (
+    <img
+      src={brandImg}
+      alt={brand}
+      className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-300"
+    />
+  )}
+  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
+  <div className="relative z-10 w-full px-4 py-3 bg-gradient-to-t from-black/90 to-transparent">
+    <span className="block font-display text-amber-400 text-sm uppercase tracking-widest leading-relaxed">
+      {brand}
+    </span>
+    <span className="block text-[9px] text-primary/30 uppercase tracking-widest font-body">
+      {count} parfum{count > 1 ? "s" : ""}
+    </span>
+  </div>
+</motion.button>
                   );
                 })}
               {filteredBrands.length === 0 && (

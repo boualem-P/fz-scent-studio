@@ -202,21 +202,21 @@ const filteredBrands = useMemo(() => {
     <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
     <div className="absolute w-[600px] h-[600px] rounded-full pointer-events-none"
       style={{
-        background: "radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)",
+        background: "radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 70%)",
         top: "10%", left: "20%",
         animation: "pulseGold 5s ease-in-out infinite",
       }}
     />
   <div className="absolute w-[700px] h-[700px] rounded-full"
     style={{
-      background: "radial-gradient(circle, rgba(212,175,55,0.25) 0%, transparent 70%)",
+      background: "radial-gradient(circle, rgba(212,175,55,0.09) 0%, transparent 70%)",
       top: "-10%", left: "-10%",
       animation: "pulseGold 5s ease-in-out infinite",
     }}
   />
   <div className="absolute w-[600px] h-[600px] rounded-full"
     style={{
-      background: "radial-gradient(circle, rgba(212,175,55,0.20) 0%, transparent 70%)",
+      background: "radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)",
       top: "40%", right: "-10%",
       animation: "pulseGold 7s ease-in-out infinite reverse",
     }}

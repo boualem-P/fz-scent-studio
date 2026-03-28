@@ -759,7 +759,7 @@ export const PERFUMES: Perfume[] = [
   id: "no5-chanel",
   name: "N°5",
   brand: "Chanel",
-  image: "https://fimgs.net/mdimg/perfume/o.176.jpg",
+  image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.40069.avif",
   description: "Le premier parfum abstrait, une révolution olfactive née en 1921, alliance de fleurs et d'aldéhydes.",
   gender: "femme",
   concentration: "Eau de Parfum",

@@ -262,7 +262,6 @@ const filteredBrands = useMemo(() => {
                   const brandImg = BRAND_IMAGES[brand];
                   return (
                     <motion.button
-<motion.button
   key={brand}
   variants={staggerItem}
   whileHover={{ scale: 1.02 }}

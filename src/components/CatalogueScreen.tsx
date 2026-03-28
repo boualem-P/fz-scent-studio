@@ -197,11 +197,9 @@ const filteredBrands = useMemo(() => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex flex-col relative p-6 lg:p-10 pb-40 overflow-x-hidden">
+   <div className="min-h-screen w-screen flex flex-col relative p-6 lg:p-10 pb-40 overflow-x-hidden">
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
-
       <AnimatePresence mode="wait">
-
         {/* ═══════════ NIVEAU 1 — MAISONS ═══════════ */}
         {!selectedBrand && (
           <motion.div
@@ -212,6 +210,32 @@ const filteredBrands = useMemo(() => {
   transition={{ duration: 0.35 }}
   className="flex-1 flex flex-col relative z-20"
 >
+  {/* Fond animé vagues dorées */}
+  <div
+    style={{
+      position: "absolute",
+      inset: 0,
+      zIndex: 0,
+      pointerEvents: "none",
+      overflow: "hidden",
+    }}
+  >
+    <div style={{
+      position: "absolute", inset: 0,
+      background: "radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.15) 0%, transparent 70%)",
+      animation: "pulseGold 4s ease-in-out infinite",
+    }} />
+    <div style={{
+      position: "absolute", inset: 0,
+      background: "radial-gradient(ellipse at 20% 80%, rgba(212,175,55,0.10) 0%, transparent 60%)",
+      animation: "pulseGold 6s ease-in-out infinite reverse",
+    }} />
+    <div style={{
+      position: "absolute", inset: 0,
+      background: "radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.10) 0%, transparent 60%)",
+      animation: "pulseGold 5s ease-in-out infinite 1s",
+    }} />
+  </div>
 {/* Fond animé vagues dorées */}
 <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
   <div

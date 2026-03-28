@@ -774,4 +774,23 @@ export const PERFUMES: Perfume[] = [
     jourPct: 40,
     seasonData: { winter: 35, spring: 30, summer: 10, autumn: 40 }
  },
+  {
+  id: "torino21-xerjoff",
+  name: "Torino21",
+  brand: "Xerjoff",
+  image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.70424.avif",
+  description: "Une fragrance aromatique et fraîche, signature de la maison Xerjoff, alliant élégance et modernité.",
+  gender: "unisexe",
+  concentration: "Eau de Parfum",
+  topNotes: ["Menthe", "Citron", "Basilic", "Cassis"],
+  heartNotes: ["Lavande", "Musc", "Notes vertes"],
+  baseNotes: ["Musc blanc", "Ambre", "Cèdre"],
+  topNotesDetailed: [{ name: "Menthe" }, { name: "Citron" }, { name: "Basilic" }],
+  heartNotesDetailed: [{ name: "Musc" }, { name: "Cassis" }, { name: "Lavande" }],
+  baseNotesDetailed: [{ name: "Musc" }, { name: "Cèdre" }],
+  sillage: "fort",
+  longevite: "6-8h",
+  jourPct: 70,
+  seasonData: { winter: 15, spring: 20, summer: 40, autumn: 25 }
+},
 ];

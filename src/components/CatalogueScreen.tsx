@@ -208,8 +208,8 @@ const filteredBrands = useMemo(() => {
   animate={{ opacity: 1, x: 0 }}
   exit={{ opacity: 0, x: -100 }}
   transition={{ duration: 0.35 }}
-<div className="min-h-screen w-screen flex flex-col bg-background relative p-6 lg:p-10 pb-40 overflow-x-hidden">
 >
+<div className="min-h-screen w-screen flex flex-col bg-background relative p-6 lg:p-10 pb-40 overflow-x-hidden">
   
             <div className="flex justify-end mb-4">
               <button onClick={openHerbier}

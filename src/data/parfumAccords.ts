@@ -47,9 +47,10 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
   ],
 
   "no5-chanel": [
-  "aldehydic", "white_floral", "floral", "powdery", "jasmine",
-  "rose", "vanilla", "musky", "sandalwood", "iris"
-],
+    "aldehydic", "white_floral", "floral", "powdery", "jasmine",
+    "rose", "vanilla", "musky", "sandalwood", "iris"
+  ],
+  
   // ── YSL ───────────────────────────────────────────────────────
 
   "black-opium": [

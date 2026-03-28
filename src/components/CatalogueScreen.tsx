@@ -279,7 +279,7 @@ const filteredBrands = useMemo(() => {
 
   return (
 <div className="min-h-screen w-screen flex flex-col relative p-6 lg:p-10 pb-40 overflow-x-hidden" style={{ backgroundColor: "#050429" }}>
-  <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
+  <canvas ref={canvasRef} className="fixed inset-0 z-[350] pointer-events-none" />
   <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
     <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(43 72% 52% / 0.04) 0%, transparent 60%)" }} />
     <div className="absolute w-[600px] h-[600px] rounded-full pointer-events-none"

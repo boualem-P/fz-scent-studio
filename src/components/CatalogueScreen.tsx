@@ -95,6 +95,7 @@ const CatalogueScreen = ({ onMenu, availableNotes, setInternalBackHandler, onHer
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
   const [fromHerbier, setFromHerbier] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const openHerbier = () => {
     setIsNotesMenuOpen(true);

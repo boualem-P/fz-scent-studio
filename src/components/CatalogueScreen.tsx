@@ -543,7 +543,7 @@ const filteredBrands = useMemo(() => {
         {isNotesMenuOpen && (
           <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 200 }}
-            className="fixed inset-0 z-[300] bg-[#050505] overflow-y-auto custom-scrollbar">
+            className="fixed inset-0 z-[300] overflow-y-auto custom-scrollbar" style={{ backgroundColor: "#050429" }}>
             <div className="fixed inset-0 pointer-events-none opacity-20" style={{ backgroundImage: "radial-gradient(circle at 50% -20%, #d4af37 0%, transparent 50%)" }} />
             <div className="max-w-6xl mx-auto p-6 lg:p-16 relative z-10">
               <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-20">

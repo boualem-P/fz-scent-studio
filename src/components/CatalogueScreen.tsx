@@ -207,21 +207,29 @@ const filteredBrands = useMemo(() => {
         animation: "pulseGold 5s ease-in-out infinite",
       }}
     />
-    <div className="absolute w-[500px] h-[500px] rounded-full pointer-events-none"
-      style={{
-        background: "radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 70%)",
-        top: "50%", right: "10%",
-        animation: "pulseGold 7s ease-in-out infinite reverse",
-      }}
-    />
-    <div className="absolute w-[400px] h-[400px] rounded-full pointer-events-none"
-      style={{
-        background: "radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%)",
-        bottom: "10%", left: "40%",
-        animation: "pulseGold 6s ease-in-out infinite 2s",
-      }}
-    />
-  </div>
+    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+  <div className="absolute w-[700px] h-[700px] rounded-full"
+    style={{
+      background: "radial-gradient(circle, rgba(212,175,55,0.25) 0%, transparent 70%)",
+      top: "-10%", left: "-10%",
+      animation: "pulseGold 5s ease-in-out infinite",
+    }}
+  />
+  <div className="absolute w-[600px] h-[600px] rounded-full"
+    style={{
+      background: "radial-gradient(circle, rgba(212,175,55,0.20) 0%, transparent 70%)",
+      top: "40%", right: "-10%",
+      animation: "pulseGold 7s ease-in-out infinite reverse",
+    }}
+  />
+  <div className="absolute w-[500px] h-[500px] rounded-full"
+    style={{
+      background: "radial-gradient(circle, rgba(212,175,55,0.18) 0%, transparent 70%)",
+      bottom: "-10%", left: "30%",
+      animation: "pulseGold 6s ease-in-out infinite 2s",
+    }}
+  />
+</div>
       <AnimatePresence mode="wait">
         {/* ═══════════ NIVEAU 1 — MAISONS ═══════════ */}
         {!selectedBrand && (

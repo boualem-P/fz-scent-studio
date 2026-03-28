@@ -83,6 +83,7 @@ const BRAND_IMAGES: Record<string, string> = {
   "Acqua di Parma":            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr7G1eC5Iy0FmM5gq63p9_SPXpOSe-Z62hzw&s",
   "Chloé":                     "https://i.pinimg.com/1200x/73/42/9f/73429f55db81d87f3210d42192448295.jpg",
   "Givenchy":                  "https://i.pinimg.com/736x/a6/13/00/a61300eeb04565d30b2c084e6d424fec.jpg",
+  "xerjoff":                   "https://maisonprado.com/cdn/shop/collections/Xerjoff_uu.webp?v=1768763637&width=2048",
   "Paco Rabanne":              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHrdwJieDavm5qELxmGFwwRmsh2WpwWfNpQA&s",
 };
 

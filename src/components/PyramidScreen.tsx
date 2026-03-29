@@ -485,16 +485,16 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     style={{ height: "calc(100vh - 80px)" }}>
 
     {/* Titre */}
-    <div className="flex flex-col items-center mb-4 text-center">
-      <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
-      <div className="w-12 h-[1px] bg-amber-500 my-3 opacity-50" />
-      <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">
+    <div className="flex flex-col items-center mb-1 text-center">
+      <h2 className="text-xl md:text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
+      <div className="w-12 h-[1px] bg-amber-500 my-2 opacity-50" />
+      <p className="text-amber-500 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em]">
         Glissez votre occasion vers le centre
       </p>
     </div>
 
     {/* Roue */}
-    <div className="relative" style={{ width: 480, height: 480 }}>
+    <div className="relative" style={{ width: "min(420px, 85vw)", height: "min(420px, 85vw)" }}>
 
       {/* Cercles décoratifs */}
       <div className="absolute inset-0 rounded-full border border-amber-500/10" />
@@ -505,9 +505,10 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
       {ATMOSPHERES.map((atm, i) => {
         const angle = (360 / ATMOSPHERES.length) * i - 90;
         const rad = (angle * Math.PI) / 180;
-        const r = 185;
-        const cx = 240 + r * Math.cos(rad);
-        const cy = 240 + r * Math.sin(rad);
+        const size = Math.min(420, window.innerWidth * 0.85);
+        const r = size * 0.38;
+        const cx = size / 2 + r * Math.cos(rad);
+        const cy = size / 2 + r * Math.sin(rad);
 
         return (
           <motion.div
@@ -531,13 +532,13 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             whileDrag={{ scale: 1.2, zIndex: 50 }}
             className="absolute flex flex-col items-center gap-1 cursor-grab active:cursor-grabbing touch-none"
             style={{
-              left: cx - 40,
-              top: cy - 40,
-              width: 80,
-              height: 80,
+              left: cx - 32,
+              top: cy - 32,
+              width: 64,
+              height: 64,
             }}
           >
-            <div className="w-20 h-20 rounded-full flex flex-col items-center justify-center border-2 border-white/30 overflow-hidden relative shadow-lg">
+            <div className="w-16 h-16 rounded-full flex flex-col items-center justify-center border-2 border-white/30 overflow-hidden relative shadow-lg">
               <img src={atm.img} alt={atm.label} className="absolute inset-0 w-full h-full object-cover opacity-40" />
               <div className="absolute inset-0 bg-black/40" />
               <span className="relative z-10 text-2xl">{atm.icon}</span>

@@ -494,7 +494,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     </div>
 
     {/* Roue */}
-    <div className="relative mt-6" style={{ width: "min(360px, 75vw)", height: "min(360px, 75vw)" }}>
+    <div className="relative" style={{ width: 360, height: 360 }}>
 
       {/* Cercles décoratifs */}
       <div className="absolute inset-0 rounded-full border border-amber-500/10" />
@@ -505,10 +505,10 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
       {ATMOSPHERES.map((atm, i) => {
         const angle = (360 / ATMOSPHERES.length) * i - 90;
         const rad = (angle * Math.PI) / 180;
-        const size = Math.min(420, window.innerWidth * 0.85);
-        const r = size * 0.38;
-        const cx = size / 2 + r * Math.cos(rad);
-        const cy = size / 2 + r * Math.sin(rad);
+        const wheelSize = 360;
+        const r = wheelSize * 0.36;
+        const cx = wheelSize / 2 + r * Math.cos(rad);
+        const cy = wheelSize / 2 + r * Math.sin(rad);
 
         return (
           <motion.div

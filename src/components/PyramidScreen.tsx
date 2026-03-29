@@ -293,46 +293,113 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
           </motion.div>
 
         ) : screen === 'swipe' ? (
-
           <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="relative z-10 w-full max-w-sm flex flex-col items-center touch-none">
-            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Affinez vos désirs</h2>
-            <div className="relative w-full mb-12" style={{ height: '520px' }}>
-              <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
-                <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg"><Frown size={48} strokeWidth={1.5} /></motion.div>
-                <motion.div style={{ opacity: smileOpacity }} className="text-white drop-shadow-lg"><Smile size={48} strokeWidth={1.5} /></motion.div>
-              </div>
+            className="relative z-10 w-full flex flex-col items-center touch-none"
+            style={{ height: "calc(100vh - 80px)", justifyContent: "center" }}>
+
+            <h2 className="text-xl font-light mb-6 italic uppercase tracking-widest text-zinc-400">
+              Affinez vos désirs
+            </h2>
+
+            {/* Indicateurs */}
+            <div className="flex items-center justify-between w-full max-w-sm px-4 mb-4">
+              <motion.div style={{ opacity: frownOpacity }}
+                className="w-12 h-12 rounded-full border-2 border-red-400/50 flex items-center justify-center">
+                <Frown size={22} className="text-red-400" strokeWidth={1.5} />
+              </motion.div>
+              <span className="text-white/20 text-[9px] uppercase tracking-[0.3em]">
+                {noteIndex + 1} / {notesAvailable.length} — {steps[currentStep]}
+              </span>
+              <motion.div style={{ opacity: smileOpacity }}
+                className="w-12 h-12 rounded-full border-2 border-emerald-400/50 flex items-center justify-center">
+                <Smile size={22} className="text-emerald-400" strokeWidth={1.5} />
+              </motion.div>
+            </div>
+
+            {/* Paquet de cartes */}
+            <div className="relative flex items-center justify-center"
+              style={{ width: 320, height: 460 }}>
+
+              {/* Cartes du dessous — empilées avec rotations aléatoires */}
+              {notesAvailable.slice(noteIndex + 1).map((note, i) => {
+                const rotations = [6, -4, 8, -6, 3, -7, 5, -3];
+                const rot = rotations[i % rotations.length];
+                const scale = 1 - (i + 1) * 0.04;
+                const translateY = (i + 1) * 4;
+                return (
+                  <div
+                    key={note.id}
+                    className="absolute inset-0 bg-white rounded-[2.5rem] shadow-xl border border-zinc-100 overflow-hidden"
+                    style={{
+                      transform: `rotate(${rot}deg) scale(${scale}) translateY(${translateY}px)`,
+                      zIndex: notesAvailable.length - i,
+                    }}
+                  >
+                    <div className="w-full h-full opacity-60">
+                      <img src={note.img} className="w-full h-[52%] object-cover" alt="" />
+                      <div className="flex flex-col items-center justify-center h-[48%] px-4">
+                        <p className="text-zinc-300 text-sm uppercase tracking-wider">???</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Carte active — au dessus */}
               <AnimatePresence mode="popLayout">
                 <motion.div
                   key={`${steps[currentStep]}-${noteIndex}`}
-                  style={{ x }} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.9}
-                  onDragEnd={(_, info) => { if (info.offset.x > 100) handleSwipe(true); else if (info.offset.x < -100) handleSwipe(false); }}
-                  initial={{ x: 0, scale: 0.9, opacity: 0 }} animate={{ x: 0, scale: 1, opacity: 1 }}
-                  exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0 }}
+                  style={{ x, zIndex: notesAvailable.length + 10 }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.9}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 100) handleSwipe(true);
+                    else if (info.offset.x < -100) handleSwipe(false);
+                  }}
+                  initial={{ scale: 0.9, opacity: 0, rotate: 0 }}
+                  animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                  exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, rotate: x.get() > 0 ? 15 : -15 }}
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10 flex flex-col">
+                  className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 flex flex-col"
+                >
                   <div className="absolute inset-0 z-50 touch-none" />
+
+                  {/* Image */}
                   <div className="w-full flex-shrink-0 pointer-events-none" style={{ height: '52%' }}>
                     <img src={currentNote.img} draggable="false" className="w-full h-full object-cover" alt={currentNote.label} />
+                    {/* Overlay dégradé doré */}
+                    <div className="absolute inset-x-0 bottom-[48%] h-16 bg-gradient-to-b from-transparent to-white pointer-events-none" />
                   </div>
-                  <div className="w-full flex-1 px-5 py-3 text-center bg-white flex flex-col items-center justify-center gap-2 pointer-events-none">
-                    <h3 className="text-lg font-semibold text-black uppercase tracking-tight leading-tight">{currentNote.label}</h3>
-                    <p className="text-amber-500 text-[11px] font-bold uppercase tracking-widest">{currentNote.sub}</p>
-                    <div className="flex items-center justify-center gap-2">
+
+                  {/* Contenu */}
+                  <div className="w-full flex-1 px-5 py-4 text-center bg-white flex flex-col items-center justify-center gap-2 pointer-events-none">
+                    <h3 className="text-lg font-semibold text-black uppercase tracking-tight leading-tight">
+                      {currentNote.label}
+                    </h3>
+                    <p className="text-amber-500 text-[11px] font-bold uppercase tracking-widest">
+                      {currentNote.sub}
+                    </p>
+                    <div className="flex items-center justify-center gap-2 my-1">
                       <div className="h-[1px] w-10 bg-amber-400/50" />
                       <div className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
                       <div className="h-[1px] w-10 bg-amber-400/50" />
                     </div>
-                    <div className="flex flex-wrap justify-center gap-1.5 mt-1">
+                    <div className="flex flex-wrap justify-center gap-1.5">
                       {currentNote.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[9px] font-bold uppercase tracking-wider">{tag}</span>
+                        <span key={tag} className="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[9px] font-bold uppercase tracking-wider">
+                          {tag}
+                        </span>
                       ))}
                     </div>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
-            <p className="text-white text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">Balayez pour choisir</p>
+
+            <p className="text-white/30 text-[9px] font-bold uppercase tracking-[0.3em] mt-6">
+              Balayez pour choisir
+            </p>
           </motion.div>
 
         ) : screen === 'map' ? (

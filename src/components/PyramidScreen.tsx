@@ -122,6 +122,8 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
+  const [selectedAtm, setSelectedAtm] = useState<typeof ATMOSPHERES[0] | null>(null);
+
   // ── MODIFICATION 1 : spring config plus réactif pour le polygone uniquement ──
   const polygonSpring = { stiffness: 400, damping: 30, mass: 0.5 };
 
@@ -478,22 +480,103 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
           </motion.div>
 
         ) : (
-
           <motion.div key="atm" initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }}
-            className="relative z-10 w-full max-w-lg flex flex-col items-center pb-2">
-            <div className="flex flex-col items-center mb-3 text-center">
+            className="relative z-10 w-full flex flex-col items-center justify-center h-screen">
+
+            {/* Titre */}
+            <div className="flex flex-col items-center mb-6 text-center">
               <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
-              <div className="w-12 h-[1px] bg-amber-500 my-4 opacity-50" />
+              <div className="w-12 h-[1px] bg-amber-500 my-3 opacity-50" />
               <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">Pour quelle occasion vous parfumez-vous ?</p>
             </div>
-            <div className="w-full px-2 flex flex-col gap-2">
-              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mb-0.5">Le quotidien</p>
-              <div className="grid grid-cols-2 gap-2">{groupQuotidien.map(atm => <AtmButton key={atm.id} atm={atm} className="h-20" />)}</div>
-              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mt-1 mb-0.5">Les grandes occasions</p>
-              <div className="grid grid-cols-3 gap-2">{groupOccasions.map(atm => <AtmButton key={atm.id} atm={atm} className="h-24" />)}</div>
-              <p className="text-[9px] uppercase tracking-[0.3em] text-zinc-600 px-1 mt-1 mb-0.5">L'intime</p>
-              <AtmButton atm={groupIntime[0]} className="h-20 w-full" />
-              <div className="grid grid-cols-2 gap-2">{groupIntime.slice(1).map(atm => <AtmButton key={atm.id} atm={atm} className="h-28" />)}</div>
+
+            {/* Roue */}
+            <div className="relative" style={{ width: 420, height: 420 }}>
+
+              {/* Cercles décoratifs */}
+              <div className="absolute inset-0 rounded-full border border-amber-500/10" />
+              <div className="absolute inset-8 rounded-full border border-amber-500/15" />
+              <div className="absolute inset-16 rounded-full border border-amber-500/20" />
+
+              {/* Boutons sur la roue */}
+              {ATMOSPHERES.map((atm, i) => {
+                const angle = (360 / ATMOSPHERES.length) * i - 90;
+                const rad = (angle * Math.PI) / 180;
+                const r = 160;
+                const cx = 210 + r * Math.cos(rad);
+                const cy = 210 + r * Math.sin(rad);
+                const isSelected = selectedAtm?.id === atm.id;
+
+                return (
+                  <motion.button
+                    key={atm.id}
+                    onClick={() => setSelectedAtm(isSelected ? null : atm)}
+                    whileTap={{ scale: 0.9 }}
+                    animate={{ scale: isSelected ? 1.15 : 1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="absolute flex flex-col items-center gap-1 group"
+                    style={{
+                      left: cx - 36,
+                      top: cy - 36,
+                      width: 72,
+                      height: 72,
+                    }}
+                  >
+                    <div className={`w-16 h-16 rounded-full flex flex-col items-center justify-center border-2 transition-all duration-300 overflow-hidden relative ${
+                      isSelected
+                        ? "border-amber-400 shadow-[0_0_20px_rgba(212,175,55,0.6)]"
+                        : "border-white/20 bg-black/40"
+                    }`}>
+                      <img
+                        src={atm.img}
+                        alt={atm.label}
+                        className="absolute inset-0 w-full h-full object-cover opacity-30"
+                      />
+                      <div className={`absolute inset-0 ${isSelected ? "bg-amber-500/30" : "bg-black/40"}`} />
+                      <span className="relative z-10 text-xl">{atm.icon}</span>
+                    </div>
+                    <span className={`text-[8px] font-bold uppercase tracking-wider text-center leading-tight w-20 transition-colors ${
+                      isSelected ? "text-amber-400" : "text-white/50"
+                    }`}>
+                      {atm.label}
+                    </span>
+                  </motion.button>
+                );
+              })}
+
+              {/* Centre — confirmation */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <AnimatePresence mode="wait">
+                  {selectedAtm ? (
+                    <motion.button
+                      key="confirm"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0, opacity: 0 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      onClick={() => onValidate(selections.top, selections.heart, selections.base, selectedAtm.id, buildRadarIntensities())}
+                      className="w-24 h-24 rounded-full bg-amber-500 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.5)] active:scale-95 transition-transform"
+                    >
+                      <span className="text-black text-[9px] font-black uppercase tracking-widest text-center leading-tight px-2">
+                        Confirmer
+                      </span>
+                      <ArrowRight size={16} className="text-black mt-1" />
+                    </motion.button>
+                  ) : (
+                    <motion.div
+                      key="idle"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="w-24 h-24 rounded-full border-2 border-amber-500/30 flex items-center justify-center"
+                    >
+                      <span className="text-amber-500/40 text-[8px] uppercase tracking-widest text-center leading-tight px-2">
+                        Choisir
+                      </span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </motion.div>
         )}

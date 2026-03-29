@@ -324,12 +324,13 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                     overflow: "hidden",
                     position: "absolute",
                   }}
-                  drag
-                  dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                  dragElastic={0.9}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={1}
                   onDragEnd={(_, info) => {
-                    if (info.offset.x > 100) handleSwipe(true);
-                    else if (info.offset.x < -100) handleSwipe(false);
+                    if (info.offset.x > 80) handleSwipe(true);
+                    else if (info.offset.x < -80) handleSwipe(false);
+                    else x.set(0);
                   }}
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}

@@ -455,7 +455,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
                 {/* ── Labels familles ── */}
                 {FAMILIES.map((f, i) => {
-                  const p = getPointPos(i, 1.45);
+                  const p = getPointPos(i, 1.25);
                   const isActive = intensities[i] > 0.7;
                   return (
                     <text key={i} x={p.x} y={p.y}
@@ -506,7 +506,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
         const angle = (360 / ATMOSPHERES.length) * i - 90;
         const rad = (angle * Math.PI) / 180;
         const wheelSize = 360;
-        const r = wheelSize * 0.36;
+        const r = wheelSize * 0.44;
         const cx = wheelSize / 2 + r * Math.cos(rad);
         const cy = wheelSize / 2 + r * Math.sin(rad);
 
@@ -525,7 +525,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
               const dropX = btnCx + info.offset.x;
               const dropY = btnCy + info.offset.y;
               const dist = Math.sqrt((dropX - centerX) ** 2 + (dropY - centerY) ** 2);
-              if (dist < 80) {
+              if (dist < 120) {
                 onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities());
               }
             }}

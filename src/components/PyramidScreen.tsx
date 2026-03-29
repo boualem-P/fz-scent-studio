@@ -346,7 +346,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 </div>
 
             {/* ── RADAR avec drag natif pointer events ── */}
-            <div className="relative flex items-center justify-center touch-none">
+            <div className="relative flex items-center justify-center touch-none mt-6">
               <svg
                 ref={svgRef}
                 id="radar-svg"
@@ -494,7 +494,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     </div>
 
     {/* Roue */}
-    <div className="relative" style={{ width: "min(420px, 85vw)", height: "min(420px, 85vw)" }}>
+    <div className="relative mt-6" style={{ width: "min(360px, 75vw)", height: "min(360px, 75vw)" }}>
 
       {/* Cercles décoratifs */}
       <div className="absolute inset-0 rounded-full border border-amber-500/10" />

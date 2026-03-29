@@ -296,8 +296,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
           <motion.div
             key="swipe-container"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-10 flex flex-col items-center justify-center touch-none"
-            style={{ backgroundColor: "#F0EDE8" }}
+            className="fixed inset-0 z-10 flex flex-col items-center justify-center touch-none bg-black"
           >
             {/* Titre */}
             <div className="absolute top-16 left-0 right-0 text-center px-6 z-10">
@@ -308,12 +307,22 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
             {/* Carte */}
             <div className="relative flex items-center justify-center w-full"
-              style={{ height: "70vh", maxWidth: 420 }}>
+              style={{ height: "70vh" }}>
 
               <AnimatePresence mode="popLayout">
                 <motion.div
                   key={`${steps[currentStep]}-${noteIndex}`}
-                  style={{ x, rotate: useTransform(x, [-200, 200], [-18, 18]) }}
+                  style={{
+                    x,
+                    rotate: useTransform(x, [-200, 200], [-18, 18]),
+                    width: "min(320px, 80vw)",
+                    height: "min(480px, 65vh)",
+                    borderRadius: 28,
+                    background: "#fff",
+                    boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+                    overflow: "hidden",
+                    position: "absolute",
+                  }}
                   drag
                   dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                   dragElastic={0.9}
@@ -325,43 +334,36 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, transition: { duration: 0.3 } }}
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  className="absolute cursor-grab active:cursor-grabbing touch-none"
-                  style={{
-                    width: "min(380px, 88vw)",
-                    borderRadius: 28,
-                    background: "#fff",
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
-                    overflow: "hidden",
-                  }}
+                  className="cursor-grab active:cursor-grabbing touch-none flex flex-col"
                 >
                   {/* Overlay ✅ */}
                   <motion.div
-                    style={{ opacity: useTransform(x, [30, 120], [0, 1]) }}
-                    className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none"
                     style={{
+                      opacity: useTransform(x, [30, 120], [0, 1]),
+                      position: "absolute", inset: 0, zIndex: 20,
                       background: "rgba(34,197,94,0.15)",
                       borderRadius: 28,
                       border: "3px solid rgba(34,197,94,0.6)",
+                      pointerEvents: "none",
+                      display: "flex", alignItems: "center", justifyContent: "center",
                     }}
-                  >
-                    <span className="text-6xl">✅</span>
-                  </motion.div>
+                  />
 
                   {/* Overlay ❌ */}
                   <motion.div
-                    style={{ opacity: useTransform(x, [-120, -30], [1, 0]) }}
-                    className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none"
                     style={{
+                      opacity: useTransform(x, [-120, -30], [1, 0]),
+                      position: "absolute", inset: 0, zIndex: 20,
                       background: "rgba(239,68,68,0.15)",
                       borderRadius: 28,
                       border: "3px solid rgba(239,68,68,0.6)",
+                      pointerEvents: "none",
+                      display: "flex", alignItems: "center", justifyContent: "center",
                     }}
-                  >
-                    <span className="text-6xl">❌</span>
-                  </motion.div>
+                  />
 
                   {/* Image */}
-                  <div style={{ height: "52%", width: "100%" }}>
+                  <div style={{ height: "55%", width: "100%", flexShrink: 0 }}>
                     <img
                       src={currentNote.img}
                       draggable="false"
@@ -371,11 +373,11 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                   </div>
 
                   {/* Contenu */}
-                  <div className="flex flex-col items-center justify-center px-6 py-5 bg-white gap-2">
-                    <h3 className="text-xl font-semibold text-zinc-900 text-center tracking-tight">
+                  <div className="flex flex-col items-center justify-center px-5 py-4 bg-white gap-1.5 flex-1">
+                    <h3 className="text-base font-semibold text-zinc-900 text-center tracking-tight">
                       {currentNote.label}
                     </h3>
-                    <p className="text-amber-600 text-[11px] font-bold uppercase tracking-widest">
+                    <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">
                       {currentNote.sub}
                     </p>
                     <div className="flex items-center gap-2 my-1">
@@ -383,13 +385,13 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
                       <div className="w-1 h-1 rounded-full bg-amber-400/60" />
                       <div className="h-px w-8 bg-amber-400/40" />
                     </div>
-                    <p className="text-[9px] uppercase tracking-[0.2em] text-zinc-400 font-medium">
+                    <p className="text-[8px] uppercase tracking-[0.2em] text-zinc-400 font-medium">
                       Équivalent en parfumerie
                     </p>
-                    <div className="flex flex-wrap justify-center gap-2">
+                    <div className="flex flex-wrap justify-center gap-1.5">
                       {currentNote.tags.map((tag) => (
                         <span key={tag}
-                          className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                          className="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
                           style={{ background: "#fff8ed", color: "#b45309", border: "1px solid #fcd34d" }}>
                           {tag}
                         </span>
@@ -400,31 +402,34 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
               </AnimatePresence>
             </div>
 
-            {/* Boutons ❌ / ❤️ */}
-            <div className="absolute flex items-center justify-between px-8 w-full" style={{ bottom: "12%" }}>
+            {/* Boutons ❌ / ❤️ — centrés verticalement */}
+            <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-6 pointer-events-none">
               <motion.button
                 style={{ opacity: useTransform(x, [-120, 0], [1, 0.5]) }}
                 onClick={() => handleSwipe(false)}
-                className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg"
+                className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg pointer-events-auto"
                 style={{ background: "#1a1a1a", border: "2px solid rgba(239,68,68,0.5)" }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Frown size={28} className="text-red-400" strokeWidth={2} />
+                <Frown size={26} className="text-red-400" strokeWidth={2} />
               </motion.button>
-
-              <p className="text-zinc-400 text-[9px] uppercase tracking-[0.3em]">
-                {noteIndex + 1} / {notesAvailable.length}
-              </p>
 
               <motion.button
                 style={{ opacity: useTransform(x, [0, 120], [0.5, 1]) }}
                 onClick={() => handleSwipe(true)}
-                className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg"
+                className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg pointer-events-auto"
                 style={{ background: "#1a1a1a", border: "2px solid rgba(34,197,94,0.5)" }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Smile size={28} className="text-emerald-400" strokeWidth={2} />
+                <Smile size={26} className="text-emerald-400" strokeWidth={2} />
               </motion.button>
+            </div>
+
+            {/* Compteur */}
+            <div className="absolute bottom-8 left-0 right-0 text-center">
+              <p className="text-zinc-600 text-[9px] uppercase tracking-[0.3em]">
+                {noteIndex + 1} / {notesAvailable.length}
+              </p>
             </div>
           </motion.div>
 

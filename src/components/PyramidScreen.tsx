@@ -346,7 +346,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 </div>
 
             {/* ── RADAR avec drag natif pointer events ── */}
-            <div className="relative flex items-center justify-center touch-none mt-6">
+            <div className="relative flex items-center justify-center touch-none">
               <svg
                 ref={svgRef}
                 id="radar-svg"
@@ -485,7 +485,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     style={{ height: "calc(100vh - 80px)" }}>
 
     {/* Titre */}
-    <div className="flex flex-col items-center mb-1 text-center">
+    <div className="flex flex-col items-center mb-8 text-center">
       <h2 className="text-xl md:text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
       <div className="w-12 h-[1px] bg-amber-500 my-2 opacity-50" />
       <p className="text-amber-500 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em]">

@@ -67,11 +67,11 @@ const IconCroissant = () => (
 );
 
 const ATMOSPHERES = [
-  { id: 'quotidien', label: 'Mon quotidien', icon: <IconParfum />, desc: "Frais, discret & efficace", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'quotidien' },
+  { id: 'quotidien', label: 'Mon quotidien', icon: <span className="text-2xl">✨</span>, desc: "Frais, discret & efficace", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'quotidien' },
   { id: 'business', label: 'Au bureau', icon: <span className="text-2xl">💼</span>, desc: "Assuré & professionnel", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400", group: 'quotidien' },
-  { id: 'aid', label: 'Aïd & Fêtes', icon: <IconCroissant />, desc: "Oriental, festif & généreux", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'occasions' },
+  { id: 'aid', label: 'Aïd & Fêtes', icon: <span className="text-2xl">🌙</span>, desc: "Oriental, festif & généreux", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'occasions' },
   { id: 'mariage', label: 'Mariage & Fiançailles', icon: <span className="text-2xl">💍</span>, desc: "Somptueux & inoubliable", img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=400", group: 'occasions' },
-  { id: 'soir', label: 'Soirée & Sorties', icon: <IconSoiree />, desc: "Intense & magnétique", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'occasions' },
+  { id: 'soir', label: 'Soirée & Sorties', icon: <span className="text-2xl">🥂</span>, desc: "Intense & magnétique", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'occasions' },
   { id: 'rendezvous', label: 'Rendez-vous', icon: <span className="text-2xl">❤️</span>, desc: "Sensuel & captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'intime' },
   { id: 'famille', label: 'En famille', icon: <span className="text-2xl">🏠</span>, desc: "Chaleureux & bienveillant", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'intime' },
   { id: 'ramadan', label: 'Ramadan', icon: <span className="text-2xl">🕌</span>, desc: "Doux, oud & spirituel", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'intime' },
@@ -480,106 +480,91 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
           </motion.div>
 
         ) : (
-          <motion.div key="atm" initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }}
-            className="relative z-10 w-full flex flex-col items-center justify-center h-screen">
+  <motion.div key="atm" initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }}
+    className="relative z-10 w-full flex flex-col items-center justify-center"
+    style={{ height: "calc(100vh - 80px)" }}>
 
-            {/* Titre */}
-            <div className="flex flex-col items-center mb-6 text-center">
-              <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
-              <div className="w-12 h-[1px] bg-amber-500 my-3 opacity-50" />
-              <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">Pour quelle occasion vous parfumez-vous ?</p>
+    {/* Titre */}
+    <div className="flex flex-col items-center mb-4 text-center">
+      <h2 className="text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
+      <div className="w-12 h-[1px] bg-amber-500 my-3 opacity-50" />
+      <p className="text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em]">
+        Glissez votre occasion vers le centre
+      </p>
+    </div>
+
+    {/* Roue */}
+    <div className="relative" style={{ width: 480, height: 480 }}>
+
+      {/* Cercles décoratifs */}
+      <div className="absolute inset-0 rounded-full border border-amber-500/10" />
+      <div className="absolute inset-8 rounded-full border border-amber-500/15" />
+      <div className="absolute inset-16 rounded-full border border-amber-500/20" />
+
+      {/* Boutons sur la roue */}
+      {ATMOSPHERES.map((atm, i) => {
+        const angle = (360 / ATMOSPHERES.length) * i - 90;
+        const rad = (angle * Math.PI) / 180;
+        const r = 185;
+        const cx = 240 + r * Math.cos(rad);
+        const cy = 240 + r * Math.sin(rad);
+
+        return (
+          <motion.div
+            key={atm.id}
+            drag
+            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            dragElastic={0.8}
+            dragMomentum={false}
+            onDragEnd={(_, info) => {
+              const btnCx = cx;
+              const btnCy = cy;
+              const centerX = 240;
+              const centerY = 240;
+              const dropX = btnCx + info.offset.x;
+              const dropY = btnCy + info.offset.y;
+              const dist = Math.sqrt((dropX - centerX) ** 2 + (dropY - centerY) ** 2);
+              if (dist < 80) {
+                onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities());
+              }
+            }}
+            whileDrag={{ scale: 1.2, zIndex: 50 }}
+            className="absolute flex flex-col items-center gap-1 cursor-grab active:cursor-grabbing touch-none"
+            style={{
+              left: cx - 40,
+              top: cy - 40,
+              width: 80,
+              height: 80,
+            }}
+          >
+            <div className="w-20 h-20 rounded-full flex flex-col items-center justify-center border-2 border-white/30 overflow-hidden relative shadow-lg">
+              <img src={atm.img} alt={atm.label} className="absolute inset-0 w-full h-full object-cover opacity-40" />
+              <div className="absolute inset-0 bg-black/40" />
+              <span className="relative z-10 text-2xl">{atm.icon}</span>
             </div>
-
-            {/* Roue */}
-            <div className="relative" style={{ width: 420, height: 420 }}>
-
-              {/* Cercles décoratifs */}
-              <div className="absolute inset-0 rounded-full border border-amber-500/10" />
-              <div className="absolute inset-8 rounded-full border border-amber-500/15" />
-              <div className="absolute inset-16 rounded-full border border-amber-500/20" />
-
-              {/* Boutons sur la roue */}
-              {ATMOSPHERES.map((atm, i) => {
-                const angle = (360 / ATMOSPHERES.length) * i - 90;
-                const rad = (angle * Math.PI) / 180;
-                const r = 160;
-                const cx = 210 + r * Math.cos(rad);
-                const cy = 210 + r * Math.sin(rad);
-                const isSelected = selectedAtm?.id === atm.id;
-
-                return (
-                  <motion.button
-                    key={atm.id}
-                    onClick={() => setSelectedAtm(isSelected ? null : atm)}
-                    whileTap={{ scale: 0.9 }}
-                    animate={{ scale: isSelected ? 1.15 : 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="absolute flex flex-col items-center gap-1 group"
-                    style={{
-                      left: cx - 36,
-                      top: cy - 36,
-                      width: 72,
-                      height: 72,
-                    }}
-                  >
-                    <div className={`w-16 h-16 rounded-full flex flex-col items-center justify-center border-2 transition-all duration-300 overflow-hidden relative ${
-                      isSelected
-                        ? "border-amber-400 shadow-[0_0_20px_rgba(212,175,55,0.6)]"
-                        : "border-white/20 bg-black/40"
-                    }`}>
-                      <img
-                        src={atm.img}
-                        alt={atm.label}
-                        className="absolute inset-0 w-full h-full object-cover opacity-30"
-                      />
-                      <div className={`absolute inset-0 ${isSelected ? "bg-amber-500/30" : "bg-black/40"}`} />
-                      <span className="relative z-10 text-xl">{atm.icon}</span>
-                    </div>
-                    <span className={`text-[8px] font-bold uppercase tracking-wider text-center leading-tight w-20 transition-colors ${
-                      isSelected ? "text-amber-400" : "text-white/50"
-                    }`}>
-                      {atm.label}
-                    </span>
-                  </motion.button>
-                );
-              })}
-
-              {/* Centre — confirmation */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <AnimatePresence mode="wait">
-                  {selectedAtm ? (
-                    <motion.button
-                      key="confirm"
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0, opacity: 0 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      onClick={() => onValidate(selections.top, selections.heart, selections.base, selectedAtm.id, buildRadarIntensities())}
-                      className="w-24 h-24 rounded-full bg-amber-500 flex flex-col items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.5)] active:scale-95 transition-transform"
-                    >
-                      <span className="text-black text-[9px] font-black uppercase tracking-widest text-center leading-tight px-2">
-                        Confirmer
-                      </span>
-                      <ArrowRight size={16} className="text-black mt-1" />
-                    </motion.button>
-                  ) : (
-                    <motion.div
-                      key="idle"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="w-24 h-24 rounded-full border-2 border-amber-500/30 flex items-center justify-center"
-                    >
-                      <span className="text-amber-500/40 text-[8px] uppercase tracking-widest text-center leading-tight px-2">
-                        Choisir
-                      </span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
+            <span className="text-[7px] font-bold uppercase tracking-wider text-center text-white/60 w-24 leading-tight">
+              {atm.label}
+            </span>
           </motion.div>
-        )}
+        );
+      })}
+
+      {/* Centre */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <motion.div
+          className="w-28 h-28 rounded-full border-2 border-amber-500/50 flex flex-col items-center justify-center"
+          animate={{ boxShadow: ["0 0 15px rgba(212,175,55,0.2)", "0 0 30px rgba(212,175,55,0.5)", "0 0 15px rgba(212,175,55,0.2)"] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <span className="text-amber-500/60 text-[8px] uppercase tracking-widest text-center leading-tight px-2">
+            Glisser ici
+          </span>
+          <ArrowRight size={14} className="text-amber-500/60 mt-1" />
+        </motion.div>
+      </div>
+    </div>
+  </motion.div>
+)}
 
       </AnimatePresence>
     </div>

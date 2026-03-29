@@ -339,11 +339,11 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
           <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             className="relative z-10 w-full max-w-md flex flex-col items-center justify-center">
-            <div className="flex flex-col items-center mb-6 text-center">
-              <h2 className="text-2xl font-bold uppercase tracking-[0.3em] text-white">Architecture Olfactive</h2>
-              <div className="w-12 h-[1px] bg-amber-500 my-3 opacity-50" />
-              <p className="text-amber-500/80 text-[10px] font-bold uppercase tracking-[0.15em]">Modelez l'intensité de vos accords</p>
-            </div>
+            <div className="flex flex-col items-center mb-2 text-center">
+  <h2 className="text-2xl font-bold uppercase tracking-[0.3em] text-white">Architecture Olfactive</h2>
+  <div className="w-12 h-[1px] bg-amber-500 my-2 opacity-50" />
+  <p className="text-amber-500/80 text-[10px] font-bold uppercase tracking-[0.15em]">Modelez l'intensité de vos accords</p>
+</div>
 
             {/* ── RADAR avec drag natif pointer events ── */}
             <div className="relative flex items-center justify-center touch-none">
@@ -455,7 +455,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
 
                 {/* ── Labels familles ── */}
                 {FAMILIES.map((f, i) => {
-                  const p = getPointPos(i, 1.55);
+                  const p = getPointPos(i, 1.45);
                   const isActive = intensities[i] > 0.7;
                   return (
                     <text key={i} x={p.x} y={p.y}

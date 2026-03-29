@@ -427,9 +427,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
               </motion.button>
             </div>
           </motion.div>
-              Balayez pour choisir
-            </p>
-          </motion.div>
 
         ) : screen === 'map' ? (
 

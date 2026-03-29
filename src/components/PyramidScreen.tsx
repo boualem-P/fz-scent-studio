@@ -296,10 +296,11 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
           <motion.div
             key="swipe-container"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-10 flex flex-col items-center justify-center touch-none bg-black"
+            className="relative z-10 w-full flex flex-col items-center justify-center touch-none"
+            style={{ minHeight: "100vh" }}
           >
             {/* Titre */}
-            <div className="absolute top-16 left-0 right-0 text-center px-6 z-10">
+            <div className="text-center px-6 mb-6 mt-4">
               <h2 className="text-xl font-light italic uppercase tracking-widest text-zinc-400">
                 Affinez vos désirs
               </h2>
@@ -403,7 +404,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             </div>
 
             {/* Boutons ❌ / ❤️ — centrés verticalement */}
-            <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-6 pointer-events-none">
+            <div className="flex items-center justify-between w-full px-6 mt-6 pointer-events-none">
               <motion.button
                 style={{ opacity: useTransform(x, [-120, 0], [1, 0.5]) }}
                 onClick={() => handleSwipe(false)}
@@ -426,7 +427,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
             </div>
 
             {/* Compteur */}
-            <div className="absolute bottom-8 left-0 right-0 text-center">
+            <div className="text-center mt-4">
               <p className="text-zinc-600 text-[9px] uppercase tracking-[0.3em]">
                 {noteIndex + 1} / {notesAvailable.length}
               </p>

@@ -293,147 +293,134 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
           </motion.div>
 
         ) : screen === 'swipe' ? (
+  <motion.div
+    key="swipe-container"
+    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+    className="relative z-10 w-full flex flex-col items-center justify-center touch-none"
+    style={{ minHeight: "100vh" }}
+  >
+    {/* Titre */}
+    <div className="text-center px-6 mb-4 mt-4">
+      <h2 className="text-xl font-light italic uppercase tracking-widest text-zinc-400">
+        Affinez vos désirs
+      </h2>
+    </div>
+
+    {/* Zone principale */}
+    <div className="relative flex items-center justify-center w-full" style={{ height: "70vh" }}>
+
+      {/* Emoji ❌ gauche — zone de dépôt */}
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-16 h-16 rounded-full"
+        style={{ background: "#1a1a1a", border: "2px solid rgba(239,68,68,0.5)" }}>
+        <Frown size={26} className="text-red-400" strokeWidth={2} />
+      </div>
+
+      {/* Emoji ✅ droite — zone de dépôt */}
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-16 h-16 rounded-full"
+        style={{ background: "#1a1a1a", border: "2px solid rgba(34,197,94,0.5)" }}>
+        <Smile size={26} className="text-emerald-400" strokeWidth={2} />
+      </div>
+
+      {/* Carte */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`${steps[currentStep]}-${noteIndex}`}
+          style={{
+            x,
+            rotate: useTransform(x, [-200, 200], [-18, 18]),
+            width: "min(300px, 75vw)",
+            borderRadius: 28,
+            background: "#fff",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+            overflow: "hidden",
+            position: "absolute",
+            height: "min(460px, 62vh)",
+          }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={1}
+          onDragEnd={(_, info) => {
+            if (info.offset.x > 100) handleSwipe(true);
+            else if (info.offset.x < -100) handleSwipe(false);
+            else x.set(0);
+          }}
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, transition: { duration: 0.3 } }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          className="cursor-grab active:cursor-grabbing touch-none flex flex-col"
+        >
+          {/* Overlay ✅ */}
           <motion.div
-            key="swipe-container"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="relative z-10 w-full flex flex-col items-center justify-center touch-none"
-            style={{ minHeight: "100vh" }}
-          >
-            {/* Titre */}
-            <div className="text-center px-6 mb-6 mt-4">
-              <h2 className="text-xl font-light italic uppercase tracking-widest text-zinc-400">
-                Affinez vos désirs
-              </h2>
+            style={{
+              opacity: useTransform(x, [40, 120], [0, 1]),
+              position: "absolute", inset: 0, zIndex: 20,
+              background: "rgba(34,197,94,0.15)",
+              borderRadius: 28,
+              border: "3px solid rgba(34,197,94,0.6)",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Overlay ❌ */}
+          <motion.div
+            style={{
+              opacity: useTransform(x, [-120, -40], [1, 0]),
+              position: "absolute", inset: 0, zIndex: 20,
+              background: "rgba(239,68,68,0.15)",
+              borderRadius: 28,
+              border: "3px solid rgba(239,68,68,0.6)",
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Image */}
+          <div style={{ height: "55%", width: "100%", flexShrink: 0 }}>
+            <img
+              src={currentNote.img}
+              draggable="false"
+              className="w-full h-full object-cover"
+              alt={currentNote.label}
+            />
+          </div>
+
+          {/* Contenu */}
+          <div className="flex flex-col items-center justify-center px-5 py-4 bg-white gap-1.5 flex-1">
+            <h3 className="text-base font-semibold text-zinc-900 text-center tracking-tight">
+              {currentNote.label}
+            </h3>
+            <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">
+              {currentNote.sub}
+            </p>
+            <div className="flex items-center gap-2 my-1">
+              <div className="h-px w-8 bg-amber-400/40" />
+              <div className="w-1 h-1 rounded-full bg-amber-400/60" />
+              <div className="h-px w-8 bg-amber-400/40" />
             </div>
-
-            {/* Carte */}
-            <div className="relative flex items-center justify-center w-full"
-              style={{ height: "70vh" }}>
-
-              <AnimatePresence mode="popLayout">
-                <motion.div
-                  key={`${steps[currentStep]}-${noteIndex}`}
-                  style={{
-                    x,
-                    rotate: useTransform(x, [-200, 200], [-18, 18]),
-                    width: "min(320px, 80vw)",
-                    height: "min(480px, 65vh)",
-                    borderRadius: 28,
-                    background: "#fff",
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
-                    overflow: "hidden",
-                    position: "absolute",
-                  }}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={1}
-                  onDragEnd={(_, info) => {
-                    if (info.offset.x > 80) handleSwipe(true);
-                    else if (info.offset.x < -80) handleSwipe(false);
-                    else x.set(0);
-                  }}
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, transition: { duration: 0.3 } }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  className="cursor-grab active:cursor-grabbing touch-none flex flex-col"
-                >
-                  {/* Overlay ✅ */}
-                  <motion.div
-                    style={{
-                      opacity: useTransform(x, [30, 120], [0, 1]),
-                      position: "absolute", inset: 0, zIndex: 20,
-                      background: "rgba(34,197,94,0.15)",
-                      borderRadius: 28,
-                      border: "3px solid rgba(34,197,94,0.6)",
-                      pointerEvents: "none",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}
-                  />
-
-                  {/* Overlay ❌ */}
-                  <motion.div
-                    style={{
-                      opacity: useTransform(x, [-120, -30], [1, 0]),
-                      position: "absolute", inset: 0, zIndex: 20,
-                      background: "rgba(239,68,68,0.15)",
-                      borderRadius: 28,
-                      border: "3px solid rgba(239,68,68,0.6)",
-                      pointerEvents: "none",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}
-                  />
-
-                  {/* Image */}
-                  <div style={{ height: "55%", width: "100%", flexShrink: 0 }}>
-                    <img
-                      src={currentNote.img}
-                      draggable="false"
-                      className="w-full h-full object-cover"
-                      alt={currentNote.label}
-                    />
-                  </div>
-
-                  {/* Contenu */}
-                  <div className="flex flex-col items-center justify-center px-5 py-4 bg-white gap-1.5 flex-1">
-                    <h3 className="text-base font-semibold text-zinc-900 text-center tracking-tight">
-                      {currentNote.label}
-                    </h3>
-                    <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest">
-                      {currentNote.sub}
-                    </p>
-                    <div className="flex items-center gap-2 my-1">
-                      <div className="h-px w-8 bg-amber-400/40" />
-                      <div className="w-1 h-1 rounded-full bg-amber-400/60" />
-                      <div className="h-px w-8 bg-amber-400/40" />
-                    </div>
-                    <p className="text-[8px] uppercase tracking-[0.2em] text-zinc-400 font-medium">
-                      Équivalent en parfumerie
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-1.5">
-                      {currentNote.tags.map((tag) => (
-                        <span key={tag}
-                          className="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
-                          style={{ background: "#fff8ed", color: "#b45309", border: "1px solid #fcd34d" }}>
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+            <p className="text-[8px] uppercase tracking-[0.2em] text-zinc-400 font-medium">
+              Équivalent en parfumerie
+            </p>
+            <div className="flex flex-wrap justify-center gap-1.5">
+              {currentNote.tags.map((tag) => (
+                <span key={tag}
+                  className="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                  style={{ background: "#fff8ed", color: "#b45309", border: "1px solid #fcd34d" }}>
+                  {tag}
+                </span>
+              ))}
             </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
 
-            {/* Boutons ❌ / ❤️ — centrés verticalement */}
-            <div className="flex items-center justify-between w-full px-6 mt-6 pointer-events-none">
-              <motion.button
-                style={{ opacity: useTransform(x, [-120, 0], [1, 0.5]) }}
-                onClick={() => handleSwipe(false)}
-                className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg pointer-events-auto"
-                style={{ background: "#1a1a1a", border: "2px solid rgba(239,68,68,0.5)" }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Frown size={26} className="text-red-400" strokeWidth={2} />
-              </motion.button>
-
-              <motion.button
-                style={{ opacity: useTransform(x, [0, 120], [0.5, 1]) }}
-                onClick={() => handleSwipe(true)}
-                className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg pointer-events-auto"
-                style={{ background: "#1a1a1a", border: "2px solid rgba(34,197,94,0.5)" }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Smile size={26} className="text-emerald-400" strokeWidth={2} />
-              </motion.button>
-            </div>
-
-            {/* Compteur */}
-            <div className="text-center mt-4">
-              <p className="text-zinc-600 text-[9px] uppercase tracking-[0.3em]">
-                {noteIndex + 1} / {notesAvailable.length}
-              </p>
-            </div>
-          </motion.div>
+    {/* Compteur */}
+    <div className="text-center mt-4">
+      <p className="text-zinc-600 text-[9px] uppercase tracking-[0.3em]">
+        {noteIndex + 1} / {notesAvailable.length}
+      </p>
+    </div>
+  </motion.div>
 
         ) : screen === 'map' ? (
 

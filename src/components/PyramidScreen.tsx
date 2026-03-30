@@ -184,13 +184,13 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     setTimeout(() => { setIsAnalyzing(false); setScreen(nextScreen); }, 4000);
   };
 
-  const handleSwipe = (liked: boolean) => {
+ const handleSwipe = (liked: boolean) => {
+    x.set(0);
     const key = steps[currentStep] as keyof typeof selections;
     if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
     if (noteIndex < notesAvailable.length - 1) { setNoteIndex(prev => prev + 1); }
     else if (currentStep < 2) { setCurrentStep(prev => prev + 1); setNoteIndex(0); }
     else { triggerTransition('map', "Harmonisation des essences sélectionnées..."); }
-    x.set(0);
   };
 
   const buildRadarIntensities = (): Record<string, number> => {
@@ -276,7 +276,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     <div className="relative h-screen bg-black text-white flex flex-col items-center pt-16 px-4 select-none overflow-hidden">
       <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="popLayout">
 
         {isAnalyzing ? (
           <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -322,7 +322,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
       </div>
 
       {/* Carte */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="popLayout">
         <motion.div
           key={`${steps[currentStep]}-${noteIndex}`}
           style={{

@@ -400,10 +400,6 @@ const handleSwipe = (liked: boolean) => {
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.9}
-            onDrag={(_, info) => {
-              // Allume les emojis en temps réel pendant le drag
-              x.set(info.offset.x);
-            }}
             onDragEnd={(_, info) => {
               if (info.offset.x > 100) handleSwipe(true);
               else if (info.offset.x < -100) handleSwipe(false);

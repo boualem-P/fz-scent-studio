@@ -119,6 +119,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const currentNote = notesAvailable[noteIndex];
 
   const x = useMotionValue(0);
+  const [cardKey, setCardKey] = useState(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
@@ -184,14 +185,18 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     setTimeout(() => { setIsAnalyzing(false); setScreen(nextScreen); }, 4000);
   };
 
- const handleSwipe = (liked: boolean) => {
+const handleSwipe = (liked: boolean) => {
+  const key = steps[currentStep] as keyof typeof selections;
+  if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
+  
+  setTimeout(() => {
     x.set(0);
-    const key = steps[currentStep] as keyof typeof selections;
-    if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
+    setCardKey(prev => prev + 1);
     if (noteIndex < notesAvailable.length - 1) { setNoteIndex(prev => prev + 1); }
     else if (currentStep < 2) { setCurrentStep(prev => prev + 1); setNoteIndex(0); }
     else { triggerTransition('map', "Harmonisation des essences sélectionnées..."); }
-  };
+  }, 300);
+};
 
   const buildRadarIntensities = (): Record<string, number> => {
     const result: Record<string, number> = {};
@@ -324,7 +329,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
       {/* Carte */}
       <AnimatePresence mode="popLayout">
         <motion.div
-          key={`${steps[currentStep]}-${noteIndex}`}
+          key={cardKey}
           style={{
             x,
             rotate: useTransform(x, [-200, 200], [-18, 18]),

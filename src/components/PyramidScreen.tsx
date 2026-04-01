@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
-import { ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
+import { ArrowRight, Smile, Frown, Loader2, Sun, Briefcase, Star, Heart, PartyPopper, Users, Moon, Sparkles } from "lucide-react";
 import { NoteCategory } from "@/data/perfumes";
 
 interface PyramidScreenProps {

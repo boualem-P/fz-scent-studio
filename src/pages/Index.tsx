@@ -110,7 +110,7 @@ const Index = () => {
     navigateTo("pyramid");
   };
 
-  const handleValidate = useCallback((
+ const handleValidate = useCallback((
   top: NoteCategory[],
   heart: NoteCategory[],
   base: NoteCategory[],

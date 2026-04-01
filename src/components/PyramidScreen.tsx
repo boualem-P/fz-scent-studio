@@ -331,6 +331,11 @@ const handleSwipe = (liked: boolean) => {
       "rgba(239,68,68,0.5)"
     ])
   }}
+  className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
+  style={{ background: "#111", border: "2px solid rgba(239,68,68,0.5)" }}
+>
+
+  }}
 
           scale: 1,
           boxShadow: "none",
@@ -358,11 +363,24 @@ const handleSwipe = (liked: boolean) => {
   ])
 }}
 
-          scale: 1.3,
-          boxShadow: "0 0 20px rgba(34,197,94,0.8)",
-          borderColor: "rgba(34,197,94,1)"
-        } : {
-          scale: 1,
+          <motion.div
+  animate={{
+    scale: useTransform(x, [0, 80, 120], [1, 1.1, 1.3]),
+    boxShadow: useTransform(x, [0, 80, 120], [
+      "none",
+      "0 0 10px rgba(34,197,94,0.4)",
+      "0 0 20px rgba(34,197,94,0.8)"
+    ]),
+    borderColor: useTransform(x, [0, 80, 120], [
+      "rgba(34,197,94,0.5)",
+      "rgba(34,197,94,0.7)",
+      "rgba(34,197,94,1)"
+    ])
+  }}
+  className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
+  style={{ background: "#111", border: "2px solid rgba(34,197,94,0.5)" }}
+>
+
           boxShadow: "none",
           borderColor: "rgba(34,197,94,0.5)"
         }}

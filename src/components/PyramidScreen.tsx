@@ -1,757 +1,575 @@
-export interface NoteDetail {
-  name: string;
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
+import { NoteCategory } from "@/data/perfumes";
+
+interface PyramidScreenProps {
+  onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string, radarIntensities?: Record<string, number>) => void;
+  onMenu: () => void;
+  setInternalBackHandler: (fn: () => boolean) => void;
 }
 
-export interface SeasonData {
-  winter: number;
-  spring: number;
-  summer: number;
-  autumn: number;
-}
+const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'MARINE'];
 
-export interface Perfume {
-  id: string;
-  name: string;
-  brand: string;
-  image: string;
-  description: string;
-  gender: "homme" | "femme" | "unisexe";
-  concentration: string;
-  topNotes: string[];
-  heartNotes: string[];
-  baseNotes: string[];
-  topNotesDetailed: NoteDetail[];
-  heartNotesDetailed: NoteDetail[];
-  baseNotesDetailed: NoteDetail[];
-  accordIds?: string[];
-  sillage?: "discret" | "modéré" | "fort" | "très fort";
-  longevite?: "2-4h" | "4-6h" | "6-8h" | "8h+";
-  // jourPct : pourcentage jour (0-100), nuit = 100 - jourPct
-  jourPct?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100;
-  seasonData: SeasonData;
-}
+const RADAR_TO_FAMILY: Record<string, string[]> = {
+  'AGRUMES': ['hesperides'],
+  'ANIMAL':  ['musquees', 'cuir', 'animal'],
+  'BOISÉ':   ['boisees', 'mousses', 'notes-vertes'],
+  'ÉPICÉ':   ['epicees', 'epices-fraiches', 'epices-chaudes'],
+  'FLORAL':  ['florales'],
+  'FRUITÉ':  ['fruitees', 'fruits-legers'],
+  'SUCRÉ':   ['gourmandes'],
+  'MARINE':  ['marines'],
+};
 
-export const PERFUMES: Perfume[] = [
-  {
-    id: "j-adore-dior",
-    name: "J'adore",
-    brand: "Dior",
-    image: "https://fimgs.net/mdimg/perfume/o.210.jpg",
-    description: "Un bouquet floral unique, riche et équilibré, dont la complexité est une source d'inspiration.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Poire", "Melon", "Magnolia", "Pêche", "Mandarine", "Bergamote"],
-    heartNotes: ["Jasmin", "Muguet", "Tubéreuse", "Freesia", "Rose", "Orchidée", "Prune", "Violette"],
-    baseNotes: ["Musc", "Vanille", "Mûre", "Cèdre"],
-    topNotesDetailed: [{ name: "Jasmin" }, { name: "Poire" }, { name: "Melon" }],
-    heartNotesDetailed: [{ name: "Muguet" }, { name: "Magnolia" }, { name: "Tubéreuse" }],
-    baseNotesDetailed: [{ name: "Musc" }, { name: "Vanille" }],
-    sillage: "fort",
-    longevite: "6-8h",
-    jourPct: 65,
-    seasonData: { winter: 20, spring: 30, summer: 15, autumn: 25 }
-  },
-  {
-    id: "sauvage-dior",
-    name: "Sauvage",
-    brand: "Dior",
-    image: "https://fimgs.net/mdimg/perfume/o.31861.jpg",
-    description: "Une composition d'une fraîcheur radicale, dictée par un nom qui sonne comme un manifeste.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Bergamote de Calabre", "Poivre"],
-    heartNotes: ["Poivre du Sichuan", "Lavande", "Poivre rose", "Vétiver", "Patchouli", "Géranium", "Élémi"],
-    baseNotes: ["Ambroxan", "Cèdre", "Ladanum"],
-    topNotesDetailed: [{ name: "Bergamote de Calabre" }, { name: "Poivre" }],
-    heartNotesDetailed: [{ name: "Poivre du Sichuan" }, { name: "Lavande" }, { name: "Vétiver" }],
-    baseNotesDetailed: [{ name: "Ambroxan" }, { name: "Cèdre" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 60,
-    seasonData: { winter: 40, spring: 85, summer: 90, autumn: 75 }
-  },
-  {
-    id: "fahrenheit-dior",
-    name: "Fahrenheit",
-    brand: "Dior",
-    image: "https://fimgs.net/mdimg/perfume/o.228.jpg",
-    description: "Une signature olfactive unique et contrastée, avec un sillage puissant et persistant.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Fleur de muscadier", "Lavande", "Cèdre", "Mandarine", "Camomille", "Aubépine", "Bergamote", "Citron"],
-    heartNotes: ["Feuille de violette", "Noix de muscade", "Cèdre", "Santal", "Chèvrefeuille", "Œillet", "Jasmin", "Muguet"],
-    baseNotes: ["Cuir", "Vétiver", "Musc", "Ambre", "Patchouli", "Fève de tonka"],
-    topNotesDetailed: [{ name: "Feuille de Violette" }, { name: "Noix de muscade" }],
-    heartNotesDetailed: [{ name: "Lavande" }, { name: "Cèdre" }],
-    baseNotesDetailed: [{ name: "Cuir" }, { name: "Vétiver" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 40,
-    seasonData: { winter: 35, spring: 20, summer: 10, autumn: 30 }
-  },
-  {
-    id: "homme-intense-dior",
-    name: "Dior Homme Intense",
-    brand: "Dior",
-    image: "https://fimgs.net/mdimg/perfume/o.13016.jpg",
-    description: "Une fragrance noble et audacieuse, un iris poudré et boisé, sophistiqué et sensuel.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Lavande"],
-    heartNotes: ["Iris", "Ambrette", "Poire"],
-    baseNotes: ["Cèdre de Virginie", "Vétiver"],
-    topNotesDetailed: [{ name: "Lavande" }],
-    heartNotesDetailed: [{ name: "Iris" }, { name: "Poire" }],
-    baseNotesDetailed: [{ name: "Cèdre de Virginie" }, { name: "Vétiver" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 10,
-    seasonData: { winter: 100, spring: 40, summer: 10, autumn: 95 }
-  },
-  {
-    id: "bleu-de-chanel",
-    name: "Bleu de Chanel",
-    brand: "Chanel",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.25967.avif",
-    description: "L'éloge de la liberté qui s'exprime dans un aromatique-boisé au sillage captivant.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Pamplemousse", "Citron", "Menthe", "Poivre rose"],
-    heartNotes: ["Gingembre", "Noix de muscade", "Jasmin", "Iso E Super"],
-    baseNotes: ["Encens", "Vétiver", "Cèdre", "Santal", "Patchouli", "Ladanum", "Musc blanc"],
-    topNotesDetailed: [{ name: "Pamplemousse" }, { name: "Citron" }],
-    heartNotesDetailed: [{ name: "Gingembre" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Encens" }, { name: "Cèdre" }],
-    sillage: "fort",
-    longevite: "6-8h",
-    jourPct: 55,
-    seasonData: { winter: 30, spring: 25, summer: 10, autumn: 25 }
-  },
-  {
-    id: "le-lion-chanel",
-    name: "Le Lion",
-    brand: "Chanel",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.61036.avif",
-    description: "Une fragrance ambrée, cuirée et intense, inspirée par la force et l'éclat du Lion.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Bergamote", "Citron"],
-    heartNotes: ["Ladanum", "Ambre"],
-    baseNotes: ["Vanille de Madagascar", "Patchouli", "Santal", "Musc"],
-    topNotesDetailed: [{ name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Ladanum" }, { name: "Ambre" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Patchouli" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 20,
-    seasonData: { winter: 100, spring: 30, summer: 10, autumn: 90 }
-  },
-  {
-    id: "allure-sport-chanel",
-    name: "Allure Homme Sport",
-    brand: "Chanel",
-    image: "https://fimgs.net/mdimg/perfume/o.607.jpg",
-    description: "Une allure qui se joue de la vitesse. Un parfum frais, sensuel et tonique.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Orange", "Notes marines", "Aldéhydes", "Mandarine sanguine"],
-    heartNotes: ["Poivre", "Néroli", "Cèdre"],
-    baseNotes: ["Fève de tonka", "Musc blanc", "Ambre", "Vanille", "Vétiver", "RÉSINE D'ÉLÉMI"],
-    topNotesDetailed: [{ name: "Orange" }, { name: "Eau de mer" }, { name: "Aldéhydes" }],
-    heartNotesDetailed: [{ name: "Mandarine" }, { name: "Vanille" }],
-    baseNotesDetailed: [{ name: "Fève Tonka" }],
-    sillage: "modéré",
-    longevite: "4-6h",
-    jourPct: 75,
-    seasonData: { winter: 10, spring: 25, summer: 45, autumn: 20 }
-  },
-  {
-    id: "black-opium",
-    name: "Black Opium",
-    brand: "YSL",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.25324.avif",
-    description: "Le premier café floral pour une dose d'adrénaline, entre mystère et énergie.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Poire", "Poivre rose", "Fleur d'oranger"],
-    heartNotes: ["Café", "Jasmin", "Amande amère", "Réglisse"],
-    baseNotes: ["Vanille", "Patchouli", "Cèdre", "Cachemire"],
-    topNotesDetailed: [{ name: "Poire" }, { name: "Poivre rose" }],
-    heartNotesDetailed: [{ name: "Café" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Patchouli" }],
-    sillage: "fort",
-    longevite: "6-8h",
-    jourPct: 50,
-    seasonData: { winter: 100, spring: 30, summer: 10, autumn: 85 }
-  },
-  {
-    id: "libre-ysl",
-    name: "Libre",
-    brand: "YSL",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.56077.avif",
-    description: "Le parfum d'une femme libre et conquérante, une tension entre le masculin et le féminin.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Lavande", "Mandarine", "Cassis", "Petit-grain"],
-    heartNotes: ["Lavande", "Fleur d'oranger", "Jasmin"],
-    baseNotes: ["Vanille de Madagascar", "Musc", "Cèdre", "Ambre gris"],
-    topNotesDetailed: [{ name: "Lavande" }, { name: "Mandarine" }],
-    heartNotesDetailed: [{ name: "Fleur d'oranger" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Ambre gris" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 60,
-    seasonData: { winter: 60, spring: 90, summer: 50, autumn: 80 }
-  },
-  {
-    id: "la-nuit-de-l-homme",
-    name: "La Nuit de l'Homme",
-    brand: "YSL",
-    image: "https://fimgs.net/mdimg/perfume/o.5521.jpg",
-    description: "Une fragrance boisée orientale qui explore les facettes de la séduction et du mystère.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Cardamome"],
-    heartNotes: ["Lavande", "Cèdre de Virginie", "Bergamote"],
-    baseNotes: ["Vétiver", "Carvi"],
-    topNotesDetailed: [{ name: "Cardamome" }],
-    heartNotesDetailed: [{ name: "Lavande" }, { name: "Cèdre de Virginie" }],
-    baseNotesDetailed: [{ name: "Vétiver" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 10,
-    seasonData: { winter: 90, spring: 60, summer: 20, autumn: 100 }
-  },
-  {
-    id: "y-edp-ysl",
-    name: "Y Eau de Parfum",
-    brand: "YSL",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.79243.avif",
-    description: "Une réinterprétation intense de la fougère, pour un homme qui ose poursuivre ses rêves.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Pomme", "Gingembre", "Bergamote"],
-    heartNotes: ["Sauge", "Baies de genièvre", "Géranium"],
-    baseNotes: ["Amberwood", "Fève de tonka", "Cèdre", "Vétiver", "Oliban"],
-    topNotesDetailed: [{ name: "Pomme" }, { name: "Gingembre" }],
-    heartNotesDetailed: [{ name: "Sauge" }, { name: "Baies de genièvre" }],
-    baseNotesDetailed: [{ name: "Amberwood" }, { name: "Fève de tonka" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 50,
-    seasonData: { winter: 60, spring: 90, summer: 80, autumn: 85 }
-  },
-  {
-    id: "the-noir-29",
-    name: "Thé Noir 29",
-    brand: "Le Labo",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.31872.avif",
-    description: "Une ode à la feuille de thé et à la noblesse de la matière, mêlant fraîcheur et profondeur.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Figue", "Laurier", "Bergamote"],
-    heartNotes: ["Cèdre", "Vétiver", "Musc"],
-    baseNotes: ["Tabac", "Foin"],
-    topNotesDetailed: [{ name: "Figue" }, { name: "Laurier" }],
-    heartNotesDetailed: [{ name: "Cèdre" }, { name: "Vétiver" }],
-    baseNotesDetailed: [{ name: "Tabac" }, { name: "Foin" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 40,
-    seasonData: { winter: 80, spring: 60, summer: 40, autumn: 100 }
-  },
-  {
-    id: "santal-33",
-    name: "Santal 33",
-    brand: "Le Labo",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.12201.avif",
-    description: "Une icône du luxe discret, évoquant les grands espaces et le feu de camp sous les étoiles.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Santal", "Papyrus", "Cèdre de Virginie"],
-    heartNotes: ["Cardamome", "Violette", "Iris"],
-    baseNotes: ["Ambre", "Cuir"],
-    topNotesDetailed: [{ name: "Santal" }, { name: "Cèdre de Virginie" }],
-    heartNotesDetailed: [{ name: "Cardamome" }, { name: "Violette" }],
-    baseNotesDetailed: [{ name: "Cuir" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 70,
-    seasonData: { winter: 70, spring: 90, summer: 60, autumn: 95 }
-  },
-  {
-    id: "la-vie-est-belle",
-    name: "La Vie est Belle",
-    brand: "Lancôme",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.95856.avif",
-    description: "Une déclaration universelle au bonheur, construite autour du premier iris gourmand.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Cassis", "Poire"],
-    heartNotes: ["Iris", "Jasmin", "Fleur d'oranger"],
-    baseNotes: ["Praliné", "Vanille", "Patchouli", "Fève de tonka"],
-    topNotesDetailed: [{ name: "Cassis" }, { name: "Poire" }],
-    heartNotesDetailed: [{ name: "Iris" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Praliné" }, { name: "Vanille" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 50,
-    seasonData: { winter: 95, spring: 60, summer: 20, autumn: 90 }
-  },
-  {
-    id: "l-interdit",
-    name: "L'Interdit",
-    brand: "Givenchy",
-    image: "https://fimgs.net/mdimg/perfume/o.51488.jpg",
-    description: "L'hommage à une féminité audacieuse. Ne rien s'interdire. Ne rien se laisser interdire.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Poire", "Bergamote"],
-    heartNotes: ["Tubéreuse", "Fleur d'oranger", "Jasmin Sambac"],
-    baseNotes: ["Patchouli", "Vanille", "Ambroxan", "Vétiver"],
-    topNotesDetailed: [{ name: "Poire" }, { name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Tubéreuse" }, { name: "Fleur d'oranger" }],
-    baseNotesDetailed: [{ name: "Patchouli" }, { name: "Vanille" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 40,
-    seasonData: { winter: 85, spring: 70, summer: 30, autumn: 90 }
-  },
-  {
-    id: "gentleman-givenchy",
-    name: "Gentleman",
-    brand: "Givenchy",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.71272.avif",
-    description: "Une élégance moderne qui ne manque pas de tempérament, entre force et douceur.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Poire", "Cardamome", "Ananas"],
-    heartNotes: ["Iris", "Lavande", "Géranium"],
-    baseNotes: ["Cuir", "Enveloppe de cacao noir", "Patchouli"],
-    topNotesDetailed: [{ name: "Poire" }, { name: "Cardamome" }],
-    heartNotesDetailed: [{ name: "Iris" }, { name: "Lavande" }],
-    baseNotesDetailed: [{ name: "Cuir" }, { name: "Patchouli" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 60,
-    seasonData: { winter: 95, spring: 50, summer: 20, autumn: 90 }
-  },
-  {
-    id: "her-burberry",
-    name: "Burberry Her",
-    brand: "Burberry",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.71379.avif",
-    description: "Une fragrance fruitée et gourmande, capturant l'esprit cosmopolite de Londres.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Fraise", "Framboise", "Mûre", "Griotte", "Cassis", "Mandarine", "Citron"],
-    heartNotes: ["Violette", "Jasmin"],
-    baseNotes: ["Musc", "Vanille", "Ambre", "Bois de Cachemire", "Notes boisées", "Mousse de chêne", "Patchouli"],
-    topNotesDetailed: [{ name: "Fraise" }, { name: "Framboise" }, { name: "Mûre" }],
-    heartNotesDetailed: [{ name: "Violette" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Musc" }, { name: "Vanille" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 80,
-    seasonData: { winter: 40, spring: 100, summer: 85, autumn: 60 }
-  },
-  {
-    id: "aventus-creed",
-    name: "Aventus",
-    brand: "Creed",
-    image: "https://fimgs.net/mdimg/perfume/o.9828.jpg",
-    description: "Une célébration de la force, de la puissance et du succès, inspirée par la vie d'un empereur.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Ananas", "Bergamote", "Cassis", "Pomme"],
-    heartNotes: ["Bouleau", "Patchouli", "Jasmin du Maroc", "Rose"],
-    baseNotes: ["Musc", "Mousse de chêne", "Ambre gris", "Vanille"],
-    topNotesDetailed: [{ name: "Ananas" }, { name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Bouleau" }, { name: "Patchouli" }],
-    baseNotesDetailed: [{ name: "Musc" }, { name: "Ambre gris" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 80,
-    seasonData: { winter: 60, spring: 100, summer: 95, autumn: 90 }
-  },
-  {
-    id: "baccarat-rouge-540",
-    name: "Baccarat Rouge 540",
-    brand: "Maison Francis Kurkdjian",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.33519.avif",
-    description: "Une signature olfactive ambrée florale et boisée, hautement condensée.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Safran", "Jasmin"],
-    heartNotes: ["Ambre gris", "Amberwood"],
-    baseNotes: ["Résine de sapin", "Cèdre"],
-    topNotesDetailed: [{ name: "Safran" }, { name: "Jasmin" }],
-    heartNotesDetailed: [{ name: "Ambre gris" }],
-    baseNotesDetailed: [{ name: "Cèdre" }],
-    sillage: "très fort",
-    longevite: "8h+",
-    jourPct: 45,
-    seasonData: { winter: 90, spring: 75, summer: 60, autumn: 85 }
-  },
-  {
-    id: "layton-pdm",
-    name: "Layton",
-    brand: "Parfums de Marly",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.46633.avif",
-    description: "Une fragrance addictive et élégante qui allie la fraîcheur de la bergamote à la chaleur des épices.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Pomme", "Lavande", "Bergamote", "Mandarine"],
-    heartNotes: ["Géranium", "Violette", "Jasmin"],
-    baseNotes: ["Vanille", "Cardamome", "Santal", "Poivre", "Patchouli", "Gaïac"],
-    topNotesDetailed: [{ name: "Pomme" }, { name: "Lavande" }],
-    heartNotesDetailed: [{ name: "Géranium" }, { name: "Violette" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Cardamome" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 30,
-    seasonData: { winter: 95, spring: 60, summer: 20, autumn: 90 }
-  },
-  {
-    id: "angels-share",
-    name: "Angels' Share",
-    brand: "Kilian Paris",
-    image: "https://fimgs.net/mdimg/perfume/o.62615.jpg",
-    description: "Une fragrance inspirée par l'héritage familial du cognac, mélangeant des notes de chêne, de cannelle et de vanille.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Cognac"],
-    heartNotes: ["Cannelle", "Fève de tonka", "Chêne"],
-    baseNotes: ["Vanille", "Praliné", "Santal"],
-    topNotesDetailed: [{ name: "Cognac" }],
-    heartNotesDetailed: [{ name: "Cannelle" }, { name: "Fève de tonka" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Praliné" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 10,
-    seasonData: { winter: 100, spring: 20, summer: 5, autumn: 95 }
-  },
-  {
-    id: "terre-d-hermes",
-    name: "Terre d'Hermès",
-    brand: "Hermès",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.8282.avif",
-    description: "Un récit symbolique tournant autour de la matière et de sa transformation.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Orange", "Pamplemousse"],
-    heartNotes: ["Poivre", "Pélargonium"],
-    baseNotes: ["Vétiver", "Cèdre", "Patchouli", "Benjoin"],
-    topNotesDetailed: [{ name: "Orange" }, { name: "Pamplemousse" }],
-    heartNotesDetailed: [{ name: "Poivre" }],
-    baseNotesDetailed: [{ name: "Vétiver" }, { name: "Cèdre" }],
-    sillage: "modéré",
-    longevite: "8h+",
-    jourPct: 85,
-    seasonData: { winter: 50, spring: 100, summer: 70, autumn: 95 }
-  },
-  {
-    id: "le-male-jpg",
-    name: "Le Male",
-    brand: "Jean Paul Gaultier",
-    image: "https://fimgs.net/mdimg/perfume/o.430.jpg",
-    description: "Une fragrance iconique qui bouscule les codes, alliant virilité et sensibilité.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Lavande", "Menthe", "Cardamome", "Bergamote", "Armoise"],
-    heartNotes: ["Cannelle", "Fleur d'oranger", "Carvi"],
-    baseNotes: ["Vanille", "Fève de tonka", "Ambre", "Santal", "Cèdre"],
-    topNotesDetailed: [{ name: "Lavande" }, { name: "Menthe" }],
-    heartNotesDetailed: [{ name: "Cannelle" }, { name: "Fleur d'oranger" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Fève de tonka" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 40,
-    seasonData: { winter: 70, spring: 90, summer: 40, autumn: 65 }
-  },
-  {
-    id: "eros-versace",
-    name: "Eros",
-    brand: "Versace",
-    image: "https://fimgs.net/mdimg/perfume/o.16657.jpg",
-    description: "Un parfum inspiré de la mythologie grecque, dégageant force, passion et désir.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Menthe", "Pomme verte", "Citron"],
-    heartNotes: ["Fève de tonka", "Ambroxan", "Géranium"],
-    baseNotes: ["Vanille de Madagascar", "Cèdre de Virginie", "Cèdre de l'Atlas", "Vétiver", "Mousse de chêne"],
-    topNotesDetailed: [{ name: "Menthe" }, { name: "Pomme verte" }],
-    heartNotesDetailed: [{ name: "Fève de tonka" }, { name: "Ambroxan" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Cèdre" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 40,
-    seasonData: { winter: 85, spring: 70, summer: 60, autumn: 80 }
-  },
-  {
-    id: "acqua-di-gio",
-    name: "Acqua di Giò",
-    brand: "Armani",
-    image: "https://fimgs.net/mdimg/perfume/o.410.jpg",
-    description: "L'harmonie parfaite des notes aquatiques, florales et fruitées, évoquant la mer et le soleil.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Citron", "Bergamote", "Jasmin", "Orange", "Mandarine", "Néroli"],
-    heartNotes: ["Notes marines", "Jasmin", "Calone", "Pêche", "Freesia", "Jacinthe", "Cyclamen", "Romarin", "Violette", "Coriandre"],
-    baseNotes: ["Musc blanc", "Cèdre", "Mousse de chêne", "Patchouli", "Ambre"],
-    topNotesDetailed: [{ name: "Citron" }, { name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Notes marines" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Musc blanc" }, { name: "Cèdre" }],
-    sillage: "modéré",
-    longevite: "4-6h",
-    jourPct: 95,
-    seasonData: { winter: 10, spring: 90, summer: 100, autumn: 30 }
-  },
-  {
-    id: "good-girl",
-    name: "Good Girl",
-    brand: "Carolina Herrera",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.39681.avif",
-    description: "Un parfum puissant et sensuel, capturant la dualité de la femme moderne.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Amande", "Café", "Bergamote", "Citron"],
-    heartNotes: ["Tubéreuse", "Jasmin Sambac", "Fleur d'oranger", "Iris", "Rose de Bulgarie"],
-    baseNotes: ["Fève de tonka", "Cacao", "Vanille", "Praliné", "Santal", "Musc", "Ambre", "Bois de cachemire", "Cannelle", "Patchouli", "Cèdre"],
-    topNotesDetailed: [{ name: "Amande" }, { name: "Café" }],
-    heartNotesDetailed: [{ name: "Tubéreuse" }, { name: "Jasmin Sambac" }],
-    baseNotesDetailed: [{ name: "Fève de tonka" }, { name: "Cacao" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 15,
-    seasonData: { winter: 40, spring: 25, summer: 15, autumn: 30 }
-  },
-  {
-    id: "nomade-chloe",
-    name: "Nomade",
-    brand: "Chloé",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.53224.avif",
-    description: "Une fragrance qui évoque la liberté et l'aventure, mêlant force et douceur.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Mirabelle", "Bergamote", "Citron", "Orange"],
-    heartNotes: ["Freesia", "Pêche", "Jasmin", "Rose"],
-    baseNotes: ["Mousse de chêne", "Amberwood", "Patchouli", "Musc blanc", "Santal"],
-    topNotesDetailed: [{ name: "Mirabelle" }, { name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Freesia" }, { name: "Rose" }],
-    baseNotesDetailed: [{ name: "Mousse de chêne" }, { name: "Patchouli" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 75,
-    seasonData: { winter: 40, spring: 95, summer: 60, autumn: 80 }
-  },
-  {
-    id: "black-orchid-tf",
-    name: "Black Orchid",
-    brand: "Tom Ford",
-    image: "https://fimgs.net/mdimg/perfume/o.1018.jpg",
-    description: "Une fragrance luxueuse et sensuelle, mêlant des notes riches, sombres et captivantes.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Truffe", "Gardénia", "Cassis", "Ylang-Ylang", "Jasmin", "Bergamote", "Mandarine", "Citron d'Amalfi"],
-    heartNotes: ["Orchidée", "Épices", "Gardénia", "Notes fruitées", "Ylang-Ylang", "Jasmin", "Lotus"],
-    baseNotes: ["Chocolat mexicain", "Patchouli", "Vanille", "Encens", "Ambre", "Santal", "Vétiver", "Musc blanc"],
-    topNotesDetailed: [{ name: "Truffe" }, { name: "Ylang-Ylang" }],
-    heartNotesDetailed: [{ name: "Orchidée" }, { name: "Épices" }],
-    baseNotesDetailed: [{ name: "Chocolat mexicain" }, { name: "Patchouli" }],
-    sillage: "très fort",
-    longevite: "8h+",
-    jourPct: 10,
-    seasonData: { winter: 100, spring: 30, summer: 10, autumn: 95 }
-  },
-  {
-    id: "spicebomb",
-    name: "Spicebomb",
-    brand: "Viktor&Rolf",
-    image: "https://fimgs.net/mdimg/perfume/o.13857.jpg",
-    description: "Une explosion d'épices, un parfum masculin et addictif pour un homme audacieux.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Poivre rose", "Élémi", "Bergamote", "Pamplemousse"],
-    heartNotes: ["Cannelle", "Safran", "Paprika"],
-    baseNotes: ["Tabac", "Cuir", "Vétiver"],
-    topNotesDetailed: [{ name: "Poivre rose" }, { name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Cannelle" }, { name: "Safran" }],
-    baseNotesDetailed: [{ name: "Tabac" }, { name: "Cuir" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 20,
-    seasonData: { winter: 100, spring: 30, summer: 10, autumn: 95 }
-  },
-  {
-    id: "spicebomb-extreme",
-    name: "Spicebomb Extreme",
-    brand: "Viktor&Rolf",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.30499.avif",
-    description: "Une réinterprétation encore plus intense et captivante de l'explosion d'épices originale.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Poivre noir", "Pamplemousse", "Bergamote"],
-    heartNotes: ["Tabac", "Cannelle", "Cumin", "Safran"],
-    baseNotes: ["Vanille de Madagascar", "Bourbon", "Ciste-Labdanum"],
-    topNotesDetailed: [{ name: "Poivre noir" }, { name: "Pamplemousse" }],
-    heartNotesDetailed: [{ name: "Tabac" }, { name: "Cannelle" }, { name: "Safran" }],
-    baseNotesDetailed: [{ name: "Vanille de Madagascar" }, { name: "Ciste-Labdanum" }],
-    sillage: "très fort",
-    longevite: "8h+",
-    jourPct: 10,
-    seasonData: { winter: 100, spring: 15, summer: 5, autumn: 95 }
-  },
-  {
-    id: "the-one-dg",
-    name: "The One for Men",
-    brand: "Dolce & Gabbana",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.31909.avif",
-    description: "Un parfum sophistiqué et sensuel, alliant charisme et élégance.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Pamplemousse", "Coriandre", "Basilic"],
-    heartNotes: ["Gingembre", "Cardamome", "Fleur d'oranger"],
-    baseNotes: ["Tabac", "Ambre", "Cèdre"],
-    topNotesDetailed: [{ name: "Pamplemousse" }, { name: "Basilic" }],
-    heartNotesDetailed: [{ name: "Gingembre" }, { name: "Cardamome" }],
-    baseNotesDetailed: [{ name: "Tabac" }, { name: "Ambre" }],
-    sillage: "modéré",
-    longevite: "4-6h",
-    jourPct: 30,
-    seasonData: { winter: 90, spring: 40, summer: 15, autumn: 100 }
-  },
-  {
-    id: "prada-l-homme",
-    name: "Prada L'Homme",
-    brand: "Prada",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.39029.avif",
-    description: "Une fragrance propre et élégante, construite autour de l'iris et du néroli.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Néroli", "Cardamome", "Poivre noir", "Graine de carotte"],
-    heartNotes: ["Iris", "Géranium", "Violette", "Maté"],
-    baseNotes: ["Ambre", "Cèdre", "Santal", "Patchouli"],
-    topNotesDetailed: [{ name: "Néroli" }, { name: "Cardamome" }],
-    heartNotesDetailed: [{ name: "Iris" }, { name: "Géranium" }],
-    baseNotesDetailed: [{ name: "Ambre" }, { name: "Cèdre" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 90,
-    seasonData: { winter: 40, spring: 100, summer: 80, autumn: 70 }
-  },
-  {
-    id: "wanted-by-night",
-    name: "Wanted by Night",
-    brand: "Azzaro",
-    image: "https://fimgs.net/mdimg/perfume/o.49144.jpg",
-    description: "Un parfum nocturne audacieux et boisé, pour l'homme moderne qui vit intensément.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Cannelle", "Mandarine", "Lavande", "Citron"],
-    heartNotes: ["Notes fruitées", "Encens", "Cèdre rouge", "Cumin"],
-    baseNotes: ["Tabac", "Vanille", "Cuir", "Cèdre", "Benjoin", "Iso E Super", "Cypriol", "Patchouli"],
-    topNotesDetailed: [{ name: "Cannelle" }, { name: "Mandarine" }],
-    heartNotesDetailed: [{ name: "Notes fruitées" }, { name: "Encens" }],
-    baseNotesDetailed: [{ name: "Tabac" }, { name: "Vanille" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 15,
-    seasonData: { winter: 100, spring: 25, summer: 10, autumn: 95 }
-  },
-  {
-    id: "born-in-roma",
-    name: "Born in Roma Uomo",
-    brand: "Valentino",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.101383.avif",
-    description: "Une célébration de l'élégance romaine, mêlant modernité et tradition.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Notes minérales", "Feuille de violette", "Sel"],
-    heartNotes: ["Gingembre", "Sauge"],
-    baseNotes: ["Notes boisées", "Vétiver"],
-    topNotesDetailed: [{ name: "Notes minérales" }, { name: "Feuille de violette" }],
-    heartNotesDetailed: [{ name: "Gingembre" }, { name: "Sauge" }],
-    baseNotesDetailed: [{ name: "Notes boisées" }, { name: "Vétiver" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 60,
-    seasonData: { winter: 60, spring: 90, summer: 70, autumn: 85 }
-  },
-  {
-    id: "cedrat-boise",
-    name: "Cedrat Boise",
-    brand: "Mancera",
-    image: "https://fimgs.net/mdimg/perfume/o.15211.jpg",
-    description: "Un mélange vibrant d'agrumes et de bois, évoquant la fraîcheur et la puissance.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Citron de Sicile", "Cassis", "Bergamote", "Notes épicées"],
-    heartNotes: ["Notes fruitées", "Feuille de patchouli", "Jasmin d'eau"],
-    baseNotes: ["Cèdre", "Cuir", "Santal", "Vanille", "Mousse de chêne", "Musc blanc"],
-    topNotesDetailed: [{ name: "Citron de Sicile" }, { name: "Cassis" }],
-    heartNotesDetailed: [{ name: "Notes fruitées" }, { name: "Feuille de patchouli" }],
-    baseNotesDetailed: [{ name: "Cèdre" }, { name: "Cuir" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 80,
-    seasonData: { winter: 50, spring: 100, summer: 95, autumn: 80 }
-  },
-  {
-    id: "one-million-pr",
-    name: "1 Million",
-    brand: "Paco Rabanne",
-    image: "https://fimgs.net/mdimg/perfume/o.3747.jpg",
-    description: "Le parfum du succès, flamboyant et audacieux, pour l'homme qui aime l'or et le pouvoir.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Mandarine sanguine", "Pamplemousse", "Menthe"],
-    heartNotes: ["Cannelle", "Rose", "Notes épicées"],
-    baseNotes: ["Ambre", "Cuir", "Notes boisées", "Patchouli indien"],
-    topNotesDetailed: [{ name: "Mandarine sanguine" }, { name: "Menthe" }],
-    heartNotesDetailed: [{ name: "Cannelle" }, { name: "Rose" }],
-    baseNotesDetailed: [{ name: "Ambre" }, { name: "Cuir" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 25,
-    seasonData: { winter: 95, spring: 40, summer: 15, autumn: 90 }
-  },
-  {
-    id: "homme-ideal-guerlain",
-    name: "L'Homme Idéal",
-    brand: "Guerlain",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.37735.avif",
-    description: "L'homme idéal est un mythe, mais son parfum est une réalité. Entre intelligence et force.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Agrumes", "Romarin", "Fleur d'oranger", "Bitter Orange"],
-    heartNotes: ["Amande", "Fève de tonka"],
-    baseNotes: ["Cuir", "Cèdre", "Vétiver"],
-    topNotesDetailed: [{ name: "Agrumes" }, { name: "Romarin" }],
-    heartNotesDetailed: [{ name: "Amande" }, { name: "Fève de tonka" }],
-    baseNotesDetailed: [{ name: "Cuir" }, { name: "Cèdre" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 60,
-    seasonData: { winter: 90, spring: 60, summer: 20, autumn: 100 }
-  },
-  {
-    id: "acqua-di-parma-colonia",
-    name: "Colonia",
-    brand: "Acqua di Parma",
-    image: "https://fimgs.net/mdimg/perfume/o.1681.jpg",
-    description: "L'élégance italienne authentique. Un classique intemporel né en 1916.",
-    gender: "unisexe",
-    concentration: "Eau de Cologne",
-    topNotes: ["Citron de Sicile", "Orange douce", "Bergamote de Calabre"],
-    heartNotes: ["Lavande", "Rose de Bulgarie", "Romarin", "Verveine"],
-    baseNotes: ["Vétiver", "Santal", "Patchouli"],
-    topNotesDetailed: [{ name: "Citron de Sicile" }, { name: "Orange douce" }],
-    heartNotesDetailed: [{ name: "Lavande" }, { name: "Rose de Bulgarie" }],
-    baseNotesDetailed: [{ name: "Vétiver" }, { name: "Santal" }],
-    sillage: "modéré",
-    longevite: "2-4h",
-    jourPct: 95,
-    seasonData: { winter: 20, spring: 90, summer: 100, autumn: 40 }
-  }
+const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, tags: string[] }[]> = {
+  top: [
+    { id: "hesperides", label: "Lumière du Matin", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", sub: "Éclat Hespéridé", tags: ["Bergamote", "Citron", "Mandarine"] },
+    { id: "marines", label: "Souffle Marin", img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", sub: "Fraîcheur Aquatique & Pure", tags: ["Sel marin", "Algues", "Air iodé"] },
+    { id: "fruitees", label: "Douceur Fruitée", img: "https://static.vecteezy.com/system/resources/thumbnails/053/277/426/small/spring-fruit-scene-designed-to-integrate-seamlessly-with-your-text-or-graphics-photo.jpeg", sub: "Léger & Pétillant", tags: ["Pêche", "Framboise", "Cassis"] }
+  ],
+  heart: [
+    { id: "florales", label: "Jardin Secret", img: "https://img.freepik.com/photos-premium/jardin-banc-fleurs-dans-herbe_1022944-31664.jpg", sub: "Floral & Délicat", tags: ["Rose", "Jasmin", "Néroli"] },
+    { id: "epicees", label: "Nuit Précieuse", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", sub: "Mystère Oriental Épicé", tags: ["Safran", "Cannelle", "Poivre noir"] },
+    { id: "musquees", label: "Chaleur Dorée", img: "https://i.ibb.co/Wp7ygw9k/fzp.png", sub: "Sillage Ambré", tags: ["Musc", "Ambre", "Patchouli"] }
+  ],
+  base: [
+    { id: "boisees", label: "Bois Sacré", img: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=400", sub: "Profondeur Boisée", tags: ["Santal", "Cèdre", "Vétiver"] },
+    { id: "gourmandes", label: "Secret Sucré", img: "https://i.ibb.co/8StFqcr/88535382628.png", sub: "Tentation Gourmande", tags: ["Vanille", "Tonka", "Caramel"] }
+  ]
+};
+
+const IconParfum = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 3h6l1 3H8L9 3z"/>
+    <path d="M8 6c0 0-2 1-2 6s2 9 6 9 6-4 6-9-2-6-2-6"/>
+    <path d="M10 3c0-1 .5-2 2-2s2 1 2 2"/>
+    <circle cx="12" cy="13" r="2" fill="currentColor" opacity="0.4"/>
+  </svg>
+);
+
+const IconSoiree = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 22V10l3-4 2 3-2 3h8l-2-3 2-3 3 4v12"/>
+    <path d="M10 6l2 3 2-3"/>
+    <path d="M16 6c1 0 2 .5 2 2l1 14H15l1-14c0-1.5.5-2 0-2z" opacity="0.6"/>
+  </svg>
+);
+
+const IconCroissant = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" opacity="0.3"/>
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    <circle cx="17" cy="6" r="1" fill="currentColor"/>
+    <circle cx="19" cy="9" r="0.7" fill="currentColor"/>
+    <circle cx="15" cy="4" r="0.7" fill="currentColor"/>
+  </svg>
+);
+
+const ATMOSPHERES = [
+  { id: 'quotidien', label: 'Mon quotidien', icon: <span className="text-2xl">?</span>, desc: "Frais, discret & efficace", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'quotidien' },
+  { id: 'business', label: 'Au bureau', icon: <span className="text-2xl">??</span>, desc: "Assuré & professionnel", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400", group: 'quotidien' },
+  { id: 'aid', label: 'Aïd & Fêtes', icon: <span className="text-2xl">??</span>, desc: "Oriental, festif & généreux", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'occasions' },
+  { id: 'mariage', label: 'Mariage & Fiançailles', icon: <span className="text-2xl">??</span>, desc: "Somptueux & inoubliable", img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=400", group: 'occasions' },
+  { id: 'soir', label: 'Soirée & Sorties', icon: <span className="text-2xl">??</span>, desc: "Intense & magnétique", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'occasions' },
+  { id: 'rendezvous', label: 'Rendez-vous', icon: <span className="text-2xl">??</span>, desc: "Sensuel & captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'intime' },
+  { id: 'famille', label: 'En famille', icon: <span className="text-2xl">??</span>, desc: "Chaleureux & bienveillant", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'intime' },
+  { id: 'ramadan', label: 'Ramadan', icon: <span className="text-2xl">??</span>, desc: "Doux, oud & spirituel", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'intime' },
 ];
+
+const GOLD_COLORS = ["#D4AF37", "#F59E0B", "#FFF0A0"];
+
+interface Leaf {
+  x: number; y: number; w: number; h: number;
+  speed: number; rotation: number; rotSpeed: number;
+  swayAmp: number; swayFreq: number; swayOffset: number;
+  opacity: number; opacityDir: number; color: string;
+}
+interface Particle { x: number; y: number; vy: number; vx: number; alpha: number; }
+
+function createLeaf(canvasW: number, canvasH: number, startTop = false): Leaf {
+  const size = 4 + Math.random() * 6;
+  return {
+    x: Math.random() * canvasW,
+    y: startTop ? -size - Math.random() * canvasH * 0.3 : Math.random() * canvasH,
+    w: size, h: size * (0.5 + Math.random() * 0.5),
+    speed: 0.5 + Math.random() * 1.5, rotation: Math.random() * Math.PI * 2,
+    rotSpeed: 0.02 * (0.5 + Math.random() * 1.5), swayAmp: 15 + Math.random() * 25,
+    swayFreq: 0.008 + Math.random() * 0.012, swayOffset: Math.random() * Math.PI * 2,
+    opacity: 0.3 + Math.random() * 0.5, opacityDir: 1,
+    color: GOLD_COLORS[Math.floor(Math.random() * GOLD_COLORS.length)],
+  };
+}
+function createParticle(canvasW: number, canvasH: number): Particle {
+  return { x: Math.random() * canvasW, y: Math.random() * canvasH, vy: 0.2 + Math.random() * 0.3, vx: (Math.random() - 0.5) * 0.3, alpha: 0.05 + Math.random() * 0.1 };
+}
+
+const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidScreenProps) => {
+  const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere'>('swipe');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisText, setAnalysisText] = useState("");
+  const [currentStep, setCurrentStep] = useState(0);
+  const [noteIndex, setNoteIndex] = useState(0);
+  const [intensities, setIntensities] = useState<number[]>(FAMILIES.map(() => 0.5));
+  const [selections, setSelections] = useState<{ top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[] }>({ top: [], heart: [], base: [] });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const steps = ["top", "heart", "base"];
+  const notesAvailable = NOTES_DATA[steps[currentStep]];
+  const currentNote = notesAvailable[noteIndex];
+
+  const x = useMotionValue(0);
+  const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
+  const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
+
+  const [selectedAtm, setSelectedAtm] = useState<typeof ATMOSPHERES[0] | null>(null);
+
+  // -- MODIFICATION 1 : spring config plus réactif pour le polygone uniquement --
+  const polygonSpring = { stiffness: 400, damping: 30, mass: 0.5 };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let animId: number;
+    let frame = 0;
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    resize();
+    window.addEventListener("resize", resize);
+    const leaves: Leaf[] = Array.from({ length: 18 }, () => createLeaf(canvas.width, canvas.height));
+    const particles: Particle[] = Array.from({ length: 40 }, () => createParticle(canvas.width, canvas.height));
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      frame++;
+      for (const p of particles) {
+        p.y += p.vy; p.x += p.vx;
+        if (p.y > canvas.height) { p.y = -2; p.x = Math.random() * canvas.width; }
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(212,175,55,${p.alpha})`; ctx.fill();
+      }
+      for (const l of leaves) {
+        l.y += l.speed; l.rotation += l.rotSpeed * l.speed;
+        l.opacity += 0.003 * l.opacityDir;
+        if (l.opacity >= 0.8) l.opacityDir = -1;
+        if (l.opacity <= 0.3) l.opacityDir = 1;
+        const swayX = l.swayAmp * Math.sin(frame * l.swayFreq + l.swayOffset);
+        if (l.y > canvas.height + l.h) Object.assign(l, createLeaf(canvas.width, canvas.height, true));
+        ctx.save(); ctx.translate(l.x + swayX, l.y); ctx.rotate(l.rotation);
+        ctx.globalAlpha = l.opacity; ctx.fillStyle = l.color;
+        ctx.beginPath(); ctx.moveTo(0, -l.h / 2); ctx.lineTo(l.w / 2, 0);
+        ctx.lineTo(0, l.h / 2); ctx.lineTo(-l.w / 2, 0); ctx.closePath(); ctx.fill();
+        ctx.restore();
+      }
+      animId = requestAnimationFrame(draw);
+    };
+    animId = requestAnimationFrame(draw);
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
+  }, []);
+
+  useEffect(() => {
+    setInternalBackHandler(() => {
+      if (isAnalyzing) return true;
+      if (screen === 'atmosphere') { setScreen('map'); return true; }
+      if (screen === 'map') { setScreen('swipe'); setCurrentStep(0); setNoteIndex(0); return true; }
+      return false;
+    });
+  }, [screen, isAnalyzing, setInternalBackHandler]);
+
+  const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
+    setAnalysisText(text);
+    setIsAnalyzing(true);
+    setTimeout(() => { setIsAnalyzing(false); setScreen(nextScreen); }, 4000);
+  };
+
+  const handleSwipe = (liked: boolean) => {
+    const key = steps[currentStep] as keyof typeof selections;
+    if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
+    if (noteIndex < notesAvailable.length - 1) { setNoteIndex(prev => prev + 1); }
+    else if (currentStep < 2) { setCurrentStep(prev => prev + 1); setNoteIndex(0); }
+    else { triggerTransition('map', "Harmonisation des essences sélectionnées..."); }
+    x.set(0);
+  };
+
+  const buildRadarIntensities = (): Record<string, number> => {
+    const result: Record<string, number> = {};
+    FAMILIES.forEach((family, i) => {
+      const families = RADAR_TO_FAMILY[family] || [];
+      families.forEach(f => { result[f] = intensities[i]; });
+    });
+    return result;
+  };
+
+  // -- MODIFICATION 2 : radar plus grand + points plus espacés --
+  const size = 380;
+  const center = size / 2;
+  const radius = size * 0.36; // augmenté de 0.32 à 0.36
+
+  const getPointPos = (index: number, intensity: number) => {
+    const angle = (Math.PI * 2 * index) / FAMILIES.length - Math.PI / 2;
+    return { x: center + radius * intensity * Math.cos(angle), y: center + radius * intensity * Math.sin(angle) };
+  };
+
+  // -- MODIFICATION 3 : drag direct via pointerId pour fluidité maximale --
+  const svgRef = useRef<SVGSVGElement>(null);
+  const activePointer = useRef<number | null>(null);
+  const activeIndex = useRef<number | null>(null);
+
+  const handlePointerDown = (e: React.PointerEvent, index: number) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    activePointer.current = e.pointerId;
+    activeIndex.current = index;
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (activePointer.current === null || activeIndex.current === null) return;
+    if (e.pointerId !== activePointer.current) return;
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const dx = e.clientX - (rect.left + rect.width / 2);
+    const dy = e.clientY - (rect.top + rect.height / 2);
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const newInts = [...intensities];
+    newInts[activeIndex.current] = Math.min(Math.max(distance / radius, 0.05), 1);
+    setIntensities(newInts);
+  };
+
+  const handlePointerUp = () => {
+    activePointer.current = null;
+    activeIndex.current = null;
+  };
+
+  const points = intensities.map((inst, i) => getPointPos(i, inst));
+  const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
+
+  // -- Repères de graduation ----------------------------------
+  const graduationLabels = [
+    { r: 0.25, label: "25%" },
+    { r: 0.5,  label: "50%" },
+    { r: 0.75, label: "75%" },
+    { r: 1.0,  label: "100%" },
+  ];
+
+  const groupQuotidien = ATMOSPHERES.filter(a => a.group === 'quotidien');
+  const groupOccasions = ATMOSPHERES.filter(a => a.group === 'occasions');
+  const groupIntime    = ATMOSPHERES.filter(a => a.group === 'intime');
+
+  const AtmButton = ({ atm, className }: { atm: typeof ATMOSPHERES[0], className: string }) => (
+    <motion.button
+      whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+      onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities())}
+      className={`group relative rounded-2xl border border-white/10 bg-zinc-900/60 overflow-hidden flex flex-col items-center justify-center p-4 hover:border-amber-500/50 transition-all text-center ${className}`}
+    >
+      <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-35 transition-opacity duration-500" alt={atm.label} />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      <div className="relative z-10 flex flex-col items-center justify-center gap-1">
+        <div className="text-amber-400 mb-1">{atm.icon}</div>
+        <h4 className="text-white font-bold text-sm leading-tight text-center">{atm.label}</h4>
+        <p className="text-amber-400/70 text-[9px] uppercase tracking-widest text-center">{atm.desc}</p>
+      </div>
+    </motion.button>
+  );
+
+  return (
+    <div className="relative h-screen bg-black text-white flex flex-col items-center pt-16 px-4 select-none overflow-hidden">
+      <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
+
+      <AnimatePresence mode="wait">
+
+        {isAnalyzing ? (
+          <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-10 text-center">
+            <div className="relative mb-8">
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="w-20 h-20 border-t-2 border-b-2 border-amber-500 rounded-full" />
+              <div className="absolute inset-0 flex items-center justify-center text-amber-500 opacity-50">
+                <Loader2 size={24} className="animate-spin" />
+              </div>
+            </div>
+            <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              className="text-amber-500 font-light italic tracking-[0.2em] text-sm uppercase">{analysisText}</motion.p>
+          </motion.div>
+
+        ) : screen === 'swipe' ? (
+
+          <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="relative z-10 w-full max-w-sm flex flex-col items-center touch-none">
+            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Affinez vos désirs</h2>
+            <div className="relative w-full mb-12" style={{ height: '520px' }}>
+              <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
+                <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg"><Frown size={48} strokeWidth={1.5} /></motion.div>
+                <motion.div style={{ opacity: smileOpacity }} className="text-white drop-shadow-lg"><Smile size={48} strokeWidth={1.5} /></motion.div>
+              </div>
+              <AnimatePresence mode="popLayout">
+                <motion.div
+                  key={`${steps[currentStep]}-${noteIndex}`}
+                  style={{ x }} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.9}
+                  onDragEnd={(_, info) => { if (info.offset.x > 100) handleSwipe(true); else if (info.offset.x < -100) handleSwipe(false); }}
+                  initial={{ x: 0, scale: 0.9, opacity: 0 }} animate={{ x: 0, scale: 1, opacity: 1 }}
+                  exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10 flex flex-col">
+                  <div className="absolute inset-0 z-50 touch-none" />
+                  <div className="w-full flex-shrink-0 pointer-events-none" style={{ height: '52%' }}>
+                    <img src={currentNote.img} draggable="false" className="w-full h-full object-cover" alt={currentNote.label} />
+                  </div>
+                  <div className="w-full flex-1 px-5 py-3 text-center bg-white flex flex-col items-center justify-center gap-2 pointer-events-none">
+                    <h3 className="text-lg font-semibold text-black uppercase tracking-tight leading-tight">{currentNote.label}</h3>
+                    <p className="text-amber-500 text-[11px] font-bold uppercase tracking-widest">{currentNote.sub}</p>
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="h-[1px] w-10 bg-amber-400/50" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
+                      <div className="h-[1px] w-10 bg-amber-400/50" />
+                    </div>
+                    <div className="flex flex-wrap justify-center gap-1.5 mt-1">
+                      {currentNote.tags.map((tag) => (
+                        <span key={tag} className="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[9px] font-bold uppercase tracking-wider">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+            <p className="text-white text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">Balayez pour choisir</p>
+          </motion.div>
+
+        ) : screen === 'map' ? (
+
+          <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className="relative z-10 w-full max-w-md flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center mb-2 text-center">
+  <h2 className="text-2xl font-bold uppercase tracking-[0.3em] text-white">Architecture Olfactive</h2>
+  <div className="w-12 h-[1px] bg-amber-500 my-2 opacity-50" />
+  <p className="text-amber-500/80 text-[10px] font-bold uppercase tracking-[0.15em]">Modelez l'intensité de vos accords</p>
+</div>
+
+            {/* -- RADAR avec drag natif pointer events -- */}
+            <div className="relative flex items-center justify-center touch-none">
+              <svg
+                ref={svgRef}
+                id="radar-svg"
+                width={size}
+                height={size}
+                className="overflow-visible"
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerLeave={handlePointerUp}
+              >
+                {/* -- Cercles de grille -- */}
+                {[0.25, 0.5, 0.75, 1].map((r, i) => (
+  <circle key={i} cx={center} cy={center} r={radius * r}
+    fill={r === 0.5 ? "rgba(245,158,11,0.03)" : "none"}
+    stroke={r === 1 ? "#f59e0b" : r === 0.5 ? "#f59e0b" : "#3a3a3a"}
+    strokeWidth={r === 1 ? "1.5" : r === 0.5 ? "0.8" : "0.5"}
+    strokeOpacity={r === 1 ? 0.5 : r === 0.5 ? 0.3 : 0.4}
+    strokeDasharray={r === 1 ? "none" : r === 0.5 ? "4 3" : "2 4"}
+  />
+))}
+
+                {/* -- MODIFICATION 3 : Repères gradués sur l'axe du haut -- */}
+                {graduationLabels.map(({ r, label }) => {
+  const y = center - radius * r;
+  const isKey = r === 0.5 || r === 1.0;
+  return (
+    <g key={label}>
+      {/* Fond pill */}
+      <rect
+        x={center - 18} y={y - 7}
+        width={36} height={14}
+        rx={7}
+        fill={isKey ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.05)"}
+        stroke={isKey ? "rgba(245,158,11,0.4)" : "rgba(255,255,255,0.1)"}
+        strokeWidth="0.5"
+        style={{ pointerEvents: 'none' }}
+      />
+      {/* Label */}
+      <text
+        x={center} y={y}
+        textAnchor="middle" dominantBaseline="middle"
+        fontSize={isKey ? "9" : "8"}
+        fontWeight={isKey ? "700" : "400"}
+        fill={isKey ? "#f59e0b" : "#888"}
+        style={{ pointerEvents: 'none' }}
+      >
+        {label}
+      </text>
+    </g>
+  );
+})}
+
+                {/* -- Axes -- */}
+                {FAMILIES.map((_, i) => {
+                  const p = getPointPos(i, 1);
+                  return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#333" strokeDasharray="2 3" />;
+                })}
+
+                {/* -- Polygone — animé avec spring réactif -- */}
+                <motion.polygon
+                  points={polygonPath}
+                  fill="rgba(245, 158, 11, 0.12)"
+                  stroke="#f59e0b"
+                  strokeWidth="2"
+                  animate={{ points: polygonPath }}
+                  transition={{ type: "spring", ...polygonSpring }}
+                />
+
+                {/* -- Points draggables — drag natif pointer -- */}
+                {points.map((p, i) => (
+                  <g key={i} transform={`translate(${p.x}, ${p.y})`}>
+                    {/* Zone de capture large et invisible */}
+                    <circle
+                      cx={0} cy={0} r={22}
+                      fill="transparent"
+                      style={{ cursor: 'grab', touchAction: 'none' }}
+                      onPointerDown={(e) => handlePointerDown(e, i)}
+                    />
+                    {/* Halo glow */}
+                    <circle
+                      cx={0} cy={0}
+                      r={8 + intensities[i] * 6}
+                      fill="#f59e0b"
+                      opacity={0.3}
+                      style={{ pointerEvents: 'none', filter: `blur(${3 + intensities[i] * 4}px)` }}
+                    />
+                    {/* Point principal */}
+                    <circle
+                      cx={0} cy={0} r={7}
+                      fill="#f59e0b"
+                      stroke="#fff"
+                      strokeWidth="1.5"
+                      style={{ pointerEvents: 'none' }}
+                    />
+                    {/* Valeur au-dessus du point */}
+                    <text
+                      x={0} y={-14}
+                      textAnchor="middle" dominantBaseline="middle"
+                      fontSize="9" fill="#f59e0b"
+                      style={{ pointerEvents: 'none', fontWeight: 700 }}
+                    >
+                      {Math.round(intensities[i] * 100)}%
+                    </text>
+                  </g>
+                ))}
+
+                {/* -- Labels familles -- */}
+                {FAMILIES.map((f, i) => {
+                  const p = getPointPos(i, 1.25);
+                  const isActive = intensities[i] > 0.7;
+                  return (
+                    <text key={i} x={p.x} y={p.y}
+                      textAnchor="middle" dominantBaseline="middle"
+                      fontSize="13" fontWeight="800"
+                      fill={isActive ? '#f59e0b' : '#71717a'}
+                      style={{ textTransform: 'uppercase', letterSpacing: '0.08em', pointerEvents: 'none' }}
+                    >
+                      {f}
+                    </text>
+                  );
+                })}
+              </svg>
+            </div>
+
+            <button
+              onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")}
+              className="mt-10 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px] active:scale-95 transition-transform"
+            >
+              Finaliser le profil
+            </button>
+          </motion.div>
+
+        ) : (
+  <motion.div key="atm" initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }}
+    className="relative z-10 w-full flex flex-col items-center justify-center"
+    style={{ height: "calc(100vh - 80px)" }}>
+
+    {/* Titre */}
+    <div className="flex flex-col items-center mb-8 text-center">
+      <h2 className="text-xl md:text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
+      <div className="w-12 h-[1px] bg-amber-500 my-2 opacity-50" />
+      <p className="text-amber-500 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em]">
+        Glissez votre occasion vers le centre
+      </p>
+    </div>
+
+    {/* Roue */}
+    <div className="relative" style={{ width: 360, height: 360 }}>
+
+      {/* Cercles décoratifs */}
+      <div className="absolute inset-0 rounded-full border border-amber-500/10" />
+      <div className="absolute inset-8 rounded-full border border-amber-500/15" />
+      <div className="absolute inset-16 rounded-full border border-amber-500/20" />
+
+      {/* Boutons sur la roue */}
+      {ATMOSPHERES.map((atm, i) => {
+        const angle = (360 / ATMOSPHERES.length) * i - 90;
+        const rad = (angle * Math.PI) / 180;
+        const wheelSize = 360;
+        const r = wheelSize * 0.44;
+        const cx = wheelSize / 2 + r * Math.cos(rad);
+        const cy = wheelSize / 2 + r * Math.sin(rad);
+
+        return (
+          <motion.div
+            key={atm.id}
+            drag
+            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            dragElastic={0.8}
+            dragMomentum={false}
+            onDragEnd={(_, info) => {
+              const btnCx = cx;
+              const btnCy = cy;
+              const centerX = 240;
+              const centerY = 240;
+              const dropX = btnCx + info.offset.x;
+              const dropY = btnCy + info.offset.y;
+              const dist = Math.sqrt((dropX - centerX) ** 2 + (dropY - centerY) ** 2);
+              if (dist < 120) {
+                onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities());
+              }
+            }}
+            whileDrag={{ scale: 1.2, zIndex: 50 }}
+            className="absolute flex flex-col items-center gap-1 cursor-grab active:cursor-grabbing touch-none"
+            style={{
+              left: cx - 32,
+              top: cy - 32,
+              width: 64,
+              height: 64,
+            }}
+          >
+            <div className="w-16 h-16 rounded-full flex flex-col items-center justify-center border-2 border-white/30 overflow-hidden relative shadow-lg">
+              <img src={atm.img} alt={atm.label} className="absolute inset-0 w-full h-full object-cover opacity-40" />
+              <div className="absolute inset-0 bg-black/40" />
+              <span className="relative z-10 text-2xl">{atm.icon}</span>
+            </div>
+            <span className="text-[7px] font-bold uppercase tracking-wider text-center text-white/60 w-24 leading-tight">
+              {atm.label}
+            </span>
+          </motion.div>
+        );
+      })}
+
+      {/* Centre */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <motion.div
+          className="w-28 h-28 rounded-full border-2 border-amber-500/50 flex flex-col items-center justify-center"
+          animate={{ boxShadow: ["0 0 15px rgba(212,175,55,0.2)", "0 0 30px rgba(212,175,55,0.5)", "0 0 15px rgba(212,175,55,0.2)"] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <span className="text-amber-500/60 text-[8px] uppercase tracking-widest text-center leading-tight px-2">
+            Glisser ici
+          </span>
+          <ArrowRight size={14} className="text-amber-500/60 mt-1" />
+        </motion.div>
+      </div>
+    </div>
+  </motion.div>
+)}
+
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default PyramidScreen;

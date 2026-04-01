@@ -317,14 +317,21 @@ const handleSwipe = (liked: boolean) => {
       style={{ height: "68vh" }}>
 
       {/* Emoji ? gauche */}
-      <motion.div
-        animate={{
-          scale: useTransform(x, [-120, -80, 0], [1.3, 1.1, 1]),
-          }}
-          scale: 1.3,
-          boxShadow: "0 0 20px rgba(239,68,68,0.8)",
-          borderColor: "rgba(239,68,68,1)"
-        } : {
+<motion.div
+  animate={{
+    scale: useTransform(x, [-120, -80, 0], [1.3, 1.1, 1]),
+    boxShadow: useTransform(x, [-120, -80, 0], [
+      "0 0 20px rgba(239,68,68,0.8)",
+      "0 0 10px rgba(239,68,68,0.4)",
+      "none"
+    ]),
+    borderColor: useTransform(x, [-120, -80, 0], [
+      "rgba(239,68,68,1)",
+      "rgba(239,68,68,0.7)",
+      "rgba(239,68,68,0.5)"
+    ])
+  }}
+
           scale: 1,
           boxShadow: "none",
           borderColor: "rgba(239,68,68,0.5)"
@@ -337,7 +344,20 @@ const handleSwipe = (liked: boolean) => {
 
       {/* Emoji ? droite */}
       <motion.div
-        animate={x.get() > 80 ? {
+        animate={{
+  scale: useTransform(x, [0, 80, 120], [1, 1.1, 1.3]),
+  boxShadow: useTransform(x, [0, 80, 120], [
+    "none",
+    "0 0 10px rgba(34,197,94,0.4)",
+    "0 0 20px rgba(34,197,94,0.8)"
+  ]),
+  borderColor: useTransform(x, [0, 80, 120], [
+    "rgba(34,197,94,0.5)",
+    "rgba(34,197,94,0.7)",
+    "rgba(34,197,94,1)"
+  ])
+}}
+
           scale: 1.3,
           boxShadow: "0 0 20px rgba(34,197,94,0.8)",
           borderColor: "rgba(34,197,94,1)"
@@ -434,7 +454,8 @@ const handleSwipe = (liked: boolean) => {
     borderRadius: 16,
     pointerEvents: "none",
   }}
-  className="..."
+  className="absolute inset-0 z-20 rounded-2xl"
+
 />
 
 

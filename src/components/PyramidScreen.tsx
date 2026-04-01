@@ -320,21 +320,26 @@ const handleSwipe = (liked: boolean) => {
       style={{ height: "68vh" }}>
 
       {/* Emoji ? gauche */}
-      <motion.div
-        animate={x.get() < -80 ? {
-          scale: 1.3,
-          boxShadow: "0 0 20px rgba(239,68,68,0.8)",
-          borderColor: "rgba(239,68,68,1)"
-        } : {
-          scale: 1,
-          boxShadow: "none",
-          borderColor: "rgba(239,68,68,0.5)"
-        }}
-        className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
-        style={{ background: "#111", border: "2px solid rgba(239,68,68,0.5)" }}
-      >
-        <Frown size={24} className="text-red-400" strokeWidth={2} />
-      </motion.div>
+     <motion.div
+  className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
+  style={{
+    background: "#111",
+    border: "2px solid rgba(239,68,68,0.5)",
+    scale: useTransform(x, [-130, -80, 0], [1.3, 1.3, 1]),
+    boxShadow: useTransform(x, [-130, -80, 0], [
+      "0 0 20px rgba(239,68,68,0.8)",
+      "0 0 20px rgba(239,68,68,0.8)",
+      "none"
+    ]),
+    borderColor: useTransform(x, [-130, -80, 0], [
+      "rgba(239,68,68,1)",
+      "rgba(239,68,68,1)",
+      "rgba(239,68,68,0.5)"
+    ]),
+  }}
+>
+  <Frown size={24} className="text-red-400" strokeWidth={2} />
+</motion.div>
 
       {/* Emoji ? droite */}
       <motion.div

@@ -1,256 +1,728 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Heart, Anchor, Check, ChevronRight, Moon, Sun, Briefcase, PartyPopper, Users, Star, ArrowRight } from "lucide-react";
-import { NOTES_IMAGES, getNoteImage } from "@/data/notesData";
-import { NOTE_LABELS, NoteCategory } from "@/data/perfumes";
-import { staggerContainer, staggerItem } from "@/lib/animations";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { ArrowRight, Smile, Frown, Loader2 } from "lucide-react";
+import { NoteCategory } from "@/data/perfumes";
 
 interface PyramidScreenProps {
-  onValidate: (
-    top: NoteCategory[],
-    heart: NoteCategory[],
-    base: NoteCategory[],
-    atmosphere?: string,
-    radarIntensities?: Record<string, number>
-  ) => void;
+  onValidate: (top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[], atmosphere?: string, radarIntensities?: Record<string, number>) => void;
   onMenu: () => void;
-  setInternalBackHandler?: (fn: (() => boolean) | null) => void;
+  setInternalBackHandler: (fn: () => boolean) => void;
 }
 
-type Step = "top" | "heart" | "base" | "atmosphere";
+const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'MARINE'];
 
-const ATMOSPHERES = [
-  { id: "soir", label: "Soirée", icon: Moon },
-  { id: "quotidien", label: "Quotidien", icon: Sun },
-  { id: "business", label: "Business", icon: Briefcase },
-  { id: "rendezvous", label: "Rendez-vous", icon: Heart },
-  { id: "aid", label: "Aïd", icon: Star },
-  { id: "mariage", label: "Mariage", icon: PartyPopper },
-  { id: "famille", label: "En famille", icon: Users },
-  { id: "ramadan", label: "Ramadan", icon: Star },
-];
-
-const TOP_CATEGORIES = ["hesperides", "aromatiques", "marines", "epices-fraiches", "fruits-legers"];
-const HEART_CATEGORIES = ["florales", "fruitees", "epices-chaudes", "notes-vertes"];
-const BASE_CATEGORIES = ["boisees", "ambrees", "gourmandes", "musquees", "mousses"];
-
-const STEP_CONFIG: Record<Step, { label: string; subtitle: string; icon: typeof Sparkles; categories: string[] }> = {
-  top: {
-    label: "Notes de Tête",
-    subtitle: "Première impression, fraîcheur et légèreté",
-    icon: Sparkles,
-    categories: TOP_CATEGORIES,
-  },
-  heart: {
-    label: "Notes de Cœur",
-    subtitle: "L'âme du parfum, caractère et personnalité",
-    icon: Heart,
-    categories: HEART_CATEGORIES,
-  },
-  base: {
-    label: "Notes de Fond",
-    subtitle: "La signature durable, profondeur et sillage",
-    icon: Anchor,
-    categories: BASE_CATEGORIES,
-  },
-  atmosphere: {
-    label: "L'Atmosphère",
-    subtitle: "Pour quelle occasion cherchez-vous votre parfum ?",
-    icon: Moon,
-    categories: [],
-  },
+const RADAR_TO_FAMILY: Record<string, string[]> = {
+  'AGRUMES': ['hesperides'],
+  'ANIMAL':  ['musquees', 'cuir', 'animal'],
+  'BOISÉ':   ['boisees', 'mousses', 'notes-vertes'],
+  'ÉPICÉ':   ['epicees', 'epices-fraiches', 'epices-chaudes'],
+  'FLORAL':  ['florales'],
+  'FRUITÉ':  ['fruitees', 'fruits-legers'],
+  'SUCRÉ':   ['gourmandes'],
+  'MARINE':  ['marines'],
 };
 
-const STEPS: Step[] = ["top", "heart", "base", "atmosphere"];
+const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, tags: string[] }[]> = {
+  top: [
+    { id: "hesperides", label: "Lumière du Matin", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", sub: "Éclat Hespéridé", tags: ["Bergamote", "Citron", "Mandarine"] },
+    { id: "marines", label: "Souffle Marin", img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", sub: "Fraîcheur Aquatique & Pure", tags: ["Sel marin", "Algues", "Air iodé"] },
+    { id: "fruitees", label: "Douceur Fruitée", img: "https://static.vecteezy.com/system/resources/thumbnails/053/277/426/small/spring-fruit-scene-designed-to-integrate-seamlessly-with-your-text-or-graphics-photo.jpeg", sub: "Léger & Pétillant", tags: ["Pêche", "Framboise", "Cassis"] }
+  ],
+  heart: [
+    { id: "florales", label: "Jardin Secret", img: "https://img.freepik.com/photos-premium/jardin-banc-fleurs-dans-herbe_1022944-31664.jpg", sub: "Floral & Délicat", tags: ["Rose", "Jasmin", "Néroli"] },
+    { id: "epicees", label: "Nuit Précieuse", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", sub: "Mystère Oriental Épicé", tags: ["Safran", "Cannelle", "Poivre noir"] },
+    { id: "musquees", label: "Chaleur Dorée", img: "https://i.ibb.co/Wp7ygw9k/fzp.png", sub: "Sillage Ambré", tags: ["Musc", "Ambre", "Patchouli"] }
+  ],
+  base: [
+    { id: "boisees", label: "Bois Sacré", img: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=400", sub: "Profondeur Boisée", tags: ["Santal", "Cèdre", "Vétiver"] },
+    { id: "gourmandes", label: "Secret Sucré", img: "https://i.ibb.co/8StFqcr/88535382628.png", sub: "Tentation Gourmande", tags: ["Vanille", "Tonka", "Caramel"] }
+  ]
+};
+
+const IconParfum = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 3h6l1 3H8L9 3z"/>
+    <path d="M8 6c0 0-2 1-2 6s2 9 6 9 6-4 6-9-2-6-2-6"/>
+    <path d="M10 3c0-1 .5-2 2-2s2 1 2 2"/>
+    <circle cx="12" cy="13" r="2" fill="currentColor" opacity="0.4"/>
+  </svg>
+);
+
+const IconSoiree = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 22V10l3-4 2 3-2 3h8l-2-3 2-3 3 4v12"/>
+    <path d="M10 6l2 3 2-3"/>
+    <path d="M16 6c1 0 2 .5 2 2l1 14H15l1-14c0-1.5.5-2 0-2z" opacity="0.6"/>
+  </svg>
+);
+
+const IconCroissant = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" opacity="0.3"/>
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    <circle cx="17" cy="6" r="1" fill="currentColor"/>
+    <circle cx="19" cy="9" r="0.7" fill="currentColor"/>
+    <circle cx="15" cy="4" r="0.7" fill="currentColor"/>
+  </svg>
+);
+
+const ATMOSPHERES = [
+  { id: 'quotidien', label: 'Mon quotidien', icon: <span className="text-2xl">?</span>, desc: "Frais, discret & efficace", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'quotidien' },
+  { id: 'business', label: 'Au bureau', icon: <span className="text-2xl">??</span>, desc: "Assuré & professionnel", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400", group: 'quotidien' },
+  { id: 'aid', label: 'Aïd & Fêtes', icon: <span className="text-2xl">??</span>, desc: "Oriental, festif & généreux", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'occasions' },
+  { id: 'mariage', label: 'Mariage & Fiançailles', icon: <span className="text-2xl">??</span>, desc: "Somptueux & inoubliable", img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=400", group: 'occasions' },
+  { id: 'soir', label: 'Soirée & Sorties', icon: <span className="text-2xl">??</span>, desc: "Intense & magnétique", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'occasions' },
+  { id: 'rendezvous', label: 'Rendez-vous', icon: <span className="text-2xl">??</span>, desc: "Sensuel & captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'intime' },
+  { id: 'famille', label: 'En famille', icon: <span className="text-2xl">??</span>, desc: "Chaleureux & bienveillant", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'intime' },
+  { id: 'ramadan', label: 'Ramadan', icon: <span className="text-2xl">??</span>, desc: "Doux, oud & spirituel", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'intime' },
+];
+
+const GOLD_COLORS = ["#D4AF37", "#F59E0B", "#FFF0A0"];
+
+interface Leaf {
+  x: number; y: number; w: number; h: number;
+  speed: number; rotation: number; rotSpeed: number;
+  swayAmp: number; swayFreq: number; swayOffset: number;
+  opacity: number; opacityDir: number; color: string;
+}
+interface Particle { x: number; y: number; vy: number; vx: number; alpha: number; }
+
+function createLeaf(canvasW: number, canvasH: number, startTop = false): Leaf {
+  const size = 4 + Math.random() * 6;
+  return {
+    x: Math.random() * canvasW,
+    y: startTop ? -size - Math.random() * canvasH * 0.3 : Math.random() * canvasH,
+    w: size, h: size * (0.5 + Math.random() * 0.5),
+    speed: 0.5 + Math.random() * 1.5, rotation: Math.random() * Math.PI * 2,
+    rotSpeed: 0.02 * (0.5 + Math.random() * 1.5), swayAmp: 15 + Math.random() * 25,
+    swayFreq: 0.008 + Math.random() * 0.012, swayOffset: Math.random() * Math.PI * 2,
+    opacity: 0.3 + Math.random() * 0.5, opacityDir: 1,
+    color: GOLD_COLORS[Math.floor(Math.random() * GOLD_COLORS.length)],
+  };
+}
+function createParticle(canvasW: number, canvasH: number): Particle {
+  return { x: Math.random() * canvasW, y: Math.random() * canvasH, vy: 0.2 + Math.random() * 0.3, vx: (Math.random() - 0.5) * 0.3, alpha: 0.05 + Math.random() * 0.1 };
+}
 
 const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidScreenProps) => {
+  const [screen, setScreen] = useState<'swipe' | 'map' | 'atmosphere'>('swipe');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisText, setAnalysisText] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedTop, setSelectedTop] = useState<string[]>([]);
-  const [selectedHeart, setSelectedHeart] = useState<string[]>([]);
-  const [selectedBase, setSelectedBase] = useState<string[]>([]);
-  const [selectedAtmosphere, setSelectedAtmosphere] = useState<string | null>(null);
+  const [noteIndex, setNoteIndex] = useState(0);
+  const [intensities, setIntensities] = useState<number[]>(FAMILIES.map(() => 0.5));
+  const [selections, setSelections] = useState<{ top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[] }>({ top: [], heart: [], base: [] });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const step = STEPS[currentStep];
-  const config = STEP_CONFIG[step];
+  const steps = ["top", "heart", "base"];
+  const notesAvailable = NOTES_DATA[steps[currentStep]];
+  const currentNote = notesAvailable[noteIndex];
 
-  // Internal back handler for navigation
+  const x = useMotionValue(0);
+  const [cardKey, setCardKey] = useState(0);
+  const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
+  const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
+
+  const [selectedAtm, setSelectedAtm] = useState<typeof ATMOSPHERES[0] | null>(null);
+
+  // -- MODIFICATION 1 : spring config plus réactif pour le polygone uniquement --
+  const polygonSpring = { stiffness: 400, damping: 30, mass: 0.5 };
+
   useEffect(() => {
-    if (setInternalBackHandler) {
-      setInternalBackHandler(() => {
-        if (currentStep > 0) {
-          setCurrentStep((s) => s - 1);
-          return true;
-        }
-        return false;
-      });
-    }
-    return () => {
-      if (setInternalBackHandler) setInternalBackHandler(null);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let animId: number;
+    let frame = 0;
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    resize();
+    window.addEventListener("resize", resize);
+    const leaves: Leaf[] = Array.from({ length: 18 }, () => createLeaf(canvas.width, canvas.height));
+    const particles: Particle[] = Array.from({ length: 40 }, () => createParticle(canvas.width, canvas.height));
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      frame++;
+      for (const p of particles) {
+        p.y += p.vy; p.x += p.vx;
+        if (p.y > canvas.height) { p.y = -2; p.x = Math.random() * canvas.width; }
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(212,175,55,${p.alpha})`; ctx.fill();
+      }
+      for (const l of leaves) {
+        l.y += l.speed; l.rotation += l.rotSpeed * l.speed;
+        l.opacity += 0.003 * l.opacityDir;
+        if (l.opacity >= 0.8) l.opacityDir = -1;
+        if (l.opacity <= 0.3) l.opacityDir = 1;
+        const swayX = l.swayAmp * Math.sin(frame * l.swayFreq + l.swayOffset);
+        if (l.y > canvas.height + l.h) Object.assign(l, createLeaf(canvas.width, canvas.height, true));
+        ctx.save(); ctx.translate(l.x + swayX, l.y); ctx.rotate(l.rotation);
+        ctx.globalAlpha = l.opacity; ctx.fillStyle = l.color;
+        ctx.beginPath(); ctx.moveTo(0, -l.h / 2); ctx.lineTo(l.w / 2, 0);
+        ctx.lineTo(0, l.h / 2); ctx.lineTo(-l.w / 2, 0); ctx.closePath(); ctx.fill();
+        ctx.restore();
+      }
+      animId = requestAnimationFrame(draw);
     };
-  }, [currentStep, setInternalBackHandler]);
+    animId = requestAnimationFrame(draw);
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
+  }, []);
 
-  const currentSelections = step === "top" ? selectedTop : step === "heart" ? selectedHeart : selectedBase;
-  const setCurrentSelections = step === "top" ? setSelectedTop : step === "heart" ? setSelectedHeart : setSelectedBase;
-
-  const toggleCategory = useCallback(
-    (cat: string) => {
-      if (step === "atmosphere") return;
-      setCurrentSelections((prev) =>
-        prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
-      );
-    },
-    [step, setCurrentSelections]
-  );
-
-  const handleNext = useCallback(() => {
-    if (currentStep < STEPS.length - 1) {
-      setCurrentStep((s) => s + 1);
-    }
-  }, [currentStep]);
-
-  const handleAtmosphere = useCallback(
-    (atm: string) => {
-      setSelectedAtmosphere(atm);
-      // Build simple radar intensities from selections
-      const allSelected = [...selectedTop, ...selectedHeart, ...selectedBase];
-      const radarIntensities: Record<string, number> = {};
-      allSelected.forEach((cat) => {
-        radarIntensities[cat] = 1.0;
-      });
-      onValidate(selectedTop, selectedHeart, selectedBase, atm, radarIntensities);
-    },
-    [selectedTop, selectedHeart, selectedBase, onValidate]
-  );
-
-  const handleSkipAtmosphere = useCallback(() => {
-    const allSelected = [...selectedTop, ...selectedHeart, ...selectedBase];
-    const radarIntensities: Record<string, number> = {};
-    allSelected.forEach((cat) => {
-      radarIntensities[cat] = 1.0;
+  useEffect(() => {
+    setInternalBackHandler(() => {
+      if (isAnalyzing) return true;
+      if (screen === 'atmosphere') { setScreen('map'); return true; }
+      if (screen === 'map') { setScreen('swipe'); setCurrentStep(0); setNoteIndex(0); return true; }
+      return false;
     });
-    onValidate(selectedTop, selectedHeart, selectedBase, undefined, radarIntensities);
-  }, [selectedTop, selectedHeart, selectedBase, onValidate]);
+  }, [screen, isAnalyzing, setInternalBackHandler]);
 
-  const canProceed = step === "atmosphere" || currentSelections.length > 0;
+  const triggerTransition = (nextScreen: 'swipe' | 'map' | 'atmosphere', text: string) => {
+    setAnalysisText(text);
+    setIsAnalyzing(true);
+    setTimeout(() => { setIsAnalyzing(false); setScreen(nextScreen); }, 4000);
+  };
+
+const handleSwipe = (liked: boolean) => {
+  const key = steps[currentStep] as keyof typeof selections;
+  if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
+  
+  setTimeout(() => {
+    x.set(0);
+    setCardKey(prev => prev + 1);
+    if (noteIndex < notesAvailable.length - 1) { setNoteIndex(prev => prev + 1); }
+    else if (currentStep < 2) { setCurrentStep(prev => prev + 1); setNoteIndex(0); }
+    else { triggerTransition('map', "Harmonisation des essences sélectionnées..."); }
+  }, 300);
+};
+
+  const buildRadarIntensities = (): Record<string, number> => {
+    const result: Record<string, number> = {};
+    FAMILIES.forEach((family, i) => {
+      const families = RADAR_TO_FAMILY[family] || [];
+      families.forEach(f => { result[f] = intensities[i]; });
+    });
+    return result;
+  };
+
+  // -- MODIFICATION 2 : radar plus grand + points plus espacés --
+  const size = 380;
+  const center = size / 2;
+  const radius = size * 0.36; // augmenté de 0.32 à 0.36
+
+  const getPointPos = (index: number, intensity: number) => {
+    const angle = (Math.PI * 2 * index) / FAMILIES.length - Math.PI / 2;
+    return { x: center + radius * intensity * Math.cos(angle), y: center + radius * intensity * Math.sin(angle) };
+  };
+
+  // -- MODIFICATION 3 : drag direct via pointerId pour fluidité maximale --
+  const svgRef = useRef<SVGSVGElement>(null);
+  const activePointer = useRef<number | null>(null);
+  const activeIndex = useRef<number | null>(null);
+
+  const handlePointerDown = (e: React.PointerEvent, index: number) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    activePointer.current = e.pointerId;
+    activeIndex.current = index;
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (activePointer.current === null || activeIndex.current === null) return;
+    if (e.pointerId !== activePointer.current) return;
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const dx = e.clientX - (rect.left + rect.width / 2);
+    const dy = e.clientY - (rect.top + rect.height / 2);
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const newInts = [...intensities];
+    newInts[activeIndex.current] = Math.min(Math.max(distance / radius, 0.05), 1);
+    setIntensities(newInts);
+  };
+
+  const handlePointerUp = () => {
+    activePointer.current = null;
+    activeIndex.current = null;
+  };
+
+  const points = intensities.map((inst, i) => getPointPos(i, inst));
+  const polygonPath = points.map(p => `${p.x},${p.y}`).join(' ');
+
+  // -- Repères de graduation ----------------------------------
+  const graduationLabels = [
+    { r: 0.25, label: "25%" },
+    { r: 0.5,  label: "50%" },
+    { r: 0.75, label: "75%" },
+    { r: 1.0,  label: "100%" },
+  ];
+
+  const groupQuotidien = ATMOSPHERES.filter(a => a.group === 'quotidien');
+  const groupOccasions = ATMOSPHERES.filter(a => a.group === 'occasions');
+  const groupIntime    = ATMOSPHERES.filter(a => a.group === 'intime');
+
+  const AtmButton = ({ atm, className }: { atm: typeof ATMOSPHERES[0], className: string }) => (
+    <motion.button
+      whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+      onClick={() => onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities())}
+      className={`group relative rounded-2xl border border-white/10 bg-zinc-900/60 overflow-hidden flex flex-col items-center justify-center p-4 hover:border-amber-500/50 transition-all text-center ${className}`}
+    >
+      <img src={atm.img} className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-35 transition-opacity duration-500" alt={atm.label} />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      <div className="relative z-10 flex flex-col items-center justify-center gap-1">
+        <div className="text-amber-400 mb-1">{atm.icon}</div>
+        <h4 className="text-white font-bold text-sm leading-tight text-center">{atm.label}</h4>
+        <p className="text-amber-400/70 text-[9px] uppercase tracking-widest text-center">{atm.desc}</p>
+      </div>
+    </motion.button>
+  );
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start pt-24 pb-12 px-4 relative">
-      {/* Step indicator */}
-      <div className="flex gap-2 mb-8">
-        {STEPS.map((s, i) => (
+    <div className="relative h-screen bg-black text-white flex flex-col items-center pt-16 px-4 select-none overflow-hidden">
+      <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
+
+      <AnimatePresence mode="popLayout">
+
+        {isAnalyzing ? (
+          <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-10 text-center">
+            <div className="relative mb-8">
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="w-20 h-20 border-t-2 border-b-2 border-amber-500 rounded-full" />
+              <div className="absolute inset-0 flex items-center justify-center text-amber-500 opacity-50">
+                <Loader2 size={24} className="animate-spin" />
+              </div>
+            </div>
+            <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              className="text-amber-500 font-light italic tracking-[0.2em] text-sm uppercase">{analysisText}</motion.p>
+          </motion.div>
+
+        ) : screen === 'swipe' ? (
+  <motion.div
+    key="swipe-container"
+    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+    className="relative z-10 w-full flex flex-col items-center touch-none"
+    style={{ minHeight: "100vh", paddingTop: "80px" }}
+  >
+    {/* Titre */}
+    <div className="text-center px-6 mb-6">
+      <h2 className="text-2xl font-light italic text-zinc-300 leading-tight"
+        style={{ fontFamily: "Georgia, serif" }}>
+        Affinez vos désirs
+      </h2>
+    </div>
+
+    {/* Zone principale */}
+    <div className="relative w-full flex items-center justify-center"
+      style={{ height: "68vh" }}>
+
+      {/* Emoji ? gauche */}
+      <motion.div
+        animate={x.get() < -80 ? {
+          scale: 1.3,
+          boxShadow: "0 0 20px rgba(239,68,68,0.8)",
+          borderColor: "rgba(239,68,68,1)"
+        } : {
+          scale: 1,
+          boxShadow: "none",
+          borderColor: "rgba(239,68,68,0.5)"
+        }}
+        className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
+        style={{ background: "#111", border: "2px solid rgba(239,68,68,0.5)" }}
+      >
+        <Frown size={24} className="text-red-400" strokeWidth={2} />
+      </motion.div>
+
+      {/* Emoji ? droite */}
+      <motion.div
+        animate={x.get() > 80 ? {
+          scale: 1.3,
+          boxShadow: "0 0 20px rgba(34,197,94,0.8)",
+          borderColor: "rgba(34,197,94,1)"
+        } : {
+          scale: 1,
+          boxShadow: "none",
+          borderColor: "rgba(34,197,94,0.5)"
+        }}
+        className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
+        style={{ background: "#111", border: "2px solid rgba(34,197,94,0.5)" }}
+      >
+        <Smile size={24} className="text-emerald-400" strokeWidth={2} />
+      </motion.div>
+
+      {/* Stack de cartes */}
+      <div className="relative flex items-center justify-center"
+        style={{ width: "min(320px, 80vw)", height: "min(480px, 64vh)" }}>
+
+        {/* Cartes du dessous — visibles derrière */}
+        {notesAvailable.slice(noteIndex + 1, noteIndex + 3).map((note, i) => (
           <div
-            key={s}
-            className={`h-1 w-8 rounded-full transition-all duration-300 ${
-              i <= currentStep ? "bg-primary" : "bg-white/10"
-            }`}
-          />
-        ))}
-      </div>
-
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={step}
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -40 }}
-          transition={{ duration: 0.3 }}
-          className="w-full max-w-lg flex flex-col items-center"
-        >
-          {/* Header */}
-          <div className="text-center mb-8">
-            <span className="text-primary text-[10px] font-black uppercase tracking-[0.5em] mb-3 block">
-              Étape {currentStep + 1}/{STEPS.length}
-            </span>
-            <h2 className="text-3xl font-extralight text-white mb-2">{config.label}</h2>
-            <p className="text-white/40 text-sm">{config.subtitle}</p>
+            key={note.id}
+            className="absolute bg-white rounded-2xl overflow-hidden shadow-xl"
+            style={{
+              width: "min(320px, 80vw)",
+              height: "min(480px, 64vh)",
+              transform: `translateX(${(i + 1) * 18}px) translateY(${(i + 1) * -6}px) scale(${1 - (i + 1) * 0.04})`,
+              zIndex: 10 - i,
+              opacity: 1 - i * 0.15,
+            }}
+          >
+            <div style={{ height: "55%", width: "100%" }}>
+              <img src={note.img} className="w-full h-full object-cover" alt="" />
+            </div>
+            <div className="flex flex-col items-start justify-center px-5 py-4 bg-white"
+              style={{ height: "45%" }}>
+              <h3 className="text-xl font-semibold text-zinc-900"
+                style={{ fontFamily: "Georgia, serif" }}>
+                {note.label}
+              </h3>
+              <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-400 mt-2">
+                Équivalent en parfumerie
+              </p>
+              <p className="text-amber-600 text-sm font-medium mt-1">
+                {note.tags[0]}
+              </p>
+            </div>
           </div>
+        ))}
 
-          {/* Content */}
-          {step !== "atmosphere" ? (
-            <>
-              <motion.div
-                variants={staggerContainer}
-                initial="hidden"
-                animate="visible"
-                className="flex flex-wrap justify-center gap-3 mb-10 w-full"
+        {/* Carte active — au dessus */}
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={`${steps[currentStep]}-${noteIndex}`}
+            style={{
+              x,
+              rotate: useTransform(x, [-200, 200], [-15, 15]),
+              zIndex: 20,
+              width: "min(320px, 80vw)",
+              height: "min(480px, 64vh)",
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.9}
+            onDragEnd={(_, info) => {
+              if (info.offset.x > 100) handleSwipe(true);
+              else if (info.offset.x < -100) handleSwipe(false);
+              else x.set(0);
+            }}
+            initial={{ x: 0, scale: 0.95, opacity: 0 }}
+            animate={{ x: 0, scale: 1, opacity: 1 }}
+            exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, rotate: x.get() > 0 ? 20 : -20 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            className="absolute bg-white rounded-2xl overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing touch-none"
+          >
+            {/* Overlay vert */}
+            <motion.div
+              style={{ opacity: useTransform(x, [40, 130], [0, 1]) }}
+              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
+              style={{
+                background: "rgba(34,197,94,0.12)",
+                border: "3px solid rgba(34,197,94,0.8)",
+                borderRadius: 16,
+                pointerEvents: "none",
+              }}
+            />
+
+            {/* Overlay rouge */}
+            <motion.div
+              style={{ opacity: useTransform(x, [-130, -40], [1, 0]) }}
+              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
+              style={{
+                background: "rgba(239,68,68,0.12)",
+                border: "3px solid rgba(239,68,68,0.8)",
+                borderRadius: 16,
+                pointerEvents: "none",
+              }}
+            />
+
+            {/* Image */}
+            <div className="w-full pointer-events-none" style={{ height: "55%" }}>
+              <img
+                src={currentNote.img}
+                draggable="false"
+                className="w-full h-full object-cover"
+                alt={currentNote.label}
+              />
+            </div>
+
+            {/* Contenu */}
+            <div
+              className="w-full flex flex-col items-start justify-center px-5 py-4 bg-white pointer-events-none"
+              style={{ height: "45%" }}
+            >
+              <h3
+                className="text-xl font-semibold text-zinc-900 mb-1"
+                style={{ fontFamily: "Georgia, serif" }}
               >
-                {config.categories.map((cat) => {
-                  const isSelected = currentSelections.includes(cat);
-                  const label = NOTE_LABELS[cat] || cat;
-                  return (
-                    <motion.button
-                      key={cat}
-                      variants={staggerItem}
-                      onClick={() => toggleCategory(cat)}
-                      className={`px-5 py-3 rounded-2xl border text-sm font-light tracking-wide transition-all duration-200 ${
-                        isSelected
-                          ? "border-primary bg-primary/10 text-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.15)]"
-                          : "border-white/10 bg-white/5 text-white/60 hover:border-white/20 hover:text-white/80"
-                      }`}
+                {currentNote.label}
+              </h3>
+              <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest mb-2">
+                {currentNote.sub}
+              </p>
+              <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-400 mb-2">
+                Équivalent en parfumerie
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {currentNote.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                    style={{
+                      background: "#fffbeb",
+                      color: "#92400e",
+                      border: "1px solid #fcd34d",
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+
+    {/* Compteur */}
+    <div className="mt-4 text-center">
+      <p className="text-zinc-600 text-[9px] uppercase tracking-[0.4em]">
+        {noteIndex + 1} / {notesAvailable.length}
+      </p>
+    </div>
+  </motion.div>
+
+        ) : screen === 'map' ? (
+
+          <motion.div key="map" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className="relative z-10 w-full max-w-md flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center mb-2 text-center">
+  <h2 className="text-2xl font-bold uppercase tracking-[0.3em] text-white">Architecture Olfactive</h2>
+  <div className="w-12 h-[1px] bg-amber-500 my-2 opacity-50" />
+  <p className="text-amber-500/80 text-[10px] font-bold uppercase tracking-[0.15em]">Modelez l'intensité de vos accords</p>
+</div>
+
+            {/* -- RADAR avec drag natif pointer events -- */}
+            <div className="relative flex items-center justify-center touch-none">
+              <svg
+                ref={svgRef}
+                id="radar-svg"
+                width={size}
+                height={size}
+                className="overflow-visible"
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerLeave={handlePointerUp}
+              >
+                {/* -- Cercles de grille -- */}
+                {[0.25, 0.5, 0.75, 1].map((r, i) => (
+  <circle key={i} cx={center} cy={center} r={radius * r}
+    fill={r === 0.5 ? "rgba(245,158,11,0.03)" : "none"}
+    stroke={r === 1 ? "#f59e0b" : r === 0.5 ? "#f59e0b" : "#3a3a3a"}
+    strokeWidth={r === 1 ? "1.5" : r === 0.5 ? "0.8" : "0.5"}
+    strokeOpacity={r === 1 ? 0.5 : r === 0.5 ? 0.3 : 0.4}
+    strokeDasharray={r === 1 ? "none" : r === 0.5 ? "4 3" : "2 4"}
+  />
+))}
+
+                {/* -- MODIFICATION 3 : Repères gradués sur l'axe du haut -- */}
+                {graduationLabels.map(({ r, label }) => {
+  const y = center - radius * r;
+  const isKey = r === 0.5 || r === 1.0;
+  return (
+    <g key={label}>
+      {/* Fond pill */}
+      <rect
+        x={center - 18} y={y - 7}
+        width={36} height={14}
+        rx={7}
+        fill={isKey ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.05)"}
+        stroke={isKey ? "rgba(245,158,11,0.4)" : "rgba(255,255,255,0.1)"}
+        strokeWidth="0.5"
+        style={{ pointerEvents: 'none' }}
+      />
+      {/* Label */}
+      <text
+        x={center} y={y}
+        textAnchor="middle" dominantBaseline="middle"
+        fontSize={isKey ? "9" : "8"}
+        fontWeight={isKey ? "700" : "400"}
+        fill={isKey ? "#f59e0b" : "#888"}
+        style={{ pointerEvents: 'none' }}
+      >
+        {label}
+      </text>
+    </g>
+  );
+})}
+
+                {/* -- Axes -- */}
+                {FAMILIES.map((_, i) => {
+                  const p = getPointPos(i, 1);
+                  return <line key={i} x1={center} y1={center} x2={p.x} y2={p.y} stroke="#333" strokeDasharray="2 3" />;
+                })}
+
+                {/* -- Polygone — animé avec spring réactif -- */}
+                <motion.polygon
+                  points={polygonPath}
+                  fill="rgba(245, 158, 11, 0.12)"
+                  stroke="#f59e0b"
+                  strokeWidth="2"
+                  animate={{ points: polygonPath }}
+                  transition={{ type: "spring", ...polygonSpring }}
+                />
+
+                {/* -- Points draggables — drag natif pointer -- */}
+                {points.map((p, i) => (
+                  <g key={i} transform={`translate(${p.x}, ${p.y})`}>
+                    {/* Zone de capture large et invisible */}
+                    <circle
+                      cx={0} cy={0} r={22}
+                      fill="transparent"
+                      style={{ cursor: 'grab', touchAction: 'none' }}
+                      onPointerDown={(e) => handlePointerDown(e, i)}
+                    />
+                    {/* Halo glow */}
+                    <circle
+                      cx={0} cy={0}
+                      r={8 + intensities[i] * 6}
+                      fill="#f59e0b"
+                      opacity={0.3}
+                      style={{ pointerEvents: 'none', filter: `blur(${3 + intensities[i] * 4}px)` }}
+                    />
+                    {/* Point principal */}
+                    <circle
+                      cx={0} cy={0} r={7}
+                      fill="#f59e0b"
+                      stroke="#fff"
+                      strokeWidth="1.5"
+                      style={{ pointerEvents: 'none' }}
+                    />
+                    {/* Valeur au-dessus du point */}
+                    <text
+                      x={0} y={-14}
+                      textAnchor="middle" dominantBaseline="middle"
+                      fontSize="9" fill="#f59e0b"
+                      style={{ pointerEvents: 'none', fontWeight: 700 }}
                     >
-                      <span className="flex items-center gap-2">
-                        {isSelected && <Check size={14} className="text-primary" />}
-                        {label}
-                      </span>
-                    </motion.button>
+                      {Math.round(intensities[i] * 100)}%
+                    </text>
+                  </g>
+                ))}
+
+                {/* -- Labels familles -- */}
+                {FAMILIES.map((f, i) => {
+                  const p = getPointPos(i, 1.25);
+                  const isActive = intensities[i] > 0.7;
+                  return (
+                    <text key={i} x={p.x} y={p.y}
+                      textAnchor="middle" dominantBaseline="middle"
+                      fontSize="13" fontWeight="800"
+                      fill={isActive ? '#f59e0b' : '#71717a'}
+                      style={{ textTransform: 'uppercase', letterSpacing: '0.08em', pointerEvents: 'none' }}
+                    >
+                      {f}
+                    </text>
                   );
                 })}
-              </motion.div>
+              </svg>
+            </div>
 
-              {/* Next button */}
-              <motion.button
-                onClick={handleNext}
-                disabled={!canProceed}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: canProceed ? 1 : 0.3, y: 0 }}
-                className={`flex items-center gap-3 px-8 py-4 rounded-full border text-sm tracking-wider uppercase transition-all ${
-                  canProceed
-                    ? "border-primary bg-primary/10 text-primary hover:bg-primary/20"
-                    : "border-white/10 text-white/20 cursor-not-allowed"
-                }`}
-              >
-                Suivant
-                <ChevronRight size={16} />
-              </motion.button>
-            </>
-          ) : (
-            /* Atmosphere step */
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-2 gap-3 w-full mb-8"
+            <button
+              onClick={() => triggerTransition('atmosphere', "Définition de l'environnement olfactif...")}
+              className="mt-10 w-full bg-white text-black py-5 rounded-full font-black uppercase tracking-[0.4em] text-[10px] active:scale-95 transition-transform"
             >
-              {ATMOSPHERES.map((atm) => {
-                const Icon = atm.icon;
-                return (
-                  <motion.button
-                    key={atm.id}
-                    variants={staggerItem}
-                    onClick={() => handleAtmosphere(atm.id)}
-                    className="flex items-center gap-4 p-5 bg-white/5 border border-white/10 rounded-2xl hover:border-primary/50 hover:bg-primary/5 transition-all group"
-                  >
-                    <div className="p-2.5 bg-black/50 rounded-xl group-hover:scale-110 transition-transform">
-                      <Icon className="text-primary" size={18} />
-                    </div>
-                    <span className="text-white/70 font-light tracking-wide text-sm group-hover:text-white transition-colors">
-                      {atm.label}
-                    </span>
-                  </motion.button>
-                );
-              })}
+              Finaliser le profil
+            </button>
+          </motion.div>
 
-              <motion.button
-                variants={staggerItem}
-                onClick={handleSkipAtmosphere}
-                className="col-span-2 flex items-center justify-center gap-2 p-4 border border-white/5 rounded-2xl text-white/30 hover:text-white/60 hover:border-white/10 transition-all text-sm"
-              >
-                Passer cette étape
-                <ArrowRight size={14} />
-              </motion.button>
-            </motion.div>
-          )}
+        ) : (
+  <motion.div key="atm" initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }}
+    className="relative z-10 w-full flex flex-col items-center justify-center"
+    style={{ height: "calc(100vh - 80px)" }}>
+
+    {/* Titre */}
+    <div className="flex flex-col items-center mb-8 text-center">
+      <h2 className="text-xl md:text-3xl font-bold uppercase tracking-[0.35em] text-white">Votre Moment</h2>
+      <div className="w-12 h-[1px] bg-amber-500 my-2 opacity-50" />
+      <p className="text-amber-500 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em]">
+        Glissez votre occasion vers le centre
+      </p>
+    </div>
+
+    {/* Roue */}
+    <div className="relative" style={{ width: 360, height: 360 }}>
+
+      {/* Cercles décoratifs */}
+      <div className="absolute inset-0 rounded-full border border-amber-500/10" />
+      <div className="absolute inset-8 rounded-full border border-amber-500/15" />
+      <div className="absolute inset-16 rounded-full border border-amber-500/20" />
+
+      {/* Boutons sur la roue */}
+      {ATMOSPHERES.map((atm, i) => {
+        const angle = (360 / ATMOSPHERES.length) * i - 90;
+        const rad = (angle * Math.PI) / 180;
+        const wheelSize = 360;
+        const r = wheelSize * 0.44;
+        const cx = wheelSize / 2 + r * Math.cos(rad);
+        const cy = wheelSize / 2 + r * Math.sin(rad);
+
+        return (
+          <motion.div
+            key={atm.id}
+            drag
+            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            dragElastic={0.8}
+            dragMomentum={false}
+            onDragEnd={(_, info) => {
+              const btnCx = cx;
+              const btnCy = cy;
+              const centerX = 240;
+              const centerY = 240;
+              const dropX = btnCx + info.offset.x;
+              const dropY = btnCy + info.offset.y;
+              const dist = Math.sqrt((dropX - centerX) ** 2 + (dropY - centerY) ** 2);
+              if (dist < 120) {
+                onValidate(selections.top, selections.heart, selections.base, atm.id, buildRadarIntensities());
+              }
+            }}
+            whileDrag={{ scale: 1.2, zIndex: 50 }}
+            className="absolute flex flex-col items-center gap-1 cursor-grab active:cursor-grabbing touch-none"
+            style={{
+              left: cx - 32,
+              top: cy - 32,
+              width: 64,
+              height: 64,
+            }}
+          >
+            <div className="w-16 h-16 rounded-full flex flex-col items-center justify-center border-2 border-white/30 overflow-hidden relative shadow-lg">
+              <img src={atm.img} alt={atm.label} className="absolute inset-0 w-full h-full object-cover opacity-40" />
+              <div className="absolute inset-0 bg-black/40" />
+              <span className="relative z-10 text-2xl">{atm.icon}</span>
+            </div>
+            <span className="text-[7px] font-bold uppercase tracking-wider text-center text-white/60 w-24 leading-tight">
+              {atm.label}
+            </span>
+          </motion.div>
+        );
+      })}
+
+      {/* Centre */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <motion.div
+          className="w-28 h-28 rounded-full border-2 border-amber-500/50 flex flex-col items-center justify-center"
+          animate={{ boxShadow: ["0 0 15px rgba(212,175,55,0.2)", "0 0 30px rgba(212,175,55,0.5)", "0 0 15px rgba(212,175,55,0.2)"] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <span className="text-amber-500/60 text-[8px] uppercase tracking-widest text-center leading-tight px-2">
+            Glisser ici
+          </span>
+          <ArrowRight size={14} className="text-amber-500/60 mt-1" />
         </motion.div>
+      </div>
+    </div>
+  </motion.div>
+)}
+
       </AnimatePresence>
     </div>
   );

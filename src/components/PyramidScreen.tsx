@@ -117,6 +117,8 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const steps = ["top", "heart", "base"];
   const notesAvailable = NOTES_DATA[steps[currentStep]];
   const currentNote = notesAvailable[noteIndex];
+ 
+  if (!currentNote) return null;
 
   const x = useMotionValue(0);
   const [cardKey, setCardKey] = useState(0);

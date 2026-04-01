@@ -343,21 +343,25 @@ const handleSwipe = (liked: boolean) => {
 
       {/* Emoji ? droite */}
       <motion.div
-        animate={x.get() > 80 ? {
-          scale: 1.3,
-          boxShadow: "0 0 20px rgba(34,197,94,0.8)",
-          borderColor: "rgba(34,197,94,1)"
-        } : {
-          scale: 1,
-          boxShadow: "none",
-          borderColor: "rgba(34,197,94,0.5)"
-        }}
-        className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
-        style={{ background: "#111", border: "2px solid rgba(34,197,94,0.5)" }}
-      >
-        <Smile size={24} className="text-emerald-400" strokeWidth={2} />
-      </motion.div>
-
+  className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
+  style={{
+    background: "#111",
+    border: "2px solid rgba(34,197,94,0.5)",
+    scale: useTransform(x, [0, 80, 130], [1, 1.3, 1.3]),
+    boxShadow: useTransform(x, [0, 80, 130], [
+      "none",
+      "0 0 20px rgba(34,197,94,0.8)",
+      "0 0 20px rgba(34,197,94,0.8)"
+    ]),
+    borderColor: useTransform(x, [0, 80, 130], [
+      "rgba(34,197,94,0.5)",
+      "rgba(34,197,94,1)",
+      "rgba(34,197,94,1)"
+    ]),
+  }}
+>
+  <Smile size={24} className="text-emerald-400" strokeWidth={2} />
+</motion.div>
       {/* Stack de cartes */}
       <div className="relative flex items-center justify-center"
         style={{ width: "min(320px, 80vw)", height: "min(480px, 64vh)" }}>

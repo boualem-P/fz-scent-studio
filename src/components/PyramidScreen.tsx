@@ -122,7 +122,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const [cardKey, setCardKey] = useState(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
-  const cardRotate = useTransform(x, [-200, 200], [-15, 15]);
+  const cardRotate = useTransform(x, [-200, 200], [0, 0]);
   const positiveOverlayOpacity = useTransform(x, [40, 130], [0, 1]);
   const negativeOverlayOpacity = useTransform(x, [-130, -40], [1, 0]);
 

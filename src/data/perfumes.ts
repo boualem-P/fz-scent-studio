@@ -5,7 +5,7 @@ import { getAccordIdsForPerfume } from "./parfumAccords";
 export { PERFUMES };
 
 export type NoteCategory = string;
-export type Gender = "homme" | "femme" | "unisexe" | "mixte";
+export type Gender = "homme" | "femme" | "unisexe";
 
 export interface NoteDetail { name: string; }
 

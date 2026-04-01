@@ -31,7 +31,6 @@ export interface Perfume {
   seasonData: SeasonData;
 }
 
-export type { Perfume };
 export const PERFUMES: Perfume[] = [
   {
     id: "j-adore-dior",

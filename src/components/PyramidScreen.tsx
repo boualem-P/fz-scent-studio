@@ -119,6 +119,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const currentNote = notesAvailable[noteIndex];
 
   const x = useMotionValue(0);
+  const [cardKey, setCardKey] = useState(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
 
@@ -184,14 +185,18 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     setTimeout(() => { setIsAnalyzing(false); setScreen(nextScreen); }, 4000);
   };
 
-  const handleSwipe = (liked: boolean) => {
-    const key = steps[currentStep] as keyof typeof selections;
-    if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
+const handleSwipe = (liked: boolean) => {
+  const key = steps[currentStep] as keyof typeof selections;
+  if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
+  
+  setTimeout(() => {
+    x.set(0);
+    setCardKey(prev => prev + 1);
     if (noteIndex < notesAvailable.length - 1) { setNoteIndex(prev => prev + 1); }
     else if (currentStep < 2) { setCurrentStep(prev => prev + 1); setNoteIndex(0); }
     else { triggerTransition('map', "Harmonisation des essences sélectionnées..."); }
-    x.set(0);
-  };
+  }, 300);
+};
 
   const buildRadarIntensities = (): Record<string, number> => {
     const result: Record<string, number> = {};
@@ -276,7 +281,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
     <div className="relative h-screen bg-black text-white flex flex-col items-center pt-16 px-4 select-none overflow-hidden">
       <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="popLayout">
 
         {isAnalyzing ? (
           <motion.div key="loader" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -293,47 +298,198 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
           </motion.div>
 
         ) : screen === 'swipe' ? (
+  <motion.div
+    key="swipe-container"
+    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+    className="relative z-10 w-full flex flex-col items-center touch-none"
+    style={{ minHeight: "100vh", paddingTop: "80px" }}
+  >
+    {/* Titre */}
+    <div className="text-center px-6 mb-6">
+      <h2 className="text-2xl font-light italic text-zinc-300 leading-tight"
+        style={{ fontFamily: "Georgia, serif" }}>
+        Affinez vos désirs
+      </h2>
+    </div>
 
-          <motion.div key="swipe-container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="relative z-10 w-full max-w-sm flex flex-col items-center touch-none">
-            <h2 className="text-xl font-light mb-8 italic uppercase tracking-widest text-zinc-400">Affinez vos désirs</h2>
-            <div className="relative w-full mb-12" style={{ height: '520px' }}>
-              <div className="absolute inset-x-[-75px] top-1/2 -translate-y-1/2 flex justify-between items-center z-0 px-2 pointer-events-none">
-                <motion.div style={{ opacity: frownOpacity }} className="text-white drop-shadow-lg"><Frown size={48} strokeWidth={1.5} /></motion.div>
-                <motion.div style={{ opacity: smileOpacity }} className="text-white drop-shadow-lg"><Smile size={48} strokeWidth={1.5} /></motion.div>
-              </div>
-              <AnimatePresence mode="popLayout">
-                <motion.div
-                  key={`${steps[currentStep]}-${noteIndex}`}
-                  style={{ x }} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.9}
-                  onDragEnd={(_, info) => { if (info.offset.x > 100) handleSwipe(true); else if (info.offset.x < -100) handleSwipe(false); }}
-                  initial={{ x: 0, scale: 0.9, opacity: 0 }} animate={{ x: 0, scale: 1, opacity: 1 }}
-                  exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  className="absolute inset-0 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-zinc-100 z-10 flex flex-col">
-                  <div className="absolute inset-0 z-50 touch-none" />
-                  <div className="w-full flex-shrink-0 pointer-events-none" style={{ height: '52%' }}>
-                    <img src={currentNote.img} draggable="false" className="w-full h-full object-cover" alt={currentNote.label} />
-                  </div>
-                  <div className="w-full flex-1 px-5 py-3 text-center bg-white flex flex-col items-center justify-center gap-2 pointer-events-none">
-                    <h3 className="text-lg font-semibold text-black uppercase tracking-tight leading-tight">{currentNote.label}</h3>
-                    <p className="text-amber-500 text-[11px] font-bold uppercase tracking-widest">{currentNote.sub}</p>
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="h-[1px] w-10 bg-amber-400/50" />
-                      <div className="w-1.5 h-1.5 rounded-full bg-amber-400/70" />
-                      <div className="h-[1px] w-10 bg-amber-400/50" />
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-1.5 mt-1">
-                      {currentNote.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[9px] font-bold uppercase tracking-wider">{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+    {/* Zone principale */}
+    <div className="relative w-full flex items-center justify-center"
+      style={{ height: "68vh" }}>
+
+      {/* Emoji ? gauche */}
+      <motion.div
+        animate={x.get() < -80 ? {
+          scale: 1.3,
+          boxShadow: "0 0 20px rgba(239,68,68,0.8)",
+          borderColor: "rgba(239,68,68,1)"
+        } : {
+          scale: 1,
+          boxShadow: "none",
+          borderColor: "rgba(239,68,68,0.5)"
+        }}
+        className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
+        style={{ background: "#111", border: "2px solid rgba(239,68,68,0.5)" }}
+      >
+        <Frown size={24} className="text-red-400" strokeWidth={2} />
+      </motion.div>
+
+      {/* Emoji ? droite */}
+      <motion.div
+        animate={x.get() > 80 ? {
+          scale: 1.3,
+          boxShadow: "0 0 20px rgba(34,197,94,0.8)",
+          borderColor: "rgba(34,197,94,1)"
+        } : {
+          scale: 1,
+          boxShadow: "none",
+          borderColor: "rgba(34,197,94,0.5)"
+        }}
+        className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
+        style={{ background: "#111", border: "2px solid rgba(34,197,94,0.5)" }}
+      >
+        <Smile size={24} className="text-emerald-400" strokeWidth={2} />
+      </motion.div>
+
+      {/* Stack de cartes */}
+      <div className="relative flex items-center justify-center"
+        style={{ width: "min(320px, 80vw)", height: "min(480px, 64vh)" }}>
+
+        {/* Cartes du dessous — visibles derrière */}
+        {notesAvailable.slice(noteIndex + 1, noteIndex + 3).map((note, i) => (
+          <div
+            key={note.id}
+            className="absolute bg-white rounded-2xl overflow-hidden shadow-xl"
+            style={{
+              width: "min(320px, 80vw)",
+              height: "min(480px, 64vh)",
+              transform: `translateX(${(i + 1) * 18}px) translateY(${(i + 1) * -6}px) scale(${1 - (i + 1) * 0.04})`,
+              zIndex: 10 - i,
+              opacity: 1 - i * 0.15,
+            }}
+          >
+            <div style={{ height: "55%", width: "100%" }}>
+              <img src={note.img} className="w-full h-full object-cover" alt="" />
             </div>
-            <p className="text-white text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">Balayez pour choisir</p>
+            <div className="flex flex-col items-start justify-center px-5 py-4 bg-white"
+              style={{ height: "45%" }}>
+              <h3 className="text-xl font-semibold text-zinc-900"
+                style={{ fontFamily: "Georgia, serif" }}>
+                {note.label}
+              </h3>
+              <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-400 mt-2">
+                Équivalent en parfumerie
+              </p>
+              <p className="text-amber-600 text-sm font-medium mt-1">
+                {note.tags[0]}
+              </p>
+            </div>
+          </div>
+        ))}
+
+        {/* Carte active — au dessus */}
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={`${steps[currentStep]}-${noteIndex}`}
+            style={{
+              x,
+              rotate: useTransform(x, [-200, 200], [-15, 15]),
+              zIndex: 20,
+              width: "min(320px, 80vw)",
+              height: "min(480px, 64vh)",
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.9}
+            onDragEnd={(_, info) => {
+              if (info.offset.x > 100) handleSwipe(true);
+              else if (info.offset.x < -100) handleSwipe(false);
+              else x.set(0);
+            }}
+            initial={{ x: 0, scale: 0.95, opacity: 0 }}
+            animate={{ x: 0, scale: 1, opacity: 1 }}
+            exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, rotate: x.get() > 0 ? 20 : -20 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            className="absolute bg-white rounded-2xl overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing touch-none"
+          >
+            {/* Overlay vert */}
+            <motion.div
+              style={{ opacity: useTransform(x, [40, 130], [0, 1]) }}
+              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
+              style={{
+                background: "rgba(34,197,94,0.12)",
+                border: "3px solid rgba(34,197,94,0.8)",
+                borderRadius: 16,
+                pointerEvents: "none",
+              }}
+            />
+
+            {/* Overlay rouge */}
+            <motion.div
+              style={{ opacity: useTransform(x, [-130, -40], [1, 0]) }}
+              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
+              style={{
+                background: "rgba(239,68,68,0.12)",
+                border: "3px solid rgba(239,68,68,0.8)",
+                borderRadius: 16,
+                pointerEvents: "none",
+              }}
+            />
+
+            {/* Image */}
+            <div className="w-full pointer-events-none" style={{ height: "55%" }}>
+              <img
+                src={currentNote.img}
+                draggable="false"
+                className="w-full h-full object-cover"
+                alt={currentNote.label}
+              />
+            </div>
+
+            {/* Contenu */}
+            <div
+              className="w-full flex flex-col items-start justify-center px-5 py-4 bg-white pointer-events-none"
+              style={{ height: "45%" }}
+            >
+              <h3
+                className="text-xl font-semibold text-zinc-900 mb-1"
+                style={{ fontFamily: "Georgia, serif" }}
+              >
+                {currentNote.label}
+              </h3>
+              <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest mb-2">
+                {currentNote.sub}
+              </p>
+              <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-400 mb-2">
+                Équivalent en parfumerie
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {currentNote.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                    style={{
+                      background: "#fffbeb",
+                      color: "#92400e",
+                      border: "1px solid #fcd34d",
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
           </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+
+    {/* Compteur */}
+    <div className="mt-4 text-center">
+      <p className="text-zinc-600 text-[9px] uppercase tracking-[0.4em]">
+        {noteIndex + 1} / {notesAvailable.length}
+      </p>
+    </div>
+  </motion.div>
 
         ) : screen === 'map' ? (
 

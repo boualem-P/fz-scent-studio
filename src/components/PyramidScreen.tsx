@@ -413,26 +413,26 @@ const handleSwipe = (liked: boolean) => {
           >
             {/* Overlay vert */}
             <motion.div
-              style={{ opacity: useTransform(x, [40, 130], [0, 1]) }}
-              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
               style={{
+                opacity: useTransform(x, [40, 130], [0, 1]),
                 background: "rgba(34,197,94,0.12)",
                 border: "3px solid rgba(34,197,94,0.8)",
                 borderRadius: 16,
                 pointerEvents: "none",
               }}
+              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
             />
 
             {/* Overlay rouge */}
             <motion.div
-              style={{ opacity: useTransform(x, [-130, -40], [1, 0]) }}
-              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
               style={{
+                opacity: useTransform(x, [-130, -40], [1, 0]),
                 background: "rgba(239,68,68,0.12)",
                 border: "3px solid rgba(239,68,68,0.8)",
                 borderRadius: 16,
                 pointerEvents: "none",
               }}
+              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
             />
 
             {/* Image */}

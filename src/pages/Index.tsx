@@ -111,20 +111,19 @@ const Index = () => {
   };
 
   const handleValidate = useCallback((
-    top: NoteCategory[],
-    heart: NoteCategory[],
-    base: NoteCategory[],
-    atmosphere?: string,
-    radarIntensities?: Record<string, number>
-  ) => {
-    const matches = matchPerfumes(gender, top, heart, base, radarIntensities, atmosphere);
-    setResults(matches);
-    navigateTo("analyzing");
-    
-    setTimeout(() => {
-      setScreen("results");
-    }, 4000);
-  }, [gender, navigateTo]);
+  top: NoteCategory[],
+  heart: NoteCategory[],
+  base: NoteCategory[],
+  atmosphere?: string,
+  radarIntensities?: Record<string, number>
+) => {
+  const matches = matchPerfumes(gender, top, heart, base, radarIntensities, atmosphere);
+  setResults(matches);
+  setScreen("analyzing");
+  setTimeout(() => {
+    setScreen("results");
+  }, 4000);
+}, [gender]);
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">

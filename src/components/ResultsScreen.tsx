@@ -140,7 +140,7 @@ const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfum
                 <span className="w-1 h-1 rounded-full bg-primary/30" />
                 <span>{topResult.perfume.gender}</span>
                 <span className="w-1 h-1 rounded-full bg-primary/30" />
-                <span>{topResult.perfume.year}</span>
+                <span>{topResult.perfume.brand}</span>
               </div>
             </div>
           </div>

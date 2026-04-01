@@ -123,7 +123,7 @@ const PerfumeModal = ({ perfume, onClose }: PerfumeModalProps) => {
             <span className="text-primary/30">•</span>
             <span className="text-[10px] font-body tracking-wider text-muted-foreground">{perfume.concentration}</span>
             <span className="text-primary/30">•</span>
-            <span className="text-[10px] font-body tracking-wider text-muted-foreground">{perfume.year}</span>
+            <span className="text-[10px] font-body tracking-wider text-muted-foreground">{perfume.brand}</span>
           </motion.div>
 
           <motion.div variants={staggerItem} className="gold-divider w-16 mb-4" />

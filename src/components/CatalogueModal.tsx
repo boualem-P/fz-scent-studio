@@ -84,7 +84,7 @@ const CatalogueModal = ({ perfume, onClose }: CatalogueModalProps) => {
           <span className="text-primary/30">•</span>
           <span>{perfume.concentration}</span>
           <span className="text-primary/30">•</span>
-          <span>{perfume.year}</span>
+          <span>{perfume.concentration}</span>
         </motion.div>
 
         <motion.p variants={staggerItem} className="text-base text-foreground/80 leading-relaxed font-body mb-10 italic border-l-2 border-primary/20 pl-6 py-2">

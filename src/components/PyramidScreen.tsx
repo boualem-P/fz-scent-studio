@@ -67,14 +67,14 @@ const IconCroissant = () => (
 );
 
 const ATMOSPHERES = [
-  { id: 'quotidien', label: 'Mon quotidien', icon: <span className="text-2xl">?</span>, desc: "Frais, discret & efficace", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'quotidien' },
-  { id: 'business', label: 'Au bureau', icon: <span className="text-2xl">??</span>, desc: "Assuré & professionnel", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400", group: 'quotidien' },
-  { id: 'aid', label: 'Aïd & Fêtes', icon: <span className="text-2xl">??</span>, desc: "Oriental, festif & généreux", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'occasions' },
-  { id: 'mariage', label: 'Mariage & Fiançailles', icon: <span className="text-2xl">??</span>, desc: "Somptueux & inoubliable", img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=400", group: 'occasions' },
-  { id: 'soir', label: 'Soirée & Sorties', icon: <span className="text-2xl">??</span>, desc: "Intense & magnétique", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'occasions' },
-  { id: 'rendezvous', label: 'Rendez-vous', icon: <span className="text-2xl">??</span>, desc: "Sensuel & captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'intime' },
-  { id: 'famille', label: 'En famille', icon: <span className="text-2xl">??</span>, desc: "Chaleureux & bienveillant", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'intime' },
-  { id: 'ramadan', label: 'Ramadan', icon: <span className="text-2xl">??</span>, desc: "Doux, oud & spirituel", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'intime' },
+  { id: 'quotidien', label: 'Mon quotidien', icon: <Sun size={22} />, desc: "Frais, discret & efficace", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'quotidien' },
+  { id: 'business', label: 'Au bureau', icon: <Briefcase size={22} />, desc: "Assuré & professionnel", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400", group: 'quotidien' },
+  { id: 'aid', label: 'Aïd & Fêtes', icon: <Star size={22} />, desc: "Oriental, festif & généreux", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'occasions' },
+  { id: 'mariage', label: 'Mariage & Fiançailles', icon: <Heart size={22} />, desc: "Somptueux & inoubliable", img: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=400", group: 'occasions' },
+  { id: 'soir', label: 'Soirée & Sorties', icon: <PartyPopper size={22} />, desc: "Intense & magnétique", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'occasions' },
+  { id: 'rendezvous', label: 'Rendez-vous', icon: <Sparkles size={22} />, desc: "Sensuel & captivant", img: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=400", group: 'intime' },
+  { id: 'famille', label: 'En famille', icon: <Users size={22} />, desc: "Chaleureux & bienveillant", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=400", group: 'intime' },
+  { id: 'ramadan', label: 'Ramadan', icon: <Moon size={22} />, desc: "Doux, oud & spirituel", img: "https://img.freepik.com/photos-gratuite/architecture-mosquee-fantastique-pour-celebration-du-nouvel-an-islamique_23-2151457419.jpg?semt=ais_hybrid&w=740&q=80", group: 'intime' },
 ];
 
 const GOLD_COLORS = ["#D4AF37", "#F59E0B", "#FFF0A0"];

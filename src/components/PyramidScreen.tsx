@@ -186,17 +186,12 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   };
 
 const handleSwipe = (liked: boolean) => {
-    x.set(0);
     const key = steps[currentStep] as keyof typeof selections;
     if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
-    if (noteIndex < notesAvailable.length - 1) {
-      setNoteIndex(prev => prev + 1);
-    } else if (currentStep < 2) {
-      setCurrentStep(prev => prev + 1);
-      setNoteIndex(0);
-    } else {
-      triggerTransition('map', "Harmonisation des essences sélectionnées...");
-    }
+    if (noteIndex < notesAvailable.length - 1) { setNoteIndex(prev => prev + 1); }
+    else if (currentStep < 2) { setCurrentStep(prev => prev + 1); setNoteIndex(0); }
+    else { triggerTransition('map', "Harmonisation des essences sélectionnées..."); }
+    x.set(0);
   };
 
   const buildRadarIntensities = (): Record<string, number> => {

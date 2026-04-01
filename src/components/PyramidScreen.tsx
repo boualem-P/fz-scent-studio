@@ -117,8 +117,6 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const steps = ["top", "heart", "base"];
   const notesAvailable = NOTES_DATA[steps[currentStep]];
   const currentNote = notesAvailable[noteIndex];
- 
-  if (!currentNote) return null;
 
   const x = useMotionValue(0);
   const [cardKey, setCardKey] = useState(0);
@@ -281,6 +279,8 @@ const handleSwipe = (liked: boolean) => {
       </div>
     </motion.button>
   );
+
+  if (!currentNote) return null;
 
   return (
     <div className="relative h-screen bg-black text-white flex flex-col items-center pt-16 px-4 select-none overflow-hidden">

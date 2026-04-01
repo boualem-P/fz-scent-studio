@@ -1,757 +1,222 @@
-export interface NoteDetail {
-  name: string;
+import { useState, useCallback, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { NoteCategory } from "@/data/perfumes";
+import { NOTES_IMAGES } from "@/data/notesData";
+import { staggerContainer, staggerItem } from "@/lib/animations";
+
+interface PyramidScreenProps {
+  onValidate: (
+    top: NoteCategory[],
+    heart: NoteCategory[],
+    base: NoteCategory[],
+    atmosphere?: string,
+    radarIntensities?: Record<string, number>
+  ) => void;
+  onMenu: () => void;
+  setInternalBackHandler: (fn: () => boolean) => void;
 }
 
-export interface SeasonData {
-  winter: number;
-  spring: number;
-  summer: number;
-  autumn: number;
-}
+type Step = "top" | "heart" | "base" | "atmosphere";
 
-export interface Perfume {
-  id: string;
-  name: string;
-  brand: string;
-  image: string;
-  description: string;
-  gender: "homme" | "femme" | "unisexe";
-  concentration: string;
-  topNotes: string[];
-  heartNotes: string[];
-  baseNotes: string[];
-  topNotesDetailed: NoteDetail[];
-  heartNotesDetailed: NoteDetail[];
-  baseNotesDetailed: NoteDetail[];
-  accordIds?: string[];
-  sillage?: "discret" | "modéré" | "fort" | "très fort";
-  longevite?: "2-4h" | "4-6h" | "6-8h" | "8h+";
-  // jourPct : pourcentage jour (0-100), nuit = 100 - jourPct
-  jourPct?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100;
-  seasonData: SeasonData;
-}
+const STEPS: Step[] = ["top", "heart", "base", "atmosphere"];
 
-export const PERFUMES: Perfume[] = [
-  {
-    id: "j-adore-dior",
-    name: "J'adore",
-    brand: "Dior",
-    image: "https://fimgs.net/mdimg/perfume/o.210.jpg",
-    description: "Un bouquet floral unique, riche et équilibré, dont la complexité est une source d'inspiration.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Poire", "Melon", "Magnolia", "Pêche", "Mandarine", "Bergamote"],
-    heartNotes: ["Jasmin", "Muguet", "Tubéreuse", "Freesia", "Rose", "Orchidée", "Prune", "Violette"],
-    baseNotes: ["Musc", "Vanille", "Mûre", "Cèdre"],
-    topNotesDetailed: [{ name: "Jasmin" }, { name: "Poire" }, { name: "Melon" }],
-    heartNotesDetailed: [{ name: "Muguet" }, { name: "Magnolia" }, { name: "Tubéreuse" }],
-    baseNotesDetailed: [{ name: "Musc" }, { name: "Vanille" }],
-    sillage: "fort",
-    longevite: "6-8h",
-    jourPct: 65,
-    seasonData: { winter: 20, spring: 30, summer: 15, autumn: 25 }
-  },
-  {
-    id: "sauvage-dior",
-    name: "Sauvage",
-    brand: "Dior",
-    image: "https://fimgs.net/mdimg/perfume/o.31861.jpg",
-    description: "Une composition d'une fraîcheur radicale, dictée par un nom qui sonne comme un manifeste.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Bergamote de Calabre", "Poivre"],
-    heartNotes: ["Poivre du Sichuan", "Lavande", "Poivre rose", "Vétiver", "Patchouli", "Géranium", "Élémi"],
-    baseNotes: ["Ambroxan", "Cèdre", "Ladanum"],
-    topNotesDetailed: [{ name: "Bergamote de Calabre" }, { name: "Poivre" }],
-    heartNotesDetailed: [{ name: "Poivre du Sichuan" }, { name: "Lavande" }, { name: "Vétiver" }],
-    baseNotesDetailed: [{ name: "Ambroxan" }, { name: "Cèdre" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 60,
-    seasonData: { winter: 40, spring: 85, summer: 90, autumn: 75 }
-  },
-  {
-    id: "fahrenheit-dior",
-    name: "Fahrenheit",
-    brand: "Dior",
-    image: "https://fimgs.net/mdimg/perfume/o.228.jpg",
-    description: "Une signature olfactive unique et contrastée, avec un sillage puissant et persistant.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Fleur de muscadier", "Lavande", "Cèdre", "Mandarine", "Camomille", "Aubépine", "Bergamote", "Citron"],
-    heartNotes: ["Feuille de violette", "Noix de muscade", "Cèdre", "Santal", "Chèvrefeuille", "Œillet", "Jasmin", "Muguet"],
-    baseNotes: ["Cuir", "Vétiver", "Musc", "Ambre", "Patchouli", "Fève de tonka"],
-    topNotesDetailed: [{ name: "Feuille de Violette" }, { name: "Noix de muscade" }],
-    heartNotesDetailed: [{ name: "Lavande" }, { name: "Cèdre" }],
-    baseNotesDetailed: [{ name: "Cuir" }, { name: "Vétiver" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 40,
-    seasonData: { winter: 35, spring: 20, summer: 10, autumn: 30 }
-  },
-  {
-    id: "homme-intense-dior",
-    name: "Dior Homme Intense",
-    brand: "Dior",
-    image: "https://fimgs.net/mdimg/perfume/o.13016.jpg",
-    description: "Une fragrance noble et audacieuse, un iris poudré et boisé, sophistiqué et sensuel.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Lavande"],
-    heartNotes: ["Iris", "Ambrette", "Poire"],
-    baseNotes: ["Cèdre de Virginie", "Vétiver"],
-    topNotesDetailed: [{ name: "Lavande" }],
-    heartNotesDetailed: [{ name: "Iris" }, { name: "Poire" }],
-    baseNotesDetailed: [{ name: "Cèdre de Virginie" }, { name: "Vétiver" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 10,
-    seasonData: { winter: 100, spring: 40, summer: 10, autumn: 95 }
-  },
-  {
-    id: "bleu-de-chanel",
-    name: "Bleu de Chanel",
-    brand: "Chanel",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.25967.avif",
-    description: "L'éloge de la liberté qui s'exprime dans un aromatique-boisé au sillage captivant.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Pamplemousse", "Citron", "Menthe", "Poivre rose"],
-    heartNotes: ["Gingembre", "Noix de muscade", "Jasmin", "Iso E Super"],
-    baseNotes: ["Encens", "Vétiver", "Cèdre", "Santal", "Patchouli", "Ladanum", "Musc blanc"],
-    topNotesDetailed: [{ name: "Pamplemousse" }, { name: "Citron" }],
-    heartNotesDetailed: [{ name: "Gingembre" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Encens" }, { name: "Cèdre" }],
-    sillage: "fort",
-    longevite: "6-8h",
-    jourPct: 55,
-    seasonData: { winter: 30, spring: 25, summer: 10, autumn: 25 }
-  },
-  {
-    id: "le-lion-chanel",
-    name: "Le Lion",
-    brand: "Chanel",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.61036.avif",
-    description: "Une fragrance ambrée, cuirée et intense, inspirée par la force et l'éclat du Lion.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Bergamote", "Citron"],
-    heartNotes: ["Ladanum", "Ambre"],
-    baseNotes: ["Vanille de Madagascar", "Patchouli", "Santal", "Musc"],
-    topNotesDetailed: [{ name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Ladanum" }, { name: "Ambre" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Patchouli" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 20,
-    seasonData: { winter: 100, spring: 30, summer: 10, autumn: 90 }
-  },
-  {
-    id: "allure-sport-chanel",
-    name: "Allure Homme Sport",
-    brand: "Chanel",
-    image: "https://fimgs.net/mdimg/perfume/o.607.jpg",
-    description: "Une allure qui se joue de la vitesse. Un parfum frais, sensuel et tonique.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Orange", "Notes marines", "Aldéhydes", "Mandarine sanguine"],
-    heartNotes: ["Poivre", "Néroli", "Cèdre"],
-    baseNotes: ["Fève de tonka", "Musc blanc", "Ambre", "Vanille", "Vétiver", "RÉSINE D'ÉLÉMI"],
-    topNotesDetailed: [{ name: "Orange" }, { name: "Eau de mer" }, { name: "Aldéhydes" }],
-    heartNotesDetailed: [{ name: "Mandarine" }, { name: "Vanille" }],
-    baseNotesDetailed: [{ name: "Fève Tonka" }],
-    sillage: "modéré",
-    longevite: "4-6h",
-    jourPct: 75,
-    seasonData: { winter: 10, spring: 25, summer: 45, autumn: 20 }
-  },
-  {
-    id: "black-opium",
-    name: "Black Opium",
-    brand: "YSL",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.25324.avif",
-    description: "Le premier café floral pour une dose d'adrénaline, entre mystère et énergie.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Poire", "Poivre rose", "Fleur d'oranger"],
-    heartNotes: ["Café", "Jasmin", "Amande amère", "Réglisse"],
-    baseNotes: ["Vanille", "Patchouli", "Cèdre", "Cachemire"],
-    topNotesDetailed: [{ name: "Poire" }, { name: "Poivre rose" }],
-    heartNotesDetailed: [{ name: "Café" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Patchouli" }],
-    sillage: "fort",
-    longevite: "6-8h",
-    jourPct: 50,
-    seasonData: { winter: 100, spring: 30, summer: 10, autumn: 85 }
-  },
-  {
-    id: "libre-ysl",
-    name: "Libre",
-    brand: "YSL",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.56077.avif",
-    description: "Le parfum d'une femme libre et conquérante, une tension entre le masculin et le féminin.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Lavande", "Mandarine", "Cassis", "Petit-grain"],
-    heartNotes: ["Lavande", "Fleur d'oranger", "Jasmin"],
-    baseNotes: ["Vanille de Madagascar", "Musc", "Cèdre", "Ambre gris"],
-    topNotesDetailed: [{ name: "Lavande" }, { name: "Mandarine" }],
-    heartNotesDetailed: [{ name: "Fleur d'oranger" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Ambre gris" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 60,
-    seasonData: { winter: 60, spring: 90, summer: 50, autumn: 80 }
-  },
-  {
-    id: "la-nuit-de-l-homme",
-    name: "La Nuit de l'Homme",
-    brand: "YSL",
-    image: "https://fimgs.net/mdimg/perfume/o.5521.jpg",
-    description: "Une fragrance boisée orientale qui explore les facettes de la séduction et du mystère.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Cardamome"],
-    heartNotes: ["Lavande", "Cèdre de Virginie", "Bergamote"],
-    baseNotes: ["Vétiver", "Carvi"],
-    topNotesDetailed: [{ name: "Cardamome" }],
-    heartNotesDetailed: [{ name: "Lavande" }, { name: "Cèdre de Virginie" }],
-    baseNotesDetailed: [{ name: "Vétiver" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 10,
-    seasonData: { winter: 90, spring: 60, summer: 20, autumn: 100 }
-  },
-  {
-    id: "y-edp-ysl",
-    name: "Y Eau de Parfum",
-    brand: "YSL",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.79243.avif",
-    description: "Une réinterprétation intense de la fougère, pour un homme qui ose poursuivre ses rêves.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Pomme", "Gingembre", "Bergamote"],
-    heartNotes: ["Sauge", "Baies de genièvre", "Géranium"],
-    baseNotes: ["Amberwood", "Fève de tonka", "Cèdre", "Vétiver", "Oliban"],
-    topNotesDetailed: [{ name: "Pomme" }, { name: "Gingembre" }],
-    heartNotesDetailed: [{ name: "Sauge" }, { name: "Baies de genièvre" }],
-    baseNotesDetailed: [{ name: "Amberwood" }, { name: "Fève de tonka" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 50,
-    seasonData: { winter: 60, spring: 90, summer: 80, autumn: 85 }
-  },
-  {
-    id: "the-noir-29",
-    name: "Thé Noir 29",
-    brand: "Le Labo",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.31872.avif",
-    description: "Une ode à la feuille de thé et à la noblesse de la matière, mêlant fraîcheur et profondeur.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Figue", "Laurier", "Bergamote"],
-    heartNotes: ["Cèdre", "Vétiver", "Musc"],
-    baseNotes: ["Tabac", "Foin"],
-    topNotesDetailed: [{ name: "Figue" }, { name: "Laurier" }],
-    heartNotesDetailed: [{ name: "Cèdre" }, { name: "Vétiver" }],
-    baseNotesDetailed: [{ name: "Tabac" }, { name: "Foin" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 40,
-    seasonData: { winter: 80, spring: 60, summer: 40, autumn: 100 }
-  },
-  {
-    id: "santal-33",
-    name: "Santal 33",
-    brand: "Le Labo",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.12201.avif",
-    description: "Une icône du luxe discret, évoquant les grands espaces et le feu de camp sous les étoiles.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Santal", "Papyrus", "Cèdre de Virginie"],
-    heartNotes: ["Cardamome", "Violette", "Iris"],
-    baseNotes: ["Ambre", "Cuir"],
-    topNotesDetailed: [{ name: "Santal" }, { name: "Cèdre de Virginie" }],
-    heartNotesDetailed: [{ name: "Cardamome" }, { name: "Violette" }],
-    baseNotesDetailed: [{ name: "Cuir" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 70,
-    seasonData: { winter: 70, spring: 90, summer: 60, autumn: 95 }
-  },
-  {
-    id: "la-vie-est-belle",
-    name: "La Vie est Belle",
-    brand: "Lancôme",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.95856.avif",
-    description: "Une déclaration universelle au bonheur, construite autour du premier iris gourmand.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Cassis", "Poire"],
-    heartNotes: ["Iris", "Jasmin", "Fleur d'oranger"],
-    baseNotes: ["Praliné", "Vanille", "Patchouli", "Fève de tonka"],
-    topNotesDetailed: [{ name: "Cassis" }, { name: "Poire" }],
-    heartNotesDetailed: [{ name: "Iris" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Praliné" }, { name: "Vanille" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 50,
-    seasonData: { winter: 95, spring: 60, summer: 20, autumn: 90 }
-  },
-  {
-    id: "l-interdit",
-    name: "L'Interdit",
-    brand: "Givenchy",
-    image: "https://fimgs.net/mdimg/perfume/o.51488.jpg",
-    description: "L'hommage à une féminité audacieuse. Ne rien s'interdire. Ne rien se laisser interdire.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Poire", "Bergamote"],
-    heartNotes: ["Tubéreuse", "Fleur d'oranger", "Jasmin Sambac"],
-    baseNotes: ["Patchouli", "Vanille", "Ambroxan", "Vétiver"],
-    topNotesDetailed: [{ name: "Poire" }, { name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Tubéreuse" }, { name: "Fleur d'oranger" }],
-    baseNotesDetailed: [{ name: "Patchouli" }, { name: "Vanille" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 40,
-    seasonData: { winter: 85, spring: 70, summer: 30, autumn: 90 }
-  },
-  {
-    id: "gentleman-givenchy",
-    name: "Gentleman",
-    brand: "Givenchy",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.71272.avif",
-    description: "Une élégance moderne qui ne manque pas de tempérament, entre force et douceur.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Poire", "Cardamome", "Ananas"],
-    heartNotes: ["Iris", "Lavande", "Géranium"],
-    baseNotes: ["Cuir", "Enveloppe de cacao noir", "Patchouli"],
-    topNotesDetailed: [{ name: "Poire" }, { name: "Cardamome" }],
-    heartNotesDetailed: [{ name: "Iris" }, { name: "Lavande" }],
-    baseNotesDetailed: [{ name: "Cuir" }, { name: "Patchouli" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 60,
-    seasonData: { winter: 95, spring: 50, summer: 20, autumn: 90 }
-  },
-  {
-    id: "her-burberry",
-    name: "Burberry Her",
-    brand: "Burberry",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.71379.avif",
-    description: "Une fragrance fruitée et gourmande, capturant l'esprit cosmopolite de Londres.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Fraise", "Framboise", "Mûre", "Griotte", "Cassis", "Mandarine", "Citron"],
-    heartNotes: ["Violette", "Jasmin"],
-    baseNotes: ["Musc", "Vanille", "Ambre", "Bois de Cachemire", "Notes boisées", "Mousse de chêne", "Patchouli"],
-    topNotesDetailed: [{ name: "Fraise" }, { name: "Framboise" }, { name: "Mûre" }],
-    heartNotesDetailed: [{ name: "Violette" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Musc" }, { name: "Vanille" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 80,
-    seasonData: { winter: 40, spring: 100, summer: 85, autumn: 60 }
-  },
-  {
-    id: "aventus-creed",
-    name: "Aventus",
-    brand: "Creed",
-    image: "https://fimgs.net/mdimg/perfume/o.9828.jpg",
-    description: "Une célébration de la force, de la puissance et du succès, inspirée par la vie d'un empereur.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Ananas", "Bergamote", "Cassis", "Pomme"],
-    heartNotes: ["Bouleau", "Patchouli", "Jasmin du Maroc", "Rose"],
-    baseNotes: ["Musc", "Mousse de chêne", "Ambre gris", "Vanille"],
-    topNotesDetailed: [{ name: "Ananas" }, { name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Bouleau" }, { name: "Patchouli" }],
-    baseNotesDetailed: [{ name: "Musc" }, { name: "Ambre gris" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 80,
-    seasonData: { winter: 60, spring: 100, summer: 95, autumn: 90 }
-  },
-  {
-    id: "baccarat-rouge-540",
-    name: "Baccarat Rouge 540",
-    brand: "Maison Francis Kurkdjian",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.33519.avif",
-    description: "Une signature olfactive ambrée florale et boisée, hautement condensée.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Safran", "Jasmin"],
-    heartNotes: ["Ambre gris", "Amberwood"],
-    baseNotes: ["Résine de sapin", "Cèdre"],
-    topNotesDetailed: [{ name: "Safran" }, { name: "Jasmin" }],
-    heartNotesDetailed: [{ name: "Ambre gris" }],
-    baseNotesDetailed: [{ name: "Cèdre" }],
-    sillage: "très fort",
-    longevite: "8h+",
-    jourPct: 45,
-    seasonData: { winter: 90, spring: 75, summer: 60, autumn: 85 }
-  },
-  {
-    id: "layton-pdm",
-    name: "Layton",
-    brand: "Parfums de Marly",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.46633.avif",
-    description: "Une fragrance addictive et élégante qui allie la fraîcheur de la bergamote à la chaleur des épices.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Pomme", "Lavande", "Bergamote", "Mandarine"],
-    heartNotes: ["Géranium", "Violette", "Jasmin"],
-    baseNotes: ["Vanille", "Cardamome", "Santal", "Poivre", "Patchouli", "Gaïac"],
-    topNotesDetailed: [{ name: "Pomme" }, { name: "Lavande" }],
-    heartNotesDetailed: [{ name: "Géranium" }, { name: "Violette" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Cardamome" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 30,
-    seasonData: { winter: 95, spring: 60, summer: 20, autumn: 90 }
-  },
-  {
-    id: "angels-share",
-    name: "Angels' Share",
-    brand: "Kilian Paris",
-    image: "https://fimgs.net/mdimg/perfume/o.62615.jpg",
-    description: "Une fragrance inspirée par l'héritage familial du cognac, mélangeant des notes de chêne, de cannelle et de vanille.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Cognac"],
-    heartNotes: ["Cannelle", "Fève de tonka", "Chêne"],
-    baseNotes: ["Vanille", "Praliné", "Santal"],
-    topNotesDetailed: [{ name: "Cognac" }],
-    heartNotesDetailed: [{ name: "Cannelle" }, { name: "Fève de tonka" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Praliné" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 10,
-    seasonData: { winter: 100, spring: 20, summer: 5, autumn: 95 }
-  },
-  {
-    id: "terre-d-hermes",
-    name: "Terre d'Hermès",
-    brand: "Hermès",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.8282.avif",
-    description: "Un récit symbolique tournant autour de la matière et de sa transformation.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Orange", "Pamplemousse"],
-    heartNotes: ["Poivre", "Pélargonium"],
-    baseNotes: ["Vétiver", "Cèdre", "Patchouli", "Benjoin"],
-    topNotesDetailed: [{ name: "Orange" }, { name: "Pamplemousse" }],
-    heartNotesDetailed: [{ name: "Poivre" }],
-    baseNotesDetailed: [{ name: "Vétiver" }, { name: "Cèdre" }],
-    sillage: "modéré",
-    longevite: "8h+",
-    jourPct: 85,
-    seasonData: { winter: 50, spring: 100, summer: 70, autumn: 95 }
-  },
-  {
-    id: "le-male-jpg",
-    name: "Le Male",
-    brand: "Jean Paul Gaultier",
-    image: "https://fimgs.net/mdimg/perfume/o.430.jpg",
-    description: "Une fragrance iconique qui bouscule les codes, alliant virilité et sensibilité.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Lavande", "Menthe", "Cardamome", "Bergamote", "Armoise"],
-    heartNotes: ["Cannelle", "Fleur d'oranger", "Carvi"],
-    baseNotes: ["Vanille", "Fève de tonka", "Ambre", "Santal", "Cèdre"],
-    topNotesDetailed: [{ name: "Lavande" }, { name: "Menthe" }],
-    heartNotesDetailed: [{ name: "Cannelle" }, { name: "Fleur d'oranger" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Fève de tonka" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 40,
-    seasonData: { winter: 70, spring: 90, summer: 40, autumn: 65 }
-  },
-  {
-    id: "eros-versace",
-    name: "Eros",
-    brand: "Versace",
-    image: "https://fimgs.net/mdimg/perfume/o.16657.jpg",
-    description: "Un parfum inspiré de la mythologie grecque, dégageant force, passion et désir.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Menthe", "Pomme verte", "Citron"],
-    heartNotes: ["Fève de tonka", "Ambroxan", "Géranium"],
-    baseNotes: ["Vanille de Madagascar", "Cèdre de Virginie", "Cèdre de l'Atlas", "Vétiver", "Mousse de chêne"],
-    topNotesDetailed: [{ name: "Menthe" }, { name: "Pomme verte" }],
-    heartNotesDetailed: [{ name: "Fève de tonka" }, { name: "Ambroxan" }],
-    baseNotesDetailed: [{ name: "Vanille" }, { name: "Cèdre" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 40,
-    seasonData: { winter: 85, spring: 70, summer: 60, autumn: 80 }
-  },
-  {
-    id: "acqua-di-gio",
-    name: "Acqua di Giò",
-    brand: "Armani",
-    image: "https://fimgs.net/mdimg/perfume/o.410.jpg",
-    description: "L'harmonie parfaite des notes aquatiques, florales et fruitées, évoquant la mer et le soleil.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Citron", "Bergamote", "Jasmin", "Orange", "Mandarine", "Néroli"],
-    heartNotes: ["Notes marines", "Jasmin", "Calone", "Pêche", "Freesia", "Jacinthe", "Cyclamen", "Romarin", "Violette", "Coriandre"],
-    baseNotes: ["Musc blanc", "Cèdre", "Mousse de chêne", "Patchouli", "Ambre"],
-    topNotesDetailed: [{ name: "Citron" }, { name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Notes marines" }, { name: "Jasmin" }],
-    baseNotesDetailed: [{ name: "Musc blanc" }, { name: "Cèdre" }],
-    sillage: "modéré",
-    longevite: "4-6h",
-    jourPct: 95,
-    seasonData: { winter: 10, spring: 90, summer: 100, autumn: 30 }
-  },
-  {
-    id: "good-girl",
-    name: "Good Girl",
-    brand: "Carolina Herrera",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.39681.avif",
-    description: "Un parfum puissant et sensuel, capturant la dualité de la femme moderne.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Amande", "Café", "Bergamote", "Citron"],
-    heartNotes: ["Tubéreuse", "Jasmin Sambac", "Fleur d'oranger", "Iris", "Rose de Bulgarie"],
-    baseNotes: ["Fève de tonka", "Cacao", "Vanille", "Praliné", "Santal", "Musc", "Ambre", "Bois de cachemire", "Cannelle", "Patchouli", "Cèdre"],
-    topNotesDetailed: [{ name: "Amande" }, { name: "Café" }],
-    heartNotesDetailed: [{ name: "Tubéreuse" }, { name: "Jasmin Sambac" }],
-    baseNotesDetailed: [{ name: "Fève de tonka" }, { name: "Cacao" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 15,
-    seasonData: { winter: 40, spring: 25, summer: 15, autumn: 30 }
-  },
-  {
-    id: "nomade-chloe",
-    name: "Nomade",
-    brand: "Chloé",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.53224.avif",
-    description: "Une fragrance qui évoque la liberté et l'aventure, mêlant force et douceur.",
-    gender: "femme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Mirabelle", "Bergamote", "Citron", "Orange"],
-    heartNotes: ["Freesia", "Pêche", "Jasmin", "Rose"],
-    baseNotes: ["Mousse de chêne", "Amberwood", "Patchouli", "Musc blanc", "Santal"],
-    topNotesDetailed: [{ name: "Mirabelle" }, { name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Freesia" }, { name: "Rose" }],
-    baseNotesDetailed: [{ name: "Mousse de chêne" }, { name: "Patchouli" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 75,
-    seasonData: { winter: 40, spring: 95, summer: 60, autumn: 80 }
-  },
-  {
-    id: "black-orchid-tf",
-    name: "Black Orchid",
-    brand: "Tom Ford",
-    image: "https://fimgs.net/mdimg/perfume/o.1018.jpg",
-    description: "Une fragrance luxueuse et sensuelle, mêlant des notes riches, sombres et captivantes.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Truffe", "Gardénia", "Cassis", "Ylang-Ylang", "Jasmin", "Bergamote", "Mandarine", "Citron d'Amalfi"],
-    heartNotes: ["Orchidée", "Épices", "Gardénia", "Notes fruitées", "Ylang-Ylang", "Jasmin", "Lotus"],
-    baseNotes: ["Chocolat mexicain", "Patchouli", "Vanille", "Encens", "Ambre", "Santal", "Vétiver", "Musc blanc"],
-    topNotesDetailed: [{ name: "Truffe" }, { name: "Ylang-Ylang" }],
-    heartNotesDetailed: [{ name: "Orchidée" }, { name: "Épices" }],
-    baseNotesDetailed: [{ name: "Chocolat mexicain" }, { name: "Patchouli" }],
-    sillage: "très fort",
-    longevite: "8h+",
-    jourPct: 10,
-    seasonData: { winter: 100, spring: 30, summer: 10, autumn: 95 }
-  },
-  {
-    id: "spicebomb",
-    name: "Spicebomb",
-    brand: "Viktor&Rolf",
-    image: "https://fimgs.net/mdimg/perfume/o.13857.jpg",
-    description: "Une explosion d'épices, un parfum masculin et addictif pour un homme audacieux.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Poivre rose", "Élémi", "Bergamote", "Pamplemousse"],
-    heartNotes: ["Cannelle", "Safran", "Paprika"],
-    baseNotes: ["Tabac", "Cuir", "Vétiver"],
-    topNotesDetailed: [{ name: "Poivre rose" }, { name: "Bergamote" }],
-    heartNotesDetailed: [{ name: "Cannelle" }, { name: "Safran" }],
-    baseNotesDetailed: [{ name: "Tabac" }, { name: "Cuir" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 20,
-    seasonData: { winter: 100, spring: 30, summer: 10, autumn: 95 }
-  },
-  {
-    id: "spicebomb-extreme",
-    name: "Spicebomb Extreme",
-    brand: "Viktor&Rolf",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.30499.avif",
-    description: "Une réinterprétation encore plus intense et captivante de l'explosion d'épices originale.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Poivre noir", "Pamplemousse", "Bergamote"],
-    heartNotes: ["Tabac", "Cannelle", "Cumin", "Safran"],
-    baseNotes: ["Vanille de Madagascar", "Bourbon", "Ciste-Labdanum"],
-    topNotesDetailed: [{ name: "Poivre noir" }, { name: "Pamplemousse" }],
-    heartNotesDetailed: [{ name: "Tabac" }, { name: "Cannelle" }, { name: "Safran" }],
-    baseNotesDetailed: [{ name: "Vanille de Madagascar" }, { name: "Ciste-Labdanum" }],
-    sillage: "très fort",
-    longevite: "8h+",
-    jourPct: 10,
-    seasonData: { winter: 100, spring: 15, summer: 5, autumn: 95 }
-  },
-  {
-    id: "the-one-dg",
-    name: "The One for Men",
-    brand: "Dolce & Gabbana",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.31909.avif",
-    description: "Un parfum sophistiqué et sensuel, alliant charisme et élégance.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Pamplemousse", "Coriandre", "Basilic"],
-    heartNotes: ["Gingembre", "Cardamome", "Fleur d'oranger"],
-    baseNotes: ["Tabac", "Ambre", "Cèdre"],
-    topNotesDetailed: [{ name: "Pamplemousse" }, { name: "Basilic" }],
-    heartNotesDetailed: [{ name: "Gingembre" }, { name: "Cardamome" }],
-    baseNotesDetailed: [{ name: "Tabac" }, { name: "Ambre" }],
-    sillage: "modéré",
-    longevite: "4-6h",
-    jourPct: 30,
-    seasonData: { winter: 90, spring: 40, summer: 15, autumn: 100 }
-  },
-  {
-    id: "prada-l-homme",
-    name: "Prada L'Homme",
-    brand: "Prada",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.39029.avif",
-    description: "Une fragrance propre et élégante, construite autour de l'iris et du néroli.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Néroli", "Cardamome", "Poivre noir", "Graine de carotte"],
-    heartNotes: ["Iris", "Géranium", "Violette", "Maté"],
-    baseNotes: ["Ambre", "Cèdre", "Santal", "Patchouli"],
-    topNotesDetailed: [{ name: "Néroli" }, { name: "Cardamome" }],
-    heartNotesDetailed: [{ name: "Iris" }, { name: "Géranium" }],
-    baseNotesDetailed: [{ name: "Ambre" }, { name: "Cèdre" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 90,
-    seasonData: { winter: 40, spring: 100, summer: 80, autumn: 70 }
-  },
-  {
-    id: "wanted-by-night",
-    name: "Wanted by Night",
-    brand: "Azzaro",
-    image: "https://fimgs.net/mdimg/perfume/o.49144.jpg",
-    description: "Un parfum nocturne audacieux et boisé, pour l'homme moderne qui vit intensément.",
-    gender: "homme",
-    concentration: "Eau de Parfum",
-    topNotes: ["Cannelle", "Mandarine", "Lavande", "Citron"],
-    heartNotes: ["Notes fruitées", "Encens", "Cèdre rouge", "Cumin"],
-    baseNotes: ["Tabac", "Vanille", "Cuir", "Cèdre", "Benjoin", "Iso E Super", "Cypriol", "Patchouli"],
-    topNotesDetailed: [{ name: "Cannelle" }, { name: "Mandarine" }],
-    heartNotesDetailed: [{ name: "Notes fruitées" }, { name: "Encens" }],
-    baseNotesDetailed: [{ name: "Tabac" }, { name: "Vanille" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 15,
-    seasonData: { winter: 100, spring: 25, summer: 10, autumn: 95 }
-  },
-  {
-    id: "born-in-roma",
-    name: "Born in Roma Uomo",
-    brand: "Valentino",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.101383.avif",
-    description: "Une célébration de l'élégance romaine, mêlant modernité et tradition.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Notes minérales", "Feuille de violette", "Sel"],
-    heartNotes: ["Gingembre", "Sauge"],
-    baseNotes: ["Notes boisées", "Vétiver"],
-    topNotesDetailed: [{ name: "Notes minérales" }, { name: "Feuille de violette" }],
-    heartNotesDetailed: [{ name: "Gingembre" }, { name: "Sauge" }],
-    baseNotesDetailed: [{ name: "Notes boisées" }, { name: "Vétiver" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 60,
-    seasonData: { winter: 60, spring: 90, summer: 70, autumn: 85 }
-  },
-  {
-    id: "cedrat-boise",
-    name: "Cedrat Boise",
-    brand: "Mancera",
-    image: "https://fimgs.net/mdimg/perfume/o.15211.jpg",
-    description: "Un mélange vibrant d'agrumes et de bois, évoquant la fraîcheur et la puissance.",
-    gender: "unisexe",
-    concentration: "Eau de Parfum",
-    topNotes: ["Citron de Sicile", "Cassis", "Bergamote", "Notes épicées"],
-    heartNotes: ["Notes fruitées", "Feuille de patchouli", "Jasmin d'eau"],
-    baseNotes: ["Cèdre", "Cuir", "Santal", "Vanille", "Mousse de chêne", "Musc blanc"],
-    topNotesDetailed: [{ name: "Citron de Sicile" }, { name: "Cassis" }],
-    heartNotesDetailed: [{ name: "Notes fruitées" }, { name: "Feuille de patchouli" }],
-    baseNotesDetailed: [{ name: "Cèdre" }, { name: "Cuir" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 80,
-    seasonData: { winter: 50, spring: 100, summer: 95, autumn: 80 }
-  },
-  {
-    id: "one-million-pr",
-    name: "1 Million",
-    brand: "Paco Rabanne",
-    image: "https://fimgs.net/mdimg/perfume/o.3747.jpg",
-    description: "Le parfum du succès, flamboyant et audacieux, pour l'homme qui aime l'or et le pouvoir.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Mandarine sanguine", "Pamplemousse", "Menthe"],
-    heartNotes: ["Cannelle", "Rose", "Notes épicées"],
-    baseNotes: ["Ambre", "Cuir", "Notes boisées", "Patchouli indien"],
-    topNotesDetailed: [{ name: "Mandarine sanguine" }, { name: "Menthe" }],
-    heartNotesDetailed: [{ name: "Cannelle" }, { name: "Rose" }],
-    baseNotesDetailed: [{ name: "Ambre" }, { name: "Cuir" }],
-    sillage: "fort",
-    longevite: "8h+",
-    jourPct: 25,
-    seasonData: { winter: 95, spring: 40, summer: 15, autumn: 90 }
-  },
-  {
-    id: "homme-ideal-guerlain",
-    name: "L'Homme Idéal",
-    brand: "Guerlain",
-    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.37735.avif",
-    description: "L'homme idéal est un mythe, mais son parfum est une réalité. Entre intelligence et force.",
-    gender: "homme",
-    concentration: "Eau de Toilette",
-    topNotes: ["Agrumes", "Romarin", "Fleur d'oranger", "Bitter Orange"],
-    heartNotes: ["Amande", "Fève de tonka"],
-    baseNotes: ["Cuir", "Cèdre", "Vétiver"],
-    topNotesDetailed: [{ name: "Agrumes" }, { name: "Romarin" }],
-    heartNotesDetailed: [{ name: "Amande" }, { name: "Fève de tonka" }],
-    baseNotesDetailed: [{ name: "Cuir" }, { name: "Cèdre" }],
-    sillage: "modéré",
-    longevite: "6-8h",
-    jourPct: 60,
-    seasonData: { winter: 90, spring: 60, summer: 20, autumn: 100 }
-  },
-  {
-    id: "acqua-di-parma-colonia",
-    name: "Colonia",
-    brand: "Acqua di Parma",
-    image: "https://fimgs.net/mdimg/perfume/o.1681.jpg",
-    description: "L'élégance italienne authentique. Un classique intemporel né en 1916.",
-    gender: "unisexe",
-    concentration: "Eau de Cologne",
-    topNotes: ["Citron de Sicile", "Orange douce", "Bergamote de Calabre"],
-    heartNotes: ["Lavande", "Rose de Bulgarie", "Romarin", "Verveine"],
-    baseNotes: ["Vétiver", "Santal", "Patchouli"],
-    topNotesDetailed: [{ name: "Citron de Sicile" }, { name: "Orange douce" }],
-    heartNotesDetailed: [{ name: "Lavande" }, { name: "Rose de Bulgarie" }],
-    baseNotesDetailed: [{ name: "Vétiver" }, { name: "Santal" }],
-    sillage: "modéré",
-    longevite: "2-4h",
-    jourPct: 95,
-    seasonData: { winter: 20, spring: 90, summer: 100, autumn: 40 }
-  }
+const STEP_LABELS: Record<Step, string> = {
+  top: "Notes de Tête",
+  heart: "Notes de Cœur",
+  base: "Notes de Fond",
+  atmosphere: "Occasion",
+};
+
+const STEP_DESCRIPTIONS: Record<Step, string> = {
+  top: "Les premières impressions, fraîches et volatiles",
+  heart: "Le cœur du parfum, son caractère profond",
+  base: "La signature qui perdure sur la peau",
+  atmosphere: "Pour quelle occasion cherchez-vous un parfum ?",
+};
+
+const NOTE_FAMILIES: Record<string, string[]> = {
+  top: ["hesperides", "aromatiques", "marines", "epices-fraiches", "fruits-legers"],
+  heart: ["florales", "fruitees", "epices-chaudes", "notes-vertes"],
+  base: ["boisees", "ambrees", "gourmandes", "musquees", "mousses"],
+};
+
+const FAMILY_LABELS: Record<string, string> = {
+  hesperides: "Hespéridés",
+  aromatiques: "Aromatiques",
+  marines: "Marines",
+  "epices-fraiches": "Épices Fraîches",
+  "fruits-legers": "Fruits Légers",
+  florales: "Florales",
+  fruitees: "Fruités",
+  "epices-chaudes": "Épices Chaudes",
+  "notes-vertes": "Notes Vertes",
+  boisees: "Boisées",
+  ambrees: "Ambrées",
+  gourmandes: "Gourmandes",
+  musquees: "Musquées",
+  mousses: "Mousses",
+};
+
+const ATMOSPHERES = [
+  { id: "soir", label: "Soirée", emoji: "🌙" },
+  { id: "quotidien", label: "Quotidien", emoji: "☀️" },
+  { id: "business", label: "Business", emoji: "💼" },
+  { id: "rendezvous", label: "Rendez-vous", emoji: "💕" },
+  { id: "aid", label: "Aïd", emoji: "🕌" },
+  { id: "mariage", label: "Mariage", emoji: "💍" },
+  { id: "famille", label: "En famille", emoji: "👨‍👩‍👧‍👦" },
+  { id: "ramadan", label: "Ramadan", emoji: "🌙" },
 ];
+
+const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidScreenProps) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [selectedTop, setSelectedTop] = useState<NoteCategory[]>([]);
+  const [selectedHeart, setSelectedHeart] = useState<NoteCategory[]>([]);
+  const [selectedBase, setSelectedBase] = useState<NoteCategory[]>([]);
+  const [selectedAtmosphere, setSelectedAtmosphere] = useState<string | undefined>();
+
+  const step = STEPS[currentStep];
+
+  // Internal back handler for parent navigation
+  useEffect(() => {
+    setInternalBackHandler(() => {
+      if (currentStep > 0) {
+        setCurrentStep((s) => s - 1);
+        return true;
+      }
+      return false;
+    });
+  }, [currentStep, setInternalBackHandler]);
+
+  const toggleNote = useCallback(
+    (note: NoteCategory) => {
+      const setter =
+        step === "top" ? setSelectedTop : step === "heart" ? setSelectedHeart : setSelectedBase;
+      setter((prev) =>
+        prev.includes(note) ? prev.filter((n) => n !== note) : [...prev, note]
+      );
+    },
+    [step]
+  );
+
+  const currentSelection =
+    step === "top" ? selectedTop : step === "heart" ? selectedHeart : selectedBase;
+
+  const canProceed =
+    step === "atmosphere" ? true : currentSelection.length > 0;
+
+  const handleNext = () => {
+    if (currentStep < STEPS.length - 1) {
+      setCurrentStep((s) => s + 1);
+    } else {
+      onValidate(selectedTop, selectedHeart, selectedBase, selectedAtmosphere);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-start p-6 pt-24 pb-40">
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="w-full max-w-2xl space-y-8"
+      >
+        {/* Progress */}
+        <motion.div variants={staggerItem} className="flex gap-2 justify-center">
+          {STEPS.map((s, i) => (
+            <div
+              key={s}
+              className={`h-1 flex-1 max-w-16 rounded-full transition-all duration-500 ${
+                i <= currentStep ? "bg-primary" : "bg-primary/20"
+              }`}
+            />
+          ))}
+        </motion.div>
+
+        {/* Header */}
+        <motion.div variants={staggerItem} className="text-center space-y-3">
+          <h2 className="font-display text-3xl md:text-4xl text-primary tracking-tight">
+            {STEP_LABELS[step]}
+          </h2>
+          <p className="text-muted-foreground text-sm tracking-wide">
+            {STEP_DESCRIPTIONS[step]}
+          </p>
+        </motion.div>
+
+        {/* Content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -30 }}
+            transition={{ duration: 0.3 }}
+          >
+            {step === "atmosphere" ? (
+              <div className="grid grid-cols-2 gap-4">
+                {ATMOSPHERES.map((atm) => (
+                  <button
+                    key={atm.id}
+                    onClick={() =>
+                      setSelectedAtmosphere(
+                        selectedAtmosphere === atm.id ? undefined : atm.id
+                      )
+                    }
+                    className={`glass-card p-5 text-center transition-all duration-300 rounded-sm ${
+                      selectedAtmosphere === atm.id
+                        ? "gold-border-glow ring-1 ring-primary/50"
+                        : "hover:bg-primary/5"
+                    }`}
+                  >
+                    <span className="text-2xl block mb-2">{atm.emoji}</span>
+                    <span className="text-sm tracking-wider text-primary/80">
+                      {atm.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {NOTE_FAMILIES[step]?.map((family) => {
+                  const isSelected = currentSelection.includes(family);
+                  return (
+                    <button
+                      key={family}
+                      onClick={() => toggleNote(family)}
+                      className={`glass-card p-5 text-center transition-all duration-300 rounded-sm ${
+                        isSelected
+                          ? "gold-border-glow ring-1 ring-primary/50"
+                          : "hover:bg-primary/5"
+                      }`}
+                    >
+                      <span className="text-sm tracking-wider text-primary/80">
+                        {FAMILY_LABELS[family] || family}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Actions */}
+        <motion.div variants={staggerItem} className="flex justify-center pt-4">
+          <button
+            onClick={handleNext}
+            disabled={!canProceed}
+            className={`px-10 py-3.5 text-xs tracking-[0.25em] uppercase transition-all duration-500 rounded-sm ${
+              canProceed
+                ? "glass-card gold-border-glow text-primary hover:gold-glow"
+                : "glass-card text-muted-foreground/40 cursor-not-allowed"
+            }`}
+          >
+            {currentStep === STEPS.length - 1 ? "Découvrir" : "Suivant"}
+          </button>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default PyramidScreen;

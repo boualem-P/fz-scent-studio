@@ -122,7 +122,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const [cardKey, setCardKey] = useState(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
-  const cardRotate = useTransform(x, [-200, 200], [-15, 15]);
+  const cardRotate = useTransform(x, [-200, 200], [0, 0]);
   const positiveOverlayOpacity = useTransform(x, [40, 130], [0, 1]);
   const negativeOverlayOpacity = useTransform(x, [-130, -40], [1, 0]);
 
@@ -410,7 +410,7 @@ const handleSwipe = (liked: boolean) => {
             }}
             initial={{ x: 0, scale: 0.95, opacity: 0 }}
             animate={{ x: 0, scale: 1, opacity: 1 }}
-            exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, rotate: x.get() > 0 ? 20 : -20 }}
+            exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, rotate: 0 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="absolute bg-white rounded-2xl overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing touch-none"
           >

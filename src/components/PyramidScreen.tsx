@@ -410,7 +410,7 @@ const handleSwipe = (liked: boolean) => {
             }}
             initial={{ x: 0, scale: 0.95, opacity: 0 }}
             animate={{ x: 0, scale: 1, opacity: 1 }}
-            exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, rotate: x.get() > 0 ? 20 : -20 }}
+            exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, rotate: 0 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className="absolute bg-white rounded-2xl overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing touch-none"
           >

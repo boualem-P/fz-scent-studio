@@ -27,7 +27,7 @@ export interface Perfume {
   sillage?: "discret" | "modéré" | "fort" | "très fort";
   longevite?: "2-4h" | "4-6h" | "6-8h" | "8h+";
   // jourPct : pourcentage jour (0-100), nuit = 100 - jourPct
-  jourPct?: 0 | 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100;
+  jourPct?: number;
   seasonData: SeasonData;
 }
 

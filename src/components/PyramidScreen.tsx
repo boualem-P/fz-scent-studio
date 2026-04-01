@@ -318,7 +318,9 @@ const handleSwipe = (liked: boolean) => {
 
       {/* Emoji ? gauche */}
       <motion.div
-        animate={x.get() < -80 ? {
+        animate={{
+          scale: useTransform(x, [-120, -80, 0], [1.3, 1.1, 1]),
+          }}
           scale: 1.3,
           boxShadow: "0 0 20px rgba(239,68,68,0.8)",
           borderColor: "rgba(239,68,68,1)"
@@ -413,27 +415,28 @@ const handleSwipe = (liked: boolean) => {
           >
             {/* Overlay vert */}
             <motion.div
-              style={{ opacity: useTransform(x, [40, 130], [0, 1]) }}
-              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
-              style={{
-                background: "rgba(34,197,94,0.12)",
-                border: "3px solid rgba(34,197,94,0.8)",
-                borderRadius: 16,
-                pointerEvents: "none",
-              }}
-            />
+  style={{
+    opacity: useTransform(x, [40, 130], [0, 1]),
+    background: "rgba(34,197,94,0.12)",
+    border: "3px solid rgba(34,197,94,0.8)",
+    borderRadius: 16,
+    pointerEvents: "none",
+  }}
+  className="absolute inset-0 z-20 rounded-2xl"
+/>
 
             {/* Overlay rouge */}
             <motion.div
-              style={{ opacity: useTransform(x, [-130, -40], [1, 0]) }}
-              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
-              style={{
-                background: "rgba(239,68,68,0.12)",
-                border: "3px solid rgba(239,68,68,0.8)",
-                borderRadius: 16,
-                pointerEvents: "none",
-              }}
-            />
+  style={{
+    opacity: useTransform(x, [-130, -40], [1, 0]),
+    background: "rgba(239,68,68,0.12)",
+    border: "3px solid rgba(239,68,68,0.8)",
+    borderRadius: 16,
+    pointerEvents: "none",
+  }}
+  className="..."
+/>
+
 
             {/* Image */}
             <div className="w-full pointer-events-none" style={{ height: "55%" }}>

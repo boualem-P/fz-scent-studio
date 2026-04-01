@@ -122,6 +122,9 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const [cardKey, setCardKey] = useState(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
+  const cardRotate = useTransform(x, [-200, 200], [-15, 15]);
+  const positiveOverlayOpacity = useTransform(x, [40, 130], [0, 1]);
+  const negativeOverlayOpacity = useTransform(x, [-130, -40], [1, 0]);
 
   const [selectedAtm, setSelectedAtm] = useState<typeof ATMOSPHERES[0] | null>(null);
 
@@ -392,7 +395,7 @@ const handleSwipe = (liked: boolean) => {
             key={`${steps[currentStep]}-${noteIndex}`}
             style={{
               x,
-              rotate: useTransform(x, [-200, 200], [-15, 15]),
+              rotate: cardRotate,
               zIndex: 20,
               width: "min(320px, 80vw)",
               height: "min(480px, 64vh)",
@@ -414,7 +417,7 @@ const handleSwipe = (liked: boolean) => {
             {/* Overlay vert */}
             <motion.div
               style={{
-                opacity: useTransform(x, [40, 130], [0, 1]),
+                opacity: positiveOverlayOpacity,
                 background: "rgba(34,197,94,0.12)",
                 border: "3px solid rgba(34,197,94,0.8)",
                 borderRadius: 16,
@@ -426,7 +429,7 @@ const handleSwipe = (liked: boolean) => {
             {/* Overlay rouge */}
             <motion.div
               style={{
-                opacity: useTransform(x, [-130, -40], [1, 0]),
+                opacity: negativeOverlayOpacity,
                 background: "rgba(239,68,68,0.12)",
                 border: "3px solid rgba(239,68,68,0.8)",
                 borderRadius: 16,

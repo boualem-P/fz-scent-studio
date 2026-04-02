@@ -9,6 +9,7 @@ import ResultsScreen from "@/components/ResultsScreen";
 import CatalogueScreen from "@/components/CatalogueScreen";
 import { NOTES_IMAGES } from "@/data/notesData";
 import AnalyzingLoader from "@/components/AnalyzingLoader";
+import GoldenRain from "@/components/GoldenRain";
 import PerfumePage from "@/components/PerfumePage"; 
 import { Gender, NoteCategory, matchPerfumes, Perfume, PERFUMES } from "@/data/perfumes"; 
 import LightWipeTransition from "@/components/LightWipeTransition";

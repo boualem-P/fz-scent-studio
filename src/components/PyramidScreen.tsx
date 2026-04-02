@@ -116,8 +116,10 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const steps = ["top", "heart", "base"];
-  const notesAvailable = NOTES_DATA[steps[currentStep]];
-  const currentNote = notesAvailable[noteIndex];
+  const notesAvailable = NOTES_DATA[steps[currentStep]] || [];
+
+  const currentNote = notesAvailable[noteIndex] || null;
+
 
   const x = useMotionValue(0);
   const frownScale = useTransform(x, [-130, -80, -50], [1.3, 1.3, 1]);
@@ -394,7 +396,8 @@ const handleSwipe = (liked: boolean) => {
         {/* Carte active — au dessus */}
         {currentNote && <AnimatePresence mode="popLayout">
           <motion.div
-            key={`${steps[currentStep]}-${noteIndex}`}
+            key={`${steps[currentStep]}-${noteIndex}-${cardKey}`}
+
             style={{
               x,
               rotate: cardRotate,

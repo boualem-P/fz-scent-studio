@@ -702,7 +702,10 @@ const handleSwipe = (liked: boolean) => {
             <div className="w-16 h-16 rounded-full flex flex-col items-center justify-center border-2 border-white/30 overflow-hidden relative shadow-lg">
               <img src={atm.img} alt={atm.label} className="absolute inset-0 w-full h-full object-cover opacity-40" />
               <div className="absolute inset-0 bg-black/40" />
-              <span className="relative z-10 text-2xl">{atm.icon}</span>
+              <span className="relative z-10 text-2xl leading-none">
+  {atm.icon}
+</span>
+
             </div>
             <span className="text-[7px] font-bold uppercase tracking-wider text-center text-white/60 w-24 leading-tight">
               {atm.label}

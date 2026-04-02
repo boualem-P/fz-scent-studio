@@ -492,7 +492,7 @@ const handleSwipe = (liked: boolean) => {
               </div>
             </div>
           </motion.div>
-        </AnimatePresence>
+        </AnimatePresence>}
       </div>
     </div>
 

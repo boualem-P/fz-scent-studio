@@ -280,8 +280,6 @@ const handleSwipe = (liked: boolean) => {
     </motion.button>
   );
 
-  if (!currentNote) return null;
-
   return (
     <div className="relative h-screen bg-black text-white flex flex-col items-center pt-16 px-4 select-none overflow-hidden">
       <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />

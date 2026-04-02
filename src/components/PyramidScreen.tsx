@@ -9,6 +9,17 @@ interface PyramidScreenProps {
   setInternalBackHandler: (fn: () => boolean) => void;
 }
 
+const STEP_KEYS = ["top", "heart", "base"] as const;
+type StepKey = (typeof STEP_KEYS)[number];
+
+type NoteCard = {
+  id: NoteCategory;
+  label: string;
+  img: string;
+  sub: string;
+  tags: string[];
+};
+
 const FAMILIES = ['AGRUMES', 'ANIMAL', 'BOISÉ', 'ÉPICÉ', 'FLORAL', 'FRUITÉ', 'SUCRÉ', 'MARINE'];
 
 const RADAR_TO_FAMILY: Record<string, string[]> = {
@@ -22,7 +33,7 @@ const RADAR_TO_FAMILY: Record<string, string[]> = {
   'MARINE':  ['marines'],
 };
 
-const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string, sub: string, tags: string[] }[]> = {
+const NOTES_DATA: Record<StepKey, NoteCard[]> = {
   top: [
     { id: "hesperides", label: "Lumière du Matin", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEGXwYm46Mp9tr5luXGPCodZofYO4jN0XimA&s", sub: "Éclat Hespéridé", tags: ["Bergamote", "Citron", "Mandarine"] },
     { id: "marines", label: "Souffle Marin", img: "https://png.pngtree.com/thumb_back/fh260/background/20241101/pngtree-tranquil-underwater-landscape-featuring-colorful-rocks-surrounded-by-diverse-aquatic-flora-image_16484128.jpg", sub: "Fraîcheur Aquatique & Pure", tags: ["Sel marin", "Algues", "Air iodé"] },
@@ -37,6 +48,14 @@ const NOTES_DATA: Record<string, { id: NoteCategory, label: string, img: string,
     { id: "boisees", label: "Bois Sacré", img: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=400", sub: "Profondeur Boisée", tags: ["Santal", "Cèdre", "Vétiver"] },
     { id: "gourmandes", label: "Secret Sucré", img: "https://i.ibb.co/8StFqcr/88535382628.png", sub: "Tentation Gourmande", tags: ["Vanille", "Tonka", "Caramel"] }
   ]
+};
+
+const EMPTY_NOTE: NoteCard = {
+  id: "",
+  label: "",
+  img: "",
+  sub: "",
+  tags: [],
 };
 
 const IconParfum = () => (
@@ -113,15 +132,14 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const [noteIndex, setNoteIndex] = useState(0);
   const [intensities, setIntensities] = useState<number[]>(FAMILIES.map(() => 0.5));
   const [selections, setSelections] = useState<{ top: NoteCategory[], heart: NoteCategory[], base: NoteCategory[] }>({ top: [], heart: [], base: [] });
+  const [cardKey, setCardKey] = useState(0);
+  const [selectedAtm, setSelectedAtm] = useState<typeof ATMOSPHERES[0] | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  const steps = ["top", "heart", "base"];
-  const notesAvailable = NOTES_DATA[steps[currentStep]] || [];
-
-  const currentNote = notesAvailable[noteIndex] || null;
-
-
   const x = useMotionValue(0);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const activePointer = useRef<number | null>(null);
+  const activeIndex = useRef<number | null>(null);
+
   const frownScale = useTransform(x, [-130, -80, -50], [1.3, 1.3, 1]);
   const frownShadow = useTransform(x, [-130, -80, -50], ["0 0 20px rgba(239,68,68,0.8)", "0 0 20px rgba(239,68,68,0.8)", "none"]);
   const frownBorder = useTransform(x, [-130, -80, -50], ["rgba(239,68,68,1)", "rgba(239,68,68,1)", "rgba(239,68,68,0.5)"]);
@@ -129,17 +147,21 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const smileScale = useTransform(x, [50, 80, 130], [1, 1.3, 1.3]);
   const smileShadow = useTransform(x, [50, 80, 130], ["none", "0 0 20px rgba(34,197,94,0.8)", "0 0 20px rgba(34,197,94,0.8)"]);
   const smileBorder = useTransform(x, [50, 80, 130], ["rgba(34,197,94,0.5)", "rgba(34,197,94,1)", "rgba(34,197,94,1)"]);
-  const [cardKey, setCardKey] = useState(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
   const cardRotate = useTransform(x, [-200, 200], [0, 0]);
   const positiveOverlayOpacity = useTransform(x, [40, 130], [0, 1]);
   const negativeOverlayOpacity = useTransform(x, [-130, -40], [1, 0]);
 
-  const [selectedAtm, setSelectedAtm] = useState<typeof ATMOSPHERES[0] | null>(null);
-
   // -- MODIFICATION 1 : spring config plus réactif pour le polygone uniquement --
   const polygonSpring = { stiffness: 400, damping: 30, mass: 0.5 };
+
+  const currentStepKey = STEP_KEYS[currentStep] ?? STEP_KEYS[0];
+  const notesAvailable = NOTES_DATA[currentStepKey] ?? [];
+  const hasSwipeCards = notesAvailable.length > 0;
+  const hasCurrentNote = noteIndex >= 0 && noteIndex < notesAvailable.length;
+  const currentNote = hasCurrentNote ? notesAvailable[noteIndex] ?? EMPTY_NOTE : EMPTY_NOTE;
+  const currentCardPosition = hasCurrentNote ? noteIndex + 1 : 0;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -199,9 +221,11 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   };
 
 const handleSwipe = (liked: boolean) => {
-  if (!currentNote) return;
-  const key = steps[currentStep] as keyof typeof selections;
-  if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
+  if (!hasCurrentNote) return;
+  const key = currentStepKey;
+  if (liked && currentNote?.id) {
+    setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
+  }
   
   setTimeout(() => {
     x.set(0);
@@ -230,11 +254,6 @@ const handleSwipe = (liked: boolean) => {
     const angle = (Math.PI * 2 * index) / FAMILIES.length - Math.PI / 2;
     return { x: center + radius * intensity * Math.cos(angle), y: center + radius * intensity * Math.sin(angle) };
   };
-
-  // -- MODIFICATION 3 : drag direct via pointerId pour fluidité maximale --
-  const svgRef = useRef<SVGSVGElement>(null);
-  const activePointer = useRef<number | null>(null);
-  const activeIndex = useRef<number | null>(null);
 
   const handlePointerDown = (e: React.PointerEvent, index: number) => {
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -358,143 +377,153 @@ const handleSwipe = (liked: boolean) => {
   <Smile size={24} className="text-emerald-400" strokeWidth={2} />
 </motion.div>
       {/* Stack de cartes */}
-      <div className="relative flex items-center justify-center"
-        style={{ width: "min(320px, 80vw)", height: "min(480px, 64vh)" }}>
+      {hasSwipeCards ? (
+        <div className="relative flex items-center justify-center"
+          style={{ width: "min(320px, 80vw)", height: "min(480px, 64vh)" }}>
 
-        {/* Cartes du dessous — visibles derrière */}
-        {notesAvailable.slice(noteIndex + 1, noteIndex + 3).map((note, i) => (
-          <div
-            key={note.id}
-            className="absolute bg-white rounded-2xl overflow-hidden shadow-xl"
-            style={{
-              width: "min(320px, 80vw)",
-              height: "min(480px, 64vh)",
-              transform: `translateX(${(i + 1) * 18}px) translateY(${(i + 1) * -6}px) scale(${1 - (i + 1) * 0.04})`,
-              zIndex: 10 - i,
-              opacity: 1 - i * 0.15,
-            }}
-          >
-            <div style={{ height: "55%", width: "100%" }}>
-              <img src={note.img} className="w-full h-full object-cover" alt="" />
-            </div>
-            <div className="flex flex-col items-start justify-center px-5 py-4 bg-white"
-              style={{ height: "45%" }}>
-              <h3 className="text-xl font-semibold text-zinc-900"
-                style={{ fontFamily: "Georgia, serif" }}>
-                {note.label}
-              </h3>
-              <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-400 mt-2">
-                Équivalent en parfumerie
-              </p>
-              <p className="text-amber-600 text-sm font-medium mt-1">
-                {note.tags[0]}
-              </p>
-            </div>
-          </div>
-        ))}
-
-        {/* Carte active — au dessus */}
-        {currentNote && <AnimatePresence mode="popLayout">
-          <motion.div
-            key={`${steps[currentStep]}-${noteIndex}-${cardKey}`}
-
-            style={{
-              x,
-              rotate: cardRotate,
-              zIndex: 20,
-              width: "min(320px, 80vw)",
-              height: "min(480px, 64vh)",
-            }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.9}
-            onDragEnd={(_, info) => {
-              if (info.offset.x > 100) handleSwipe(true);
-              else if (info.offset.x < -100) handleSwipe(false);
-              else x.set(0);
-            }}
-            initial={{ x: 0, scale: 0.95, opacity: 0 }}
-            animate={{ x: 0, scale: 1, opacity: 1 }}
-            exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute bg-white rounded-2xl overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing touch-none"
-          >
-            {/* Overlay vert */}
-            <motion.div
-              style={{
-                opacity: positiveOverlayOpacity,
-                background: "rgba(34,197,94,0.12)",
-                border: "3px solid rgba(34,197,94,0.8)",
-                borderRadius: 16,
-                pointerEvents: "none",
-              }}
-              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
-            />
-
-            {/* Overlay rouge */}
-            <motion.div
-              style={{
-                opacity: negativeOverlayOpacity,
-                background: "rgba(239,68,68,0.12)",
-                border: "3px solid rgba(239,68,68,0.8)",
-                borderRadius: 16,
-                pointerEvents: "none",
-              }}
-              className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
-            />
-
-            {/* Image */}
-            <div className="w-full pointer-events-none" style={{ height: "55%" }}>
-              <img
-                src={currentNote.img}
-                draggable="false"
-                className="w-full h-full object-cover"
-                alt={currentNote.label}
-              />
-            </div>
-
-            {/* Contenu */}
+          {/* Cartes du dessous — visibles derrière */}
+          {notesAvailable.slice(noteIndex + 1, noteIndex + 3).map((note, i) => (
             <div
-              className="w-full flex flex-col items-start justify-center px-5 py-4 bg-white pointer-events-none"
-              style={{ height: "45%" }}
+              key={note?.id || `${currentStepKey}-${noteIndex}-${i}`}
+              className="absolute bg-white rounded-2xl overflow-hidden shadow-xl"
+              style={{
+                width: "min(320px, 80vw)",
+                height: "min(480px, 64vh)",
+                transform: `translateX(${(i + 1) * 18}px) translateY(${(i + 1) * -6}px) scale(${1 - (i + 1) * 0.04})`,
+                zIndex: 10 - i,
+                opacity: 1 - i * 0.15,
+              }}
             >
-              <h3
-                className="text-xl font-semibold text-zinc-900 mb-1"
-                style={{ fontFamily: "Georgia, serif" }}
-              >
-                {currentNote.label}
-              </h3>
-              <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest mb-2">
-                {currentNote.sub}
-              </p>
-              <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-400 mb-2">
-                Équivalent en parfumerie
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {currentNote.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
-                    style={{
-                      background: "#fffbeb",
-                      color: "#92400e",
-                      border: "1px solid #fcd34d",
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
+              <div style={{ height: "55%", width: "100%" }}>
+                <img src={note?.img || ""} className="w-full h-full object-cover" alt={note?.label || ""} />
+              </div>
+              <div className="flex flex-col items-start justify-center px-5 py-4 bg-white"
+                style={{ height: "45%" }}>
+                <h3 className="text-xl font-semibold text-zinc-900"
+                  style={{ fontFamily: "Georgia, serif" }}>
+                  {note?.label || ""}
+                </h3>
+                <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-400 mt-2">
+                  Équivalent en parfumerie
+                </p>
+                <p className="text-amber-600 text-sm font-medium mt-1">
+                  {note?.tags?.[0] || ""}
+                </p>
               </div>
             </div>
-          </motion.div>
-        </AnimatePresence>}
-      </div>
+          ))}
+
+          {/* Carte active — au dessus */}
+          {hasCurrentNote && <AnimatePresence mode="popLayout">
+            <motion.div
+              key={`${currentStepKey}-${noteIndex}-${cardKey}`}
+
+              style={{
+                x,
+                rotate: cardRotate,
+                zIndex: 20,
+                width: "min(320px, 80vw)",
+                height: "min(480px, 64vh)",
+              }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.9}
+              onDragEnd={(_, info) => {
+                if (info.offset.x > 100) handleSwipe(true);
+                else if (info.offset.x < -100) handleSwipe(false);
+                else x.set(0);
+              }}
+              initial={{ x: 0, scale: 0.95, opacity: 0 }}
+              animate={{ x: 0, scale: 1, opacity: 1 }}
+              exit={{ x: x.get() > 0 ? 600 : -600, opacity: 0, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              className="absolute bg-white rounded-2xl overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing touch-none"
+            >
+              {/* Overlay vert */}
+              <motion.div
+                style={{
+                  opacity: positiveOverlayOpacity,
+                  background: "rgba(34,197,94,0.12)",
+                  border: "3px solid rgba(34,197,94,0.8)",
+                  borderRadius: 16,
+                  pointerEvents: "none",
+                }}
+                className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
+              />
+
+              {/* Overlay rouge */}
+              <motion.div
+                style={{
+                  opacity: negativeOverlayOpacity,
+                  background: "rgba(239,68,68,0.12)",
+                  border: "3px solid rgba(239,68,68,0.8)",
+                  borderRadius: 16,
+                  pointerEvents: "none",
+                }}
+                className="absolute inset-0 z-20 pointer-events-none rounded-2xl"
+              />
+
+              {/* Image */}
+              <div className="w-full pointer-events-none" style={{ height: "55%" }}>
+                <img
+                  src={currentNote?.img || ""}
+                  draggable="false"
+                  className="w-full h-full object-cover"
+                  alt={currentNote?.label || ""}
+                />
+              </div>
+
+              {/* Contenu */}
+              <div
+                className="w-full flex flex-col items-start justify-center px-5 py-4 bg-white pointer-events-none"
+                style={{ height: "45%" }}
+              >
+                <h3
+                  className="text-xl font-semibold text-zinc-900 mb-1"
+                  style={{ fontFamily: "Georgia, serif" }}
+                >
+                  {currentNote?.label || ""}
+                </h3>
+                <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest mb-2">
+                  {currentNote?.sub || ""}
+                </p>
+                <p className="text-[8px] uppercase tracking-[0.25em] text-zinc-400 mb-2">
+                  Équivalent en parfumerie
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {currentNote?.tags?.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider"
+                      style={{
+                        background: "#fffbeb",
+                        color: "#92400e",
+                        border: "1px solid #fcd34d",
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>}
+        </div>
+      ) : (
+        <div className="flex items-center justify-center px-6"
+          style={{ width: "min(320px, 80vw)", height: "min(480px, 64vh)" }}>
+          <div className="w-full rounded-2xl border border-white/10 bg-white/5 px-6 py-8 text-center backdrop-blur-sm">
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-300">Aucune carte disponible</p>
+            <p className="mt-3 text-xs text-zinc-500">Le parcours reste affiché même si les données de cette étape sont absentes.</p>
+          </div>
+        </div>
+      )}
     </div>
 
     {/* Compteur */}
     <div className="mt-4 text-center">
       <p className="text-zinc-600 text-[9px] uppercase tracking-[0.4em]">
-        {noteIndex + 1} / {notesAvailable.length}
+        {currentCardPosition} / {notesAvailable.length}
       </p>
     </div>
   </motion.div>

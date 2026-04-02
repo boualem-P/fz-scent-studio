@@ -73,7 +73,7 @@ const ATMOSPHERES = [
   { id: 'mariage', label: 'Mariage & Fiançailles', icon: "💍", desc: "Somptueux & inoubliable", img: "...", group: 'occasions' },
   { id: 'soir', label: 'Soirée & Sorties', icon: "🎉", desc: "Intense & magnétique", img: "...", group: 'occasions' },
   { id: 'rendezvous', label: 'Rendez-vous', icon: "💫", desc: "Sensuel & captivant", img: "...", group: 'intime' },
-  { id: 'famille', label: 'En famille', icon: "👨‍👩‍👧", desc: "Chaleureux & bienveillant", img: "...", group: 'intime' },
+  { id: 'famille', label: 'En famille', icon: "🏡", desc: "Chaleureux & bienveillant", img: "...", group: 'intime' },
   { id: 'ramadan', label: 'Ramadan', icon: "🌙", desc: "Doux, oud & spirituel", img: "...", group: 'intime' },
 ];
 
@@ -702,9 +702,22 @@ const handleSwipe = (liked: boolean) => {
             <div className="w-16 h-16 rounded-full flex flex-col items-center justify-center border-2 border-white/30 overflow-hidden relative shadow-lg">
               <img src={atm.img} alt={atm.label} className="absolute inset-0 w-full h-full object-cover opacity-40" />
               <div className="absolute inset-0 bg-black/40" />
-              <span className="relative z-10 text-2xl leading-none">
-  {atm.icon}
-</span>
+              <div className="relative w-16 h-16 rounded-full overflow-hidden flex items-center justify-center">
+  
+  <img
+    src={atm.img}
+    alt={atm.label}
+    className="absolute inset-0 w-full h-full object-cover opacity-30"
+  />
+
+  <div className="absolute inset-0 bg-black/40" />
+
+  <span className="relative z-10 text-2xl leading-none">
+    {atm.icon}
+  </span>
+
+</div>
+
 
             </div>
             <span className="text-[7px] font-bold uppercase tracking-wider text-center text-white/60 w-24 leading-tight">

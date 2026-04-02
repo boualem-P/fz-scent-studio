@@ -699,24 +699,25 @@ const handleSwipe = (liked: boolean) => {
               height: 64,
             }}
           >
-            <div className="w-16 h-16 rounded-full flex flex-col items-center justify-center border-2 border-white/30 overflow-hidden relative shadow-lg">
-              <img src={atm.img} alt={atm.label} className="absolute inset-0 w-full h-full object-cover opacity-40" />
-              <div className="absolute inset-0 bg-black/40" />
-              <div className="relative w-16 h-16 rounded-full overflow-hidden flex items-center justify-center">
-  
+            <div className="relative w-16 h-16 rounded-full overflow-hidden flex items-center justify-center border-2 border-white/30 shadow-lg">
+
+  {/* Image fond */}
   <img
     src={atm.img}
     alt={atm.label}
-    className="absolute inset-0 w-full h-full object-cover opacity-30"
+    className="absolute inset-0 w-full h-full object-cover opacity-30 blur-[1px] scale-110"
   />
 
-  <div className="absolute inset-0 bg-black/40" />
+  {/* Overlay */}
+  <div className="absolute inset-0 bg-black/50" />
 
+  {/* Icône */}
   <span className="relative z-10 text-2xl leading-none">
     {atm.icon}
   </span>
 
 </div>
+
 
 
             </div>

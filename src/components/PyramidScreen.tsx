@@ -119,6 +119,13 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   const currentNote = notesAvailable[noteIndex];
 
   const x = useMotionValue(0);
+  const frownScale = useTransform(x, [-130, -80, 0], [1.3, 1.3, 1]);
+  const frownShadow = useTransform(x, [-130, -80, 0], ["0 0 20px rgba(239,68,68,0.8)", "0 0 20px rgba(239,68,68,0.8)", "none"]);
+  const frownBorder = useTransform(x, [-130, -80, 0], ["rgba(239,68,68,1)", "rgba(239,68,68,1)", "rgba(239,68,68,0.5)"]);
+
+  const smileScale = useTransform(x, [0, 80, 130], [1, 1.3, 1.3]);
+  const smileShadow = useTransform(x, [0, 80, 130], ["none", "0 0 20px rgba(34,197,94,0.8)", "0 0 20px rgba(34,197,94,0.8)"]);
+  const smileBorder = useTransform(x, [0, 80, 130], ["rgba(34,197,94,0.5)", "rgba(34,197,94,1)", "rgba(34,197,94,1)"]);
   const [cardKey, setCardKey] = useState(0);
   const frownOpacity = useTransform(x, [-120, 0], [1, 0.6]);
   const smileOpacity = useTransform(x, [0, 120], [0.6, 1]);
@@ -320,45 +327,29 @@ const handleSwipe = (liked: boolean) => {
     <div className="relative w-full flex items-center justify-center"
       style={{ height: "68vh" }}>
 
-      {/* Emoji ? gauche */}
-     <motion.div
+      {/* Emoji ❌ gauche */}
+<motion.div
   className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
   style={{
     background: "#111",
     border: "2px solid rgba(239,68,68,0.5)",
-    scale: useTransform(x, [-130, -80, 0], [1.3, 1.3, 1]),
-    boxShadow: useTransform(x, [-130, -80, 0], [
-      "0 0 20px rgba(239,68,68,0.8)",
-      "0 0 20px rgba(239,68,68,0.8)",
-      "none"
-    ]),
-    borderColor: useTransform(x, [-130, -80, 0], [
-      "rgba(239,68,68,1)",
-      "rgba(239,68,68,1)",
-      "rgba(239,68,68,0.5)"
-    ]),
+    scale: frownScale,
+    boxShadow: frownShadow,
+    borderColor: frownBorder,
   }}
 >
   <Frown size={24} className="text-red-400" strokeWidth={2} />
 </motion.div>
 
-      {/* Emoji ? droite */}
-      <motion.div
+{/* Emoji ✅ droite */}
+<motion.div
   className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-14 h-14 rounded-full flex items-center justify-center pointer-events-none"
   style={{
     background: "#111",
     border: "2px solid rgba(34,197,94,0.5)",
-    scale: useTransform(x, [0, 80, 130], [1, 1.3, 1.3]),
-    boxShadow: useTransform(x, [0, 80, 130], [
-      "none",
-      "0 0 20px rgba(34,197,94,0.8)",
-      "0 0 20px rgba(34,197,94,0.8)"
-    ]),
-    borderColor: useTransform(x, [0, 80, 130], [
-      "rgba(34,197,94,0.5)",
-      "rgba(34,197,94,1)",
-      "rgba(34,197,94,1)"
-    ]),
+    scale: smileScale,
+    boxShadow: smileShadow,
+    borderColor: smileBorder,
   }}
 >
   <Smile size={24} className="text-emerald-400" strokeWidth={2} />

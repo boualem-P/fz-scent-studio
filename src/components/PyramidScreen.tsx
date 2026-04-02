@@ -189,6 +189,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   };
 
 const handleSwipe = (liked: boolean) => {
+  if (!currentNote) return;
   const key = steps[currentStep] as keyof typeof selections;
   if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
   

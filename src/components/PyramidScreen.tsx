@@ -189,6 +189,7 @@ const PyramidScreen = ({ onValidate, onMenu, setInternalBackHandler }: PyramidSc
   };
 
 const handleSwipe = (liked: boolean) => {
+  if (!currentNote) return;
   const key = steps[currentStep] as keyof typeof selections;
   if (liked) setSelections(prev => ({ ...prev, [key]: [...prev[key], currentNote.id] }));
   
@@ -279,8 +280,6 @@ const handleSwipe = (liked: boolean) => {
       </div>
     </motion.button>
   );
-
-  if (!currentNote) return null;
 
   return (
     <div className="relative h-screen bg-black text-white flex flex-col items-center pt-16 px-4 select-none overflow-hidden">
@@ -401,7 +400,7 @@ const handleSwipe = (liked: boolean) => {
         ))}
 
         {/* Carte active — au dessus */}
-        <AnimatePresence mode="popLayout">
+        {currentNote && <AnimatePresence mode="popLayout">
           <motion.div
             key={`${steps[currentStep]}-${noteIndex}`}
             style={{
@@ -493,7 +492,7 @@ const handleSwipe = (liked: boolean) => {
               </div>
             </div>
           </motion.div>
-        </AnimatePresence>
+        </AnimatePresence>}
       </div>
     </div>
 

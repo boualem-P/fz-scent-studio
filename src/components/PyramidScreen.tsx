@@ -67,14 +67,14 @@ const IconCroissant = () => (
 );
 
 const ATMOSPHERES = [
-  { id: 'quotidien', label: 'Mon quotidien', icon: "☀️", desc: "Frais, discret & efficace", img: "...", group: 'quotidien' },
-  { id: 'business', label: 'Au bureau', icon: "💼", desc: "Assuré & professionnel", img: "...", group: 'quotidien' },
-  { id: 'aid', label: 'Aïd & Fêtes', icon: "✨", desc: "Oriental, festif & généreux", img: "...", group: 'occasions' },
-  { id: 'mariage', label: 'Mariage & Fiançailles', icon: "💍", desc: "Somptueux & inoubliable", img: "...", group: 'occasions' },
-  { id: 'soir', label: 'Soirée & Sorties', icon: "🎉", desc: "Intense & magnétique", img: "...", group: 'occasions' },
-  { id: 'rendezvous', label: 'Rendez-vous', icon: "💫", desc: "Sensuel & captivant", img: "...", group: 'intime' },
-  { id: 'famille', label: 'En famille', icon: "🏡", desc: "Chaleureux & bienveillant", img: "...", group: 'intime' },
-  { id: 'ramadan', label: 'Ramadan', icon: "🌙", desc: "Doux, oud & spirituel", img: "...", group: 'intime' },
+  { id: 'quotidien', label: 'Mon quotidien', icon: "☀️", desc: "Frais, discret & efficace", img: "https://lesangesontlapeaudouce.com/wp-content/uploads/2026/01/un-homme-appliquant-son-parfum-Louis-Vuitton-1024x683.png", group: 'quotidien' },
+  { id: 'business', label: 'Au bureau', icon: "💼", desc: "Assuré & professionnel", img: "https://trucsdemec.fr/wp-content/uploads/2024/02/Parfum-homme-pour-le-bureau-trucsdemec.fr-blog-lifestyle-masculin-mode-beaute-3.webp", group: 'quotidien' },
+  { id: 'aid', label: 'Aïd & Fêtes', icon: "✨", desc: "Oriental, festif & généreux", img: "https://blog.vperfumes.com/wp-content/uploads/2024/04/best-perfumes-for-eid.jpg", group: 'occasions' },
+  { id: 'mariage', label: 'Mariage & Fiançailles', icon: "💍", desc: "Somptueux & inoubliable", img: "https://www.wedding-secret.com/wp-content/uploads/2019/09/changer-de-parfum-pour-un-mariage-une-bonne-id%C3%A9e-e1567684077187.jpeg", group: 'occasions' },
+  { id: 'soir', label: 'Soirée & Sorties', icon: "🎉", desc: "Intense & magnétique", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcPYhY9g09b-IdPYHl9bjjlmujBDOjqwY9Iw&s", group: 'occasions' },
+  { id: 'rendezvous', label: 'Rendez-vous', icon: "💫", desc: "Sensuel & captivant", img: "https://us.123rf.com/450wm/noomhh/noomhh1307/noomhh130700063/20981812-romantic-scene-of-love-couples-partners-on-the-beach-before-sunset.jpg", group: 'intime' },
+  { id: 'famille', label: 'En famille', icon: "🏡", desc: "Chaleureux & bienveillant", img: "https://www.peelcas.org/images/default-source/featured-image-gallery/muslimfamily2.jpg?sfvrsn=252d779_2", group: 'intime' },
+  { id: 'ramadan', label: 'Ramadan', icon: "🌙", desc: "Doux, oud & spirituel", img: "https://thumbs.dreamstime.com/b/homme-musulman-s-habiller-et-appliquer-le-parfum-sur-son-corps-un-asiatique-se-pr%C3%A9pare-pour-l-a%C3%AFd-moubarak-215893876.jpg", group: 'intime' },
 ];
 
 

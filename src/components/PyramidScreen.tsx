@@ -400,7 +400,7 @@ const handleSwipe = (liked: boolean) => {
         ))}
 
         {/* Carte active — au dessus */}
-        <AnimatePresence mode="popLayout">
+        {currentNote && <AnimatePresence mode="popLayout">
           <motion.div
             key={`${steps[currentStep]}-${noteIndex}`}
             style={{

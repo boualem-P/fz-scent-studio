@@ -718,9 +718,6 @@ const handleSwipe = (liked: boolean) => {
 
 </div>
 
-
-
-            </div>
             <span className="text-[7px] font-bold uppercase tracking-wider text-center text-white/60 w-24 leading-tight">
               {atm.label}
             </span>

@@ -28,6 +28,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Jasmin Sambac": "https://palmiersetcompagnie.fr/wp-content/uploads/2024/04/MG_7363-Jasminum-sambac-Jasmin-Arabie.jpg",
   "Jasmin du Maroc": "https://dw5gv07eh08co.cloudfront.net/media/perfumes/thumb/Jasmin2_thumbnail.jpg",
   "Tubéreuse": "https://www.biolandes.com/wp-content/uploads/photo-produit-F2960.jpg",
+  "Ladanum": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Cistus_creticus_LC0069.jpg/250px-Cistus_creticus_LC0069.jpg",
   "Ylang-Ylang": "https://t4.ftcdn.net/jpg/00/34/90/31/360_F_34903143_mTqdY4T9w6yykmq4Bx41jiTrpoUAgpPI.jpg",
   "Fleur d'oranger": "https://lallanature.com/wp-content/uploads/2020/08/eau-de-fleur-doranger-1280x800.jpg",
   "Géranium": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1ev56SrgogQ_YfNi-0QlkLMYQrPJA1QUsrw&s",

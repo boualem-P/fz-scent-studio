@@ -9,7 +9,6 @@ import ResultsScreen from "@/components/ResultsScreen";
 import CatalogueScreen from "@/components/CatalogueScreen";
 import { NOTES_IMAGES } from "@/data/notesData";
 import AnalyzingLoader from "@/components/AnalyzingLoader";
-import GoldenRain from "@/components/GoldenRain";
 import PerfumePage from "@/components/PerfumePage"; 
 import { Gender, NoteCategory, matchPerfumes, Perfume, PERFUMES } from "@/data/perfumes"; 
 import LightWipeTransition from "@/components/LightWipeTransition";
@@ -127,9 +126,6 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden w-full">
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        {screen !== "landing" && !selectedPerfume && <GoldenRain />}
-      </div>
 
       <LightWipeTransition 
         isVisible={showWipe} 

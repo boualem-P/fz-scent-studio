@@ -4,7 +4,7 @@ import { Perfume } from "@/data/perfumes";
 import { RotateCcw, Home, Sparkles, Crown } from "lucide-react";
 import { useStock } from "@/data/useStock";
 import { EpuiseOverlay } from "@/components/EpuiseOverlay";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
@@ -55,6 +55,56 @@ const PerfumeInitial = ({ name }: { name: string }) => (
 
 const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
   const { isAvailable } = useStock();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+useEffect(() => {
+  const canvas = canvasRef.current;
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  let animId: number;
+  let frame = 0;
+  const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+  resize();
+  window.addEventListener("resize", resize);
+  const leaves: Leaf[] = Array.from({ length: 18 }, () => createLeaf(canvas.width, canvas.height));
+  const particles: Particle[] = Array.from({ length: 40 }, () => createParticle(canvas.width, canvas.height));
+  const draw = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    frame++;
+    for (const p of particles) {
+      p.y += p.vy; p.x += p.vx;
+      if (p.y > canvas.height) { p.y = -2; p.x = Math.random() * canvas.width; }
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(212,175,55,${p.alpha})`; ctx.fill();
+    }
+    for (const l of leaves) {
+      l.y += l.speed; l.rotation += l.rotSpeed * l.speed;
+      l.opacity += 0.003 * l.opacityDir;
+      if (l.opacity >= 0.8) l.opacityDir = -1;
+      if (l.opacity <= 0.3) l.opacityDir = 1;
+      const swayX = l.swayAmp * Math.sin(frame * l.swayFreq + l.swayOffset);
+      if (l.y > canvas.height + l.h) Object.assign(l, createLeaf(canvas.width, canvas.height, true));
+      ctx.save(); ctx.translate(l.x + swayX, l.y); ctx.rotate(l.rotation);
+      ctx.globalAlpha = l.opacity; ctx.fillStyle = l.color;
+      ctx.beginPath(); ctx.moveTo(0, -l.h / 2); ctx.lineTo(l.w / 2, 0);
+      ctx.lineTo(0, l.h / 2); ctx.lineTo(-l.w / 2, 0); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+    animId = requestAnimationFrame(draw);
+  };
+  animId = requestAnimationFrame(draw);
+  return () => {
+    cancelAnimationFrame(animId);
+    window.removeEventListener("resize", resize);
+  };
+}, []);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   if (results.length === 0) {
     return (
@@ -79,7 +129,8 @@ const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfum
   const otherResults = results.slice(1);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start p-6 pt-20 pb-40">
+    <div className="min-h-screen flex flex-col items-center justify-start p-6 pt-20 pb-40 relative" style={{ backgroundColor: "#050429" }}>
+      <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
       <motion.div
         variants={staggerContainer}
         initial="hidden"

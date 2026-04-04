@@ -104,7 +104,6 @@ useEffect(() => {
     window.removeEventListener("resize", resize);
   };
 }, []);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   if (results.length === 0) {
     return (

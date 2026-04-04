@@ -384,7 +384,7 @@ const handleSwipe = (liked: boolean) => {
           {/* Cartes du dessous — visibles derrière */}
 {(() => {
   const remaining = notesAvailable.slice(noteIndex + 1);
-  const nextStepNotes = currentStep < 2 ? NOTES_DATA[steps[currentStep + 1]] : [];
+  const nextStepNotes = currentStep < 2 ? NOTES_DATA[STEP_KEYS[currentStep + 1]] : [];
   const combined = [...remaining, ...nextStepNotes].slice(0, 2);
   return combined.map((note, i) => (
             <div

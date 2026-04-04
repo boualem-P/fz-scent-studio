@@ -153,6 +153,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   "Notes marines": "https://medias.pourlascience.fr/api/v1/images/view/5d246010d286c24c0d17e855/wide_1300/image.jpg",
   "Algues": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVKBHTrGGG4Z4nYID8BT6d38m4w_gcipbuQQ&s",
   "Lotus": "https://img.freepik.com/photos-premium/belle-fleur-lotus-surface-etang_38535-73.jpg",
+  "Eau de mer": "https://images.unsplash.com/photo-1572864845227-6bc5a14b1984?q=80&w=435&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "Calone": "https://previews.123rf.com/images/miradrozdowski/miradrozdowski1209/miradrozdowski120900112/15119239-pieces-of-watermelon-and-cantaloupe-melon.jpg",
   "Aldéhydes": "https://thumbs.dreamstime.com/b/usine-d-herbe-de-poissons-de-lizardtail-de-heartleaf-de-cordata-de-houttuynia-29944862.jpg",
 

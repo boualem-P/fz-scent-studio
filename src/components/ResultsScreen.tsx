@@ -4,6 +4,7 @@ import { Perfume } from "@/data/perfumes";
 import { RotateCcw, Home, Sparkles, Crown } from "lucide-react";
 import { useStock } from "@/data/useStock";
 import { EpuiseOverlay } from "@/components/EpuiseOverlay";
+import { useEffect, useRef } from "react";
 
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
@@ -11,6 +12,39 @@ interface ResultsScreenProps {
   onLanding: () => void;
   onCatalogue: () => void;
   onSelectPerfume: (perfume: Perfume) => void;
+}
+
+const GOLD_COLORS = ["#D4AF37", "#F59E0B", "#FFF0A0"];
+
+interface Leaf {
+  x: number; y: number; w: number; h: number;
+  speed: number; rotation: number; rotSpeed: number;
+  swayAmp: number; swayFreq: number; swayOffset: number;
+  opacity: number; opacityDir: number; color: string;
+}
+interface Particle { x: number; y: number; vy: number; vx: number; alpha: number; }
+
+function createLeaf(canvasW: number, canvasH: number, startTop = false): Leaf {
+  const size = 4 + Math.random() * 6;
+  return {
+    x: Math.random() * canvasW,
+    y: startTop ? -size - Math.random() * canvasH * 0.3 : Math.random() * canvasH,
+    w: size, h: size * (0.5 + Math.random() * 0.5),
+    speed: 0.5 + Math.random() * 1.5, rotation: Math.random() * Math.PI * 2,
+    rotSpeed: 0.02 * (0.5 + Math.random() * 1.5), swayAmp: 15 + Math.random() * 25,
+    swayFreq: 0.008 + Math.random() * 0.012, swayOffset: Math.random() * Math.PI * 2,
+    opacity: 0.3 + Math.random() * 0.5, opacityDir: 1,
+    color: GOLD_COLORS[Math.floor(Math.random() * GOLD_COLORS.length)],
+  };
+}
+function createParticle(canvasW: number, canvasH: number): Particle {
+  return {
+    x: Math.random() * canvasW,
+    y: Math.random() * canvasH,
+    vy: 0.2 + Math.random() * 0.3,
+    vx: (Math.random() - 0.5) * 0.3,
+    alpha: 0.05 + Math.random() * 0.1
+  };
 }
 
 const PerfumeInitial = ({ name }: { name: string }) => (
@@ -46,11 +80,12 @@ const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfum
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start p-6 pt-20 pb-40">
+      <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="show"
-        className="w-full max-w-5xl space-y-10"
+        className="w-full max-w-5xl space-y-10 relative z-10"
       >
         {/* Header */}
         <motion.div variants={staggerItem} className="text-center space-y-4">

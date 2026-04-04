@@ -4,7 +4,7 @@ import { Perfume } from "@/data/perfumes";
 import { RotateCcw, Home, Sparkles, Crown } from "lucide-react";
 import { useStock } from "@/data/useStock";
 import { EpuiseOverlay } from "@/components/EpuiseOverlay";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface ResultsScreenProps {
   results: { perfume: Perfume; matchPercent: number }[];
@@ -55,6 +55,7 @@ const PerfumeInitial = ({ name }: { name: string }) => (
 
 const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
   const { isAvailable } = useStock();
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   if (results.length === 0) {
     return (
@@ -80,6 +81,7 @@ const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfum
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start p-6 pt-20 pb-40">
+      <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
       <motion.div
         variants={staggerContainer}
         initial="hidden"

@@ -382,7 +382,11 @@ const handleSwipe = (liked: boolean) => {
           style={{ width: "min(320px, 80vw)", height: "min(480px, 64vh)" }}>
 
           {/* Cartes du dessous — visibles derrière */}
-          {notesAvailable.slice(noteIndex + 1, noteIndex + 3).map((note, i) => (
+{(() => {
+  const remaining = notesAvailable.slice(noteIndex + 1);
+  const nextStepNotes = currentStep < 2 ? NOTES_DATA[steps[currentStep + 1]] : [];
+  const combined = [...remaining, ...nextStepNotes].slice(0, 2);
+  return combined.map((note, i) => (
             <div
               key={note?.id || `${currentStepKey}-${noteIndex}-${i}`}
               className="absolute bg-white rounded-2xl overflow-hidden shadow-xl"
@@ -411,7 +415,8 @@ const handleSwipe = (liked: boolean) => {
                 </p>
               </div>
             </div>
-          ))}
+          ));
+})()}
 
           {/* Carte active — au dessus */}
           {hasCurrentNote && <AnimatePresence mode="popLayout">

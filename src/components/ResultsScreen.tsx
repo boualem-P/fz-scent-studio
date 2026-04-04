@@ -55,6 +55,7 @@ const PerfumeInitial = ({ name }: { name: string }) => (
 
 const ResultsScreen = ({ results, onMenu, onLanding, onCatalogue, onSelectPerfume }: ResultsScreenProps) => {
   const { isAvailable } = useStock();
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   if (results.length === 0) {
     return (

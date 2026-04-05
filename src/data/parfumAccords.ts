@@ -192,6 +192,14 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
     "patchouli", "floral", "chocolate", "fruity", "narcotic_floral"
   ],
 
+  "oud-wood-intense-tom-ford": [
+  "woody",
+  "fresh_spicy",
+  "aromatic",
+  "leather",
+  "oud"
+],
+
   // ── VIKTOR&ROLF ───────────────────────────────────────────────
 
   "spicebomb": [

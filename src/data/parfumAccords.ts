@@ -146,6 +146,14 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
     "lavender", "fresh_spicy", "powdery", "spicy", "sandalwood"
   ],
 
+  "haltane-parfums-de-marly": [
+  "oud",
+  "aromatic",
+  "sweet",
+  "warm_spicy",
+  "woody"
+],
+
   // ── KILIAN PARIS ──────────────────────────────────────────────
 
   "angels-share": [

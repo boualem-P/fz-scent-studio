@@ -793,6 +793,25 @@ export const PERFUMES: Perfume[] = [
     seasonData: { winter: 45, spring: 10, summer: 5, autumn: 40 }
   },
   {
+    id: "oud-wood-intense-tom-ford",
+    name: "Oud Wood Intense",
+    brand: "Tom Ford",
+    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.46767.avif",
+    description: "Une version plus riche, animale et profonde du classique Oud Wood, mettant l'accent sur des notes de cuir et de castoréum.",
+    gender: "unisexe",
+    concentration: "Eau de Parfum",
+    topNotes: ["Angélique", "Gingembre", "Genièvre"],
+    heartNotes: ["Cyprès", "Oud (Bois d'Agar)"],
+    baseNotes: ["Castoréum"],
+    topNotesDetailed: [{ name: "Angélique" }, { name: "Gingembre" }, { name: "Genièvre" }],
+    heartNotesDetailed: [{ name: "Cyprès" }, { name: "Oud" }],
+    baseNotesDetailed: [{ name: "Castoréum" }],
+    sillage: "très fort",
+    longevite: "8h+",
+    jourPct: 30,
+    seasonData: { winter: 45, spring: 10, summer: 5, autumn: 40 }
+  },
+  {
   id: "torino21-xerjoff",
   name: "Torino21",
   brand: "Xerjoff",

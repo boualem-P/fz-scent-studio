@@ -73,6 +73,16 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
     "green", "herbal", "sage", "cedar", "incense"
   ],
 
+  // ── Nishane ───────────────────────────────────────────────────────
+  
+  "ani-nishane": [
+  "vanilla",
+  "warm_spicy",
+  "woody",
+  "fresh_spicy",
+  "citrus"
+],
+  
   // ── LE LABO ───────────────────────────────────────────────────
 
   "the-noir-29": [

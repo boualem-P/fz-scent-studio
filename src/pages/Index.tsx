@@ -13,6 +13,7 @@ import PerfumePage from "@/components/PerfumePage";
 import { Gender, NoteCategory, matchPerfumes, Perfume, PERFUMES } from "@/data/perfumes"; 
 import LightWipeTransition from "@/components/LightWipeTransition";
 import ChatConseiller from "@/components/ChatConseiller";
+import MoodScreen from "@/components/MoodScreen";
 
 type ScreenType = "landing" | "budget" | "pyramid" | "analyzing" | "results" | "catalogue";
 

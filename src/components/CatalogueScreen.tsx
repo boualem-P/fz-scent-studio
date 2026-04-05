@@ -73,6 +73,7 @@ const BRAND_IMAGES: Record<string, string> = {
   "Valentino":                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuM-qtpaBSEOid4tieSWJyjgLifmNnDlU1pQ&s",
   "Dolce & Gabbana":           "https://fimgs.net/mdimg/dizajneri/o.56.jpg",
   "Prada":                     "https://www.icon-icon.com/wp-content/uploads/2018/06/prada_1247_l.jpg",
+  "Nishane":                   "https://cocoparfemi.com/cdn/shop/collections/o.2232.jpg?v=1669780799",
   "Jean Paul Gaultier":        "https://fimgs.net/mdimg/dizajneri/o.72.jpg",
   "Viktor&Rolf":               "https://priveperfumes.com/cdn/shop/collections/viktor-rolf-prive-perfumes-banner.webp?v=1743664405&width=1024",
   "Carolina Herrera":          "https://i.pinimg.com/564x/8b/7a/f9/8b7af96beeee9c6dcdc0f433a888d02c.jpg",

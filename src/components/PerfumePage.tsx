@@ -69,10 +69,11 @@ function getPerfumesWithNote(noteName: string): Perfume[] {
 
 // -- Config sillage (arc+flacon validé session 3) ---------------
 const SILLAGE_CONFIG = {
-  "discret":   { label: "Discret",   sublabel: "Proche de la peau", arcs: 1 },
+  "discret":   { label: "Discret",   sublabel: "Proche de la peau",  arcs: 1 },
   "modéré":    { label: "Modéré",    sublabel: "Perceptible",        arcs: 2 },
   "fort":      { label: "Fort",      sublabel: "Très perceptible",   arcs: 3 },
   "très fort": { label: "Très Fort", sublabel: "Enveloppant",        arcs: 4 },
+  "énorme":    { label: "énorme",    sublabel: "Ultra enveloppant",  arcs: 5 },
 } as const;
 
 const LONGEVITE_CONFIG = {

@@ -126,11 +126,7 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
   ],
   
   "grand-soir-mfk": [
-  "amber", 
-  "vanilla", 
-  "powdery", 
-  "sweet", 
-  "aromatic"
+   "amber", "vanilla",  "powdery",  "sweet",  "aromatic"
 ],
 
   // ── PARFUMS DE MARLY ──────────────────────────────────────────

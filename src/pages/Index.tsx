@@ -12,6 +12,7 @@ import AnalyzingLoader from "@/components/AnalyzingLoader";
 import PerfumePage from "@/components/PerfumePage"; 
 import { Gender, NoteCategory, matchPerfumes, Perfume, PERFUMES } from "@/data/perfumes"; 
 import LightWipeTransition from "@/components/LightWipeTransition";
+import ChatConseiller from "@/components/ChatConseiller";
 
 type ScreenType = "landing" | "budget" | "pyramid" | "analyzing" | "results" | "catalogue";
 
@@ -230,6 +231,8 @@ const Index = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ChatConseiller />
     </div>
   );
 };

@@ -231,6 +231,8 @@ const Index = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ChatConseiller />
     </div>
   );
 };

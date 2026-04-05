@@ -15,6 +15,25 @@ interface PerfumePageProps {
   userGender?: "homme" | "femme" | "unisexe";
 }
 
+function parseLongevite(value: string | number): number {
+  if (typeof value === "number") return value;
+  switch (value) {
+    case "2-4h": return 3;
+    case "4-6h": return 5;
+    case "6-8h": return 7;
+    case "8h": return 8;
+    case "8h+": return 9;
+    default: return 6;
+  }
+}
+
+function getLongeviteCategory(hours: number): string {
+  if (hours < 4) return "2-4h";
+  if (hours < 6) return "4-6h";
+  if (hours < 8) return "6-8h";
+  return "8h+";
+}
+
 type DeviceType = "mobile" | "tablet" | "desktop";
 
 const getDevice = (): DeviceType => {
@@ -449,7 +468,9 @@ className="flex items-center justify-center overflow-hidden"
     if (!perfume.sillage && !perfume.longevite) return null;
 
     const sillage   = perfume.sillage   ? SILLAGE_CONFIG[perfume.sillage]    : null;
-    const longevite = perfume.longevite ? LONGEVITE_CONFIG[perfume.longevite] : null;
+    const longevite = perfume.longevite
+      ? LONGEVITE_CONFIG[getLongeviteCategory(parseLongevite(perfume.longevite))]
+      : null;
 
     // Flacon vaporisateur + demi-cercles concentriques
     const FlaconsVapeur = ({ arcs }: { arcs: number }) => (

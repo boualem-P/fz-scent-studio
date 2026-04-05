@@ -773,7 +773,7 @@ export const PERFUMES: Perfume[] = [
     jourPct: 40,
     seasonData: { winter: 35, spring: 30, summer: 10, autumn: 40 }
  },
-  {
+ {
     id: "grand-soir-mfk",
     name: "Grand Soir",
     brand: "Maison Francis Kurkdjian",
@@ -791,7 +791,7 @@ export const PERFUMES: Perfume[] = [
     longevite: "8h",
     jourPct: 20, 
     seasonData: { winter: 45, spring: 10, summer: 5, autumn: 40 }
-  }
+  },
   {
   id: "torino21-xerjoff",
   name: "Torino21",

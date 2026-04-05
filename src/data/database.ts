@@ -25,10 +25,17 @@ export interface Perfume {
   baseNotesDetailed: NoteDetail[];
   accordIds?: string[];
   sillage?: "discret" | "modéré" | "fort" | "très fort" | "énorme";
-  longevite?: "2-4h" | "4-6h" | "6-8h" | "8h" | "6-8h";
+  longevite?: number; // en heures
   // jourPct : pourcentage jour (0-100), nuit = 100 - jourPct
   jourPct?: number;
   seasonData: SeasonData;
+}
+
+function getLongeviteCategory(hours: number): string {
+  if (hours < 4) return "2-4h";
+  if (hours < 6) return "4-6h";
+  if (hours < 8) return "6-8h";
+  return "8h+";
 }
 
 export const PERFUMES: Perfume[] = [
@@ -829,6 +836,25 @@ export const PERFUMES: Perfume[] = [
     longevite: "8h+",
     jourPct: 30,
     seasonData: { winter: 45, spring: 10, summer: 5, autumn: 40 }
+  },
+  {
+    id: "haltane-parfums-de-marly",
+    name: "Haltane",
+    brand: "Parfums de Marly",
+    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.70776.avif",
+    description: "Une composition contrastée mêlant des notes rares et nobles, entre fraîcheur aromatique et gourmandise cuirée boisée.",
+    gender: "homme",
+    concentration: "Eau de Parfum",
+    topNotes: ["Sauge sclarée", "Lavande", "Bergamote"],
+    heartNotes: ["Safran", "Praliné"],
+    baseNotes: ["Oud (Bois d'Agar)", "Cèdre"],
+    topNotesDetailed: [{ name: "Sauge sclarée" }, { name: "Lavande" }],
+    heartNotesDetailed: [{ name: "Safran" }, { name: "Praliné" }],
+    baseNotesDetailed: [{ name: "Oud" }, { name: "Cèdre" }],
+    sillage: "fort",
+    longevite: "8h",
+    jourPct: 35,
+    seasonData: { winter: 40, spring: 10, summer: 5, autumn: 45 }
   },
   {
   id: "torino21-xerjoff",

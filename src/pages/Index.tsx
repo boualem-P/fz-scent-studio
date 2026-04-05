@@ -12,10 +12,17 @@ import AnalyzingLoader from "@/components/AnalyzingLoader";
 import PerfumePage from "@/components/PerfumePage"; 
 import { Gender, NoteCategory, matchPerfumes, Perfume, PERFUMES } from "@/data/perfumes"; 
 import LightWipeTransition from "@/components/LightWipeTransition";
+import LuxuryTransition from "@/components/LuxuryTransition";
 import ChatConseiller from "@/components/ChatConseiller";
 import MoodScreen from "@/components/MoodScreen";
 
 type ScreenType = "landing" | "budget" | "mood" | "pyramid" | "analyzing" | "results" | "catalogue";
+
+const LUXURY_TRANSITIONS: ReadonlySet<string> = new Set([
+  "landing->budget",
+  "budget->mood",
+  "mood->pyramid",
+]);
 
 const Index = () => {
   const [screen, setScreen] = useState<ScreenType>("landing");
@@ -27,6 +34,8 @@ const Index = () => {
   const [showWipe, setShowWipe] = useState(false);
   const [isHerbierOpen, setIsHerbierOpen] = useState(false);
   const [selectedAtmosphere, setSelectedAtmosphere] = useState<string | undefined>(undefined);
+  const [showLuxury, setShowLuxury] = useState(false);
+  const pendingScreenRef = useRef<ScreenType | null>(null);
 
   const pyramidInternalBackRef = useRef<(() => boolean) | null>(null);
   const catalogueInternalBackRef = useRef<(() => boolean) | null>(null);
@@ -52,6 +61,15 @@ const Index = () => {
   const navigateTo = useCallback((nextScreen: ScreenType) => {
     if (nextScreen === screen) return;
 
+    const key = `${screen}->${nextScreen}`;
+
+    if (LUXURY_TRANSITIONS.has(key)) {
+      pendingScreenRef.current = nextScreen;
+      setShowLuxury(true);
+      // History is pushed when transition completes
+      return;
+    }
+
     if (screen === "landing" && nextScreen === "pyramid") {
       setShowWipe(true);
       setTimeout(() => {
@@ -62,6 +80,16 @@ const Index = () => {
       setHistory((prev) => [...prev, screen]);
       setScreen(nextScreen);
     }
+  }, [screen]);
+
+  const handleLuxuryComplete = useCallback(() => {
+    const next = pendingScreenRef.current;
+    if (next) {
+      setHistory((prev) => [...prev, screen]);
+      setScreen(next);
+      pendingScreenRef.current = null;
+    }
+    setShowLuxury(false);
   }, [screen]);
 
   const handleGoToLanding = useCallback(() => {
@@ -135,9 +163,13 @@ const Index = () => {
         onComplete={() => setShowWipe(false)} 
       />
 
+      <LuxuryTransition
+        show={showLuxury}
+        onComplete={handleLuxuryComplete}
+      />
+
       <nav className="fixed top-6 left-6 right-6 flex justify-between items-start z-[200] pointer-events-none">
         <div className="flex flex-col gap-3 pointer-events-auto">
-          {/* Bouton retour masqué quand l'herbier est ouvert */}
           {(screen !== "landing" || selectedPerfume) && !isHerbierOpen && (
             <button 
               onClick={handleBack}

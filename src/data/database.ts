@@ -773,6 +773,25 @@ export const PERFUMES: Perfume[] = [
     jourPct: 40,
     seasonData: { winter: 35, spring: 30, summer: 10, autumn: 40 }
  },
+  {
+    id: "ani-nishane",
+    name: "Ani",
+    brand: "Nishane",
+    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.54785.avif",
+    description: "Un hommage à une cité ancienne, Ani est une vanille épicée et boisée d'une puissance exceptionnelle, mêlant fraîcheur de gingembre et profondeur de résines.",
+    gender: "unisexe",
+    concentration: "Extrait de Parfum",
+    topNotes: ["Gingembre", "Bergamote", "Baies roses"],
+    heartNotes: ["Cardamome", "Cassis", "Rose de Turquie"],
+    baseNotes: ["Vanille", "Benjoin", "Santal", "Musc", "Patchouli", "Cèdre"],
+    topNotesDetailed: [{ name: "Gingembre" }, { name: "Bergamote" }],
+    heartNotesDetailed: [{ name: "Cardamome" }],
+    baseNotesDetailed: [{ name: "Vanille" }, { name: "Benjoin" }, { name: "Santal" }],
+    sillage: "fort",
+    longevite: "8h",
+    jourPct: 45,
+    seasonData: { winter: 40, spring: 15, summer: 5, autumn: 40 }
+  },
  {
     id: "grand-soir-mfk",
     name: "Grand Soir",

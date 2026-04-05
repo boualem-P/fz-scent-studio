@@ -26,6 +26,7 @@ const Index = () => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
   const [showWipe, setShowWipe] = useState(false);
   const [isHerbierOpen, setIsHerbierOpen] = useState(false);
+  const [selectedAtmosphere, setSelectedAtmosphere] = useState<string | undefined>(undefined);
 
   const pyramidInternalBackRef = useRef<(() => boolean) | null>(null);
   const catalogueInternalBackRef = useRef<(() => boolean) | null>(null);
@@ -108,7 +109,7 @@ const Index = () => {
   };
 
   const handleAgeValidate = (age: number) => {
-    navigateTo("pyramid");
+    navigateTo("mood");
   };
 
  const handleValidate = useCallback((
@@ -181,6 +182,14 @@ const Index = () => {
                 <BudgetScreen
                   onValidate={handleAgeValidate}
                   onBack={handleBack}
+                />
+              )}
+              {screen === "mood" && (
+                <MoodScreen
+                  onComplete={(atm) => {
+                    setSelectedAtmosphere(atm);
+                    navigateTo("pyramid");
+                  }}
                 />
               )}
               {screen === "pyramid" && (

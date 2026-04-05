@@ -777,7 +777,7 @@ export const PERFUMES: Perfume[] = [
     id: "grand-soir-mfk",
     name: "Grand Soir",
     brand: "Maison Francis Kurkdjian",
-    image: "https://fimgs.net/mdimg/perfume/o.37352.jpg",
+    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.40816.avif",
     description: "Un parfum ambré boisé majestueux, chaud et enveloppant, évoquant l'éclat d'une nuit parisienne.",
     gender: "unisexe",
     concentration: "Eau de Parfum",

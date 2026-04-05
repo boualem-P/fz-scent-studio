@@ -788,7 +788,7 @@ export const PERFUMES: Perfume[] = [
     heartNotesDetailed: [{ name: "Lavande" }, { name: "Benjoin" }],
     baseNotesDetailed: [{ name: "Ciste" }],
     sillage: "fort",
-    longevite: "8h",
+    longevite: "8h+",
     jourPct: 20, 
     seasonData: { winter: 45, spring: 10, summer: 5, autumn: 40 }
   },

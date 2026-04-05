@@ -124,6 +124,14 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
     "amber_woody", "woody", "amber", "warm_spicy", "saffron", 
     "fresh_spicy", "aromatic", "jasmine", "mineral", "conifer"
   ],
+  
+  "grand-soir-mfk": [
+  "amber", 
+  "vanilla", 
+  "powdery", 
+  "sweet", 
+  "aromatic"
+],
 
   // ── PARFUMS DE MARLY ──────────────────────────────────────────
 

@@ -25,7 +25,7 @@ export interface Perfume {
   baseNotesDetailed: NoteDetail[];
   accordIds?: string[];
   sillage?: "discret" | "modéré" | "fort" | "très fort" | "énorme";
-  longevite?: "2-4h" | "4-6h" | "6-8h" | "8h+";
+  longevite?: "2-4h" | "4-6h" | "6-8h" | "8h" | "6-8h";
   // jourPct : pourcentage jour (0-100), nuit = 100 - jourPct
   jourPct?: number;
   seasonData: SeasonData;
@@ -788,7 +788,7 @@ export const PERFUMES: Perfume[] = [
     heartNotesDetailed: [{ name: "Cardamome" }],
     baseNotesDetailed: [{ name: "Vanille" }, { name: "Benjoin" }, { name: "Santal" }],
     sillage: "fort",
-    longevite: "8h",
+    longevite: "8h+",
     jourPct: 45,
     seasonData: { winter: 40, spring: 15, summer: 5, autumn: 40 }
   },
@@ -807,7 +807,7 @@ export const PERFUMES: Perfume[] = [
     heartNotesDetailed: [{ name: "Lavande" }, { name: "Benjoin" }],
     baseNotesDetailed: [{ name: "Ciste" }],
     sillage: "fort",
-    longevite: "8h+",
+    longevite: "8h",
     jourPct: 20, 
     seasonData: { winter: 45, spring: 10, summer: 5, autumn: 40 }
   },

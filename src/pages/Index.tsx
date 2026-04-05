@@ -15,7 +15,7 @@ import LightWipeTransition from "@/components/LightWipeTransition";
 import ChatConseiller from "@/components/ChatConseiller";
 import MoodScreen from "@/components/MoodScreen";
 
-type ScreenType = "landing" | "budget" | "pyramid" | "analyzing" | "results" | "catalogue";
+type ScreenType = "landing" | "budget" | "mood" | "pyramid" | "analyzing" | "results" | "catalogue";
 
 const Index = () => {
   const [screen, setScreen] = useState<ScreenType>("landing");

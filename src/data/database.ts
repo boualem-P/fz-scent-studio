@@ -774,6 +774,25 @@ export const PERFUMES: Perfume[] = [
     seasonData: { winter: 35, spring: 30, summer: 10, autumn: 40 }
  },
   {
+    id: "grand-soir-mfk",
+    name: "Grand Soir",
+    brand: "Maison Francis Kurkdjian",
+    image: "https://fimgs.net/mdimg/perfume/o.37352.jpg",
+    description: "Un parfum ambré boisé majestueux, chaud et enveloppant, évoquant l'éclat d'une nuit parisienne.",
+    gender: "unisexe",
+    concentration: "Eau de Parfum",
+    topNotes: ["Ambre", "Vanille", "Fève de tonka"],
+    heartNotes: ["Lavande", "Benjoin"],
+    baseNotes: ["Ciste"],
+    topNotesDetailed: [{ name: "Ambre" }, { name: "Vanille" }, { name: "Fève de tonka" }],
+    heartNotesDetailed: [{ name: "Lavande" }, { name: "Benjoin" }],
+    baseNotesDetailed: [{ name: "Ciste" }],
+    sillage: "fort",
+    longevite: "8h",
+    jourPct: 20, 
+    seasonData: { winter: 45, spring: 10, summer: 5, autumn: 40 }
+  }
+  {
   id: "torino21-xerjoff",
   name: "Torino21",
   brand: "Xerjoff",

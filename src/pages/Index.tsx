@@ -13,8 +13,9 @@ import PerfumePage from "@/components/PerfumePage";
 import { Gender, NoteCategory, matchPerfumes, Perfume, PERFUMES } from "@/data/perfumes"; 
 import LightWipeTransition from "@/components/LightWipeTransition";
 import ChatConseiller from "@/components/ChatConseiller";
+import MoodScreen from "@/components/MoodScreen";
 
-type ScreenType = "landing" | "budget" | "pyramid" | "analyzing" | "results" | "catalogue";
+type ScreenType = "landing" | "budget" | "mood" | "pyramid" | "analyzing" | "results" | "catalogue";
 
 const Index = () => {
   const [screen, setScreen] = useState<ScreenType>("landing");
@@ -25,6 +26,7 @@ const Index = () => {
   const [selectedPerfume, setSelectedPerfume] = useState<Perfume | null>(null);
   const [showWipe, setShowWipe] = useState(false);
   const [isHerbierOpen, setIsHerbierOpen] = useState(false);
+  const [selectedAtmosphere, setSelectedAtmosphere] = useState<string | undefined>(undefined);
 
   const pyramidInternalBackRef = useRef<(() => boolean) | null>(null);
   const catalogueInternalBackRef = useRef<(() => boolean) | null>(null);
@@ -107,7 +109,7 @@ const Index = () => {
   };
 
   const handleAgeValidate = (age: number) => {
-    navigateTo("pyramid");
+    navigateTo("mood");
   };
 
  const handleValidate = useCallback((
@@ -180,6 +182,14 @@ const Index = () => {
                 <BudgetScreen
                   onValidate={handleAgeValidate}
                   onBack={handleBack}
+                />
+              )}
+              {screen === "mood" && (
+                <MoodScreen
+                  onComplete={(atm) => {
+                    setSelectedAtmosphere(atm);
+                    navigateTo("pyramid");
+                  }}
                 />
               )}
               {screen === "pyramid" && (

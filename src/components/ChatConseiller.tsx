@@ -296,7 +296,12 @@ const ChatConseiller = () => {
         whileTap={{ scale: 0.95 }}
         aria-label="Ouvrir le conseiller parfum"
       >
-        {open ? <X size={22} className="text-black" /> : <Bot size={22} className="text-black" />}
+        {open ? (
+  <X size={22} className="text-black" />
+) : (
+  <img src="/logo.png" alt="logo" className="w-8 h-8 object-contain" />
+)}
+
       </motion.button>
 
       {/* Chat panel */}

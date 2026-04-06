@@ -25,7 +25,7 @@ export interface Perfume {
   baseNotesDetailed: NoteDetail[];
   accordIds?: string[];
   sillage?: "discret" | "modéré" | "fort" | "très fort" | "énorme";
-  longevite?: number; // en heures
+  longevite?: string; // ex: "6-8h", "8h+"
   // jourPct : pourcentage jour (0-100), nuit = 100 - jourPct
   jourPct?: number;
   seasonData: SeasonData;

@@ -299,7 +299,7 @@ const ChatConseiller = () => {
         {open ? (
   <X size={22} className="text-black" />
 ) : (
-  className="w-12 h-12 object-contain flex items-center justify-center mx-auto"
+  <img src="/logo.png" className="w-12 h-12 object-contain"
 />
 )}
 

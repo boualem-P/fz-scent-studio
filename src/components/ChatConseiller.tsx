@@ -425,9 +425,9 @@ const ChatConseiller = () => {
         aria-label="Ouvrir le conseiller parfum"
       >
         {open ? (
-          <X size={22} className="text-black" />
-        ) : (
-          <Bot size={22} className="text-black" />
+  <X size={22} className="text-black" />
+) : (
+  <img src="/logo.png" className="w-12 h-12 object-contain" />
         )}
       </motion.button>
 

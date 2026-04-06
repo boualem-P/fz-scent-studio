@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Bot } from "lucide-react";
 import { PERFUMES } from "@/data/perfumes";
@@ -16,6 +16,18 @@ interface ChatMessage {
 interface SessionMemory {
   preferences: Set<string>;
   lastPerfumeId?: string;
+  askedTags: Set<string>;
+}
+
+interface PerfumeProfile {
+  accords: string[];
+  tags: string[];
+  sweetnessLevel: number;
+  freshnessLevel: number;
+  intensityLevel: number;
+  woodyLevel: number;
+  spicyLevel: number;
+  floralLevel: number;
 }
 
 /* ─── Thinking phrases ──────────────────────────────────── */
@@ -25,6 +37,8 @@ const THINKING_PHRASES = [
   "Exploration olfactive…",
   "Je cherche la perle rare…",
   "Consultation de la collection…",
+  "Analyse de votre profil olfactif…",
+  "Parcours de la collection…",
 ];
 
 /* ─── Welcome ───────────────────────────────────────────── */
@@ -71,80 +85,170 @@ const APP_GUIDE_PATTERNS: { test: RegExp; response: string }[] = [
   },
 ];
 
+/* ─── Olfactory profile engine ──────────────────────────── */
+const SWEET_KEYWORDS = ["vanille", "tonka", "caramel", "miel", "chocolat", "praliné", "ambre", "benzoin", "gourmand", "sucrée", "pêche", "fraise", "framboise", "mangue", "abricot", "pomme", "poire", "cerise", "fruit"];
+const FRESH_KEYWORDS = ["citron", "bergamote", "orange", "agrume", "pamplemousse", "mandarine", "yuzu", "marine", "aquatique", "fraîch", "menthe", "concombre", "thé vert", "gingembre", "calone", "verveine", "eau", "ozoni"];
+const WOODY_KEYWORDS = ["cèdre", "santal", "vétiver", "patchouli", "bois", "oud", "chêne", "gaïac", "pin", "cyprès", "acajou"];
+const SPICY_KEYWORDS = ["poivre", "cannelle", "safran", "clou", "muscade", "cardamome", "cumin", "épic"];
+const FLORAL_KEYWORDS = ["rose", "jasmin", "fleur", "iris", "néroli", "violette", "tubéreuse", "ylang", "pivoine", "muguet", "oranger", "lavande", "magnolia", "gardénia", "lilas", "mimosa", "géranium"];
+
+function computeLevel(notes: string[], keywords: string[]): number {
+  const joined = notes.join(" ").toLowerCase();
+  let hits = 0;
+  for (const kw of keywords) {
+    if (joined.includes(kw)) hits++;
+  }
+  return Math.min(hits / 3, 1);
+}
+
+const profileCache = new Map<string, PerfumeProfile>();
+
+function getPerfumeProfile(perfume: Perfume): PerfumeProfile {
+  const cached = profileCache.get(perfume.id);
+  if (cached) return cached;
+
+  const allNotes = [...perfume.topNotes, ...perfume.heartNotes, ...perfume.baseNotes];
+
+  const sweetnessLevel = computeLevel(allNotes, SWEET_KEYWORDS);
+  const freshnessLevel = computeLevel(allNotes, FRESH_KEYWORDS);
+  const woodyLevel = computeLevel(allNotes, WOODY_KEYWORDS);
+  const spicyLevel = computeLevel(allNotes, SPICY_KEYWORDS);
+  const floralLevel = computeLevel(allNotes, FLORAL_KEYWORDS);
+
+  const sillageMap: Record<string, number> = { "discret": 0.2, "modéré": 0.4, "fort": 0.7, "très fort": 0.85, "énorme": 1.0 };
+  const intensityLevel = sillageMap[perfume.sillage] ?? 0.5;
+
+  const accords: string[] = [];
+  const tags: string[] = [];
+
+  if (sweetnessLevel > 0.3) { accords.push("sucré"); tags.push("gourmand"); }
+  if (freshnessLevel > 0.3) { accords.push("frais"); tags.push("frais"); }
+  if (woodyLevel > 0.3) { accords.push("boisé"); tags.push("boisé"); }
+  if (spicyLevel > 0.3) { accords.push("épicé"); tags.push("épicé"); }
+  if (floralLevel > 0.3) { accords.push("floral"); tags.push("floral"); }
+  if (intensityLevel >= 0.7) tags.push("intense");
+  if (intensityLevel <= 0.3) tags.push("léger");
+
+  const profile: PerfumeProfile = { accords, tags, sweetnessLevel, freshnessLevel, intensityLevel, woodyLevel, spicyLevel, floralLevel };
+  profileCache.set(perfume.id, profile);
+  return profile;
+}
+
+function getAccordLabel(profile: PerfumeProfile): string {
+  const levels: [string, number][] = [
+    ["sucré vanillé", profile.sweetnessLevel],
+    ["frais agrumé", profile.freshnessLevel],
+    ["boisé profond", profile.woodyLevel],
+    ["épicé chaleureux", profile.spicyLevel],
+    ["floral élégant", profile.floralLevel],
+  ];
+  levels.sort((a, b) => b[1] - a[1]);
+  const top = levels.filter(l => l[1] > 0.2).slice(0, 2);
+  if (top.length === 0) return "équilibré";
+  return top.map(l => l[0]).join(", ");
+}
+
+function getVibeLabel(profile: PerfumeProfile): string {
+  const vibes: string[] = [];
+  if (profile.sweetnessLevel > 0.5) vibes.push("enveloppant");
+  if (profile.freshnessLevel > 0.5) vibes.push("vivifiant");
+  if (profile.woodyLevel > 0.5) vibes.push("profond");
+  if (profile.spicyLevel > 0.5) vibes.push("charismatique");
+  if (profile.floralLevel > 0.5) vibes.push("délicat");
+  if (profile.intensityLevel >= 0.7) vibes.push("puissant");
+  if (profile.intensityLevel <= 0.3) vibes.push("subtil");
+  return vibes.length > 0 ? vibes.slice(0, 3).join(", ") : "harmonieux";
+}
+
 /* ─── Keyword filters ───────────────────────────────────── */
 interface KeywordRule {
   test: RegExp;
-  filter: (p: Perfume) => boolean;
+  filter: (p: Perfume, prof: PerfumeProfile) => boolean;
   tag: string;
   prefTag: string;
+  weight: number;
 }
 
 const KEYWORD_RULES: KeywordRule[] = [
   {
     test: /soir[ée]e|nuit|gala|sortir/i,
-    filter: (p) => (p.sillage === "fort" || p.sillage === "très fort") && (p.seasonData.winter > 50 || p.seasonData.autumn > 50),
-    tag: "soirée",
-    prefTag: "intense",
+    filter: (p, prof) => prof.intensityLevel >= 0.6 && (p.seasonData.winter > 50 || p.seasonData.autumn > 50),
+    tag: "soirée", prefTag: "intense", weight: 1.5,
   },
   {
     test: /intense|puissant|fort/i,
-    filter: (p) => p.sillage === "fort" || p.sillage === "très fort" || p.sillage === "énorme",
-    tag: "intense",
-    prefTag: "intense",
+    filter: (_p, prof) => prof.intensityLevel >= 0.6,
+    tag: "intense", prefTag: "intense", weight: 1.3,
+  },
+  {
+    test: /sucr[ée]|vanill[ée]|gourmand|doux|caramel|tonka|chocolat/i,
+    filter: (_p, prof) => prof.sweetnessLevel > 0.3,
+    tag: "sucré", prefTag: "sucré", weight: 1.4,
+  },
+  {
+    test: /frais|fraîch|léger|légère|citron|agrume|aquatique/i,
+    filter: (_p, prof) => prof.freshnessLevel > 0.3,
+    tag: "frais", prefTag: "frais", weight: 1.4,
+  },
+  {
+    test: /bois[ée]|cèdre|santal|vétiver|patchouli|oud/i,
+    filter: (_p, prof) => prof.woodyLevel > 0.3,
+    tag: "boisé", prefTag: "boisé", weight: 1.3,
+  },
+  {
+    test: /épic[ée]|poivre|cannelle|safran|muscade/i,
+    filter: (_p, prof) => prof.spicyLevel > 0.3,
+    tag: "épicé", prefTag: "épicé", weight: 1.3,
+  },
+  {
+    test: /floral|fleur|rose|jasmin|iris|tubéreuse/i,
+    filter: (_p, prof) => prof.floralLevel > 0.3,
+    tag: "floral", prefTag: "floral", weight: 1.3,
   },
   {
     test: /sédu|romantique|rendez|charm/i,
-    filter: (p) => (p.sillage === "fort" || p.sillage === "modéré") && p.seasonData.autumn > 30,
-    tag: "séduction",
-    prefTag: "séduisant",
+    filter: (p, prof) => prof.intensityLevel >= 0.4 && (prof.sweetnessLevel > 0.2 || prof.floralLevel > 0.2),
+    tag: "séduction", prefTag: "séduisant", weight: 1.2,
   },
   {
-    test: /hiver|froid|chaud|ambre|oud|épic/i,
+    test: /hiver|froid|chaud|ambre/i,
     filter: (p) => p.seasonData.winter >= 60,
-    tag: "hiver",
-    prefTag: "chaud",
+    tag: "hiver", prefTag: "chaud", weight: 1.2,
   },
   {
-    test: /été|soleil|plage|frais|fraîch|légère?|citron|agrume/i,
+    test: /été|soleil|plage/i,
     filter: (p) => p.seasonData.summer >= 60,
-    tag: "été",
-    prefTag: "frais",
+    tag: "été", prefTag: "frais", weight: 1.2,
   },
   {
-    test: /printemps|fleur|floral|doux|rose|jasmin/i,
+    test: /printemps/i,
     filter: (p) => p.seasonData.spring >= 60,
-    tag: "printemps",
-    prefTag: "floral",
+    tag: "printemps", prefTag: "floral", weight: 1.1,
   },
   {
-    test: /automne|bois[ée]|cuir|feuille/i,
+    test: /automne|cuir|feuille/i,
     filter: (p) => p.seasonData.autumn >= 60,
-    tag: "automne",
-    prefTag: "boisé",
+    tag: "automne", prefTag: "boisé", weight: 1.1,
   },
   {
     test: /travail|bureau|discret|jour|quotidien/i,
-    filter: (p) => p.sillage === "discret" || p.sillage === "modéré",
-    tag: "quotidien",
-    prefTag: "discret",
+    filter: (_p, prof) => prof.intensityLevel <= 0.4,
+    tag: "quotidien", prefTag: "discret", weight: 1.2,
   },
   {
     test: /homme|masculin|viril/i,
-    filter: (p) => p.gender === "homme",
-    tag: "masculin",
-    prefTag: "masculin",
+    filter: (p) => p.gender === "homme" || p.gender === "unisexe",
+    tag: "masculin", prefTag: "masculin", weight: 1.0,
   },
   {
     test: /femme|féminin|elle/i,
-    filter: (p) => p.gender === "femme",
-    tag: "féminin",
-    prefTag: "féminin",
+    filter: (p) => p.gender === "femme" || p.gender === "unisexe",
+    tag: "féminin", prefTag: "féminin", weight: 1.0,
   },
   {
     test: /unisexe|mixte|neutre|non.?gen/i,
     filter: (p) => p.gender === "unisexe",
-    tag: "unisexe",
-    prefTag: "unisexe",
+    tag: "unisexe", prefTag: "unisexe", weight: 1.0,
   },
 ];
 
@@ -155,14 +259,16 @@ function getOlfactoryProfile(p: Perfume): string {
 }
 
 /* ─── Suggestions based on context ──────────────────────── */
-function getSuggestions(tags: string[]): string[] {
+function getSuggestions(tags: string[], memory: SessionMemory): string[] {
   const pool: string[] = [];
-  if (!tags.includes("intense")) pool.push("Plus intense");
-  if (!tags.includes("discret")) pool.push("Plus discret");
-  if (!tags.includes("frais")) pool.push("Pour l'été");
-  if (!tags.includes("chaud")) pool.push("Pour l'hiver");
-  if (!tags.includes("séduisant")) pool.push("Plus séduisant");
-  if (!tags.includes("floral")) pool.push("Plus floral");
+  if (!tags.includes("intense") && !memory.askedTags.has("intense")) pool.push("Plus intense");
+  if (!tags.includes("discret") && !memory.askedTags.has("discret")) pool.push("Plus discret");
+  if (!tags.includes("frais") && !memory.askedTags.has("frais")) pool.push("Quelque chose de frais");
+  if (!tags.includes("sucré") && !memory.askedTags.has("sucré")) pool.push("Plus sucré");
+  if (!tags.includes("boisé") && !memory.askedTags.has("boisé")) pool.push("Plus boisé");
+  if (!tags.includes("chaud") && !memory.askedTags.has("hiver")) pool.push("Pour l'hiver");
+  if (!tags.includes("floral") && !memory.askedTags.has("floral")) pool.push("Plus floral");
+  if (!tags.includes("séduisant") && !memory.askedTags.has("séduisant")) pool.push("Plus séduisant");
   return pool.slice(0, 3);
 }
 
@@ -181,54 +287,71 @@ function getAIResponse(message: string, memory: SessionMemory): { text: string; 
   const matchedRules = KEYWORD_RULES.filter((kw) => kw.test.test(m));
   const matchedTags = matchedRules.map((r) => r.tag);
 
-  // Add memory preferences
-  matchedRules.forEach((r) => memory.preferences.add(r.prefTag));
+  // Track asked tags
+  matchedRules.forEach((r) => {
+    memory.preferences.add(r.prefTag);
+    memory.askedTags.add(r.tag);
+  });
 
   if (matchedRules.length > 0) {
-    // Score perfumes by how many criteria they match
+    // Weighted scoring
     const scored = PERFUMES.map((p) => {
+      const prof = getPerfumeProfile(p);
       let score = 0;
       for (const rule of matchedRules) {
-        if (rule.filter(p)) score++;
+        if (rule.filter(p, prof)) score += rule.weight;
       }
-      // Bonus if matches memory preferences
-      if (memory.preferences.has("frais") && p.seasonData.summer >= 50) score += 0.3;
-      if (memory.preferences.has("intense") && (p.sillage === "fort" || p.sillage === "très fort")) score += 0.3;
-      if (memory.preferences.has("discret") && (p.sillage === "discret" || p.sillage === "modéré")) score += 0.3;
-      // Avoid repeating last suggestion
-      if (p.id === memory.lastPerfumeId) score -= 2;
-      return { perfume: p, score };
+      // Memory preference bonuses
+      if (memory.preferences.has("frais") && prof.freshnessLevel > 0.4) score += 0.3;
+      if (memory.preferences.has("intense") && prof.intensityLevel >= 0.6) score += 0.3;
+      if (memory.preferences.has("discret") && prof.intensityLevel <= 0.4) score += 0.3;
+      if (memory.preferences.has("sucré") && prof.sweetnessLevel > 0.4) score += 0.3;
+      if (memory.preferences.has("boisé") && prof.woodyLevel > 0.4) score += 0.3;
+      if (memory.preferences.has("floral") && prof.floralLevel > 0.4) score += 0.3;
+      if (memory.preferences.has("épicé") && prof.spicyLevel > 0.4) score += 0.3;
+      // Avoid repeat
+      if (p.id === memory.lastPerfumeId) score -= 3;
+      return { perfume: p, score, profile: prof };
     })
       .filter((s) => s.score > 0)
       .sort((a, b) => b.score - a.score);
 
     if (scored.length > 0) {
-      // Pick from top 3 randomly for variety
       const topN = scored.slice(0, Math.min(3, scored.length));
-      const pick = topN[Math.floor(Math.random() * topN.length)].perfume;
-      memory.lastPerfumeId = pick.id;
+      const pick = topN[Math.floor(Math.random() * topN.length)];
+      memory.lastPerfumeId = pick.perfume.id;
 
       const criteriaLabel = matchedTags.length > 1
         ? `Pour votre recherche ${matchedTags.join(" + ")}`
         : `Pour une ambiance ${matchedTags[0]}`;
 
-      const profile = getOlfactoryProfile(pick);
+      const profile = getOlfactoryProfile(pick.perfume);
+      const accord = getAccordLabel(pick.profile);
+      const vibe = getVibeLabel(pick.profile);
 
-      const text = `${criteriaLabel}, voici ma recommandation :\n\n🌸 **${pick.name}**\n${pick.brand} · ${pick.concentration}\n\n_${pick.description}_\n\n🎵 Profil olfactif : ${profile}\nSillage : ${pick.sillage ?? "non renseigné"}`;
+      const seasonBest = Object.entries(pick.perfume.seasonData)
+        .sort((a, b) => b[1] - a[1])[0];
+      const seasonLabels: Record<string, string> = { winter: "hiver", spring: "printemps", summer: "été", autumn: "automne" };
+      const bestSeason = seasonLabels[seasonBest[0]] ?? seasonBest[0];
 
-      return { text, perfume: pick, suggestions: getSuggestions(matchedTags) };
+      const text = `${criteriaLabel}, voici ma recommandation :\n\n🌸 **${pick.perfume.name}**\n${pick.perfume.brand} · ${pick.perfume.concentration}\n\n_${pick.perfume.description}_\n\n🎵 Notes clés : ${profile}\n✨ Accord dominant : ${accord}\n🎭 Profil : ${vibe}\n📍 Sillage : ${pick.perfume.sillage} · Idéal en ${bestSeason}`;
+
+      return { text, perfume: pick.perfume, suggestions: getSuggestions(matchedTags, memory) };
     }
   }
 
-  // Fallback with memory context
+  // Fallback
   const random = PERFUMES.filter((p) => p.id !== memory.lastPerfumeId);
   const pick = random[Math.floor(Math.random() * random.length)] || PERFUMES[0];
   memory.lastPerfumeId = pick.id;
 
+  const prof = getPerfumeProfile(pick);
   const profile = getOlfactoryProfile(pick);
-  const text = `Laissez-moi vous proposer une découverte :\n\n🌸 **${pick.name}**\n${pick.brand} · ${pick.concentration}\n\n_${pick.description}_\n\n🎵 Profil olfactif : ${profile}\n\nPrécisez l'occasion ou l'ambiance souhaitée pour affiner !`;
+  const accord = getAccordLabel(prof);
+  const vibe = getVibeLabel(prof);
+  const text = `Laissez-moi vous proposer une découverte :\n\n🌸 **${pick.name}**\n${pick.brand} · ${pick.concentration}\n\n_${pick.description}_\n\n🎵 Notes clés : ${profile}\n✨ Accord dominant : ${accord}\n🎭 Profil : ${vibe}\n\nPrécisez l'occasion ou l'ambiance souhaitée pour affiner !`;
 
-  return { text, perfume: pick, suggestions: ["Pour une soirée", "Quelque chose de frais", "Plus discret"] };
+  return { text, perfume: pick, suggestions: ["Pour une soirée", "Quelque chose de frais", "Plus sucré"] };
 }
 
 /* ─── Component ─────────────────────────────────────────── */
@@ -242,7 +365,12 @@ const ChatConseiller = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const idCounter = useRef(1);
-  const memoryRef = useRef<SessionMemory>({ preferences: new Set() });
+  const memoryRef = useRef<SessionMemory>({ preferences: new Set(), askedTags: new Set() });
+
+  // Pre-compute profiles on mount
+  useMemo(() => {
+    PERFUMES.forEach((p) => getPerfumeProfile(p));
+  }, []);
 
   const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() => {
@@ -265,7 +393,7 @@ const ChatConseiller = () => {
     setTyping(true);
     setThinkingText(THINKING_PHRASES[Math.floor(Math.random() * THINKING_PHRASES.length)]);
 
-    const delay = 600 + Math.random() * 500;
+    const delay = 1500;
     setTimeout(() => {
       const { text: reply, perfume, suggestions } = getAIResponse(msg, memoryRef.current);
       const aiMsg: ChatMessage = { id: idCounter.current++, role: "ai", text: reply, perfume, suggestions };
@@ -297,12 +425,10 @@ const ChatConseiller = () => {
         aria-label="Ouvrir le conseiller parfum"
       >
         {open ? (
-  <X size={22} className="text-black" />
-) : (
-  <img src="/logo.png" className="w-12 h-12 object-contain"
-/>
-)}
-
+          <X size={22} className="text-black" />
+        ) : (
+          <Bot size={22} className="text-black" />
+        )}
       </motion.button>
 
       {/* Chat panel */}

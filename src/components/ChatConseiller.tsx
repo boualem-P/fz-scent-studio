@@ -276,7 +276,6 @@ function getSuggestions(tags: string[], memory: SessionMemory): string[] {
 /* ─── Multi-criteria AI response ────────────────────────── */
 function getAIResponse(message: string, memory: SessionMemory): { text: string; perfume?: Perfume; suggestions: string[] } {
   const m = message.toLowerCase();
-  const matchedRules = KEYWORD_RULES.filter((kw) => kw.test.test(m));
   const wantsFemale = /femme|féminin|elle/i.test(m);
   const wantsMale = /homme|masculin|viril/i.test(m);
 

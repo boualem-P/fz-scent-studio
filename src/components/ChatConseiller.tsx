@@ -276,6 +276,9 @@ function getSuggestions(tags: string[], memory: SessionMemory): string[] {
 /* ─── Multi-criteria AI response ────────────────────────── */
 function getAIResponse(message: string, memory: SessionMemory): { text: string; perfume?: Perfume; suggestions: string[] } {
   const m = message.toLowerCase();
+  const matchedRules = KEYWORD_RULES.filter((kw) => kw.test.test(m));
+  const wantsFemale = /femme|féminin|elle/i.test(m);
+  const wantsMale = /homme|masculin|viril/i.test(m);
 
   // Check app guide first
   for (const guide of APP_GUIDE_PATTERNS) {
@@ -296,7 +299,13 @@ function getAIResponse(message: string, memory: SessionMemory): { text: string; 
 
   if (matchedRules.length > 0) {
     // Weighted scoring
-    const scored = PERFUMES.map((p) => {
+    const scored = PERFUMES
+  .filter((p) => {
+    if (wantsFemale) return p.gender === "femme" || p.gender === "unisexe";
+    if (wantsMale) return p.gender === "homme" || p.gender === "unisexe";
+    return true;
+  })
+  .map((p) => {
       const prof = getPerfumeProfile(p);
       let score = 0;
       for (const rule of matchedRules) {

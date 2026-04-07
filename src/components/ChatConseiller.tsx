@@ -47,7 +47,7 @@ const WELCOME_MSG: ChatMessage = {
   id: 0,
   role: "ai",
   text: "Bienvenue chez votre conseiller parfum ✨\nDites-moi ce que vous recherchez : une occasion, une saison, une ambiance… Je vous guiderai vers le parfum idéal.",
-  suggestions: ["Parfum pour une soirée", "Parfum viril pour homme", "Parfum sensuel pour femme" "Parfum séduisant"],
+  suggestions: ["Parfum pour une soirée", "Parfum viril pour homme", "Parfum sensuel pour femme", "Parfum séduisant"],
 };
 
 /* ─── Starter prompts ───────────────────────────────────── */
@@ -347,6 +347,7 @@ function getAIResponse(message: string, memory: SessionMemory): { text: string; 
   memory.lastPerfumeId = pick.id;
 
   const prof = getPerfumeProfile(pick);
+  const profile = getOlfactoryProfile(pick);
   const notes = [
   ...pick.topNotes,
   ...pick.heartNotes,
@@ -354,12 +355,9 @@ function getAIResponse(message: string, memory: SessionMemory): { text: string; 
 ];
 
   const expertProfile = expert.buildExpertProfile(notes);
-  if (m.includes("sucré") && expertProfile.dominantCategories.includes("sweet")) score += 1.5;
-  if (m.includes("frais") && expertProfile.dominantCategories.includes("fresh")) score += 1.5;
-  if (m.includes("boisé") && expertProfile.dominantCategories.includes("woody")) score += 1.5;
 
   const dominant = expert.getDominantCategory(expertProfile);
-  const vibe = expert.getMainVibe(expertProfile);
+  const expertVibe = expert.getMainVibe(expertProfile);
   const season = expert.getBestSeason(expertProfile);
   const accord = getAccordLabel(prof);
   const vibe = getVibeLabel(prof);
@@ -382,7 +380,7 @@ const ChatConseiller = () => {
   const memoryRef = useRef<SessionMemory>({ preferences: new Set(), askedTags: new Set() });
 
   // Pre-compute profiles on mount
-  useMemo(() => {
+  useEffect(() => {
     PERFUMES.forEach((p) => getPerfumeProfile(p));
   }, []);
 
@@ -441,7 +439,7 @@ const ChatConseiller = () => {
         {open ? (
   <X size={22} className="text-black" />
 ) : (
-  <img src="/logo.png" className="w-12 h-12 object-contain" />
+  <img src="/logo.png" alt="logo" className="w-12 h-12 object-contain" />
         )}
       </motion.button>
 

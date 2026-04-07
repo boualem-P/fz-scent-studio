@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Bot } from "lucide-react";
 import { PERFUMES } from "@/data/perfumes";
+import expert from "@/data/perfumeExpertRules";
 import type { Perfume } from "@/data/database";
 
 /* ─── Types ─────────────────────────────────────────────── */

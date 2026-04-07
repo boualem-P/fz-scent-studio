@@ -47,7 +47,7 @@ const WELCOME_MSG: ChatMessage = {
   id: 0,
   role: "ai",
   text: "Bienvenue chez votre conseiller parfum ✨\nDites-moi ce que vous recherchez : une occasion, une saison, une ambiance… Je vous guiderai vers le parfum idéal.",
-  suggestions: ["Parfum pour une soirée", "Parfum été homme", "Parfum séduisant"],
+  suggestions: ["Parfum pour une soirée", "Parfum viril pour homme", "Parfum sensuel pour femme" "Parfum séduisant"],
 };
 
 /* ─── Starter prompts ───────────────────────────────────── */

@@ -347,7 +347,20 @@ function getAIResponse(message: string, memory: SessionMemory): { text: string; 
   memory.lastPerfumeId = pick.id;
 
   const prof = getPerfumeProfile(pick);
-  const profile = getOlfactoryProfile(pick);
+  const notes = [
+  ...pick.topNotes,
+  ...pick.heartNotes,
+  ...pick.baseNotes
+];
+
+  const expertProfile = expert.buildExpertProfile(notes);
+  if (m.includes("sucré") && expertProfile.dominantCategories.includes("sweet")) score += 1.5;
+  if (m.includes("frais") && expertProfile.dominantCategories.includes("fresh")) score += 1.5;
+  if (m.includes("boisé") && expertProfile.dominantCategories.includes("woody")) score += 1.5;
+
+  const dominant = expert.getDominantCategory(expertProfile);
+  const vibe = expert.getMainVibe(expertProfile);
+  const season = expert.getBestSeason(expertProfile);
   const accord = getAccordLabel(prof);
   const vibe = getVibeLabel(prof);
   const text = `Laissez-moi vous proposer une découverte :\n\n🌸 **${pick.name}**\n${pick.brand} · ${pick.concentration}\n\n_${pick.description}_\n\n🎵 Notes clés : ${profile}\n✨ Accord dominant : ${accord}\n🎭 Profil : ${vibe}\n\nPrécisez l'occasion ou l'ambiance souhaitée pour affiner !`;

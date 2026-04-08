@@ -520,7 +520,7 @@ function getAIResponse(message: string, memory: SessionMemory): { text: string; 
       const accord = getAccordLabel(best.profile);
       const vibe = getVibeLabel(best.profile);
 
-      const seasonBest = Object.entries(best.perfume.seasonData).sort((a, b) => b[1] - a[1])[0];
+      const seasonBest = Object.entries(best.perfume.seasonData).sort((a, b) => Number(b[1]) - Number(a[1]))[0];
       const seasonLabels: Record<string, string> = { winter: "hiver", spring: "printemps", summer: "été", autumn: "automne" };
       const bestSeason = seasonLabels[seasonBest[0]] ?? seasonBest[0];
 

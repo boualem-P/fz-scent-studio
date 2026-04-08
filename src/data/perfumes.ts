@@ -1,3 +1,16 @@
+// Re-export types and data from database.ts so all components can import from "@/data/perfumes"
+export { PERFUMES } from "./database";
+export type { Perfume, NoteDetail, SeasonData } from "./database";
+
+// Additional type aliases used by components
+export type Gender = "homme" | "femme" | "unisexe";
+export type NoteCategory = "top" | "heart" | "base";
+export const NOTE_LABELS: Record<NoteCategory, string> = {
+  top: "Notes de tête",
+  heart: "Notes de cœur",
+  base: "Notes de fond",
+};
+
 export function matchPerfumes(
   gender: string | null,
   selectedTop: string[],

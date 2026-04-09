@@ -375,11 +375,97 @@ function sommelierSynthesize(answers: string[], memory: SessionMemory): { text: 
   return { text: `${pick(SOFIA_FALLBACK_INTROS)}\n\n🌸 **${fallback.name}** — ${fallback.brand}`, perfume: fallback, suggestions: ["Plus intense", "Plus frais"] };
 }
 
+/* ─── KNOWLEDGE ENGINE (LLM LIKE) ───────────────────────── */
+
+function buildPerfumeKnowledge(perfume: Perfume): string {
+  const notes = [
+    ...perfume.topNotes,
+    ...perfume.heartNotes,
+    ...perfume.baseNotes,
+  ].slice(0, 6).join(", ");
+
+  return `
+${perfume.name} de ${perfume.brand}.
+Notes principales : ${notes}.
+Description : ${perfume.description}.
+Sillage : ${perfume.sillage}.
+`;
+}
+
+function answerGeneralQuestion(message: string): string | null {
+  const m = message.toLowerCase();
+
+  // ── QUESTIONS GÉNÉRALES PARFUM ──
+
+  if (/c.?est quoi.*parfum|définition parfum/i.test(m)) {
+    return `Un parfum est une composition de notes olfactives organisée en trois niveaux : tête, cœur et fond. Il évolue dans le temps sur la peau.`;
+  }
+
+  if (/note de tête|note de coeur|note de fond/i.test(m)) {
+    return `Un parfum est structuré en 3 parties :
+- Notes de tête : les premières odeurs (fraîches, volatiles)
+- Notes de cœur : l’identité du parfum
+- Notes de fond : la signature longue durée (boisées, ambrées, vanillées)`;
+  }
+
+  if (/différence.*eau de parfum|eau de toilette/i.test(m)) {
+    return `La différence vient de la concentration :
+- Eau de toilette : plus légère, 5–10%
+- Eau de parfum : plus intense, 15–20%
+Plus la concentration est élevée, plus le parfum tient longtemps.`;
+  }
+
+  if (/tenir longtemps|longévité/i.test(m)) {
+    return `Pour qu’un parfum tienne longtemps :
+- privilégie les notes boisées, ambrées ou gourmandes
+- applique sur peau hydratée
+- zones chaudes (cou, poignets)`;
+  }
+
+  if (/quel parfum.*sent bon|meilleur parfum/i.test(m)) {
+    return `Il n’existe pas de “meilleur” parfum universel. Tout dépend de ton style, ton humeur et ta peau. Je peux t’aider à trouver le tien si tu me donnes quelques indices 😉`;
+  }
+
+  return null;
+}
+
 /* ─── Multi-criteria AI response ────────────────────────── */
 function getAIResponse(message: string, memory: SessionMemory): { text: string; perfume?: Perfume; perfume2?: Perfume; suggestions: string[] } {
   const m = message.toLowerCase();
   const wantsFemale = /femme|féminin|elle/i.test(m);
   const wantsMale = /homme|masculin|viril/i.test(m);
+  // ── LLM STYLE RESPONSE ──
+const generalAnswer = answerGeneralQuestion(message);
+if (generalAnswer) {
+  return {
+    text: generalAnswer,
+    suggestions: ["Trouve-moi un parfum", "Comparer deux parfums"]
+  };
+}
+  // ── QUESTIONS SUR UN PARFUM PRÉCIS ──
+const foundPerfume = PERFUMES.find(p =>
+  message.toLowerCase().includes(p.name.toLowerCase())
+);
+
+if (foundPerfume) {
+  const knowledge = buildPerfumeKnowledge(foundPerfume);
+
+  if (/note|composition|contient|ingrédient/i.test(message)) {
+    return {
+      text: `Voici la composition de **${foundPerfume.name}** :\n\n${knowledge}`,
+      perfume: foundPerfume,
+      suggestions: ["Comparer avec un autre", "Parfum similaire"]
+    };
+  }
+
+  if (/avis|c.?est bien|vaut le coup/i.test(message)) {
+    return {
+      text: `**${foundPerfume.name}** est apprécié pour son profil ${getAccordLabel(getPerfumeProfile(foundPerfume))}.\n\n${foundPerfume.description}`,
+      perfume: foundPerfume,
+      suggestions: ["Comparer", "Similaire"]
+    };
+  }
+}
 
   // Check app guide first
   for (const guide of APP_GUIDE_PATTERNS) {
@@ -540,7 +626,16 @@ function getAIResponse(message: string, memory: SessionMemory): { text: string; 
   const accord = getAccordLabel(prof);
   const vibe = getVibeLabel(prof);
   const intro = pick(SOFIA_FALLBACK_INTROS);
-  const text = `${intro}\n\n🌸 **${fallback.name}**\n${fallback.brand} · ${fallback.concentration}\n\n_${fallback.description}_\n\n🎵 Notes clés : ${profile}\n✨ Accord dominant : ${accord}\n🎭 Profil : ${vibe}\n\nPrécise l'occasion ou l'ambiance souhaitée pour affiner !`;
+  const text = `
+Je veux bien t’aider, mais j’ai besoin d’un peu plus de détails 😊
+
+Tu peux me dire :
+• une ambiance (soirée, été…)
+• une odeur (sucré, frais…)
+• ou un parfum que tu aimes
+
+Et je te guiderai parfaitement.
+`;
 
   return { text, perfume: fallback, suggestions: ["Pour une soirée", "Quelque chose de frais", "Plus sucré"] };
 }

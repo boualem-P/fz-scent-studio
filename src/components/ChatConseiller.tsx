@@ -887,7 +887,7 @@ const ChatConseiller = () => {
     if (!persistentRef.current) return;
     const prefs = Array.from(memoryRef.current.preferences);
     persistentRef.current.preferences = prefs;
-    persistentRef.current.favoriteTags = [...new Set([...persistentRef.current.favoriteTags, ...prefs])].slice(0, 5);
+    persistentRef.current.favoriteTags = Array.from(new Set([...persistentRef.current.favoriteTags, ...prefs])).slice(0, 5);
     savePersistentMemory(persistentRef.current);
   }, []);
 

@@ -75,8 +75,8 @@ const BudgetScreen = ({ onValidate, onBack }: BudgetScreenProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const age = ageStr ? parseInt(ageStr, 10) : null;
-  const isValid = age !== null && age >= 16 && age <= 99;
-  const isTooYoung = age !== null && age > 0 && age < 16 && ageStr.length >= 2;
+  const isValid = age !== null && age >= 15 && age <= 99;
+  const isTooYoung = age !== null && age > 0 && age < 15 && ageStr.length >= 2;
 
   // Canvas animation
   useEffect(() => {
@@ -259,7 +259,7 @@ const BudgetScreen = ({ onValidate, onBack }: BudgetScreenProps) => {
               exit={{ opacity: 0 }}
               className="text-red-400/80 text-[10px] uppercase tracking-widest mt-3"
             >
-              Âge minimum : 16 ans
+              Âge minimum : 15 ans
             </motion.p>
           )}
         </AnimatePresence>

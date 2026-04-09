@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Bot } from "lucide-react";
+import { X, Send, Bot, RotateCcw } from "lucide-react";
 import { PERFUMES } from "@/data/perfumes";
 import expert from "@/data/perfumeExpertRules";
 import type { Perfume } from "@/data/database";
@@ -37,6 +37,170 @@ interface PerfumeProfile {
   woodyLevel: number;
   spicyLevel: number;
   floralLevel: number;
+}
+
+/* ─── Chat Memory (session-scoped intelligence) ─────────── */
+type ChatIntent = "comparison" | "follow_up" | "preference_update" | "new_search" | "general" | null;
+
+interface ChatMemoryState {
+  lastIntent: ChatIntent;
+  lastComparedPerfumes: Perfume[];
+  lastResults: { perfume: Perfume; score: number }[];
+  lastPreferences: {
+    accords: string[];
+    intensity: string | null;
+    gender: string | null;
+    atmosphere: string | null;
+  };
+}
+
+function createEmptyChatMemory(): ChatMemoryState {
+  return {
+    lastIntent: null,
+    lastComparedPerfumes: [],
+    lastResults: [],
+    lastPreferences: { accords: [], intensity: null, gender: null, atmosphere: null },
+  };
+}
+
+/* ─── Intent Detection ──────────────────────────────────── */
+function detectIntent(msg: string, chatMem: ChatMemoryState): ChatIntent {
+  const m = msg.toLowerCase();
+
+  // Comparison
+  if (/compar|versus|vs\.?|ou bien|lequel.*entre|différence entre/i.test(m)) return "comparison";
+
+  // Follow-up (only if there's context)
+  if (chatMem.lastComparedPerfumes.length === 2 || chatMem.lastResults.length > 0) {
+    if (/le plus|le meilleur|le moins|lequel|entre eux|préfère|choisi|sucré|frais|boisé|intense|léger|fort|discret/i.test(m)) return "follow_up";
+  }
+
+  // Preference update
+  if (/je veux|plutôt|quelque chose de|j'aime|je préfère|pas trop|très|envie de/i.test(m)) return "preference_update";
+
+  // General knowledge
+  if (/c.?est quoi|définition|comment|pourquoi|à quoi sert|note de/i.test(m)) return "general";
+
+  return "new_search";
+}
+
+/* ─── Preference extraction ─────────────────────────────── */
+function extractPreferences(msg: string, prefs: ChatMemoryState["lastPreferences"]): ChatMemoryState["lastPreferences"] {
+  const m = msg.toLowerCase();
+  const newPrefs = { ...prefs, accords: [...prefs.accords] };
+
+  if (/sucr[ée]|vanill|gourmand|caramel|tonka|chocolat/i.test(m) && !newPrefs.accords.includes("sucré")) newPrefs.accords.push("sucré");
+  if (/frais|fraîch|léger|citron|agrume|aquatique/i.test(m) && !newPrefs.accords.includes("frais")) newPrefs.accords.push("frais");
+  if (/bois[ée]|cèdre|santal|vétiver|oud|patchouli/i.test(m) && !newPrefs.accords.includes("boisé")) newPrefs.accords.push("boisé");
+  if (/épic[ée]|poivre|cannelle|safran/i.test(m) && !newPrefs.accords.includes("épicé")) newPrefs.accords.push("épicé");
+  if (/floral|fleur|rose|jasmin|iris/i.test(m) && !newPrefs.accords.includes("floral")) newPrefs.accords.push("floral");
+
+  if (/intense|puissant|fort/i.test(m)) newPrefs.intensity = "intense";
+  if (/discret|subtil|léger/i.test(m)) newPrefs.intensity = "discret";
+
+  if (/homme|masculin|viril/i.test(m)) newPrefs.gender = "homme";
+  if (/femme|féminin/i.test(m)) newPrefs.gender = "femme";
+  if (/unisexe|mixte/i.test(m)) newPrefs.gender = "unisexe";
+
+  if (/soir[ée]e|nuit|gala/i.test(m)) newPrefs.atmosphere = "soirée";
+  if (/été|soleil|plage/i.test(m)) newPrefs.atmosphere = "été";
+  if (/hiver|froid/i.test(m)) newPrefs.atmosphere = "hiver";
+  if (/bureau|travail|quotidien/i.test(m)) newPrefs.atmosphere = "bureau";
+  if (/rendez|romantique|sédu/i.test(m)) newPrefs.atmosphere = "romantique";
+
+  // Keep only last 5 accords
+  newPrefs.accords = newPrefs.accords.slice(-5);
+  return newPrefs;
+}
+
+/* ─── Conversational scoring ────────────────────────────── */
+function conversationalScore(perfume: Perfume, prof: PerfumeProfile, prefs: ChatMemoryState["lastPreferences"], intentKeyword?: string): number {
+  let score = 0;
+
+  // +10 per matching preference
+  for (const acc of prefs.accords) {
+    if (acc === "sucré" && prof.sweetnessLevel > 0.3) score += 10;
+    if (acc === "frais" && prof.freshnessLevel > 0.3) score += 10;
+    if (acc === "boisé" && prof.woodyLevel > 0.3) score += 10;
+    if (acc === "épicé" && prof.spicyLevel > 0.3) score += 10;
+    if (acc === "floral" && prof.floralLevel > 0.3) score += 10;
+  }
+
+  // +15 for current intent keyword
+  if (intentKeyword) {
+    if (/sucr/i.test(intentKeyword) && prof.sweetnessLevel > 0.3) score += 15;
+    if (/frais|fraîch/i.test(intentKeyword) && prof.freshnessLevel > 0.3) score += 15;
+    if (/bois/i.test(intentKeyword) && prof.woodyLevel > 0.3) score += 15;
+    if (/épic/i.test(intentKeyword) && prof.spicyLevel > 0.3) score += 15;
+    if (/floral/i.test(intentKeyword) && prof.floralLevel > 0.3) score += 15;
+    if (/intense|puissant|fort/i.test(intentKeyword) && prof.intensityLevel >= 0.6) score += 15;
+    if (/discret|subtil|léger/i.test(intentKeyword) && prof.intensityLevel <= 0.4) score += 15;
+  }
+
+  // Intensity match
+  if (prefs.intensity === "intense" && prof.intensityLevel >= 0.6) score += 5;
+  if (prefs.intensity === "discret" && prof.intensityLevel <= 0.4) score += 5;
+
+  // Gender match
+  if (prefs.gender) {
+    if (prefs.gender === "homme" && (perfume.gender === "homme" || perfume.gender === "unisexe")) score += 5;
+    if (prefs.gender === "femme" && (perfume.gender === "femme" || perfume.gender === "unisexe")) score += 5;
+    if (prefs.gender === "unisexe" && perfume.gender === "unisexe") score += 5;
+  }
+
+  // Season match
+  if (prefs.atmosphere === "été" && perfume.seasonData.summer >= 60) score += 5;
+  if (prefs.atmosphere === "hiver" && perfume.seasonData.winter >= 60) score += 5;
+
+  return score;
+}
+
+/* ─── Follow-up on compared perfumes ────────────────────── */
+function handleComparisonFollowUp(msg: string, p1: Perfume, p2: Perfume): string {
+  const m = msg.toLowerCase();
+  const prof1 = getPerfumeProfile(p1);
+  const prof2 = getPerfumeProfile(p2);
+
+  const comparisons: { test: RegExp; getter: (p: PerfumeProfile) => number; label: string }[] = [
+    { test: /sucr[ée]|gourmand|vanill/i, getter: p => p.sweetnessLevel, label: "sucré" },
+    { test: /frais|fraîch|léger/i, getter: p => p.freshnessLevel, label: "frais" },
+    { test: /bois[ée]|woody/i, getter: p => p.woodyLevel, label: "boisé" },
+    { test: /épic[ée]|spicy/i, getter: p => p.spicyLevel, label: "épicé" },
+    { test: /floral|fleur/i, getter: p => p.floralLevel, label: "floral" },
+    { test: /intense|puissant|fort/i, getter: p => p.intensityLevel, label: "intense" },
+    { test: /discret|subtil|léger/i, getter: p => 1 - p.intensityLevel, label: "discret" },
+  ];
+
+  for (const cmp of comparisons) {
+    if (cmp.test.test(m)) {
+      const v1 = cmp.getter(prof1);
+      const v2 = cmp.getter(prof2);
+      const winner = v1 >= v2 ? p1 : p2;
+      const loser = v1 >= v2 ? p2 : p1;
+      return `Entre les deux, **${winner.name}** est le plus ${cmp.label} 🎯\n\n✨ ${winner.name} : ${cmp.label} à ${Math.round(Math.max(v1, v2) * 100)}%\n📊 ${loser.name} : ${cmp.label} à ${Math.round(Math.min(v1, v2) * 100)}%\n\nMon conseil : si tu cherches du ${cmp.label}, fonce sur **${winner.name}** !`;
+    }
+  }
+
+  // Generic "which one" follow-up
+  if (/lequel|choisir|préfère|meilleur/i.test(m)) {
+    const s1 = prof1.intensityLevel + prof1.sweetnessLevel + prof1.woodyLevel;
+    const s2 = prof2.intensityLevel + prof2.sweetnessLevel + prof2.woodyLevel;
+    const richer = s1 >= s2 ? p1 : p2;
+    const lighter = s1 >= s2 ? p2 : p1;
+    return `Difficile de choisir ! Voici mon analyse :\n\n🌟 **${richer.name}** — Plus riche et affirmé, parfait pour marquer les esprits\n🍃 **${lighter.name}** — Plus subtil et élégant, idéal au quotidien\n\nTout dépend de l'occasion ! Pour une soirée → **${richer.name}**. Pour le bureau → **${lighter.name}**.`;
+  }
+
+  // Season follow-up
+  if (/été|hiver|printemps|automne|saison/i.test(m)) {
+    const seasonKey = /été/i.test(m) ? "summer" : /hiver/i.test(m) ? "winter" : /printemps/i.test(m) ? "spring" : "autumn";
+    const seasonLabel = /été/i.test(m) ? "été" : /hiver/i.test(m) ? "hiver" : /printemps/i.test(m) ? "printemps" : "automne";
+    const v1 = p1.seasonData[seasonKey as keyof typeof p1.seasonData];
+    const v2 = p2.seasonData[seasonKey as keyof typeof p2.seasonData];
+    const winner = v1 >= v2 ? p1 : p2;
+    return `Pour l'${seasonLabel}, je te recommande **${winner.name}** (score saison : ${Math.max(v1, v2)}%) 🌡️`;
+  }
+
+  return `Tu hésites encore entre **${p1.name}** et **${p2.name}** ? Dis-moi ce qui compte le plus : intensité, fraîcheur, occasion… et je trancherai pour toi ! 😉`;
 }
 
 /* ─── Sofia's personality ───────────────────────────────── */
@@ -304,10 +468,9 @@ function buildComparisonText(p1: Perfume, p2: Perfume): string {
   const vibe2 = getVibeLabel(prof2);
 
   const seasonLabels: Record<string, string> = { winter: "hiver", spring: "printemps", summer: "été", autumn: "automne" };
-  const bestSeason1 = seasonLabels[Object.entries(p1.seasonData).sort((a, b) => b[1] - a[1])[0][0]];
-  const bestSeason2 = seasonLabels[Object.entries(p2.seasonData).sort((a, b) => b[1] - a[1])[0][0]];
+  const bestSeason1 = seasonLabels[Object.entries(p1.seasonData).sort((a, b) => Number(b[1]) - Number(a[1]))[0][0]];
+  const bestSeason2 = seasonLabels[Object.entries(p2.seasonData).sort((a, b) => Number(b[1]) - Number(a[1]))[0][0]];
 
-  // Common notes
   const notes1 = new Set([...p1.topNotes, ...p1.heartNotes, ...p1.baseNotes].map(n => n.toLowerCase()));
   const notes2 = [...p2.topNotes, ...p2.heartNotes, ...p2.baseNotes].map(n => n.toLowerCase());
   const common = notes2.filter(n => notes1.has(n));
@@ -324,7 +487,6 @@ function buildComparisonText(p1: Perfume, p2: Perfume): string {
     text += `🤝 Notes en commun : ${common.slice(0, 3).join(", ")}\n`;
   }
 
-  // Recommendation
   if (prof1.intensityLevel > prof2.intensityLevel) {
     text += `\n💡 Mon conseil : **${p1.name}** pour marquer les esprits, **${p2.name}** pour la subtilité.`;
   } else {
@@ -338,7 +500,6 @@ function buildComparisonText(p1: Perfume, p2: Perfume): string {
 function sommelierSynthesize(answers: string[], memory: SessionMemory): { text: string; perfume?: Perfume; suggestions: string[] } {
   const joined = answers.join(" ").toLowerCase();
 
-  // Build virtual query from answers
   const wantEvening = /soir|nuit/i.test(joined);
   const wantWarm = /chaud|enveloppant|intense/i.test(joined);
   const wantFresh = /frais|léger|light/i.test(joined);
@@ -375,8 +536,7 @@ function sommelierSynthesize(answers: string[], memory: SessionMemory): { text: 
   return { text: `${pick(SOFIA_FALLBACK_INTROS)}\n\n🌸 **${fallback.name}** — ${fallback.brand}`, perfume: fallback, suggestions: ["Plus intense", "Plus frais"] };
 }
 
-/* ─── KNOWLEDGE ENGINE (LLM LIKE) ───────────────────────── */
-
+/* ─── KNOWLEDGE ENGINE ──────────────────────────────────── */
 function buildPerfumeKnowledge(perfume: Perfume): string {
   const notes = [
     ...perfume.topNotes,
@@ -384,101 +544,135 @@ function buildPerfumeKnowledge(perfume: Perfume): string {
     ...perfume.baseNotes,
   ].slice(0, 6).join(", ");
 
-  return `
-${perfume.name} de ${perfume.brand}.
-Notes principales : ${notes}.
-Description : ${perfume.description}.
-Sillage : ${perfume.sillage}.
-`;
+  return `${perfume.name} de ${perfume.brand}.\nNotes principales : ${notes}.\nDescription : ${perfume.description}.\nSillage : ${perfume.sillage}.`;
 }
 
 function answerGeneralQuestion(message: string): string | null {
   const m = message.toLowerCase();
-
-  // ── QUESTIONS GÉNÉRALES PARFUM ──
 
   if (/c.?est quoi.*parfum|définition parfum/i.test(m)) {
     return `Un parfum est une composition de notes olfactives organisée en trois niveaux : tête, cœur et fond. Il évolue dans le temps sur la peau.`;
   }
 
   if (/note de tête|note de coeur|note de fond/i.test(m)) {
-    return `Un parfum est structuré en 3 parties :
-- Notes de tête : les premières odeurs (fraîches, volatiles)
-- Notes de cœur : l’identité du parfum
-- Notes de fond : la signature longue durée (boisées, ambrées, vanillées)`;
+    return `Un parfum est structuré en 3 parties :\n- Notes de tête : les premières odeurs (fraîches, volatiles)\n- Notes de cœur : l'identité du parfum\n- Notes de fond : la signature longue durée (boisées, ambrées, vanillées)`;
   }
 
   if (/différence.*eau de parfum|eau de toilette/i.test(m)) {
-    return `La différence vient de la concentration :
-- Eau de toilette : plus légère, 5–10%
-- Eau de parfum : plus intense, 15–20%
-Plus la concentration est élevée, plus le parfum tient longtemps.`;
+    return `La différence vient de la concentration :\n- Eau de toilette : plus légère, 5–10%\n- Eau de parfum : plus intense, 15–20%\nPlus la concentration est élevée, plus le parfum tient longtemps.`;
   }
 
   if (/tenir longtemps|longévité/i.test(m)) {
-    return `Pour qu’un parfum tienne longtemps :
-- privilégie les notes boisées, ambrées ou gourmandes
-- applique sur peau hydratée
-- zones chaudes (cou, poignets)`;
+    return `Pour qu'un parfum tienne longtemps :\n- privilégie les notes boisées, ambrées ou gourmandes\n- applique sur peau hydratée\n- zones chaudes (cou, poignets)`;
   }
 
   if (/quel parfum.*sent bon|meilleur parfum/i.test(m)) {
-    return `Il n’existe pas de “meilleur” parfum universel. Tout dépend de ton style, ton humeur et ta peau. Je peux t’aider à trouver le tien si tu me donnes quelques indices 😉`;
+    return `Il n'existe pas de "meilleur" parfum universel. Tout dépend de ton style, ton humeur et ta peau. Je peux t'aider à trouver le tien si tu me donnes quelques indices 😉`;
   }
 
   return null;
 }
 
-/* ─── Multi-criteria AI response ────────────────────────── */
-function getAIResponse(message: string, memory: SessionMemory): { text: string; perfume?: Perfume; perfume2?: Perfume; suggestions: string[] } {
+/* ─── Multi-criteria AI response (with ChatMemory) ──────── */
+function getAIResponse(
+  message: string,
+  memory: SessionMemory,
+  chatMem: ChatMemoryState
+): { text: string; perfume?: Perfume; perfume2?: Perfume; suggestions: string[]; updatedChatMem: ChatMemoryState } {
   const m = message.toLowerCase();
   const wantsFemale = /femme|féminin|elle/i.test(m);
   const wantsMale = /homme|masculin|viril/i.test(m);
-  // ── LLM STYLE RESPONSE ──
-const generalAnswer = answerGeneralQuestion(message);
-if (generalAnswer) {
-  return {
-    text: generalAnswer,
-    suggestions: ["Trouve-moi un parfum", "Comparer deux parfums"]
-  };
-}
-  // ── QUESTIONS SUR UN PARFUM PRÉCIS ──
-const foundPerfume = PERFUMES.find(p =>
-  message.toLowerCase().includes(p.name.toLowerCase())
-);
 
-if (foundPerfume) {
-  const knowledge = buildPerfumeKnowledge(foundPerfume);
+  // Update preferences from message
+  const updatedPrefs = extractPreferences(message, chatMem.lastPreferences);
+  let newMem: ChatMemoryState = { ...chatMem, lastPreferences: updatedPrefs };
 
-  if (/note|composition|contient|ingrédient/i.test(message)) {
+  // Detect intent
+  const intent = detectIntent(message, chatMem);
+  newMem.lastIntent = intent;
+
+  // ── PRIORITY 1: Follow-up on compared perfumes ──
+  if (intent === "follow_up" && chatMem.lastComparedPerfumes.length === 2) {
+    const [p1, p2] = chatMem.lastComparedPerfumes;
+    const text = handleComparisonFollowUp(message, p1, p2);
     return {
-      text: `Voici la composition de **${foundPerfume.name}** :\n\n${knowledge}`,
-      perfume: foundPerfume,
-      suggestions: ["Comparer avec un autre", "Parfum similaire"]
+      text,
+      perfume: p1,
+      perfume2: p2,
+      suggestions: ["Le plus sucré ?", "Le plus frais ?", "Lequel choisir ?", "Nouvelle recherche"],
+      updatedChatMem: newMem,
     };
   }
 
-  if (/avis|c.?est bien|vaut le coup/i.test(message)) {
-    return {
-      text: `**${foundPerfume.name}** est apprécié pour son profil ${getAccordLabel(getPerfumeProfile(foundPerfume))}.\n\n${foundPerfume.description}`,
-      perfume: foundPerfume,
-      suggestions: ["Comparer", "Similaire"]
-    };
-  }
-}
+  // ── PRIORITY 2: Follow-up on last results ──
+  if (intent === "follow_up" && chatMem.lastResults.length > 0) {
+    const results = chatMem.lastResults;
+    const reScored = results.map(r => {
+      const prof = getPerfumeProfile(r.perfume);
+      const convScore = conversationalScore(r.perfume, prof, updatedPrefs, message);
+      return { ...r, score: r.score + convScore };
+    }).sort((a, b) => b.score - a.score);
 
-  // Check app guide first
+    const best = reScored[0];
+    if (best) {
+      const prof = getPerfumeProfile(best.perfume);
+      const accord = getAccordLabel(prof);
+      const vibe = getVibeLabel(prof);
+      memory.lastPerfumeId = best.perfume.id;
+      const text = `${pick(PERSONALITY_INTROS)}\n\nD'après tes dernières préférences, voici mon choix affiné :\n\n🌸 **${best.perfume.name}**\n${best.perfume.brand} · ${best.perfume.concentration}\n\n✨ ${accord} · ${vibe}\n📍 Sillage : ${best.perfume.sillage}`;
+      newMem.lastResults = reScored;
+      return { text, perfume: best.perfume, suggestions: ["Autre chose", "Plus intense", "Plus frais"], updatedChatMem: newMem };
+    }
+  }
+
+  // ── PRIORITY 3: Preference update → refine from last results if available ──
+  if (intent === "preference_update" && chatMem.lastResults.length > 0) {
+    const reScored = chatMem.lastResults.map(r => {
+      const prof = getPerfumeProfile(r.perfume);
+      const convScore = conversationalScore(r.perfume, prof, updatedPrefs, message);
+      return { ...r, score: r.score + convScore };
+    }).sort((a, b) => b.score - a.score);
+
+    const best = reScored[0];
+    if (best) {
+      const prof = getPerfumeProfile(best.perfume);
+      const accord = getAccordLabel(prof);
+      memory.lastPerfumeId = best.perfume.id;
+      const prefsStr = updatedPrefs.accords.join(", ");
+      const text = `${pick(PERSONALITY_INTROS)}\n\nJ'ai bien noté tes préférences (${prefsStr}) ! Voici ce qui colle le mieux :\n\n🌸 **${best.perfume.name}**\n${best.perfume.brand}\n\n✨ Accord : ${accord}\n📍 Sillage : ${best.perfume.sillage}`;
+      newMem.lastResults = reScored;
+      return { text, perfume: best.perfume, suggestions: ["Encore plus ?", "Autre style", "Comparer"], updatedChatMem: newMem };
+    }
+  }
+
+  // ── General knowledge ──
+  const generalAnswer = answerGeneralQuestion(message);
+  if (generalAnswer) {
+    return { text: generalAnswer, suggestions: ["Trouve-moi un parfum", "Comparer deux parfums"], updatedChatMem: newMem };
+  }
+
+  // ── Questions about a specific perfume ──
+  const foundPerfume = PERFUMES.find(p => m.includes(p.name.toLowerCase()));
+  if (foundPerfume) {
+    const knowledge = buildPerfumeKnowledge(foundPerfume);
+    if (/note|composition|contient|ingrédient/i.test(message)) {
+      return { text: `Voici la composition de **${foundPerfume.name}** :\n\n${knowledge}`, perfume: foundPerfume, suggestions: ["Comparer avec un autre", "Parfum similaire"], updatedChatMem: newMem };
+    }
+    if (/avis|c.?est bien|vaut le coup/i.test(message)) {
+      return { text: `**${foundPerfume.name}** est apprécié pour son profil ${getAccordLabel(getPerfumeProfile(foundPerfume))}.\n\n${foundPerfume.description}`, perfume: foundPerfume, suggestions: ["Comparer", "Similaire"], updatedChatMem: newMem };
+    }
+  }
+
+  // ── App guide ──
   for (const guide of APP_GUIDE_PATTERNS) {
     if (guide.test.test(m)) {
-      return { text: guide.response, suggestions: ["Recommande-moi un parfum", "Comment choisir ?"] };
+      return { text: guide.response, suggestions: ["Recommande-moi un parfum", "Comment choisir ?"], updatedChatMem: newMem };
     }
   }
 
   // ── Comparison detection ──
   const compareRegex = /compar|versus|vs\.?|ou bien|lequel.*entre|différence entre/i;
   if (compareRegex.test(m)) {
-    // Try to extract two perfume names
-    const perfumeNames = PERFUMES.map(p => p.name.toLowerCase());
     const found: Perfume[] = [];
     for (const p of PERFUMES) {
       if (m.includes(p.name.toLowerCase()) && found.length < 2 && !found.find(f => f.id === p.id)) {
@@ -487,25 +681,26 @@ if (foundPerfume) {
     }
     if (found.length === 2) {
       const text = buildComparisonText(found[0], found[1]);
-      return { text, perfume: found[0], perfume2: found[1], suggestions: ["Lequel pour une soirée ?", "Un autre comparatif"] };
+      newMem.lastComparedPerfumes = [found[0], found[1]];
+      newMem.lastIntent = "comparison";
+      return { text, perfume: found[0], perfume2: found[1], suggestions: ["Le plus sucré ?", "Lequel pour une soirée ?", "Le plus frais ?"], updatedChatMem: newMem };
     }
     if (found.length === 1) {
-      // Compare with a random different one
       const other = PERFUMES.find(p => p.id !== found[0].id && p.gender === found[0].gender);
       if (other) {
         const text = buildComparisonText(found[0], other);
-        return { text, perfume: found[0], perfume2: other, suggestions: ["Lequel pour une soirée ?", "Un autre comparatif"] };
+        newMem.lastComparedPerfumes = [found[0], other];
+        newMem.lastIntent = "comparison";
+        return { text, perfume: found[0], perfume2: other, suggestions: ["Le plus sucré ?", "Lequel choisir ?"], updatedChatMem: newMem };
       }
     }
   }
 
-  // ── Reverse analysis (find similar) ──
+  // ── Reverse analysis ──
   const reverseRegex = /ressemble|proche de|dans le style|j.?aime\s+\w+|comme\s+[A-Z]/i;
   if (reverseRegex.test(m)) {
-    // Check if they mention a perfume in our collection
     const inCollection = PERFUMES.find(p => m.includes(p.name.toLowerCase()));
     if (inCollection) {
-      // Find similar
       const prof = getPerfumeProfile(inCollection);
       const similar = PERFUMES
         .filter(p => p.id !== inCollection.id)
@@ -526,10 +721,9 @@ if (foundPerfume) {
         const accord = getAccordLabel(best.profile);
         const vibe = getVibeLabel(best.profile);
         const text = `${pick(PERSONALITY_INTROS)}\n\nSi tu aimes **${inCollection.name}**, tu vas adorer :\n\n🌸 **${best.perfume.name}**\n${best.perfume.brand} · ${best.perfume.concentration}\n\n✨ Accord dominant : ${accord}\n🎭 Profil : ${vibe}\n\nIls partagent un ADN olfactif très proche !`;
-        return { text, perfume: best.perfume, suggestions: ["Encore plus proche", "Quelque chose de différent"] };
+        return { text, perfume: best.perfume, suggestions: ["Encore plus proche", "Quelque chose de différent"], updatedChatMem: newMem };
       }
     } else {
-      // Not in collection — use keywords to match
       const matchedRules = KEYWORD_RULES.filter(kw => kw.test.test(m));
       if (matchedRules.length > 0) {
         const scored = PERFUMES.map(p => {
@@ -547,20 +741,19 @@ if (foundPerfume) {
           memory.lastPerfumeId = best.perfume.id;
           const accord = getAccordLabel(best.profile);
           const text = `Je ne connais pas ce parfum, mais d'après ce que tu décris, voici ce qui s'en approche le plus dans notre collection :\n\n🌸 **${best.perfume.name}**\n${best.perfume.brand}\n\n✨ Accord dominant : ${accord}`;
-          return { text, perfume: best.perfume, suggestions: ["Plus proche encore", "Autre style"] };
+          return { text, perfume: best.perfume, suggestions: ["Plus proche encore", "Autre style"], updatedChatMem: newMem };
         }
       }
 
-      // Generic reverse fallback
       const randomPick = PERFUMES.filter(p => p.id !== memory.lastPerfumeId);
       const rp = randomPick[Math.floor(Math.random() * randomPick.length)] || PERFUMES[0];
       memory.lastPerfumeId = rp.id;
       const text = `Je ne connais pas ce parfum, mais d'après ce que tu décris, voici ce qui s'en approche :\n\n🌸 **${rp.name}** — ${rp.brand}\n\n_${rp.description}_`;
-      return { text, perfume: rp, suggestions: ["Plus intense", "Plus frais"] };
+      return { text, perfume: rp, suggestions: ["Plus intense", "Plus frais"], updatedChatMem: newMem };
     }
   }
 
-  // ── Standard multi-criteria matching ──
+  // ── Standard multi-criteria matching (with conversational boost) ──
   const matchedRules = KEYWORD_RULES.filter((kw) => kw.test.test(m));
   const matchedTags = matchedRules.map((r) => r.tag);
 
@@ -589,11 +782,17 @@ if (foundPerfume) {
         if (memory.preferences.has("boisé") && prof.woodyLevel > 0.4) score += 0.3;
         if (memory.preferences.has("floral") && prof.floralLevel > 0.4) score += 0.3;
         if (memory.preferences.has("épicé") && prof.spicyLevel > 0.4) score += 0.3;
+        // Conversational boost
+        score += conversationalScore(p, prof, updatedPrefs, message) * 0.1;
         if (p.id === memory.lastPerfumeId) score -= 3;
         return { perfume: p, score, profile: prof };
       })
       .filter((s) => s.score > 0)
       .sort((a, b) => b.score - a.score);
+
+    // Store results for follow-up
+    newMem.lastResults = scored.slice(0, 8).map(s => ({ perfume: s.perfume, score: s.score }));
+    newMem.lastComparedPerfumes = []; // reset comparison mode on new search
 
     if (scored.length > 0) {
       const topN = scored.slice(0, Math.min(3, scored.length));
@@ -612,32 +811,18 @@ if (foundPerfume) {
 
       const text = `${intro}\n\n🌸 **${best.perfume.name}**\n${best.perfume.brand} · ${best.perfume.concentration}\n\n${transition}\n\n🎵 Notes clés : ${profile}\n✨ Accord dominant : ${accord}\n🎭 Profil : ${vibe}\n📍 Sillage : ${best.perfume.sillage} · Idéal en ${bestSeason}`;
 
-      return { text, perfume: best.perfume, suggestions: getSuggestions(matchedTags, memory) };
+      return { text, perfume: best.perfume, suggestions: getSuggestions(matchedTags, memory), updatedChatMem: newMem };
     }
   }
 
-  // Fallback
+  // ── Fallback ──
   const random = PERFUMES.filter((p) => p.id !== memory.lastPerfumeId);
   const fallback = random[Math.floor(Math.random() * random.length)] || PERFUMES[0];
   memory.lastPerfumeId = fallback.id;
 
-  const prof = getPerfumeProfile(fallback);
-  const profile = getOlfactoryProfile(fallback);
-  const accord = getAccordLabel(prof);
-  const vibe = getVibeLabel(prof);
-  const intro = pick(SOFIA_FALLBACK_INTROS);
-  const text = `
-Je veux bien t’aider, mais j’ai besoin d’un peu plus de détails 😊
+  const text = `Je veux bien t'aider, mais j'ai besoin d'un peu plus de détails 😊\n\nTu peux me dire :\n• une ambiance (soirée, été…)\n• une odeur (sucré, frais…)\n• ou un parfum que tu aimes\n\nEt je te guiderai parfaitement.`;
 
-Tu peux me dire :
-• une ambiance (soirée, été…)
-• une odeur (sucré, frais…)
-• ou un parfum que tu aimes
-
-Et je te guiderai parfaitement.
-`;
-
-  return { text, perfume: fallback, suggestions: ["Pour une soirée", "Quelque chose de frais", "Plus sucré"] };
+  return { text, perfume: fallback, suggestions: ["Pour une soirée", "Quelque chose de frais", "Plus sucré"], updatedChatMem: newMem };
 }
 
 /* ─── Component ─────────────────────────────────────────── */
@@ -657,6 +842,7 @@ const ChatConseiller = () => {
   const memoryRef = useRef<SessionMemory>({ preferences: new Set(), askedTags: new Set() });
   const persistentRef = useRef<PersistentMemory | null>(null);
   const welcomeBackSent = useRef(false);
+  const chatMemRef = useRef<ChatMemoryState>(createEmptyChatMemory());
 
   // Pre-compute profiles on mount
   useEffect(() => {
@@ -668,7 +854,6 @@ const ChatConseiller = () => {
     const saved = loadPersistentMemory();
     if (saved) {
       persistentRef.current = { ...saved, totalVisits: saved.totalVisits + 1, lastVisit: new Date().toISOString() };
-      // Restore preferences into session memory
       saved.preferences.forEach(p => memoryRef.current.preferences.add(p));
     } else {
       persistentRef.current = { preferences: [], lastVisit: new Date().toISOString(), totalVisits: 1, favoriteTags: [] };
@@ -702,12 +887,26 @@ const ChatConseiller = () => {
     if (!persistentRef.current) return;
     const prefs = Array.from(memoryRef.current.preferences);
     persistentRef.current.preferences = prefs;
-    // Update favorite tags (tags mentioned 3+ times tracked via simple count)
-    const tagCounts: Record<string, number> = {};
-    prefs.forEach(p => { tagCounts[p] = (tagCounts[p] || 0) + 1; });
-    // Since preferences is a Set we track favorites by how many sessions they appear
-    persistentRef.current.favoriteTags = [...new Set([...persistentRef.current.favoriteTags, ...prefs])].slice(0, 5);
+    persistentRef.current.favoriteTags = Array.from(new Set([...persistentRef.current.favoriteTags, ...prefs])).slice(0, 5);
     savePersistentMemory(persistentRef.current);
+  }, []);
+
+  // ── RESET SESSION ──
+  const resetSession = useCallback(() => {
+    chatMemRef.current = createEmptyChatMemory();
+    memoryRef.current = { preferences: new Set(), askedTags: new Set() };
+    setSommelierMode(false);
+    setSommelierStep(0);
+    setSommelierAnswers([]);
+    setHasUserSent(false);
+    setInput("");
+    setTyping(false);
+    idCounter.current = 1;
+    setMessages([{
+      ...WELCOME_MSG,
+      id: 0,
+      text: "Nouvelle session ! ✨ Je suis Sofia, prête à t'accompagner dans ta découverte olfactive.\n\nDis-moi ce que tu recherches !",
+    }]);
   }, []);
 
   const sendMessage = useCallback((text?: string) => {
@@ -741,7 +940,6 @@ const ChatConseiller = () => {
           setMessages(prev => [...prev, aiMsg]);
           setTyping(false);
         } else {
-          // Synthesize final recommendation
           setSommelierMode(false);
           setSommelierStep(0);
           setSommelierAnswers([]);
@@ -773,9 +971,10 @@ const ChatConseiller = () => {
       return;
     }
 
-    // ── Standard response ──
+    // ── Standard response (with ChatMemory) ──
     setTimeout(() => {
-      const result = getAIResponse(msg, memoryRef.current);
+      const result = getAIResponse(msg, memoryRef.current, chatMemRef.current);
+      chatMemRef.current = result.updatedChatMem;
       const aiMsg: ChatMessage = { id: idCounter.current++, role: "ai", text: result.text, perfume: result.perfume, perfume2: result.perfume2, suggestions: result.suggestions };
       setMessages((prev) => [...prev, aiMsg]);
       setTyping(false);
@@ -835,9 +1034,19 @@ const ChatConseiller = () => {
                 <Bot size={18} className="text-amber-400" />
                 <span className="font-display text-sm text-amber-200 tracking-wide">Sofia · Conseillère parfum</span>
               </div>
-              <button onClick={() => setOpen(false)} className="text-white/40 hover:text-white transition-colors" aria-label="Fermer">
-                <X size={18} />
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={resetSession}
+                  className="text-white/30 hover:text-amber-400 transition-colors p-1 rounded-lg hover:bg-white/5"
+                  aria-label="Nouvelle session"
+                  title="Nouvelle session"
+                >
+                  <RotateCcw size={15} />
+                </button>
+                <button onClick={() => setOpen(false)} className="text-white/40 hover:text-white transition-colors" aria-label="Fermer">
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
             {/* Messages */}

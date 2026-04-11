@@ -51,37 +51,155 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
     "rose", "vanilla", "musky", "sandalwood", "iris"
   ],
 
-  "coromandel-exclusif-chanel": ["amber", "patchouli", "woody", "balsamic", "warm_spicy", "powdery", "sweet", "smoky"],
-  "sycomore-exclusif-chanel": ["woody", "earthy", "aromatic", "vetiver", "smoky", "balsamic", "fresh_spicy"],
-  "egoiste-chanel": ["woody", "warm_spicy", "cinnamon", "aromatic", "rose", "powdery", "amber", "tobacco"],
-  "cuir-de-russie-exclusif-chanel": ["leather", "woody", "animalic", "floral", "powdery", "smoky", "musky"],
-  "bois-des-iles-exclusif-chanel": ["woody", "powdery", "floral", "aldehydic", "warm_spicy", "balsamic", "sandalwood"],
-  "antaeus-chanel": ["woody", "earthy", "aromatic", "leather", "mossy", "animalic", "patchouli", "warm_spicy"],
-  "cristalle-eau-verte-chanel": ["citrus", "floral", "white_floral", "aromatic", "fresh_spicy", "green"],
-  "platinum-egoiste-chanel": ["aromatic", "fresh_spicy", "woody", "lavender", "herbal", "floral", "green"],
-  "allure-sensuelle-chanel": ["warm_spicy", "patchouli", "woody", "amber", "powdery", "balsamic", "rose"],
-  "coco-noir-chanel": ["patchouli", "warm_spicy", "woody", "citrus", "amber", "rose", "balsamic", "aromatic"],
-  "gardenia-exclusif-chanel": ["white_floral", "floral", "sweet", "tuberose", "lactonic", "musky"],
-  "31-rue-cambon-exclusif-chanel": ["iris", "earthy", "woody", "patchouli", "powdery", "floral", "warm_spicy"],
-  "bel-respiro-exclusif-chanel": ["green", "aromatic", "floral", "fresh", "herbal", "leather"],
-  "la-pausa-exclusif-chanel": ["iris", "powdery", "earthy", "woody", "floral", "violet"],
-  "1932-exclusif-chanel": ["powdery", "floral", "white_floral", "woody", "musky", "aldehydic", "fruity"],
-  "misia-exclusif-chanel": ["powdery", "violet", "iris", "rose", "floral", "fruity", "balsamic"],
-  "boy-exclusif-chanel": ["aromatic", "lavender", "fresh_spicy", "musky", "woody", "powdery", "herbal"],
-  "jersey-exclusif-chanel": ["lavender", "musky", "vanilla", "aromatic", "powdery", "sweet"],
-  "beige-exclusif-chanel": ["honey", "floral", "white_floral", "sweet", "yellow_floral"],
-  "chance-eau-tendre-chanel": ["floral", "fruity", "fresh", "musky", "citrus", "rose"],
-  "allure-homme-edition-blanche-chanel": ["citrus", "woody", "vanilla", "aromatic", "amber", "powdery", "fresh_spicy"],
-  "coco-mademoiselle-intense-chanel": ["patchouli", "citrus", "amber", "woody", "sweet", "warm_spicy", "vanilla"],
-  "pour-monsieur-chanel": ["citrus", "aromatic", "mossy", "woody", "earthy", "fresh_spicy"],
-  "n19-poudre-chanel": ["iris", "powdery", "green", "musky", "woody", "earthy", "floral"],
-  "gardenia-parfum-chanel": ["white_floral", "floral", "creamy", "tuberose", "sweet"],
-  "paris-biarritz-chanel": ["citrus", "aromatic", "fresh", "green", "musky", "white_floral"],
-  "paris-venise-chanel": ["vanilla", "powdery", "citrus", "musky", "amber", "aromatic", "soft_spicy"],
-  "paris-riviera-chanel": ["citrus", "white_floral", "sweet", "floral", "amber"],
-  "n22-exclusif-chanel": ["aldehydic", "white_floral", "powdery", "floral", "sweet", "woody"],
-  "18-exclusif-chanel": ["musky", "fruity", "powdery", "floral", "woody", "amber"]
-],
+  "coromandel-exclusif-chanel": [
+    "amber", "patchouli", "woody", "balsamic", "warm_spicy", 
+    "powdery", "white_chocolate", "smoky", "incense", "oriental"
+  ],
+
+  "sycomore-exclusif-chanel": [
+    "woody", "vetiver", "earthy", "aromatic", "smoky", 
+    "balsamic", "fresh_spicy", "tobacco", "cedar", "forest"
+  ],
+
+  "egoiste-chanel": [
+    "woody", "warm_spicy", "cinnamon", "aromatic", "rose", 
+    "sandalwood", "tobacco", "amber", "powdery", "mahogany"
+  ],
+
+  "cuir-de-russie-exclusif-chanel": [
+    "leather", "woody", "animalic", "smoky", "powdery", 
+    "floral", "musky", "birch", "tobacco", "aldehydic"
+  ],
+
+  "bois-des-iles-exclusif-chanel": [
+    "woody", "powdery", "sandalwood", "floral", "aldehydic", 
+    "warm_spicy", "balsamic", "amber", "sweet", "oriental"
+  ],
+
+  "antaeus-chanel": [
+    "woody", "animalic", "leather", "aromatic", "earthy", 
+    "mossy", "patchouli", "castoreum", "warm_spicy", "herbal"
+  ],
+
+  "cristalle-eau-verte-chanel": [
+    "citrus", "floral", "white_floral", "aromatic", "fresh_spicy", 
+    "green", "magnolia", "lemon", "fresh", "transparent"
+  ],
+
+  "platinum-egoiste-chanel": [
+    "aromatic", "fresh_spicy", "woody", "lavender", "herbal", 
+    "floral", "green", "metallic", "fresh", "mossy"
+  ],
+
+  "allure-sensuelle-chanel": [
+    "warm_spicy", "patchouli", "woody", "amber", "powdery", 
+    "balsamic", "rose", "floral", "incense", "vanilla"
+  ],
+
+  "coco-noir-chanel": [
+    "patchouli", "warm_spicy", "woody", "citrus", "amber", 
+    "rose", "balsamic", "aromatic", "floral", "powdery"
+  ],
+
+  "gardenia-exclusif-chanel": [
+    "white_floral", "floral", "sweet", "tuberose", "creamy", 
+    "lactonic", "musky", "gardenia", "green", "fresh"
+  ],
+
+  "31-rue-cambon-exclusif-chanel": [
+    "iris", "earthy", "woody", "patchouli", "powdery", 
+    "floral", "warm_spicy", "chypre", "balsamic", "elegant"
+  ],
+
+  "bel-respiro-exclusif-chanel": [
+    "green", "aromatic", "floral", "fresh", "herbal", 
+    "leather", "grassy", "natural", "dewy", "ozonic"
+  ],
+
+  "la-pausa-exclusif-chanel": [
+    "iris", "powdery", "earthy", "woody", "floral", 
+    "violet", "rooty", "fresh", "musky", "mineral"
+  ],
+
+  "1932-exclusif-chanel": [
+    "powdery", "floral", "white_floral", "woody", "musky", 
+    "aldehydic", "fruity", "iris", "jasmine", "fresh"
+  ],
+
+  "misia-exclusif-chanel": [
+    "powdery", "violet", "iris", "rose", "floral", 
+    "fruity", "balsamic", "cosmetic", "sweet", "tonka_bean"
+  ],
+
+  "boy-exclusif-chanel": [
+    "aromatic", "lavender", "fresh_spicy", "musky", "woody", 
+    "powdery", "herbal", "floral", "vanilla", "fougère"
+  ],
+
+  "jersey-exclusif-chanel": [
+    "lavender", "musky", "vanilla", "aromatic", "powdery", 
+    "sweet", "herbal", "fresh", "floral", "soft"
+  ],
+
+  "beige-exclusif-chanel": [
+    "honey", "floral", "white_floral", "sweet", "yellow_floral", 
+    "powdery", "tropical", "musky", "sunny", "nectar"
+  ],
+
+  "chance-eau-tendre-chanel": [
+    "floral", "fruity", "fresh", "musky", "citrus", 
+    "rose", "sweet", "soft", "quince", "delicate"
+  ],
+
+  "allure-homme-edition-blanche-chanel": [
+    "citrus", "woody", "vanilla", "aromatic", "amber", 
+    "powdery", "fresh_spicy", "creamy", "lemon", "sandalwood"
+  ],
+
+  "coco-mademoiselle-intense-chanel": [
+    "patchouli", "citrus", "amber", "woody", "sweet", 
+    "warm_spicy", "vanilla", "rose", "balsamic", "fruity"
+  ],
+
+  "pour-monsieur-chanel": [
+    "citrus", "aromatic", "mossy", "woody", "earthy", 
+    "fresh_spicy", "lemon", "green", "herbal", "old_school"
+  ],
+
+  "n19-poudre-chanel": [
+    "iris", "powdery", "green", "musky", "woody", 
+    "earthy", "floral", "galbanum", "fresh", "vetiver"
+  ],
+
+  "gardenia-parfum-chanel": [
+    "white_floral", "floral", "creamy", "tuberose", "sweet", 
+    "animalic", "green", "jasmine", "coconut", "tropical"
+  ],
+
+  "paris-biarritz-chanel": [
+    "citrus", "aromatic", "fresh", "green", "musky", 
+    "white_floral", "marine", "mandarin", "lily_of_the_valley", "ozonic"
+  ],
+
+  "paris-venise-chanel": [
+    "vanilla", "powdery", "citrus", "musky", "amber", 
+    "aromatic", "soft_spicy", "floral", "iris", "tonka_bean"
+  ],
+
+  "paris-riviera-chanel": [
+    "citrus", "white_floral", "sweet", "floral", "amber", 
+    "orange_blossom", "neroli", "fresh", "balsamic", "sunny"
+  ],
+
+  "n22-exclusif-chanel": [
+    "aldehydic", "white_floral", "powdery", "floral", "sweet", 
+    "woody", "vanilla", "iris", "jasmine", "yellow_floral"
+  ],
+
+  "18-exclusif-chanel": [
+    "musky", "fruity", "powdery", "floral", "woody", 
+    "amber", "ambrette", "fresh", "sweet", "aromatic"
+  ],
 
   "gabrielle-chanel": [
   "citrus",

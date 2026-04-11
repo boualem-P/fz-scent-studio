@@ -875,7 +875,6 @@ export const PERFUMES: Perfume[] = [
     jourPct: 80,
     seasonData: { winter: 5, spring: 45, summer: 35, autumn: 35 }
   },
-  const chanelDatabase = [
   {
     id: "coromandel-exclusif-chanel",
     name: "Coromandel",

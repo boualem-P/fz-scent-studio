@@ -208,7 +208,7 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
   "sweet",
   "woody",
   "fruity"
-],
+ ],
   
   // ── YSL ───────────────────────────────────────────────────────
 

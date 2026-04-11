@@ -181,9 +181,16 @@ export function matchPerfumes(
       new Set(perfumeAccords).size / Math.max(perfumeAccords.length, 1);
     score += (richness * 0.6 + uniqueness * 0.4) * 0.1;
 
+    // Bris d'égalité unique par parfum
+    const tieBreaker =
+      (perfume.seasonData[currentSeason] % 7) * 0.001 +
+      (perfume.topNotes.length * 0.002) +
+      (perfume.baseNotes.length * 0.001) +
+      (sillageScore[perfume.sillage ?? "modéré"] * 0.003);
+
     return {
       perfume,
-      matchPercent: Math.min(Math.round(score * 100), 99),
+      matchPercent: Math.min(Math.round((score + tieBreaker) * 100), 99),
       brand: perfume.brand,
       perfumeAccords,
     };
@@ -191,6 +198,15 @@ export function matchPerfumes(
 
   // ── 5. TRI ────────────────────────────────────────────────
   const sorted = scored.sort((a, b) => b.matchPercent - a.matchPercent);
+
+  // Garantir l'unicité des scores
+  const seenScores = new Set<number>();
+  sorted.forEach(item => {
+    let s = item.matchPercent;
+    while (seenScores.has(s)) s--;
+    item.matchPercent = Math.max(s, 1);
+    seenScores.add(s);
+  });
 
   // ── 6. DIVERSITÉ AMÉLIORÉE ────────────────────────────────
   const finalResults: { perfume: any; matchPercent: number }[] = [];

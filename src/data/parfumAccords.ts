@@ -50,6 +50,15 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
     "aldehydic", "white_floral", "floral", "powdery", "jasmine",
     "rose", "vanilla", "musky", "sandalwood", "iris"
   ],
+
+  "gabrielle-chanel": [
+  "citrus",
+  "white_floral",
+  "yellow_floral",
+  "sweet",
+  "woody",
+  "fruity"
+],
   
   // ── YSL ───────────────────────────────────────────────────────
 

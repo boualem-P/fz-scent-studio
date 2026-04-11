@@ -857,6 +857,25 @@ export const PERFUMES: Perfume[] = [
     seasonData: { winter: 40, spring: 10, summer: 5, autumn: 45 }
   },
   {
+    id: "gabrielle-chanel",
+    name: "Gabrielle",
+    brand: "Chanel",
+    image: "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.43718.avif",
+    description: "Une fleur imaginaire, une fleur solaire construite autour de quatre fleurs blanches : un cœur de jasmin exotique, de l'ylang-ylang, de la fleur d'oranger et de la tubéreuse de Grasse.",
+    gender: "femme",
+    concentration: "Eau de Parfum",
+    topNotes: ["Agrumes", "Mandarine", "Cassis"],
+    heartNotes: ["Fleur d'oranger", "Jasmin", "Ylang-ylang", "Tubéreuse", "Muguet", "Poire", "Poivre rose"],
+    baseNotes: ["Musc", "Santal", "Cachemire", "Iris"],
+    topNotesDetailed: [{ name: "Mandarine" }, { name: "Cassis" }],
+    heartNotesDetailed: [{ name: "Fleur d'oranger" }, { name: "Jasmin" }, { name: "Ylang-ylang" }],
+    baseNotesDetailed: [{ name: "Musc" }, { name: "Santal" }],
+    sillage: "modéré",
+    longevite: "6h",
+    jourPct: 80,
+    seasonData: { winter: 5, spring: 45, summer: 35, autumn: 35 }
+  },
+  {
   id: "torino21-xerjoff",
   name: "Torino21",
   brand: "Xerjoff",

@@ -58,7 +58,7 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
 
   "sycomore-exclusif-chanel": [
     "woody", "vetiver", "earthy", "aromatic", "smoky", 
-    "balsamic", "fresh_spicy", "tobacco", "cedar", "forest"
+    "balsamic", "fresh_spicy", "tobacco", "cedar"
   ],
 
   "egoiste-chanel": [
@@ -83,7 +83,7 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
 
   "cristalle-eau-verte-chanel": [
     "citrus", "floral", "white_floral", "aromatic", "fresh_spicy", 
-    "green", "magnolia", "lemon", "fresh", "transparent"
+    "green", "magnolia", "lemon", "fresh"
   ],
 
   "platinum-egoiste-chanel": [
@@ -108,12 +108,12 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
 
   "31-rue-cambon-exclusif-chanel": [
     "iris", "earthy", "woody", "patchouli", "powdery", 
-    "floral", "warm_spicy", "chypre", "balsamic", "elegant"
+    "floral", "warm_spicy", "chypre", "balsamic"
   ],
 
   "bel-respiro-exclusif-chanel": [
     "green", "aromatic", "floral", "fresh", "herbal", 
-    "leather", "grassy", "natural", "dewy", "ozonic"
+    "leather", "grassy", "dewy", "ozonic"
   ],
 
   "la-pausa-exclusif-chanel": [
@@ -138,17 +138,17 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
 
   "jersey-exclusif-chanel": [
     "lavender", "musky", "vanilla", "aromatic", "powdery", 
-    "sweet", "herbal", "fresh", "floral", "soft"
+    "sweet", "herbal", "fresh", "floral"
   ],
 
   "beige-exclusif-chanel": [
     "honey", "floral", "white_floral", "sweet", "yellow_floral", 
-    "powdery", "tropical", "musky", "sunny", "nectar"
+    "powdery", "tropical", "musky", "nectar"
   ],
 
   "chance-eau-tendre-chanel": [
     "floral", "fruity", "fresh", "musky", "citrus", 
-    "rose", "sweet", "soft", "quince", "delicate"
+    "rose", "sweet", "soft", "quince"
   ],
 
   "allure-homme-edition-blanche-chanel": [
@@ -163,7 +163,7 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
 
   "pour-monsieur-chanel": [
     "citrus", "aromatic", "mossy", "woody", "earthy", 
-    "fresh_spicy", "lemon", "green", "herbal", "old_school"
+    "fresh_spicy", "lemon", "green", "herbal"
   ],
 
   "n19-poudre-chanel": [

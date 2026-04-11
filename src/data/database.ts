@@ -946,7 +946,7 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Fleur d'oranger" }],
     heartNotesDetailed: [{ name: "Ylang-ylang" }],
     baseNotesDetailed: [{ name: "Cuir" }, { name: "Bouleau" }],
-    sillage: "intime",
+    sillage: "discret",
     longevite: "7h",
     jourPct: 40,
     seasonData: { winter: 35, spring: 15, summer: 10, autumn: 40 }
@@ -1345,7 +1345,7 @@ export const PERFUMES: Perfume[] = [
     topNotesDetailed: [{ name: "Feuilles vertes" }],
     heartNotesDetailed: [{ name: "Gardénia" }],
     baseNotesDetailed: [{ name: "Santal" }],
-    sillage: "intime",
+    sillage: "discret",
     longevite: "10h",
     jourPct: 60,
     seasonData: { winter: 10, spring: 45, summer: 35, autumn: 10 }

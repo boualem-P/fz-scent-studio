@@ -81,7 +81,7 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
   "paris-riviera-chanel": ["citrus", "white_floral", "sweet", "floral", "amber"],
   "n22-exclusif-chanel": ["aldehydic", "white_floral", "powdery", "floral", "sweet", "woody"],
   "18-exclusif-chanel": ["musky", "fruity", "powdery", "floral", "woody", "amber"]
-},
+,
 
   "gabrielle-chanel": [
   "citrus",

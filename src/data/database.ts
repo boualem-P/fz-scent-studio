@@ -1682,7 +1682,7 @@ export const PERFUMES: Perfume[] = [
     gender: "femme",
     concentration: "Eau de Toilette",
     topNotes: ["Aldéhydes", "Mandarine", "Bergamote", "Bois de rose"],
-    heartNotes: ["Lis", "Giroflée", "Jasmin", "Rose"],
+    heartNotes: ["Lys", "Giroflée", "Jasmin", "Rose"],
     baseNotes: ["Ambre", "Santal", "Benjoin", "Vanille", "Patchouli", "Musc"],
     topNotesDetailed: [{ name: "Aldéhydes" }, { name: "Mandarine" }],
     heartNotesDetailed: [{ name: "Jasmin" }],

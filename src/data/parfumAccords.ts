@@ -24,6 +24,127 @@ export const PARFUM_ACCORDS: Record<string, string[]> = {
   "violet", "earthy", "animalic", "floral", "vetiver"
 ],
 
+  "bois-d-argent-dior": [
+    "woody", "powdery", "floral", "balsamic", "amber", 
+    "honey", "musky", "iris", "incense", "atmospheric"
+  ],
+  "gris-dior": [
+    "floral", "woody", "fresh", "earthy", "patchouli", 
+    "rose", "mossy", "fruity", "citrus", "atmospheric"
+  ],
+  "ambre-nuit-dior": [
+    "amber", "floral", "spicy", "rose", "warm_spicy", 
+    "citrus", "woody", "musky", "animalic", "oriental"
+  ],
+  "oud-ispahan-dior": [
+    "oriental", "woody", "floral", "rose", "oud", 
+    "spicy", "patchouli", "warm_spicy", "balsamic", "animalic"
+  ],
+  "feve-delicieuse-dior": [
+    "gourmand", "oriental", "spicy", "vanilla", "sweet", 
+    "woody", "balsamic", "fruity", "floral", "warm_spicy"
+  ],
+  "tobacolor-dior": [
+    "oriental", "spicy", "honey", "woody", "fruity", 
+    "sweet", "amber", "smoky", "tobacco", "warm_spicy"
+  ],
+  "miss-dior-original-dior": [
+    "floral", "fresh", "woody", "green", "mossy", 
+    "earthy", "aromatic", "spicy", "animalic", "atmospheric"
+  ],
+  "diorama-dior": [
+    "floral", "fruity", "spicy", "woody", "fresh", 
+    "mossy", "warm_spicy", "animalic", "oriental", "classic"
+  ],
+  "diorissimo-dior": [
+    "floral", "fresh", "green", "white_floral", "spring", 
+    "jasmine", "woody", "animalic", "atmospheric", "clean"
+  ],
+  "eau-sauvage-dior": [
+    "fresh", "citrus", "aromatic", "woody", "floral", 
+    "spicy", "mossy", "earthy", "clean", "classic"
+  ],
+  "poison-dior": [
+    "oriental", "floral", "fruity", "spicy", "sweet", 
+    "woody", "balsamic", "smoky", "warm_spicy", "animalic"
+  ],
+  "hypnotic-poison-dior": [
+    "gourmand", "oriental", "vanilla", "sweet", "nutty", 
+    "floral", "powdery", "spicy", "woody", "musky"
+  ],
+  "dune-dior": [
+    "woody", "amber", "floral", "powdery", "fresh", 
+    "balsamic", "citrus", "musky", "atmospheric", "marine"
+  ],
+  "dolce-vita-dior": [
+    "woody", "spicy", "fruity", "floral", "vanilla", 
+    "warm_spicy", "sweet", "citrus", "powdery", "oriental"
+  ],
+  "eden-roc-dior": [
+    "fresh", "atmospheric", "marine", "salty", "floral", 
+    "citrus", "woody", "mineral", "ozonic", "sunny"
+  ],
+  "leather-oud-dior": [
+    "animalic", "leather", "woody", "oriental", "smoky", 
+    "oud", "spicy", "warm_spicy", "balsamic", "earthy"
+  ],
+  "milly-la-foret-dior": [
+    "fresh", "floral", "musky", "citrus", "green", 
+    "woody", "clean", "atmospheric", "soft", "powdery"
+  ],
+  "new-look-1947-dior": [
+    "floral", "white_floral", "powdery", "balsamic", "spicy", 
+    "sweet", "vanilla", "woody", "atmospheric", "classic"
+  ],
+  "patchouli-imperial-dior": [
+    "woody", "oriental", "patchouli", "spicy", "balsamic", 
+    "earthy", "warm_spicy", "citrus", "vanilla", "amber"
+  ],
+  "santal-noir-dior": [
+    "woody", "floral", "animalic", "leather", "creamy", 
+    "rose", "amber", "oriental", "balsamic", "musky"
+  ],
+  "la-colle-noire-dior": [
+    "floral", "rose", "fruity", "fresh", "woody", 
+    "musky", "spicy", "amber", "sweet", "atmospheric"
+  ],
+  "jasmin-des-anges-dior": [
+    "floral", "fruity", "white_floral", "fresh", "sweet", 
+    "musky", "citrus", "abricot", "atmospheric", "clean"
+  ],
+  "purple-oud-dior": [
+    "woody", "spicy", "oud", "fresh", "citrus", 
+    "warm_spicy", "oriental", "atmospheric", "aromatic", "clean"
+  ],
+  "belle-de-jour-dior": [
+    "floral", "fruity", "musky", "fresh", "woody", 
+    "sweet", "powdery", "atmospheric", "clean", "rose"
+  ],
+  "lucky-dior": [
+    "floral", "fresh", "white_floral", "green", "musky", 
+    "clean", "atmospheric", "soft", "spring", "transparent"
+  ],
+  "rose-gipsy-dior": [
+    "floral", "rose", "fresh", "green", "musky", 
+    "spicy", "atmospheric", "dewy", "clean", "transparent"
+  ],
+  "vanilla-diorama-dior": [
+    "gourmand", "oriental", "vanilla", "spicy", "woody", 
+    "warm_spicy", "boozy", "sweet", "citrus", "amber"
+  ],
+  "spice-blend-dior": [
+    "spicy", "warm_spicy", "woody", "boozy", "fresh", 
+    "aromatic", "oriental", "atmospheric", "earthy", "clean"
+  ],
+  "balade-sauvage-dior": [
+    "fruity", "fresh", "woody", "floral", "citrus", 
+    "atmospheric", "marine", "green", "amber", "sunny"
+  ],
+  "diorella-dior": [
+    "floral", "fruity", "fresh", "citrus", "woody", 
+    "mossy", "aromatic", "atmospheric", "green", "earthy"
+  ],
+
   "homme-intense-dior": [
     "iris", "powdery", "lavender", "woody", "violet", 
     "earthy", "amber_woody", "musky", "cedar", "vetiver"

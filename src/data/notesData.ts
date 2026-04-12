@@ -64,7 +64,7 @@ export const NOTES_IMAGES: Record<string, string> = {
 
   // --- SPICES ------------------------------------------
   "Poivre": "https://plus.unsplash.com/premium_photo-1668447605666-716a18e15a1d?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "Poivre Rose": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy68QcnTdnE0gdP-PDGwPZNKArSN386GfYMA&s",
+  "Poivre Rose": "https://images.unsplash.com/photo-1700308234510-85bf5f51e135?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "Poivre noir": "https://thumbs.dreamstime.com/b/tas-frais%C3%A9-ou-moulu-de-poivre-noir-d-isolement-sur-le-fond-blanc-front-view-143209481.jpg",
   "Poivre du Sichuan": "https://pommedambre.com/app/uploads/2021/05/poivre-de-sichuan-400.jpg",
   "Gingembre": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlJtMdQmJ2JFlcmdsalxqNg7vzSS1DEj1XvA&s",
@@ -190,7 +190,7 @@ export const NOTES_IMAGES: Record<string, string> = {
   // --- DIVERS ------------------------------------------
   "Notes boisées": "https://images.unsplash.com/photo-1752028828275-9506afe8a2b4?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE0fHx8ZW58MHx8fHx8",
   "Notes fruitées": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGlhJ9z_OYQIPCAKKd--_EpLf7EbkD4-vdyg&s",
-  "Notes épicées": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy68QcnTdnE0gdP-PDGwPZNKArSN386GfYMA&s",
+  "Notes épicées": "https://images.unsplash.com/photo-1716816211590-c15a328a5ff0?q=80&w=823&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "Notes solaires": "https://www.olfastory.com/sites/default/files/styles/400x400/public/notes-solaires.jpg?itok=I5-j7hJk",
   "Notes minérales": "https://www.olfastory.com/sites/default/files/styles/400x400/public/notes-minerales.jpg?itok=KtUG-nOt",
   "Sel": "https://images.unsplash.com/photo-1604697976327-4f28ff459803?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",

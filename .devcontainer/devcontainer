@@ -1,0 +1,31 @@
+// .devcontainer/devcontainer.json
+{
+  "name": "Mon Projet",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",  // ou node, ubuntu, etc.
+
+  // Extensions VS Code à installer automatiquement
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2
+      }
+    }
+  },
+
+  // Commandes exécutées après création du conteneur
+  "postCreateCommand": "pip install -r requirements.txt",
+
+  // Ports à exposer automatiquement
+  "forwardPorts": [3000, 8080],
+
+  // Variables d'environnement
+  "remoteEnv": {
+    "NODE_ENV": "development"
+  }
+}
